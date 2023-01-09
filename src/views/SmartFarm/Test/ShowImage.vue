@@ -14,28 +14,15 @@
             </v-chip>
           </v-chip-group>
           <v-spacer></v-spacer>
-          <v-btn color="primary" @click="dialogOpen">조회</v-btn>
+          <v-btn color="primary" @click="dialogOpen">조회 (branch테스트)</v-btn>
         </v-col>
       </v-row>
       <v-row>
         <v-col>
-          <v-data-table
-            :headers="datas_header"
-            :items="datas"
-            :page.sync="page"
-            :options.sync="options"
-            :server-items-length="totalData"
-            :items-per-page="itemsPerPage"
-            :loading="loading"
-            dense
-            hide-default-footer
-            v-model="selected"
-            show-select
-            item-key="testName"
-            multi-sort
-            @page-count="pageCount = $event"
-            class="elevation-1"
-          >
+          <v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options"
+            :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" dense hide-default-footer
+            v-model="selected" show-select item-key="testName" multi-sort @page-count="pageCount = $event"
+            class="elevation-1">
             <template v-slot:item.testName="{ item }">
               <td>{{ item.testName }}</td>
             </template>
@@ -52,12 +39,7 @@
         </v-snackbar>
       </div>
       <!-- 이미지갤러리 다이아로그 -->
-      <v-dialog
-        v-model="dialog"
-        fullscreen
-        hide-overlay
-        transition="dialog-bottom-transition"
-      >
+      <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
         <v-card>
           <v-toolbar color="grey lighten-2" dense elevation="0" rounded="0">
             <v-btn icon @click="dialog = false">
@@ -66,15 +48,8 @@
             <v-toolbar-title>이미지 갤러리</v-toolbar-title>
           </v-toolbar>
           <v-row class="mx-auto">
-            <v-card
-              style="overflow: auto"
-              :loading="loading"
-              class="mx-auto my-12"
-              width="374"
-              height="825"
-              v-for="(item, i) in selected"
-              :key="item"
-            >
+            <v-card style="overflow: auto" :loading="loading" class="mx-auto my-12" width="374" height="825"
+              v-for="(item, i) in selected" :key="item">
               <v-card-text>
                 <div class="text-subtitle-1">
                   {{ item.testName }}
@@ -85,11 +60,7 @@
                 <!-- 사진들어갈곳 -->
                 <div v-for="(item, i) in 5">
                   <h6 class="pa-0 ma-0">2022-12-24</h6>
-                  <v-img
-                    max-height="200"
-                    class="ma-4"
-                    src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-                  ></v-img>
+                  <v-img max-height="200" class="ma-4" src="https://cdn.vuetifyjs.com/images/cards/cooking.png"></v-img>
                 </div>
               </v-card-text>
             </v-card>
@@ -334,7 +305,7 @@ export default {
           this.items = res.data.responseData;
           this.totalData = res.data.totalCount;
         })
-        .catch((error) => {});
+        .catch((error) => { });
     },
     // 생육조사 일지 조회 api
     // 다이아로그오픈
@@ -364,7 +335,7 @@ export default {
     },
     // 다이아로그 닫기
     // 등록버튼 누르면 이동하는 메서드
-    CompletedRegister() {},
+    CompletedRegister() { },
     // 등록버튼 누르면 이동하는 메서드
     // 시작일을 한달전으로
     BeforeWeeks() {
@@ -409,7 +380,7 @@ export default {
       let id = {
         growthReportId: this.editedItem.growthReportId,
       };
-      api.growthresearch.DeleteGrowthResearch(id).then((res) => {});
+      api.growthresearch.DeleteGrowthResearch(id).then((res) => { });
       this.closeDelete();
       this.delete_snackbar = true;
     },
