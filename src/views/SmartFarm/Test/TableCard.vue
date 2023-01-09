@@ -35,8 +35,6 @@
                         <td v-if="index == 0" :rowspan="item.datas.length">
                             <input type="text" disabled name="text" size="20" style="width:100%; border: 0"
                                 v-model="item.treatmentName"> </input>
-
-
                         </td>
                         <!-- 개체수  -->
                         <td>
@@ -315,17 +313,16 @@ export default {
                 let checkLength = _.map(this.table.carousel_data[top].datas, 'internodeLength')
                 avgArr.push({
                     growthDataId: '평균입니다.',
-                    internodeLength: _.map(this.table.carousel_data[top].datas, 'internodeLength').reduce(reduer) / checkLength.length.toFixed(2),
-                    leafHeight: _.map(this.table.carousel_data[top].datas, 'leafHeight').reduce(reduer) / checkLength.length.toFixed(2),
-                    leafLength: _.map(this.table.carousel_data[top].datas, 'leafLength').reduce(reduer) / checkLength.length.toFixed(2),
-                    leafStage: _.map(this.table.carousel_data[top].datas, 'leafStage').reduce(reduer) / checkLength.length.toFixed(2),
-                    leafWidth: _.map(this.table.carousel_data[top].datas, 'leafWidth').reduce(reduer) / checkLength.length.toFixed(2),
+                    internodeLength: (_.map(this.table.carousel_data[top].datas, 'internodeLength').reduce(reduer) / checkLength.length).toFixed(2),
+                    leafHeight: (_.map(this.table.carousel_data[top].datas, 'leafHeight').reduce(reduer) / checkLength.length).toFixed(2),
+                    leafLength: (_.map(this.table.carousel_data[top].datas, 'leafLength').reduce(reduer) / checkLength.length).toFixed(2),
+                    leafStage: (_.map(this.table.carousel_data[top].datas, 'leafStage').reduce(reduer) / checkLength.length).toFixed(2),
+                    leafWidth: (_.map(this.table.carousel_data[top].datas, 'leafWidth').reduce(reduer) / checkLength.length).toFixed(2),
                     sampleNumber: '평균입니다.',
-                    stemThickness: _.map(this.table.carousel_data[top].datas, 'stemThickness').reduce(reduer) / checkLength.length.toFixed(2)
+                    stemThickness: (_.map(this.table.carousel_data[top].datas, 'stemThickness').reduce(reduer) / checkLength.length).toFixed(2)
                 })
                 this.table.carousel_data[top].datas.push(avgArr[top])
             }
-
         },
         closeDialog() { //다이아로그 닫으면 데이터 초기화해준다.
             this.input.image = null

@@ -3,15 +3,8 @@
     <!-- 1.테스트명 -->
     <v-row class="">
       <v-col class="d-flex align-center" md="12">
-        <v-btn
-          icon
-          elevation="3"
-          small
-          class="mr-3"
-          @click="$router.push({ name: 'ShowTest' }), removeLS()"
-        >
-          <v-icon>mdi-arrow-left</v-icon></v-btn
-        >
+        <v-btn icon elevation="3" small class="mr-3" @click="$router.push({ name: 'ShowTest' }), removeLS()">
+          <v-icon>mdi-arrow-left</v-icon></v-btn>
         <h4 class="searchbox-title">실험명:{{ testName }}</h4>
         <v-spacer></v-spacer>
         <v-btn class="mx-2" small @click="disable = true">
@@ -26,77 +19,31 @@
     <v-row class="my-0">
       <v-col cols="12" class="my-0 py-0 px-0 pb-0 my-0 d-flex">
         <v-col cols="12">
-          <v-textarea
-            no-resize
-            class=""
-            name="input-7-1"
-            height="100"
-            filled
-            label="실험조건"
-            clearable
-            counter
-            :disabled="disable == false"
-            v-model="testCondition"
-          ></v-textarea
-        ></v-col>
+          <v-textarea no-resize class="" name="input-7-1" height="100" filled label="실험조건" clearable counter
+            :disabled="disable == false" v-model="testCondition"></v-textarea></v-col>
         <v-col cols="2" class="px-0 mx-0 d-flex align-center"> </v-col>
       </v-col>
     </v-row>
     <!-- 3.표 -->
     <v-row class="my-0">
       <v-col cols="12" class="" lg="12" xl="12" md="10">
-        <v-sheet
-          class="mx-auto"
-          color="#F6F8F9"
-          elevation="0"
-          width=""
-          height="740"
-        >
+        <v-sheet class="mx-auto" color="#F6F8F9" elevation="0" width="" height="760">
           <v-col cols="12" class="d-flex align-center">
             <v-btn icon fab class="px-2" x-small @click="Plus()" rounded>
               <v-icon color="primary">mdi-plus</v-icon>
             </v-btn>
             <p class="pa-0 ma-0 mx-2">페이지 추가</p>
-            <v-btn
-              icon
-              fab
-              class="px-2"
-              x-small
-              @click="getGraphData()"
-              rounded
-            >
+            <v-btn icon fab class="px-2" x-small @click="getGraphData()" rounded>
               <v-icon color="primary">mdi-chart-bell-curve</v-icon>
             </v-btn>
             <p class="pa-0 ma-0 mx-2" @click="getGraphData()">그래프 조회</p>
           </v-col>
           <LoadingSpinner v-if="!isLoading"></LoadingSpinner>
-          <v-slide-group
-            v-else
-            v-model="model"
-            class="d-flex align-center pa-0 ma-0"
-            center-active
-            show-arrows
-          >
-            <v-slide-item
-              v-for="(item, i) in table"
-              :key="i"
-              v-slot="{ active }"
-            >
-              <v-card
-                class="ma-4 pt-0 mt-0"
-                height="600"
-                width="700"
-                style="overflow-y: auto"
-              >
-                <TableCard
-                  ref="tableCard"
-                  :parentTable="item"
-                  :i="i"
-                  :ReportId="growthReportId"
-                  @deletedNum="deletedNum"
-                  @resetPage="resetPage"
-                  @snackBarTrue="snackBarTrue"
-                >
+          <v-slide-group v-else v-model="model" class="d-flex align-center pa-0 ma-0" center-active show-arrows>
+            <v-slide-item v-for="(item, i) in table" :key="i" v-slot="{ active }">
+              <v-card class="ma-4 pt-0 mt-0" height="680" width="700" style="overflow-y: auto">
+                <TableCard ref="tableCard" :parentTable="item" :i="i" :ReportId="growthReportId"
+                  @deletedNum="deletedNum" @resetPage="resetPage" @snackBarTrue="snackBarTrue">
                 </TableCard>
               </v-card>
             </v-slide-item>
@@ -126,12 +73,7 @@
     <v-snackbar v-model="snackbar_delete" :timeout="timeout">
       {{ text_delete }}
       <template v-slot:action="{ attrs }">
-        <v-btn
-          color="blue"
-          text
-          v-bind="attrs"
-          @click="snackbar_delete = false"
-        >
+        <v-btn color="blue" text v-bind="attrs" @click="snackbar_delete = false">
           Close
         </v-btn>
       </template>
@@ -157,12 +99,7 @@
       </v-card>
     </v-dialog>
     <!-- 8.그래프 보는 다이아로그 -->
-    <v-dialog
-      v-model="graph_dialog"
-      fullscreen
-      hide-overlay
-      transition="dialog-bottom-transition"
-    >
+    <v-dialog v-model="graph_dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
       <v-card class="pa-0 ma-0">
         <v-toolbar color="grey lighten-2" dense elevation="0" rounded="0">
           <v-btn icon @click="resetGraphData()">
