@@ -1,0 +1,87 @@
+.v-dialog:not(.v-dialog--fullscreen) {
+  max-height: 95%;
+}
+.searchbox-title {
+  color: #6e7c87;
+}
+#dialogBox {
+  display: flex-direction;
+}
+.searchbox {
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1 1 auto;
+  margin: -12px;
+  justify-content: space-between;
+}
+.closeBtn {
+  border: 2px solid #1976d2;
+}
+.dialog-title {
+  font-weight: bold;
+  color: #6e7c87;
+}
+#tempBox {
+  height: 550px;
+}
+.tempRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+}
+.temp-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.detailFont .text-start {
+  font-size: 12px !important;
+}
+tr.v-data-table__selected {
+  background: #97c6f5 !important;
+}
+.treeTable {
+  border-bottom: 1px solid #d8dadb;
+  padding-top: 0px;
+  background-color: white;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+.treeTable .text-start {
+  border-bottom: 0px;
+}
+.countFont input::placeholder {
+  color: red !important;
+  opacity: 1;
+  font-size: 12px;
+}
+.countFont input {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+.countFont .v-input__control {
+  height: 30px;
+}
+.editBtn {
+  border: 1px solid #1976d2;
+}
+.statusBox .v-input__slot {
+  border-bottom: 1px solid #6e7c87;
+  width: fit-content;
+}
+.searchRow {
+  height: 50px;
+}
+.v-data-table-header th {
+  white-space: nowrap;
+  background-color: #f6f8f9 !important;
+}
+.text-start {
+  border-right: 1px solid #d8dadb;
+  border-bottom: 1px solid #d8dadb;
+}
+.orderTableRow {
+  margin-top: -34px;
+}

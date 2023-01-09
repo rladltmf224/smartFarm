@@ -1,0 +1,25 @@
+.v-input--radio-group.v-input--radio-group--row .v-radio {
+  margin-right: 2px !important;
+}
+.countFont input::placeholder {
+  color: red !important;
+  opacity: 1;
+  font-size: 12px;
+}
+.saveStock {
+  margin-top: -16px;
+}
+.clockRow {
+  height: 45px;
+}
+.stockTreeTable {
+  background-color: white;
+  padding-left: 113px !important;
+  padding-right: 0px !important;
+}
+.second-tableBorder {
+  border-left: 1px solid #d8dadb;
+}
+tr.v-data-table__selected {
+  background: #97c6f5 !important;
+}

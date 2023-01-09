@@ -1,0 +1,42 @@
+import AuthAPI from "../api/AuthAPI";
+
+export default {
+  getTotalOrderListPage: (params) =>
+    AuthAPI.post("/api/operation/joborder/search", JSON.stringify(params)),
+  getOperationOrderPage: (params) =>
+    AuthAPI.post("/api/operation/joborder", JSON.stringify(params)),
+  getBasicDataPage: () => AuthAPI.get("/api/operation/joborder/basicdatas"),
+  getOperationOrderChangePage: (params) =>
+    AuthAPI.put("/api/operation/joborder", JSON.stringify(params)),
+  getDepartmentDataPage: () =>
+    AuthAPI.get("/api/operation/joborder/department"),
+  getDepartmentCrewDataPage: (params) =>
+    AuthAPI.get("/api/operation/joborder/department/account", {
+      params: params,
+    }),
+  deleteorderList: (params) =>
+    AuthAPI.delete("/api/operation/joborder", {
+      params: {
+        id: params.id
+          .toString()
+          .replace("[", "")
+          .replace("]", "")
+          .replace(" ", ""),
+      },
+    }),
+  getOrderTempPage: (params) =>
+    AuthAPI.post("/api/operation/joborder/temp", JSON.stringify(params)),
+  getOrderTempListPage: () => AuthAPI.get("/api/operation/joborder/temp"),
+  deletetempList: (params) =>
+    AuthAPI.delete("/api/operation/joborder/temp", {
+      params: {
+        id: params.id
+          .toString()
+          .replace("[", "")
+          .replace("]", "")
+          .replace(" ", ""),
+      },
+    }),
+  updateOperationOrderPage: (params) =>
+    AuthAPI.put("/api/operation/joborder/status", JSON.stringify(params)),
+};

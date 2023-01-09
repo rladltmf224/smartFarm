@@ -1,0 +1,38 @@
+{
+  "sensorValue": {
+    "temperature": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "humidity": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "CO2": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "rootZoneTemp": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "rootZoneHumid": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "soilEC": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "soilpH": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  },
+  "controlStatus": {
+    "sidewindow": false,
+    "topwindow": true,
+    "fan": true,
+    "led": false,
+    "boiler": false,
+    "waterpump": true,
+    "fertilizer": false
+  },
+  "sensorOutdoorValue": {
+    "solarRadiation": 11,
+    "rainfall": 22,
+    "windDirection": 33,
+    "windSpeed": 44,
+    "outdoorTemperature": 55,
+    "outdoorHumidity": 66
+  },
+  "cropInfo": { "cropName": 11, "sowingDay": 22, "cropStatus": 33 },
+  "unitInfo": {
+    "unit-id1": {
+      "temperature": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      "humidity": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      "rootZoneTemp": 1,
+      "rootHumid": 2,
+      "measureTime": 1
+    }
+  }
+}

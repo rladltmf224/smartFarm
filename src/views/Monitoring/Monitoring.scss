@@ -1,0 +1,44 @@
+.monitor-page {
+  background-color: #1a1a2e;
+  height: 100%;
+}
+
+.monitor-title {
+  color: white !important;
+}
+
+.watch-title {
+  color: white !important;
+}
+p {
+  color: white !important;
+}
+
+.vue-circular-progress .percent {
+  color: white;
+}
+.dot,
+.percent__dec {
+  display: none;
+}
+
+.line-error-text {
+  background-color: #0f3460;
+}
+
+table {
+  color: white;
+  border: 1px solid #ebebeb;
+  border-collapse: collapse;
+  text-align: center;
+  width: 100%;
+}
+
+th,
+td {
+  border: 1px solid #ebebeb;
+  background-color: #16213e;
+}
+th {
+  background-color: #0f3460;
+}

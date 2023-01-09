@@ -1,0 +1,55 @@
+.title {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+tr.v-data-table__selected {
+  background: #97c6f5 !important;
+}
+.swal-wide {
+  width: 850px;
+}
+.closeBtn {
+  border: 1px solid #1976d2;
+}
+.reverseRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  height: 70px;
+}
+.bomRow {
+  padding: 0px;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  height: 50px;
+}
+.bomTreeTable {
+  background-color: white;
+  padding-left: 64px !important;
+  padding-right: 0px !important;
+}
+.countFont input::placeholder {
+  color: red !important;
+  opacity: 1;
+  font-size: 12px;
+}
+.countFont input {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+.countFont .v-input__control {
+  height: 30px;
+}
+.text-start {
+  border-right: 1px solid #d8dadb;
+  border-bottom: 1px solid #d8dadb;
+}
+.second-tableBorder {
+  border-left: 1px solid #d8dadb;
+}
+.detailTable {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}

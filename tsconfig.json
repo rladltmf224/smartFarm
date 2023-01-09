@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "types": ["vuetify", "vue-jwt-decode"],
+    "target": "es5",
+    "module": "es6",
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "removeComments": true,
+    "allowJs": true,
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "declaration": true,
+    "emitDeclarationOnly": false,
+    "isolatedModules": false,
+    "experimentalDecorators": true
+  }
+}
