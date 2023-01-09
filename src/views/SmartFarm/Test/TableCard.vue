@@ -26,7 +26,7 @@
 
 
         <v-row class="pa-4 mx-0">
-            <v-data-table :headers="datas_header" hide-default-footer :items="table.carousel_data" class="elevation-1 ">
+            <v-data-table :headers="datas_header" hide-default-footer :items="table.carousel_data" class="elevation-1">
                 <!-- ㅁㄴㅇㅁㄴㅇ -->
                 <template #item="{ item, index }">
                     <tr :class="index === selectedRow ? 'custom-highlight-row' : ''"

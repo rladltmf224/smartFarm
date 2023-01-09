@@ -247,6 +247,13 @@ export default {
       },
       deep: true,
     },
+    selected(val, oldVal) { //최대 5개 선택
+      if (val.length > 5) {
+        this.$nextTick(() => {
+          this.selected = oldVal
+        })
+      }
+    },
   },
   methods: {
     twoMonthAgo() {
@@ -476,11 +483,7 @@ export default {
 };
 </script>
 <style>
-.select {
-  max-width: 200px;
-}
-
-.custom-highlight-row {
-  background-color: pink;
+tr.v-data-table__selected {
+  background: rgb(224, 238, 255) !important;
 }
 </style>
