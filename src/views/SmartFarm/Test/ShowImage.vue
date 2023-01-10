@@ -7,14 +7,14 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="12" class="d-flex">
+        <v-col cols="12" class="d-flex ">
           <v-chip-group multiple active-class="primary--text pa-0 ma-0">
             <v-chip v-for="item in selected" :key="item">
               {{ item.testName }}
             </v-chip>
           </v-chip-group>
           <v-spacer></v-spacer>
-          <v-btn color="primary" @click="dialogOpen">조회 (branch테스트)</v-btn>
+          <v-btn color="primary" @click="dialogOpen">조회</v-btn>
         </v-col>
       </v-row>
       <v-row>
@@ -25,6 +25,16 @@
             class="elevation-1">
             <template v-slot:item.testName="{ item }">
               <td>{{ item.testName }}</td>
+            </template>
+            <!-- 체크박스 -->
+            <template #item="{ item }">
+              <tr>
+                <td>
+                  <v-checkbox></v-checkbox>
+                </td>
+                <td>{{ item.testName }}</td>
+                <td><v-checkbox></v-checkbox></td> <!-- 여기 v-model -->
+              </tr>
             </template>
           </v-data-table>
           <div class="text-center pt-2">
@@ -172,18 +182,13 @@ export default {
           text: "실험명",
           value: "testName",
         },
+        {
+          text: "선택(최대 5개)",
+          value: "selected",
+        },
       ],
       datas: [],
-      datas_header_simple: [
-        {
-          text: "실험명",
-          value: "testName",
-        },
-        {
-          text: "선택",
-          value: "select",
-        },
-      ],
+
       datas_simple: [],
       startDate: false,
       endDate: false,
