@@ -92,9 +92,9 @@
 
 
 
-
+        <!-- 사진 조회 및 등록 -->
         <v-dialog v-model="dialog" persistent max-width="1000" max-height="1000">
-            <v-card height="800">
+            <v-card height="800" style="overflow:auto">
                 <v-card-title class="text-h5 grey lighten-2">
                     사진 조회 및 등록
                     <v-spacer></v-spacer>
@@ -123,38 +123,34 @@
 
                             </v-col>
                         </v-col>
-
                     </v-row>
 
-                    <v-row class="">
-                        <v-col cols="4" class="mx-0">
-                            <h5 class="   searchbox-title ">처치구명</h5>
-                        </v-col>
-                    </v-row>
-                    <v-row class="">
-                        <v-col cols="12" class="pa-0 ma-0">
-                            <v-list-group v-for="item in imageDatas" :key="item.treatmentName" v-model="item.active"
-                                :prepend-icon="item.action" no-action>
-                                <template v-slot:activator>
-                                    <v-list-item-content>
-                                        <v-list-item-title v-text="item.treatmentName"></v-list-item-title>
-                                    </v-list-item-content>
-                                </template>
-                                <v-list-item v-for="child in item.fileNames" :key="child">
-                                    <v-list-item-content>
-                                        <v-list-item-title v-text="child"></v-list-item-title>
-                                    </v-list-item-content>
-                                    <v-btn v-if="child != ['이미지 없음']" icon @click="getSingleImage(item, child)">
-                                        <v-icon color="grey lighten-1">mdi-magnify</v-icon>
-                                    </v-btn>
+
+
+
+                    <!-- 이미지 미리보기 -->
+                    <v-row>
+                        <v-col cols="12" v-for=" (item, i) in imageDatas " :key="i">
+                            <h4 class="searchbox-title"> {{ item.treatmentName }} </h4>
+                            <v-row>
+                                <v-col cols="2" v-for="(child, i) in item.fileNames" :key="i">
+                                    <v-img v-if="child != ['이미지 없음']" max-height="200" max-width="200" ref="myimg"
+                                        :src="child.fileData" class="grey lighten-2 pa-0 ma-0" aspect-ratio="1"
+                                        @dblclick="getSingleImage(item, child)"></v-img>
+                                    {{ child.fileName }}
+                                    <p v-if="child == ['이미지 없음']">이미지가 없습니다.</p>
+
                                     <v-btn v-if="child != ['이미지 없음']" icon @click="openDeleteImageDialog(item, child)">
-                                        <v-icon color="grey lighten-1">mdi-trash-can-outline
+                                        <v-icon small color="grey lighten-1">mdi-trash-can-outline
                                         </v-icon>
                                     </v-btn>
-                                </v-list-item>
-                            </v-list-group>
+                                </v-col>
+                            </v-row>
+
                         </v-col>
                     </v-row>
+
+
 
 
 
@@ -193,7 +189,6 @@
                             </v-btn>
                         </template>
                     </v-snackbar>
-
                 </v-card-text>
             </v-card>
         </v-dialog>
@@ -211,7 +206,7 @@
                 <v-card-title>{{ zoomItem.fileName }}</v-card-title>
                 <v-card-text class="d-flex align-center justify-center">
                     <LoadingSpinner v-if="isLoading"></LoadingSpinner>
-                    <v-img v-else max-height="800" max-width="800" ref="myimg" :src="this.url" :alt="emptyImage"
+                    <v-img v-else max-height="800" max-width="800" ref="myimg" :src="this.url"
                         class="grey lighten-2 pa-0 ma-0" aspect-ratio="1"></v-img>
 
                 </v-card-text>
@@ -220,6 +215,7 @@
     </div>
 </template>           
 <script>
+
 import LoadingSpinner from '../Loading/LodingSpinner.vue'; // 로딩스피너
 import * as api from '@/api'
 import { el } from 'vuetify/lib/locale';
@@ -242,6 +238,7 @@ export default {
 
     data() {
         return {
+            yes: false, //임시
             selectedRow: null,
             snackForParents: '',
             deletePageNum: 0, //현재페이지 삭제 시, 해당 i 번째 num을 emit 부모로 보냄.
@@ -338,6 +335,7 @@ export default {
             this.$emit("deletedNum", this.deletePageNum, this.tableData);
         },
         sendImage() { //이미지 업로드
+            console.log('이미지보낼것임')
             if (this.selectTreatMent.treatmentId == undefined) {
                 alert('처치구를 선택해주세요.')
                 this.$refs.serveyImage.value = ''
@@ -354,49 +352,48 @@ export default {
                         treatmentId: this.selectTreatMent.treatmentId,
                         files: fileArr[i]
                     };
-                    api.growthresearch.SaveGrowthResearchImage(paramData).then((res) => {
+                    api.growthresearch.SaveGrowthResearchImage(paramData).then((response) => { //then에서오류남 ㅠㅠ여쭤보기..
                         this.openAlbum()
                         this.$refs.serveyImage.value = ''
                         this.$refs.serveyImage.files = null
                         this.selectTreatMent.treatmentName = ''
                         this.snackbar_save = true
-                    }).catch((err) => {
-                        alert('이미 등록된 이미지는 중복하여 등록할 수 없습니다.')
-                        this.$refs.serveyImage.files = null
-                        this.$refs.serveyImage.value = ''
-                        this.input.image = null
-                        this.selectTreatMent = null
                     })
                 }
+
+
             }
         },
         DeleteNowImage() {
             let body = this.delete_item
+            console.log('삭제할때body', body)
             api.growthresearch.DeleteGrowthResearchImage(body).then((res) => {
-                this.snackbar_delete = true
+                this.sendSnackDelete()
                 this.openAlbum()
                 this.deleteImageDialog = false
             })
         },
         openDeleteImageDialog(item, child) { //사진을 삭제하시겠습니까? 다이아로그
             let fileNameArr = []
-            fileNameArr.push(child)
+            fileNameArr.push(child.fileName)
             let body = {
                 growthReportId: this.growthReportId,
                 growthReportDetailId: this.table.growthReportDetailId,
                 treatmentId: item.treatmentId,
                 fileNames: fileNameArr
             }
+
             this.delete_item = body
             this.deleteImageDialog = true
         },
         getSingleImage(item, child) { //개별이미지 조회 api 
+            console.log('개별이미지보냅니다')
             this.isLoading = false
             let params = {
                 growthReportId: this.growthReportId,
                 growthReportDetailId: this.table.growthReportDetailId,
                 treatmentId: item.treatmentId,
-                imageName: child.toString()
+                imageName: child.fileName
             }
 
             console.log('내가보낸파라미터', params)
@@ -514,30 +511,52 @@ export default {
                 api.growthresearch.GetGrowthResearchImageList(params).then((res) => {
                     console.log('-------------사진조회성공-------------------', res)
                     let imgObj = []
-                    //처치구명,트리트먼트아이디,파일네임스로 디폴트 어레이만든다.
+                    //처치구명,트리트먼트아이디,파일네임스로 어레이 틀을 만든다.
                     let defaultArr = []
                     for (let i = 0; i < this.table.carousel_data.length; i++) {
                         let tableNum = this.table.carousel_data[i]
                         defaultArr.push({
                             treatmentId: tableNum.treatmentId,
                             treatmentName: tableNum.treatmentName,
-                            fileNames: ['이미지 없음']
+                            fileNames: ['이미지 없음'],
                         })
                     }
                     if (res.data.responseData[0].detailInfo.length == 0) {
                         this.imageDatas = defaultArr
                     } else {
-                        //데이터가있으면 데이터를 넣고 없으면 그대로 데이터없음이라고 둔다.
-                        for (let arrNum = 0; arrNum < defaultArr.length; arrNum++) {
-                            for (let dataNum = 0; dataNum < res.data.responseData[0].detailInfo.length; dataNum++) {
-                                if (defaultArr[arrNum].treatmentName == res.data.responseData[0].detailInfo[dataNum].treatmentName) {
-                                    defaultArr[arrNum].fileNames = res.data.responseData[0].detailInfo[dataNum].fileNames
+                        //데이터가있으면 데이터를 넣고 없으면 그대로  둔다.
+                        let detailInfo = res.data.responseData[0].detailInfo  //1.res.data.responseData를 detailInfo로 함축.
+
+                        console.log('detailInfo', detailInfo)
+
+                        for (let top = 0; top < detailInfo.length; top++) { //2.detailInfo의fileData를 blob화한다.
+                            for (let mid = 0; mid < detailInfo[top].fileInfo.length; mid++) {
+                                let imagedata = detailInfo[top].fileInfo[mid]
+                                const contentType = "image/png";
+                                const b64Data = imagedata.fileData;
+                                const image_data = atob(b64Data);
+                                const arraybuffer = new ArrayBuffer(image_data.length);
+                                const view = new Uint8Array(arraybuffer);
+                                for (let i = 0; i < image_data.length; i++) {
+                                    view[i] = image_data.charCodeAt(i) & 0xff;
+                                    // charCodeAt() 메서드는 주어진 인덱스에 대한 UTF-16 코드를코드를 나타내는 0부터 65535 사이의 정수를 반환
+                                    // 비트연산자 & 와 0xff(255) 값은 숫자를 양수로 표현하기 위한 설정
                                 }
+                                const blob = new Blob([arraybuffer], { type: contentType });
+                                const blobUrl = URL.createObjectURL(blob);
+                                detailInfo[top].fileInfo[mid].fileData = blobUrl  // 보여질 img의 url에 바인딩한다
                             }
                         }
 
+                        for (let arrNum = 0; arrNum < defaultArr.length; arrNum++) { //3.만들어놓은 틀에다가 실제데이터를 바인딩한다.
+                            for (let dataNum = 0; dataNum < detailInfo.length; dataNum++) {
+                                if (defaultArr[arrNum].treatmentName == detailInfo[dataNum].treatmentName) {
+                                    defaultArr[arrNum].fileNames = detailInfo[dataNum].fileInfo
+                                }
+                            }
+                        }
+                        console.log('defaultArr', defaultArr)
                         this.imageDatas = defaultArr
-
                     }
                 })
                 this.dialog = true
@@ -574,6 +593,10 @@ export default {
             this.snackForParents = 'save'
             this.$emit("snackBarTrue", this.snackForParents);
         },
+        sendSnackDelete() {
+            this.snackForParents = 'delete'
+            this.$emit("snackBarTrue", this.snackForParents);
+        }
     },
     computed: {
         table: function () {
