@@ -38,31 +38,40 @@ export default {
     AuthAPI.put("/api/growth", JSON.stringify(params), {
       headers: { "Content-Type": "application/json" },
     }),
-  GetGrowthResearchImage: (params) =>
+  GetGrowthResearchImage: (
+    params //사진 개별조회
+  ) =>
     AuthAPI.get("/api/growth/image", {
       params: params,
     }),
-  GetGrowthResearchImageList: (params) =>
+  GetGrowthResearchImageList: (
+    params //사진 리스트 조회
+  ) =>
     AuthAPI.get("/api/growth/imageList", {
       params: params,
     }),
-  SaveGrowthResearchImage: function (groupData) {
+
+  SaveGrowthResearchImage: (groupData) => {
     let form = new FormData();
     form.append("growthReportId", groupData["growthReportId"]); //growthReportId
     form.append("growthReportDetailId", groupData["growthReportDetailId"]); //growthReportDetailId
-    form.append("treatmentId", groupData["treatmentId"]); //growthReportDetailId
+    form.append("treatmentId", groupData["treatmentId"]); //treatmentId
     form.append("files", groupData["files"]); //files (사진들 어레이)
-    AuthAPI.get("/api/growth/image", {
+    console.log("그룹데이타", groupData);
+    return AuthAPI.post("/api/growth/image", form, {
       headers: { "Content-Type": "multipart/form-data" },
     });
   },
+
   DeleteGrowthResearchImage: (params) =>
     AuthAPI.post("/api/growth/image/delete", JSON.stringify(params), {
       headers: { "Content-Type": "application/json" },
     }),
-  DeleteGrowthResearchDate: (params) =>
-    AuthAPI.delete("/api/growth/detail", JSON.stringify(params), {
-      headers: { "Content-Type": "application/json" },
+  DeleteGrowthResearchDate: (
+    params //01-11 10:27 am , 현재페이지 삭제 리퀘스트 파람인데 바디로 되어있어서 파람으로 변경함.
+  ) =>
+    AuthAPI.delete("/api/growth/detail", {
+      params: params,
     }),
   GetGrowthResearchGraphData: (params) =>
     AuthAPI.get("/api/growth/graph", {

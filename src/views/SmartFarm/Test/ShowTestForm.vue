@@ -364,19 +364,24 @@ export default {
     snackBarTrue(data) {
       //자식에서 스낵바 true 보내주면  부모에서 true해줌
       console.log("자식에서받은거", data);
-      if (data == "save") {
+      if (data == 'save') {
         this.snackbar = true;
+      } if (data == 'delete') {
+        this.snackbar_delete = true;
       } else {
         console.log("세이브가아님.");
       }
     },
     DeleteNowPage() {
+      console.log('삭제시킬것임삭제시킬것임삭제시킬것임')
       if (this.deleteTableData.growthReportDetailId == "") {
         console.log("growthReportDetailId가 없으니까 그냥삭제시킨다.");
       } else {
         let id = {
           growthReportDetailId: this.deleteTableData.growthReportDetailId,
         };
+        console.log("ididididididididididididididid", id);
+
         api.growthresearch.DeleteGrowthResearchDate(id).then((res) => {
           console.log("삭제가 완료되었습니다.", res);
           this.deleteDialog = false;
