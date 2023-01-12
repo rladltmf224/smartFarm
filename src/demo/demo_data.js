@@ -43,6 +43,10 @@ let demo_side_data = [
     sort: 5,
     subItems: [
       {
+        title: "생산관리",
+        to: "operationMng",
+      },
+      {
         title: "작업지시서 등록",
         to: "operationOrder",
       },

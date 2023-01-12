@@ -46,8 +46,8 @@
       </v-menu>
     </v-row>
 
-    <v-row class="d-flex justify-md-center">
-      <v-col v-for="(n, index) in cards" :key="index" cols="4">
+    <v-row dense class="d-flex justify-md-center">
+      <v-col v-for="(n, index) in cards" :key="index" cols="3">
         <RoomInfo
           :roomData="n"
           @controllPage="goControllPage"
@@ -251,7 +251,7 @@
               hide-default-footer
               class="elevation-1"
             >
-              <template v-slot:item.controlStatus="{ item }">
+              <template v-slot:[`item.controlStatus`]="{ item }">
                 <v-btn-toggle mandatory v-model="item.controlStatus">
                   <v-btn
                     color="green"
@@ -282,7 +282,7 @@
                 </v-btn-toggle>
               </template>
               <!-- 시간설정 -->
-              <template v-slot:item.setting="{ item }">
+              <template v-slot:[`item.setting`]="{ item }">
                 <!-- LED부분 -->
                 <div
                   class="d-flex"
@@ -780,7 +780,7 @@ export default {
   mounted() {
     this.getOutDoor();
     this.BeforeWeeks;
-    this.getEquipMentInFormation();
+    //this.getEquipMentInFormation();
     console.log("템프휴미드", this.Data_TempHumid[0].unit[0].unit);
 
     api.smartfarm.getRoomData().then((res) => {
@@ -807,12 +807,9 @@ export default {
     ws.onopen = function () {
       // console.log('[open] 커넥션이 만들어졌습니다.');
       var item = {
-        api: "temphumidValue",
+        api: "roomValue",
         method: "add",
-        parameters: {
-          room: "육묘실",
-          section: 1,
-        },
+        parameters: {},
       };
       ws.send(JSON.stringify(item));
     };
@@ -821,15 +818,13 @@ export default {
       if (event.data === undefined) {
         console.log("웹소켓연결되지않음");
       } else {
-        // console.log('웹소켓으로 받은데이터', event.data);
-        // JSON.parse로풀기
-        const obj = JSON.parse(event.data);
-
-        // console.log('소켓으로받은현재온도', obj.data[0].temperature);
-        // console.log('소켓으로받은현재습도', obj.data[0].humidity);
-        _this.nowTemp = obj.data[0].temperature;
-        _this.nowHumid = obj.data[0].humidity;
-        // console.log('디스로그디스로그디스로그', _this.logs);
+        if (event.data.api == "roomValue") {
+          //console.log("웹소켓으로 받은데이터", event.data);
+          // JSON.parse로풀기
+          const obj = JSON.parse(event.data);
+          this.cards = obj[0];
+          console.log("obj", obj);
+        }
       }
     };
 

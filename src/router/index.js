@@ -175,6 +175,12 @@ const routes = [
         component: () => import("@/views/SmartFarm/Test/ShowTestForm"),
         props: true,
       },
+      {
+        path: "operationmng",
+        name: "operationmng",
+        component: () => import("@/views/operationMng/OperationMng"),
+        props: true,
+      },
     ],
   },
 ];

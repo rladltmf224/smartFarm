@@ -42,7 +42,7 @@
         </v-list-item>
       </v-list-group>
     </v-list>
-    <v-list dense>
+    <!-- <v-list dense>
       <v-subheader>개발예정</v-subheader>
       <v-divider></v-divider>
       <v-list-item
@@ -61,7 +61,7 @@
           v-text="item.title"
         ></v-list-item-title>
       </v-list-item>
-    </v-list>
+    </v-list> -->
     <template v-slot:append>
       <v-btn class="ma-2" color="indigo" dark @click="userInfoDialog = true">
         <v-icon dark> mdi-account-circle-outline </v-icon>
@@ -100,7 +100,7 @@ export default class Sidebar extends Vue {
   @Ref() form: HTMLFormElement;
 
   userInfoDialog: boolean = false;
-  to_home?: string = "home";
+  to_home?: string = "monitoring";
   to_notdev?: string = "notdev";
   items?: any[] = [];
   items_dev?: any[] = [];
@@ -122,10 +122,6 @@ export default class Sidebar extends Vue {
   ];
   userInfo?: object;
 
-  created() {
-    console.log(jwt_decode(this.$cookies.get("refreshToken")));
-  }
-
   mounted() {
     let decodeData: any = jwt_decode(this.$cookies.get("refreshToken"));
 
@@ -142,7 +138,7 @@ export default class Sidebar extends Vue {
     });
 
     menu_Data = _.filter(menu_Data, { use: "Y" });
-    this.items_dev = _.filter(demo_side_data, { use: "N" });
+    //this.items_dev = _.filter(demo_side_data, { use: "N" });
     this.items = _.sortBy(menu_Data, "sort");
     this.items.push({
       title: "환경관리",
@@ -210,7 +206,7 @@ export default class Sidebar extends Vue {
     });
   }
   goHome(): void {
-    this.$router.push("/home").catch(() => {});
+    this.$router.push("/monitoring").catch(() => {});
     return;
   }
 
