@@ -63,11 +63,11 @@ export default class Login extends Vue {
         console.log("res", res);
       });
     console.log("loginManager", this.$store.state.userId);
-    // if (this.$store.state.userId !== "") {
-    //   this.$router.push({ path: "monitoring" });
-    //   return;
-    // }
-    this.$router.push({ path: "monitoring" });
+    if (this.$store.state.userId !== "") {
+      this.$router.push({ path: "monitoring" });
+      return;
+    }
+    // this.$router.push({ path: "monitoring" });
 
     this.username = "";
     this.password = "";

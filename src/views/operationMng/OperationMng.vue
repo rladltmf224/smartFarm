@@ -276,62 +276,86 @@
           </v-card-title>
           <v-card-text>
             <!-- 발아실 -->
-            <!-- <v-card class="mb-4">
-              <v-card-text class="d-flex justify-space-around">
-                <v-btn
-                  v-for="(data, index) in germination_arr"
-                  class="toggle"
-                  :key="index"
-                  :class="[data.active ? 'equipment-active' : '']"
-                  @click="toggleEquip(data)"
-                  ><v-card>
-                    <v-card-text>
-                      {{ data.name }}
-                    </v-card-text>
-                  </v-card></v-btn
-                >
+            <v-card class="mb-4">
+              <v-card-text>
+                <v-item-group multiple :value="selectEquipData">
+                  <v-row class="d-flex justify-space-between">
+                    <v-item v-for="(n, i) in germination_arr" :key="i">
+                      <v-card
+                        :color="n.use ? 'success' : n.active ? 'primary' : ''"
+                        class="d-flex align-center text-center"
+                        dark
+                        height="200"
+                        width="200"
+                        @click="toggleEquip(n)"
+                      >
+                        <v-card-text>
+                          <div>
+                            <span class="text-h6">{{ n.name }}</span>
+                          </div>
+                          <div><span>상세정보</span></div>
+                        </v-card-text>
+                      </v-card>
+                    </v-item>
+                  </v-row>
+                </v-item-group>
               </v-card-text>
-            </v-card> -->
-
-            <v-item-group multiple :value="selectEquipData">
-              <v-container>
-                <v-row class="d-flex justify-space-around">
-                  <v-item v-for="(n, i) in germination_arr" :key="i">
-                    <v-card
-                      :color="n.active ? 'primary' : ''"
-                      class="d-flex align-center"
-                      dark
-                      height="200"
-                      width="200"
-                      @click="toggleEquip(n)"
-                    >
-                      <div>
-                        <span>{{ n.name }}</span>
-                      </div>
-
-                      <v-scroll-y-transition>
-                        <div
-                          v-if="n.active"
-                          class="text-h2 flex-grow-1 text-center"
-                        >
-                          Active
-                        </div>
-                      </v-scroll-y-transition>
-                    </v-card>
-                  </v-item>
-                </v-row>
-              </v-container>
-            </v-item-group>
+            </v-card>
 
             <!-- 활착실 -->
             <v-card class="mb-4">
-              <v-card-text> </v-card-text>
+              <v-card-text>
+                <v-item-group multiple :value="selectEquipData">
+                  <v-row class="d-flex justify-space-between">
+                    <v-item v-for="(n, i) in survival_arr" :key="i">
+                      <v-card
+                        :color="n.use ? 'success' : n.active ? 'primary' : ''"
+                        class="d-flex align-center text-center"
+                        dark
+                        height="200"
+                        width="150"
+                        @click="toggleEquip(n)"
+                      >
+                        <v-card-text>
+                          <div>
+                            <span class="text-h6">{{ n.name }}</span>
+                          </div>
+                          <div><span>상세정보</span></div>
+                        </v-card-text>
+                      </v-card>
+                    </v-item>
+                  </v-row>
+                </v-item-group>
+              </v-card-text>
             </v-card>
             <!-- 육묘실 -->
-            <v-card>
-              <v-card-text> </v-card-text>
+            <v-card elevation="4">
+              <v-card-text>
+                <v-item-group multiple :value="selectEquipData">
+                  <v-row class="d-flex justify-space-between">
+                    <v-item v-for="(n, i) in seeding_arr" :key="i">
+                      <v-card
+                        :color="n.use ? 'success' : n.active ? 'primary' : ''"
+                        class="d-flex align-center text-center"
+                        dark
+                        height="200"
+                        width="200"
+                        @click="toggleEquip(n)"
+                      >
+                        <v-card-text>
+                          <div>
+                            <span class="text-h6">{{ n.name }}</span>
+                          </div>
+                          <div><span>상세정보</span></div>
+                        </v-card-text>
+                      </v-card>
+                    </v-item>
+                  </v-row>
+                </v-item-group>
+              </v-card-text>
             </v-card>
           </v-card-text>
+
           <v-card-actions>
             <v-col class="text-right">
               <v-btn color="success" text @click="saveEquipmentInfo">
@@ -370,10 +394,26 @@ export default class OperationMng extends Vue {
   equipment_modal: boolean = false;
   operation_modal_mode: string = "C";
   germination_arr: any[] = [
-    { name: "육묘타이1", active: true },
-    { name: "육묘타이2", active: false },
-    { name: "육묘타이3", active: false },
-    { name: "육묘타이4", active: true },
+    { name: "육묘다이1", use: true, active: true },
+    { name: "육묘다이2", use: false, active: false },
+    { name: "육묘다이3", use: false, active: false },
+    { name: "육묘다이4", use: true, active: true },
+  ];
+
+  survival_arr: any[] = [
+    { name: "활착실1", use: true, active: true },
+    { name: "활착실2", use: false, active: false },
+    { name: "활착실3", use: false, active: false },
+    { name: "활착실4", use: true, active: true },
+    { name: "활착실5", use: true, active: true },
+    { name: "활착실6", use: true, active: true },
+  ];
+
+  seeding_arr: any[] = [
+    { name: "섹터1", use: true, active: true },
+    { name: "섹터2", use: false, active: false },
+    { name: "섹터3", use: false, active: false },
+    { name: "섹터4", use: true, active: true },
   ];
 
   get headers_operation() {
@@ -402,6 +442,9 @@ export default class OperationMng extends Vue {
 
   toggleEquip(btnData: any) {
     console.log(btnData);
+    if (btnData.use) {
+      return;
+    }
     return (btnData.active = !btnData.active);
   }
 
