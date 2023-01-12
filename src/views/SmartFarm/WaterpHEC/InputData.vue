@@ -7,84 +7,40 @@
           <v-sheet class="pa-3" color="#F6F8F9" height="80" elevation="2">
             <v-row class="">
               <v-col cols="2" class="pl-12 d-flex align-center">
-                <v-select
-                  class="select pt-4"
-                  :items="search_list1"
-                  label="조회항목"
-                  v-model="search_type_1"
-                  item-text="name"
-                  item-value="value"
-                  dense
-                ></v-select>
+                <v-select class="select pt-4" :items="search_list1" label="조회항목" v-model="search_type_1"
+                  item-text="name" item-value="value" dense></v-select>
               </v-col>
-              <v-col
-                md="4"
-                class="pa-0 ma-0 d-flex align-center justify-center"
-              >
-                <v-menu
-                  ref="test_menu1"
-                  v-model="test_menu1"
-                  :close-on-content-click="false"
-                  :return-value.sync="test_date1"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="auto"
-                >
+              <v-col md="4" class="pa-0 ma-0 d-flex align-center justify-center">
+                <v-menu ref="test_menu1" v-model="test_menu1" :close-on-content-click="false"
+                  :return-value.sync="test_date1" transition="scale-transition" offset-y min-width="auto">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="test_date1"
-                      label="시작일"
-                      prepend-icon="mdi-calendar"
-                      readonly
-                      v-bind="attrs"
-                      v-on="on"
-                    ></v-text-field>
+                    <v-text-field v-model="test_date1" label="시작일" prepend-icon="mdi-calendar" readonly v-bind="attrs"
+                      v-on="on"></v-text-field>
                   </template>
                   <v-date-picker v-model="test_date1" no-title scrollable>
                     <v-spacer></v-spacer>
                     <v-btn text color="primary" @click="test_menu1 = false">
                       Cancel
                     </v-btn>
-                    <v-btn
-                      text
-                      color="primary"
-                      @click="$refs.test_menu1.save(test_date1)"
-                    >
+                    <v-btn text color="primary" @click="$refs.test_menu1.save(test_date1)">
                       OK
                     </v-btn>
                   </v-date-picker>
                 </v-menu>
                 <!-- 시작일테스트 -->
                 <!-- 종료일테스트 -->
-                <v-menu
-                  ref="test_menu2"
-                  v-model="test_menu2"
-                  :close-on-content-click="false"
-                  :return-value.sync="test_date2"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="auto"
-                >
+                <v-menu ref="test_menu2" v-model="test_menu2" :close-on-content-click="false"
+                  :return-value.sync="test_date2" transition="scale-transition" offset-y min-width="auto">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="test_date2"
-                      label="종료일"
-                      prepend-icon="mdi-calendar"
-                      readonly
-                      v-bind="attrs"
-                      v-on="on"
-                    ></v-text-field>
+                    <v-text-field v-model="test_date2" label="종료일" prepend-icon="mdi-calendar" readonly v-bind="attrs"
+                      v-on="on"></v-text-field>
                   </template>
                   <v-date-picker v-model="test_date2" no-title scrollable>
                     <v-spacer></v-spacer>
                     <v-btn text color="primary" @click="test_menu2 = false">
                       Cancel
                     </v-btn>
-                    <v-btn
-                      text
-                      color="primary"
-                      @click="$refs.test_menu2.save(test_date2)"
-                    >
+                    <v-btn text color="primary" @click="$refs.test_menu2.save(test_date2)">
                       OK
                     </v-btn>
                   </v-date-picker>
@@ -94,15 +50,8 @@
               <!-- 범위슬라이더 -->
               <v-col class="pr-12 d-flex align-center mt-4" md="4">
                 <p class="px-4" style="font-size: 12px">양액pH</p>
-                <v-range-slider
-                  v-model="range"
-                  step=".1"
-                  :max="max"
-                  thumb-label="always"
-                  :min="min"
-                  hide-details
-                  class="align-center"
-                >
+                <v-range-slider v-model="range" step=".1" :max="max" thumb-label="always" :min="min" hide-details
+                  class="align-center">
                   <template v-slot:prepend> </template>
                   <template v-slot:append> </template>
                 </v-range-slider>
@@ -110,15 +59,8 @@
                 <!-- 양액EC -->
                 <p class="px-4" style="font-size: 12px">양액EC</p>
 
-                <v-range-slider
-                  v-model="EC_range"
-                  step=".1"
-                  thumb-label="always"
-                  :max="EC_max"
-                  :min="EC_min"
-                  hide-details
-                  class="align-center"
-                >
+                <v-range-slider v-model="EC_range" step=".1" thumb-label="always" :max="EC_max" :min="EC_min"
+                  hide-details class="align-center">
                   <template v-slot:append> </template>
                 </v-range-slider>
               </v-col>
@@ -138,30 +80,16 @@
     <v-container fluid>
       <v-row class="text-right">
         <v-col>
-          <v-btn color="primary" @click="editItem(defaultItem)"
-            >데이터 추가</v-btn
-          >
+          <v-btn color="primary" @click="editItem(defaultItem)">데이터 추가</v-btn>
         </v-col>
       </v-row>
 
       <v-row>
         <v-col class="ma-2" md="12">
           <div>
-            <v-data-table
-              :headers="datas_header"
-              :items="datas"
-              :page.sync="page"
-              :options.sync="options"
-              :server-items-length="totalData"
-              :items-per-page="itemsPerPage"
-              :loading="loading"
-              dense
-              hide-default-footer
-              multi-sort
-              @page-count="pageCount = $event"
-              class="elevation-1"
-              height="670"
-            >
+            <v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options"
+              :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" dense
+              hide-default-footer multi-sort @page-count="pageCount = $event" class="elevation-1" height="670">
               <!-- 버튼을 chip으로 표현 -->
               <template v-slot:item.inputDate="{ item }">
                 <!-- 수정전 버튼만-->
@@ -208,57 +136,26 @@
             <!-- 상단 -->
             <v-row class="d-flex justify-center">
               <v-col cols="12" sm="6" md="6">
-                <v-menu
-                  ref="DIA_menu1"
-                  v-model="DIA_menu1"
-                  :close-on-content-click="false"
-                  :return-value.sync="DIA_s_date"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="290px"
-                >
+                <v-menu ref="DIA_menu1" v-model="DIA_menu1" :close-on-content-click="false"
+                  :return-value.sync="DIA_s_date" transition="scale-transition" offset-y min-width="290px">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="editedItem.inputDate"
-                      prepend-icon="mdi-calendar"
-                      readonly
-                      v-bind="attrs"
-                      v-on="on"
-                    ></v-text-field>
+                    <v-text-field v-model="editedItem.inputDate" prepend-icon="mdi-calendar" readonly v-bind="attrs"
+                      v-on="on"></v-text-field>
                   </template>
                   <!-- 날짜 -->
                   <!--                     v-model="DIA_s_date" -->
-                  <v-date-picker
-                    v-model="editedItem.inputDate"
-                    no-title
-                    scrollable
-                    :max="DIA_e_date"
-                  >
+                  <v-date-picker v-model="editedItem.inputDate" no-title scrollable :max="DIA_e_date">
                     <v-spacer></v-spacer>
-                    <v-btn text color="primary" @click="DIA_menu1 = false"
-                      >Cancel</v-btn
-                    >
-                    <v-btn
-                      text
-                      color="primary"
-                      @click="DIA_s_date_search(DIA_s_date)"
-                      >OK</v-btn
-                    >
+                    <v-btn text color="primary" @click="DIA_menu1 = false">Cancel</v-btn>
+                    <v-btn text color="primary" @click="DIA_s_date_search(DIA_s_date)">OK</v-btn>
                   </v-date-picker>
                 </v-menu>
               </v-col>
               <!-- 날짜 -->
 
               <v-col cols="12" sm="2" md="4">
-                <v-select
-                  class="pa-0 pt-4"
-                  :items="search_list2"
-                  label="오전/오후"
-                  v-model="editedItem.division"
-                  item-text="name"
-                  item-value="value"
-                  dense
-                ></v-select>
+                <v-select class="pa-0 pt-4" :items="search_list2" label="오전/오후" v-model="editedItem.division"
+                  item-text="name" item-value="value" dense></v-select>
               </v-col>
               <v-row>
                 <v-row class="d-flex justify-center">
@@ -271,15 +168,8 @@
                       @change="pH_Num_Check()"
                     ></v-text-field> -->
 
-                    <v-text-field
-                      type="number"
-                      step="any"
-                      min="0"
-                      ref="input"
-                      label="양액pH(4~8사이)"
-                      :rules="[pH_numberRule]"
-                      v-model.number="editedItem.ph"
-                    ></v-text-field>
+                    <v-text-field type="number" step="any" min="0" ref="input" label="양액pH(4~8사이)"
+                      :rules="[pH_numberRule]" v-model.number="editedItem.ph"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4" class="">
                     <!-- <v-text-field
@@ -288,26 +178,14 @@
                       type="number"
                     ></v-text-field> -->
 
-                    <v-text-field
-                      type="number"
-                      step="any"
-                      min="0"
-                      ref="input"
-                      label="양액EC(0.3~2.5사이)"
-                      :rules="[EC_numberRule]"
-                      v-model.number="editedItem.ec"
-                    ></v-text-field>
+                    <v-text-field type="number" step="any" min="0" ref="input" label="양액EC(0.3~2.5사이)"
+                      :rules="[EC_numberRule]" v-model.number="editedItem.ec"></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row class="d-flex justify-center">
                   <v-col cols="12" class="d-flex justify-center" sm="12" md="6">
-                    <v-text-field
-                      maxlength="100"
-                      style="width: 300px"
-                      v-model="editedItem.memo"
-                      label="메모"
-                    ></v-text-field> </v-col></v-row
-              ></v-row>
+                    <v-text-field maxlength="100" style="width: 300px" v-model="editedItem.memo"
+                      label="메모"></v-text-field> </v-col></v-row></v-row>
             </v-row>
             <!-- 상단 -->
           </v-container>
@@ -576,7 +454,6 @@ export default {
 
       if (this.editedIndex == -1) {
         console.log("등록버젼입니다.");
-
         api.smartfarm
           .waterECpHRegister(item)
           .then((response) => {
@@ -644,16 +521,24 @@ export default {
       api.smartfarm
         .waterECpHInfo(item)
         .then((res) => {
-          console.log("통신후", res.data);
-          console.log("통신후 데이타만있는거", res.data.responseData);
-          this.loading = false; //로딩바
-          this.datas = res.data.responseData;
-          this.totalData = res.totalCount;
+          if (res.status == '200 OK') {
+            console.log("통신후", res.data);
+            console.log("통신후 데이타만있는거", res.data.responseData);
+            this.loading = false; //로딩바
+            this.datas = res.data.responseData;
+            this.totalData = res.totalCount;
+          } else {
+            this.loading = false;
+            this.$swal.fire(
+              'ERROR',
+              '서버와 통신이 원활하지않습니다.',
+              'ERROR'
+            )
+          }
         })
         .catch((error) => {
           console.log("에러입니다.");
 
-          console.log(error);
         });
     },
 
@@ -674,7 +559,7 @@ export default {
       return this.editedIndex === -1 ? "New Item" : "Edit Item";
     },
   },
-  created() {},
+  created() { },
 };
 </script>
 <style>

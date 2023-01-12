@@ -27,19 +27,19 @@
               <td>{{ item.testName }}</td>
             </template>
             <!-- 체크박스 -->
-            <template #item="{ item }">
+            <!--     <template #item="{ item }">
               <tr>
                 <td>
                   <v-checkbox></v-checkbox>
                 </td>
                 <td>{{ item.testName }}</td>
                 <td><v-checkbox></v-checkbox></td> <!-- 여기 v-model -->
-              </tr>
-            </template>
+            <!-- </tr> -->
+            <!-- </template> --> -->
           </v-data-table>
           <div class="text-center pt-2">
             <v-pagination v-model="page" :length="pageCount"></v-pagination>
-            <!-- <h5>Selected: {{ selected }}</h5> -->
+            <h5>Selected: {{ selected }}</h5>
           </div>
         </v-col>
       </v-row>
@@ -57,8 +57,11 @@
             </v-btn>
             <v-toolbar-title>이미지 갤러리</v-toolbar-title>
           </v-toolbar>
-          <v-row class="mx-auto">
-            <v-card style="overflow: auto" :loading="loading" class="mx-auto my-12" width="374" height="825"
+          <v-card-text v-if="selected.length == 0" class="d-flex justify-center py-12 ">
+            이미지가 없습니다.
+          </v-card-text>
+          <v-row v-else class="mx-auto">
+            <v-card style="overflow: auto" :loading="loading" class="mx-auto my-12" max-width="374" max-height="825"
               v-for="(item, i) in selected" :key="item">
               <v-card-text>
                 <div class="text-subtitle-1">
@@ -75,6 +78,7 @@
               </v-card-text>
             </v-card>
           </v-row>
+
         </v-card>
       </v-dialog>
     </v-container>
@@ -179,7 +183,7 @@ export default {
       //테스트
       datas_header: [
         {
-          text: "실험명",
+          text: "실험명(최대 5개 선택)",
           value: "testName",
         },
         {
@@ -261,6 +265,11 @@ export default {
     },
   },
   methods: {
+    getDataSimple() {
+      api.growthresearch.LoadGrowthResearch().then((res) => {
+        this.datas_simple = res.data.responseData;
+      });
+    },
     twoMonthAgo() {
       var now = new Date(); // 현재 날짜 및 시간
       var twoMonthAgo = new Date(now.setMonth(now.getMonth() - 2)); // 한달 전
@@ -288,14 +297,6 @@ export default {
       );
     },
     // 데이터 테이블 검색api
-    // 불러올때 간단한 데이터테이블  만드는 api
-    getDataSimple() {
-      api.growthresearch.LoadGrowthResearch().then((res) => {
-        this.datas_simple = res.data.responseData;
-      });
-    },
-    // 불러올때 간단한 데이터테이블  만드는 api
-
     // 생육조사 일지 조회 api
     getData() {
       this.loading = true;
@@ -307,7 +308,7 @@ export default {
         page: page, //페이지 수
         size: itemsPerPage, //보여주고싶은 행의개수
         sortBy: sortBy, //sortby
-        sortDesc: sortDesc, //sortDesc
+        sortDesc: sortDesc, //sortDesc  
       };
       api.growthresearch
         .getGrowthResearch(item)

@@ -95,12 +95,14 @@
         <!-- 사진 조회 및 등록 -->
         <v-dialog v-model="dialog" persistent max-width="1000" max-height="1000">
             <v-card height="800" style="overflow:auto">
+
                 <v-card-title class="text-h5 grey lighten-2">
                     사진 조회 및 등록
                     <v-spacer></v-spacer>
                     <v-btn icon text @click="closeDialog()"><v-icon>mdi-close</v-icon></v-btn>
                 </v-card-title>
-                <v-card-text class="pa-5">
+
+                <v-card-text class="pa-5 ">
                     <v-row class="">
                         <v-col cols="4" class="mx-0">
                             <h5 class="   searchbox-title ">사진 업로드</h5>
@@ -124,31 +126,34 @@
                             </v-col>
                         </v-col>
                     </v-row>
-
-
-
-
+                    <LoadingSpinner v-if="isLoading"></LoadingSpinner>
                     <!-- 이미지 미리보기 -->
-                    <v-row>
+                    <v-row v-else>
                         <v-col cols="12" v-for=" (item, i) in imageDatas " :key="i">
                             <h4 class="searchbox-title"> {{ item.treatmentName }} </h4>
                             <v-row>
                                 <v-col cols="2" v-for="(child, i) in item.fileNames" :key="i">
                                     <v-img v-if="child != ['이미지 없음']" max-height="200" max-width="200" ref="myimg"
                                         :src="child.fileData" class="grey lighten-2 pa-0 ma-0" aspect-ratio="1"
-                                        @dblclick="getSingleImage(item, child)"></v-img>
-                                    {{ child.fileName }}
+                                        @dblclick="getSingleImage(item, child)">
+                                        <v-btn v-if="child != ['이미지 없음']" icon color="red"
+                                            @click="openDeleteImageDialog(item, child)">
+                                            <v-icon small color="grey lighten-1">mdi-trash-can-outline
+                                            </v-icon>
+                                        </v-btn>
+                                    </v-img>
+                                    <h6>
+                                        {{ child.fileName }}
+                                    </h6>
                                     <p v-if="child == ['이미지 없음']">이미지가 없습니다.</p>
 
-                                    <v-btn v-if="child != ['이미지 없음']" icon @click="openDeleteImageDialog(item, child)">
-                                        <v-icon small color="grey lighten-1">mdi-trash-can-outline
-                                        </v-icon>
-                                    </v-btn>
+
                                 </v-col>
                             </v-row>
 
                         </v-col>
                     </v-row>
+
 
 
 
@@ -190,6 +195,14 @@
                         </template>
                     </v-snackbar>
                 </v-card-text>
+                <v-divider></v-divider>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="primary" text @click="dialog = false">
+                        닫기
+                    </v-btn>
+                </v-card-actions>
+
             </v-card>
         </v-dialog>
         <v-snackbar v-model="snackbar_delete" :timeout="timeout">
@@ -235,7 +248,9 @@ export default {
         },
     },
     name: 'MESFETableCard',
-
+    components: {
+        LoadingSpinner
+    },
     data() {
         return {
             yes: false, //임시
@@ -270,15 +285,15 @@ export default {
             growthReportId: '',
             datas_header: [
                 {
-                    text: "처리구명", value: "treatmentName",
+                    text: "처리구명", value: "treatmentName", sortable: false
                 },
-                { text: "개체수", value: "sampleNumber", },
-                { text: "엽수", value: "leafStage" },
-                { text: "초장", value: "leafHeight" },
-                { text: "엽폭", value: "leafWidth" },
-                { text: "엽장", value: "leafLength" },
-                { text: "경경", value: "stemThickness" },
-                { text: "절간장", value: "internodeLength" },
+                { text: "개체수", value: "sampleNumber", sortable: false },
+                { text: "엽수", value: "leafStage", sortable: false },
+                { text: "초장", value: "leafHeight", sortable: false },
+                { text: "엽폭", value: "leafWidth", sortable: false },
+                { text: "엽장", value: "leafLength", sortable: false },
+                { text: "경경", value: "stemThickness", sortable: false },
+                { text: "절간장", value: "internodeLength", sortable: false },
             ],
             datas: [
             ],
@@ -335,7 +350,6 @@ export default {
             this.$emit("deletedNum", this.deletePageNum, this.tableData);
         },
         sendImage() { //이미지 업로드
-            console.log('이미지보낼것임')
             if (this.selectTreatMent.treatmentId == undefined) {
                 alert('처치구를 선택해주세요.')
                 this.$refs.serveyImage.value = ''
@@ -344,6 +358,7 @@ export default {
                 this.$refs.serveyImage.value = ''
             }
             else {
+                console.log('인풋이미지', this.input.image)
                 for (let i = 0; i < this.input.image.length; i++) {
                     let fileArr = Array.from(this.input.image)
                     let paramData = { //서버로 보낼 폼 데이타의  형태를 만든다.
@@ -352,7 +367,7 @@ export default {
                         treatmentId: this.selectTreatMent.treatmentId,
                         files: fileArr[i]
                     };
-                    api.growthresearch.SaveGrowthResearchImage(paramData).then((response) => { //then에서오류남 ㅠㅠ여쭤보기..
+                    api.growthresearch.SaveGrowthResearchImage(paramData).then((response) => {
                         this.openAlbum()
                         this.$refs.serveyImage.value = ''
                         this.$refs.serveyImage.files = null
@@ -360,6 +375,23 @@ export default {
                         this.snackbar_save = true
                     })
                 }
+
+                // let paramData = { //서버로 보낼 폼 데이타의  형태를 만든다.
+                //     growthReportId: this.growthReportDetailId,
+                //     growthReportDetailId: this.table.growthReportDetailId,
+                //     treatmentId: this.selectTreatMent.treatmentId,
+                //     files: fileArr
+
+                // };
+
+                // console.log('이미지보낼것임,', paramData)
+                // api.growthresearch.SaveGrowthResearchImage(paramData).then((response) => {
+                //     this.openAlbum()
+                //     this.$refs.serveyImage.value = ''
+                //     this.$refs.serveyImage.files = null
+                //     this.selectTreatMent.treatmentName = ''
+                //     this.snackbar_save = true
+                // })
 
 
             }
@@ -504,6 +536,7 @@ export default {
             if (this.table.growthReportDetailId == '') {
                 alert('날짜먼저발급해주세요.')
             } else {
+                this.isLoading = true
                 let params = {
                     growthReportId: this.growthReportId,
                     growthReportDetailId: this.table.growthReportDetailId,
@@ -558,6 +591,8 @@ export default {
                         console.log('defaultArr', defaultArr)
                         this.imageDatas = defaultArr
                     }
+                    this.isLoading = false
+
                 })
                 this.dialog = true
             }
@@ -615,5 +650,9 @@ export default {
 <style style lang ="scss" scoped>
 .custom-highlight-row {
     background-color: rgb(224, 238, 255)
+}
+
+.scroll {
+    overflow-y: scroll
 }
 </style>

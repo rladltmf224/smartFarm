@@ -175,6 +175,12 @@ const routes = [
         component: () => import("@/views/SmartFarm/Test/ShowTestForm"),
         props: true,
       },
+      {
+        path: "OrderManagement",
+        name: "OrderManagement",
+        component: () =>
+          import("@/views/SmartFarm/OrderManagement/OrderManagement"),
+      },
     ],
   },
 ];
