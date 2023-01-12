@@ -94,7 +94,7 @@
 
         <!-- 사진 조회 및 등록 -->
         <v-dialog v-model="dialog" persistent max-width="1000" max-height="1000">
-            <v-card height="800" style="overflow:auto">
+            <v-card style="overflow:auto">
 
                 <v-card-title class="text-h5 grey lighten-2">
                     사진 조회 및 등록

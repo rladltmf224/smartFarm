@@ -63,6 +63,13 @@ export default {
     });
   },
 
+  //GetGrowthResearchListInGallery:
+
+  GetGrowthResearchListInGallery: (params) =>
+    AuthAPI.post("/api/growth/list", JSON.stringify(params), {
+      headers: { "Content-Type": "application/json" },
+    }),
+
   DeleteGrowthResearchImage: (params) =>
     AuthAPI.post("/api/growth/image/delete", JSON.stringify(params), {
       headers: { "Content-Type": "application/json" },

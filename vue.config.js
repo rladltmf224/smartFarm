@@ -20,3 +20,4 @@ module.exports = defineConfig({
 });
 
 //target: "http://192.168.0.84:8080", // 설님 서버
+//target: "http://192.168.0.231:8080", // 테육 서버

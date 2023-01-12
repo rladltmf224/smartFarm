@@ -35,19 +35,11 @@
                                         </v-col>
 
                                         <v-col cols="2" class="pa-0 pl-2 mr-2">
-                                            <v-text-field class="" label="수주번호" disabled v-model="orderData.memo"
+                                            <v-text-field class="" label="수주번호:193871" disabled v-model="orderData.memo"
                                                 tabindex="6"></v-text-field>
                                         </v-col>
 
-                                        <v-col cols="2" class="pa-0 pl-2 mr-2">
-                                            <v-autocomplete label="거래처" v-model="orderData.department" tabindex="3"
-                                                :items="departmentData" item-text="departmentName"
-                                                item-value="departmentId" @change="selectedDepartment" return-object
-                                                required></v-autocomplete>
-                                        </v-col>
-                                        <v-btn class="mr-1" small v-show="!change" color="primary" @click="complete">
-                                            조 회
-                                        </v-btn>
+
                                         <v-col cols="2" class="pa-0 pl-2 mr-2">
                                             <v-menu tabindex="5" ref="deadline" v-model="menu_deadline_date"
                                                 :close-on-content-click="false" :return-value.sync="deadline"
@@ -69,20 +61,53 @@
                                                 </v-date-picker>
                                             </v-menu>
                                         </v-col>
-                                    </v-row>
-
-                                    <!-- <v-row>
                                         <v-col cols="2" class="pa-0 pl-2 mr-2">
-                                            <v-text-field class="" label="품목명" v-model="orderData.memo"
+                                            <v-text-field class="" label="거래처" v-model="accountName" disabled
                                                 tabindex="6"></v-text-field>
                                         </v-col>
-                                        <v-col cols="2" class="d-flex align-center">
-                                            <v-btn class="mr-1" small v-show="!change" color="primary"
-                                                @click="complete">
-                                                조 회
-                                            </v-btn>
-                                        </v-col>
-                                    </v-row> -->
+                                        <v-menu v-model="menuLoad" :close-on-content-click="false" :nudge-width="400"
+                                            offset-x max-height="600">
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <v-btn v-bind="attrs" v-on="on" small @click="getDataSimple()">
+                                                    불러오기
+                                                </v-btn>
+                                            </template>
+
+                                            <v-card class="pa-3">
+                                                <v-data-table :headers="datas_header_simple" :items="datas_simple" dense
+                                                    :items-per-page=100 item-key="name" class="elevation-1"
+                                                    :search="search" hide-default-footer height="300">
+                                                    <template v-slot:top>
+                                                        <v-text-field v-model="search" label="거래처명으로 검색"
+                                                            class="mx-4"></v-text-field>
+                                                    </template>
+                                                    <template v-slot:item.testName="{ item }">
+                                                        <v-btn @click="cloneItem(item)" class="ma-2" outlined
+                                                            color="indigo">
+                                                            {{ item.testName }}
+                                                        </v-btn>
+                                                    </template>
+
+                                                </v-data-table>
+                                                </v-list-item>
+                                                </v-list>
+                                                <v-divider></v-divider>
+                                                <v-card-actions>
+                                                    <v-spacer></v-spacer>
+                                                    <v-btn text @click="closeMenuLoadCard()">
+                                                        닫기
+                                                    </v-btn>
+                                                </v-card-actions>
+                                            </v-card>
+                                        </v-menu>
+
+
+
+
+
+
+
+                                    </v-row>
                                 </v-form>
                             </v-container>
                         </v-container>
@@ -110,16 +135,11 @@
                                     :items="itemData" return-object item-key="id" dense :items-per-page="50"
                                     :footer-props="footer_option">
                                     <template v-slot:no-data>
-                                        <h5>조회된 품목이 없습니다.</h5>
+                                        <h5>조회된 수주품목이 없습니다.</h5>
                                     </template>
                                 </v-data-table>
                             </v-container>
                             <v-container fluid class="d-flex justify-center pa-0">
-                                <v-col cols="1">
-                                    <v-btn small fluid color="deep-orange" @click="minus">
-                                        <v-icon>mdi-arrow-up-bold-outline</v-icon>
-                                    </v-btn>
-                                </v-col>
                                 <v-col cols="1">
                                     <v-btn small fluid color="deep-orange" @click="plus">
                                         <v-icon>mdi-arrow-down-bold-outline</v-icon>
@@ -143,19 +163,27 @@
                                     </template>
 
                                     <template v-slot:no-data>
-                                        <h5>선택된 품목이 없습니다.</h5>
+                                        <h5>선택된 수주품목이 없습니다.</h5>
                                     </template>
                                 </v-data-table>
+
+
                             </v-container>
                         </v-sheet>
-
+                        <v-container fluid>
+                            <v-row class="d-flex align-center">
+                                <v-col cols="12" class=" pa-0 d-flex align-center pt-6">
+                                    <v-text-field class="mr-10 pa-0 ml-3" placeholder="요청사항"></v-text-field>
+                                </v-col>
+                            </v-row>
+                        </v-container>
                         <v-container fluid>
                             <v-row>
                                 <v-col class="text-right">
                                     <v-btn class="mr-1" v-show="!change" color="primary" @click="complete">
                                         수주등록
                                     </v-btn>
-                                    <v-btn class="closeBtn" color="primary" text @click="closeModal()">
+                                    <v-btn class="closeBtn" color="primary" text @click="openModal = false">
                                         닫기
                                     </v-btn>
                                 </v-col>
@@ -175,6 +203,7 @@ import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 
 @Component
 export default class OrderManagementModal extends Vue {
+
     footer_option: {
         disableItemsPerPage: boolean;
         itemsPerPageAllText: string;
@@ -189,6 +218,15 @@ export default class OrderManagementModal extends Vue {
             !(v && v.length >= 50) || "작업지시서명 50자 이상 입력할 수 없습니다.",
     ];
     name: string = "";
+    menuLoad: boolean = false; //거래처명으로 검색 모달 
+    datas_simple: any[] = [];
+    datas_header_simple: any[] = [
+        {
+            text: "거래처명",
+            value: "testName",
+        }
+    ];
+    accountName: string = "";
     customerId: number | "" = "";
     customerList: any[] = [];
     departmentList: any[] = [];
@@ -262,6 +300,13 @@ export default class OrderManagementModal extends Vue {
             this.itemName = this.item.name;
         }
     }
+
+
+
+
+
+
+
 
     get openModal() {
         return this.open;
@@ -624,6 +669,13 @@ export default class OrderManagementModal extends Vue {
             }
         }
     }
+    getDataSimple() {
+        api.growthresearch.LoadGrowthResearch().then((res) => {
+            this.datas_simple = res.data.responseData;
+        });
+    }
+
+
     getTemp() {
         this.selectedData = [];
         let joborderTemp;
@@ -835,10 +887,14 @@ export default class OrderManagementModal extends Vue {
         }
     }
 
-
-    closeModal() {
-        console.log('닫겠습니다.')
-        this.openModal = false
+    cloneItem(item: any) { //거래처 명 클릭 시 
+        this.accountName = item.testName
+    }
+    closeMenuLoadCard(event: any, item: any) { //그냥 닫기 클릭 시 
+        this.menuLoad = false
+    }
+    closeModal(item: any) {
+        this.change = false;
     }
 
 

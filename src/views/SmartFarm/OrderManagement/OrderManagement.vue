@@ -4,77 +4,101 @@
             <v-row no-gutters>
                 <v-col class="ma-2" md="12">
                     <h4 class="searchbox-title">조회 조건</h4>
-                    <v-sheet class="pa-3" color="#F6F8F9" height="120" elevation="2">
-                        <v-row no-gutters>
+                    <v-sheet class="pa-3" color="#F6F8F9" height="80" elevation="2">
+                        <v-row no-gutters class="d-flex align-center">
                             <v-col cols="10">
                                 <v-row>
                                     <v-col cols="2">
-                                        <v-select :items="search_list1" label="선택" v-model="search_type_1"
-                                            item-text="name" item-value="value" dense></v-select>
-                                    </v-col>
-
-                                    <v-col cols="2">
-                                        <v-text-field label="검색어1" v-model="search_text_1" @keydown.enter="getCustomer"
+                                        <v-text-field label="수주번호" v-model="search_condition.order_num"
                                             dense></v-text-field>
                                     </v-col>
                                     <v-col cols="2">
-                                        <v-select :items="search_list2" label="선택" v-model="search_type_2"
-                                            item-text="name" item-value="value" dense></v-select>
-                                    </v-col>
-
-                                    <v-col cols="2">
-                                        <v-text-field label="검색어2" v-model="search_text_2" @keydown.enter="getCustomer"
-                                            dense></v-text-field>
-                                    </v-col>
-                                    <v-col cols="2">
-                                        <v-select :items="customer_type" label="거래처 유형" v-model="search_condition.type"
-                                            item-text="name" item-value="value" @change="getCustomer" dense></v-select>
-                                    </v-col>
-                                    <v-col cols="1">
-                                        <v-select :items="search_list3" label="사용여부" v-model="search_condition.isValid"
-                                            item-text="name" item-value="value" @change="getCustomer" dense></v-select>
-                                    </v-col>
-                                </v-row>
-                                <v-row no-gutters>
-                                    <v-col cols="2">
-                                        <v-menu ref="startDate" v-model="startDate" :close-on-content-click="false"
-                                            :return-value.sync="search_condition.startDate"
+                                        <v-menu ref="order_startDate" v-model="order_startDate"
+                                            :close-on-content-click="false"
+                                            :return-value.sync="search_condition.order_startDate"
                                             transition="scale-transition" offset-y min-width="auto">
                                             <template v-slot:activator="{ on, attrs }">
-                                                <v-text-field v-model="search_condition.startDate" label="시작일"
+                                                <v-text-field v-model="search_condition.order_startDate" label="수주시작일"
                                                     prepend-icon="mdi-calendar" readonly v-bind="attrs" v-on="on"
                                                     dense></v-text-field>
                                             </template>
-                                            <v-date-picker v-model="search_condition.startDate" no-title scrollable
-                                                locale="ko-KR" :max="search_condition.endDate">
+                                            <v-date-picker v-model="search_condition.order_startDate" no-title
+                                                scrollable locale="ko-KR" :max="search_condition.order_endDate">
                                                 <v-spacer></v-spacer>
-                                                <v-btn text color="primary" @click="startDate = false">
+                                                <v-btn text color="primary" @click="order_startDate = false">
                                                     취소
                                                 </v-btn>
                                                 <v-btn text color="primary"
-                                                    @click="s_date_search(search_condition.startDate)">
+                                                    @click="s_date_search_order(search_condition.order_startDate)">
                                                     확인
                                                 </v-btn>
                                             </v-date-picker>
                                         </v-menu>
                                     </v-col>
                                     <v-col md="2">
-                                        <v-menu ref="endDate" v-model="endDate" :close-on-content-click="false"
-                                            :return-value.sync="search_condition.endDate" transition="scale-transition"
-                                            offset-y min-width="auto">
+                                        <v-menu ref="order_endDate" v-model="order_endDate"
+                                            :close-on-content-click="false"
+                                            :return-value.sync="search_condition.order_endDate"
+                                            transition="scale-transition" offset-y min-width="auto">
                                             <template v-slot:activator="{ on, attrs }">
-                                                <v-text-field v-model="search_condition.endDate" label="종료일"
+                                                <v-text-field v-model="search_condition.order_endDate" label="수주종료일"
                                                     prepend-icon="mdi-calendar" readonly v-bind="attrs" v-on="on"
                                                     dense></v-text-field>
                                             </template>
-                                            <v-date-picker v-model="search_condition.endDate" no-title scrollable
-                                                locale="ko-KR" :min="search_condition.startDate">
+                                            <v-date-picker v-model="search_condition.order_endDate" no-title scrollable
+                                                locale="ko-KR" :min="search_condition.order_startDate">
                                                 <v-spacer></v-spacer>
-                                                <v-btn text color="primary" @click="endDate = false">
+                                                <v-btn text color="primary" @click="order_endDate = false">
                                                     취소
                                                 </v-btn>
                                                 <v-btn text color="primary"
-                                                    @click="e_date_search(search_condition.endDate)">
+                                                    @click="e_date_search_order(search_condition.order_endDate)">
+                                                    확인
+                                                </v-btn>
+                                            </v-date-picker>
+                                        </v-menu>
+                                    </v-col>
+                                    <v-col cols="2">
+                                        <v-menu ref="delivery_startDate" v-model="delivery_startDate"
+                                            :close-on-content-click="false"
+                                            :return-value.sync="search_condition.delivery_startDate"
+                                            transition="scale-transition" offset-y min-width="auto">
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <v-text-field v-model="search_condition.delivery_startDate"
+                                                    label="납품시작일" prepend-icon="mdi-calendar" readonly v-bind="attrs"
+                                                    v-on="on" dense></v-text-field>
+                                            </template>
+                                            <v-date-picker v-model="search_condition.delivery_startDate" no-title
+                                                scrollable locale="ko-KR" :max="search_condition.delivery_endDate">
+                                                <v-spacer></v-spacer>
+                                                <v-btn text color="primary" @click="delivery_startDate = false">
+                                                    취소
+                                                </v-btn>
+                                                <v-btn text color="primary"
+                                                    @click="s_date_search_delivery(search_condition.delivery_startDate)">
+                                                    확인
+                                                </v-btn>
+                                            </v-date-picker>
+                                        </v-menu>
+                                    </v-col>
+                                    <v-col md="2">
+                                        <v-menu ref="delivery_endDate" v-model="delivery_endDate"
+                                            :close-on-content-click="false"
+                                            :return-value.sync="search_condition.delivery_endDate"
+                                            transition="scale-transition" offset-y min-width="auto">
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <v-text-field v-model="search_condition.delivery_endDate" label="수주종료일"
+                                                    prepend-icon="mdi-calendar" readonly v-bind="attrs" v-on="on"
+                                                    dense></v-text-field>
+                                            </template>
+                                            <v-date-picker v-model="search_condition.delivery_endDate" no-title
+                                                scrollable locale="ko-KR" :min="search_condition.delivery_startDate">
+                                                <v-spacer></v-spacer>
+                                                <v-btn text color="primary" @click="delivery_endDate = false">
+                                                    취소
+                                                </v-btn>
+                                                <v-btn text color="primary"
+                                                    @click="e_date_search_delivery(search_condition.delivery_endDate)">
                                                     확인
                                                 </v-btn>
                                             </v-date-picker>
@@ -168,15 +192,31 @@ export default class Customer extends Vue {
         memo: "", //메모
         details: [], //추가한 품목 목록
     };
+    // 2023-01-12
+
+
+
+
+    search_condition: any = {
+        order_num: 13254,
+        order_startDate: "",
+        order_endDate: "",
+        delivery_startDate: "",
+        delivery_endDate: "",
+    };
+
+    order_startDate: boolean = false;
+    order_endDate: boolean = false;
+    delivery_startDate: boolean = false;
+    delivery_endDate: boolean = false;
+
+
+
+    // 2023-01-12
     change: boolean = false;
-
-
-
-
     customerDialog: boolean = false;
     customerDialog_type: boolean = false;
-    startDate: boolean = false;
-    endDate: boolean = false;
+
     customerOption: any = {};
     customer_type: object[] = [];
     edit_customer: boolean = false;
@@ -209,16 +249,6 @@ export default class Customer extends Vue {
     search_list2: object[] = [];
     search_list3: object[] = [];
     search_list4: object[] = [];
-    search_condition: any = {
-        startDate: "",
-        endDate: "",
-        createdId: "",
-        customer: "",
-        type: "",
-        business: "",
-        isValid: "",
-        memo: "",
-    };
     editedIndex: number = -1;
     customer_list: [] = [];
 
@@ -294,28 +324,45 @@ export default class Customer extends Vue {
         }
     }
     closeModal() {
-        this.customerDialog = false;
+        this.orderDialog = false;
         this.editedCustomer = Object.assign({}, this.customer);
         this.getCustomer();
         console.log("closeModal");
     }
-    s_date_search(v: any) {
-        this.search_condition.startDate = v;
-        this.startDate = false;
-        console.log("startDateEl", this.$refs.startDate);
-        let startDate: any = this.$refs.startDate;
+    s_date_search_order(v: any) {
+        this.search_condition.order_startDate = v;
+        this.order_startDate = false;
+        let startDate: any = this.$refs.order_startDate;
         startDate.save(v);
     }
-    e_date_search(v: any) {
-        this.search_condition.endDate = v;
-        this.endDate = false;
-        let endDate: any = this.$refs.endDate;
+
+    s_date_search_delivery(v: any) {
+        this.search_condition.delivery_startDate = v;
+        this.delivery_startDate = false;
+        let startDate: any = this.$refs.delivery_startDate;
+        startDate.save(v);
+    }
+
+
+    e_date_search_order(v: any) {
+        this.search_condition.order_endDate = v;
+        this.order_endDate = false;
+        let endDate: any = this.$refs.order_endDate;
         endDate.save(v);
     }
+
+    e_date_search_delivery(v: any) {
+        this.search_condition.delivery_endDate = v;
+        this.delivery_endDate = false;
+        let endDate: any = this.$refs.delivery_endDate;
+        endDate.save(v);
+    }
+
     selectCustomer(data: object) {
         console.log("selectCustomer", data);
     }
     getCustomer() {
+        console.log('search_condition', this.search_condition)
         if (this.search_type_1 != "") {
             this.search_condition.customer =
                 this.search_type_1 + "-" + this.search_text_1;
