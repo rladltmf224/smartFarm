@@ -3,6 +3,7 @@
     <v-chip v-if="status === 'AUTO'" color="primary" small> AUTO </v-chip>
     <v-chip v-if="status === 'ON'" color="success" small> ON </v-chip>
     <v-chip v-if="status === 'OFF'" color="error" small> OFF </v-chip>
+    <v-chip v-if="status === null" small> EMPTY </v-chip>
   </div>
 </template>
 

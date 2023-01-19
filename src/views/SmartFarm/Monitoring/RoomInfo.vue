@@ -50,55 +50,24 @@
           >
         </v-col>
       </v-row>
-
       <v-row dense class="text-center align-self-center">
-        <v-col cols="2">
-          <b class="text-subtitle-1 font-weight-bold">냉방기</b>
-        </v-col>
-        <v-col cols="2" class="pt-2">
-          <EquipStatusChip
-            :status="roomInfo_prop.equipment.airConditioner"
-          ></EquipStatusChip>
-        </v-col>
-        <v-col cols="2">
-          <b class="text-subtitle-1 font-weight-bold">난방기</b>
-        </v-col>
-        <v-col cols="2" class="pt-2">
-          <EquipStatusChip
-            :status="roomInfo_prop.equipment.heater"
-          ></EquipStatusChip>
-        </v-col>
-        <v-col cols="2">
-          <b class="text-subtitle-1 font-weight-bold">LED</b>
-        </v-col>
-        <v-col cols="2" class="pt-2">
-          <EquipStatusChip
-            :status="roomInfo_prop.equipment.led"
-          ></EquipStatusChip>
-        </v-col>
-        <v-col cols="2">
-          <b class="text-subtitle-1 font-weight-bold">가습기</b>
-        </v-col>
-        <v-col cols="2" class="pt-2">
-          <EquipStatusChip
-            :status="roomInfo_prop.equipment.humidifier"
-          ></EquipStatusChip>
-        </v-col>
-        <v-col cols="2">
-          <b class="text-subtitle-1 font-weight-bold">환풍기</b>
-        </v-col>
-        <v-col cols="2" class="pt-2">
-          <EquipStatusChip
-            :status="roomInfo_prop.equipment.ventilator"
-          ></EquipStatusChip>
-        </v-col>
-        <v-col cols="2">
-          <b class="text-subtitle-1 font-weight-bold">환기팬</b>
-        </v-col>
-        <v-col cols="2" class="pt-2">
-          <EquipStatusChip
-            :status="roomInfo_prop.equipment.airCirculator"
-          ></EquipStatusChip>
+        <v-col
+          v-for="(equipData, index) in roomInfo_prop.equipment"
+          cols="4"
+          class="d-flex align-center"
+          :key="index"
+        >
+          <div
+            class="mr-1"
+            :class="{
+              on: equipData.currentStatus === 'ON',
+              off: equipData.currentStatus === 'OFF',
+            }"
+          ></div>
+          <b class="text-caption font-weight-bold mr-1 text-truncate">{{
+            equipData.equipmentName
+          }}</b>
+          <EquipStatusChip :status="equipData.controlStatus"></EquipStatusChip>
         </v-col>
       </v-row>
       <v-row class="pr-3" justify="end">
@@ -145,3 +114,23 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+div {
+  %circle {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+  }
+
+  .on {
+    @extend %circle;
+    background: greenyellow;
+  }
+
+  .off {
+    @extend %circle;
+    background: red;
+  }
+}
+</style>
