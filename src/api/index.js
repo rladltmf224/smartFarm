@@ -16,6 +16,7 @@ import storage from "./service/storage";
 import warehousingPrice from "./service/warehousingPrice";
 import smartfarm from "./service/smartfarm";
 import growthresearch from "./service/growthresearch";
+import order from "./service/order"; //수주관리 api 2023/01/31 추가 - 이슬
 
 export {
   bom,
@@ -36,4 +37,5 @@ export {
   warehousingPrice,
   smartfarm,
   growthresearch,
+  order, //수주관리 api
 };

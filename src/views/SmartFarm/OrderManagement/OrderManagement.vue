@@ -136,13 +136,22 @@
                         :loading="customerOption.loading" :items-per-page="customerOption.itemsPerPage"
                         :page.sync="customerOption.page" @page-count="customerOption.pageCount = $event"
                         hide-default-footer>
-                        <template v-slot:item.contactPoint="props">
-                            {{ props.item.contactPoint | PhoneMask }}
-                        </template>
                         <template v-slot:item.edit="{ item }">
                             <v-icon small class="mr-2" @click="editItem(item, (customerDialog_type = false))">
                                 mdi-pencil
                             </v-icon>
+                        </template>
+                        <template v-slot:item.detail="{ item }">
+                            <v-btn icon>
+                                <v-icon small>mdi-magnify</v-icon>
+                            </v-btn>
+                        </template>
+                        <template v-slot:item.delete="{ item }">
+                            <v-btn icon>
+                                <v-icon small class="mr-2" @click="editItem(item, (customerDialog_type = false))">
+                                    mdi-trash-can-outline
+                                </v-icon>
+                            </v-btn>
                         </template>
                     </v-data-table>
                     <v-pagination v-model="customerOption.page" :length="customerOption.pageCount"></v-pagination>
@@ -150,8 +159,8 @@
             </v-row>
         </v-container>
         <!-- 거래처 생성 모달 -->
-        <OrderManagementModal :open="orderDialog" :change="change" :editedCustomerData="editedOrder"
-            @closeModal="closeModal">
+        <OrderManagementModal :open="orderDialog" :orderInfoId="orderInfoId" :change="change"
+            :editedCustomerData="editedOrder" @closeModal="closeModal">
         </OrderManagementModal>
     </div>
 </template>
@@ -209,8 +218,7 @@ export default class Customer extends Vue {
     order_endDate: boolean = false;
     delivery_startDate: boolean = false;
     delivery_endDate: boolean = false;
-
-
+    orderInfoId: number = 0; // 수주정보상세조회 orderInfoId
 
     // 2023-01-12
     change: boolean = false;
@@ -256,9 +264,7 @@ export default class Customer extends Vue {
 
     }
 
-    mounted() {
 
-    }
 
     @Watch("edit_customer")
     onEditCustomerChange(val: object) {
@@ -270,8 +276,8 @@ export default class Customer extends Vue {
         this.getCustomer();
     }
 
-    get headers() {
-        return cfg.header.customerList;
+    get headers() { //data-table의 header를 가져온다.
+        return cfg.header.orderList;
     }
     get formTitle() {
         return this.editedIndex === -1 ? "거래처 생성" : "거래처 수정";
@@ -324,6 +330,7 @@ export default class Customer extends Vue {
         }
     }
     closeModal() {
+
         this.orderDialog = false;
         this.editedCustomer = Object.assign({}, this.customer);
         this.getCustomer();
@@ -361,39 +368,62 @@ export default class Customer extends Vue {
     selectCustomer(data: object) {
         console.log("selectCustomer", data);
     }
-    getCustomer() {
-        console.log('search_condition', this.search_condition)
-        if (this.search_type_1 != "") {
-            this.search_condition.customer =
-                this.search_type_1 + "-" + this.search_text_1;
-        }
-        if (this.search_type_2 != "") {
-            this.search_condition.business =
-                this.search_type_2 + "-" + this.search_text_2;
-        }
+    // getCustomer() {
+    //     console.log('search_condition', this.search_condition)
+    //     if (this.search_type_1 != "") {
+    //         this.search_condition.customer =
+    //             this.search_type_1 + "-" + this.search_text_1;
+    //     }
+    //     if (this.search_type_2 != "") {
+    //         this.search_condition.business =
+    //             this.search_type_2 + "-" + this.search_text_2;
+    //     }
 
-        const { page, itemsPerPage, sortBy, sortDesc } =
-            this.customerOption.options;
-        this.search_condition.page = page;
-        this.search_condition.size = itemsPerPage;
-        this.search_condition.sortBy = sortBy;
-        this.search_condition.sortDesc = sortDesc;
-        this.customerOption.loading = true;
-        console.log("customerOption", this.customerOption);
+    //     const { page, itemsPerPage, sortBy, sortDesc } =
+    //         this.customerOption.options;
+    //     this.search_condition.page = page;
+    //     this.search_condition.size = itemsPerPage;
+    //     this.search_condition.sortBy = sortBy;
+    //     this.search_condition.sortDesc = sortDesc;
+    //     this.customerOption.loading = true;
+    //     console.log("customerOption", this.customerOption);
 
-        api.customer
-            .postCustomerList(this.search_condition)
-            .then((response) => {
-                console.log("postCustomerList", response);
-                this.customer_list = response.data.responseData;
-                this.customerOption.totalCount = response.data.totalCount;
-                this.customerOption.loading = false;
-            })
-            .catch((error) => {
-                console.log(error);
-                this.customerOption.loading = false;
-            });
+    //     api.customer
+    //         .postCustomerList(this.search_condition)
+    //         .then((response) => {
+    //             console.log("postCustomerList", response);
+    //             this.customer_list = response.data.responseData;
+    //             this.customerOption.totalCount = response.data.totalCount;
+    //             this.customerOption.loading = false;
+    //         })
+    //         .catch((error) => {
+    //             console.log(error);
+    //             this.customerOption.loading = false;
+    //         });
+    // }
+
+
+    getCustomer() {  // 수주 정보 조회 
+        let item = {
+            orderInfoCode: "", // 수주 코드
+            orderDate: "", // 수주 일자
+            customerName: "", // 고객사 명
+            page: 1, // 페이징 기능
+            size: 20, // 페이징 기능
+            sortBy: [], // 정렬 기능
+            sortDesc: [false] // 정렬 기능
+        }
+        console.log('내가보낸 아이템', item)
+        api.order.getOrderInfo(item).then((res: any) => {
+            this.customer_list = res.data.responseData
+            console.log('수주 정보 조회 성공', res)
+        })
     }
+
+
+
+
+
 
     closeModal_customer() {
         this.edit_customer = false;
@@ -409,15 +439,26 @@ export default class Customer extends Vue {
         };
     }
     editItem(item: any, edit_type: boolean) {
-        this.customerDialog = true;
-        //this.editedIndex = this.customer_list.indexOf(JSON.stringify(item));
-        this.editedCustomer = Object.assign({}, item);
-        this.customerDialog_type = edit_type;
-        this.edit_customer = true;
+        this.orderDialog = true;
+        // this.editedIndex = this.customer_list.indexOf(JSON.stringify(item));
+        this.change = true
+        this.orderInfoId = item.orderInfoId
+
+
+
+
+
+
+
+
+        //this.editedCustomer = Object.assign({}, item);
+        // this.customerDialog_type = edit_type;
+        // this.edit_customer = true;
     }
 
     add() {
         this.orderDialog = true;
+        this.change = false
         // this.editedOrder = {
         //     name: "",
         //     customer: "",

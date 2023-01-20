@@ -11,6 +11,14 @@ export default {
       { text: "수정한 ID", value: "modifiedId" },
       { text: "수정", value: "edit" },
     ],
+    orderList: [
+      { text: "수주일자", value: "orderDate" },
+      { text: "수주번호", value: "orderInfoCode" },
+      { text: "거래처", value: "customerName" },
+      { text: "요청사항", value: "memo" },
+      { text: "수정", value: "edit" },
+      { text: "삭제", value: "delete" },
+    ],
   },
   data: {
     search_list1: [

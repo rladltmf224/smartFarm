@@ -441,6 +441,7 @@ export default {
             // 서버에서 받은 이미지 데이터를 인코딩한다
             let images = []
             let imagedata = paramImg
+            console.log('이미지데이타확인', imagedata)
             const contentType = "image/png";
             const b64Data = imagedata.fileData;
             const image_data = atob(b64Data); // base64 인코딩을 풀어준다

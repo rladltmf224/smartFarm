@@ -84,4 +84,9 @@ export default {
     AuthAPI.get("/api/growth/graph", {
       params: params,
     }),
+
+  GetGrowthResearchOriginImageList: (params) =>
+    AuthAPI.post("/api/growth/originalImageList", JSON.stringify(params), {
+      headers: { "Content-Type": "application/json" },
+    }),
 };
