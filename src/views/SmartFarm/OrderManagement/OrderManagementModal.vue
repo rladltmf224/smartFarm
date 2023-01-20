@@ -205,26 +205,16 @@
                                     </template>
                                     <!-- 납품예정일 -->
                                     <template v-slot:item.expectedDeliveryDate="props">
-                                        <v-menu tabindex="5" ref="menu_expectedDeliveryDate"
-                                            v-model="menu_expectedDeliveryDate" :close-on-content-click="false"
-                                            :return-value.sync="menu_expectedDeliveryDate" transition="scale-transition"
-                                            offset-y min-width="auto">
+                                        <v-menu v-model="props.item.menu_expectedDeliveryDate"
+                                            :close-on-content-click="false" :nudge-right="40"
+                                            transition="scale-transition" offset-y min-width="auto">
                                             <template v-slot:activator="{ on, attrs }">
-                                                <v-text-field label="납품예정일" v-model="props.item.expectedDeliveryDate"
+                                                <v-text-field v-model="props.item.expectedDeliveryDate" label="납품예정일"
                                                     prepend-icon="mdi-calendar" readonly v-bind="attrs"
                                                     v-on="on"></v-text-field>
                                             </template>
-                                            <v-date-picker v-model="props.item.expectedDeliveryDate" no-title scrollable
-                                                locale="ko-KR">
-                                                <v-spacer></v-spacer>
-                                                <v-btn text color="primary" @click="menu_expectedDeliveryDate = false">
-                                                    취소
-                                                </v-btn>
-                                                <v-btn text color="primary"
-                                                    @click="d_date_expectedDeliveryDate(props.item.expectedDeliveryDate)">
-                                                    확인
-                                                </v-btn>
-                                            </v-date-picker>
+                                            <v-date-picker no-title v-model="props.item.expectedDeliveryDate"
+                                                @input="props.item.menu_expectedDeliveryDate = false"></v-date-picker>
                                         </v-menu>
                                     </template>
                                     <!-- 비고(메모) -->
@@ -330,7 +320,6 @@ export default class OrderManagementModal extends Vue {
 
 
 
-    menu_expectedDeliveryDate: boolean = false; //수주품목 납품예정일 menu  
 
 
 
@@ -551,11 +540,7 @@ export default class OrderManagementModal extends Vue {
         deliveryDate.save(v);
     }
 
-    d_date_expectedDeliveryDate(v: any) { //수주일자
-        this.menu_expectedDeliveryDate = false;
-        let expectedDeliveryDate: any = this.$refs.menu_deliveryDate;
-        expectedDeliveryDate.save(v);
-    }
+
 
 
 
