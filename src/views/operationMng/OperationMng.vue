@@ -95,7 +95,9 @@
                 </v-row>
               </v-col>
               <v-col class="text-right align-self-center" offset="1" cols="1">
-                <v-btn color="primary" large> 조회 </v-btn>
+                <v-btn color="primary" large @click="getOperationData()">
+                  조회
+                </v-btn>
               </v-col>
             </v-row>
           </v-sheet>
@@ -152,7 +154,7 @@
             <v-spacer></v-spacer>
           </v-card-title>
           <v-card-text>
-            <v-card class="mb-4" elevation="4">
+            <!-- <v-card class="mb-4" elevation="4">
               <v-card-text>
                 <v-row dense class="align-self-center">
                   <v-col cols="2">
@@ -184,7 +186,7 @@
                   </v-col>
                 </v-row>
               </v-card-text>
-            </v-card>
+            </v-card> -->
             <v-card class="mb-4" elevation="4">
               <v-card-text>
                 <v-data-table
@@ -215,11 +217,12 @@
               <v-card-text>
                 <v-row dense class="align-self-center">
                   <v-col cols="2">
-                    <v-select
-                      :items="operationReqList"
-                      label="목적"
-                      dense
-                    ></v-select>
+                    <v-select :items="objectList" label="목적" dense></v-select>
+                  </v-col>
+                </v-row>
+                <v-row dense class="align-self-center">
+                  <v-col cols="2">
+                    <v-select :items="objectList" label="목적" dense></v-select>
                   </v-col>
                   <v-col cols="2">
                     <v-select
@@ -372,6 +375,7 @@
   </div>
 </template>
 <script lang="ts">
+import * as api from "@/api";
 import cfg from "./config";
 import { gridCfg } from "@/util/config";
 import { Component, Vue, Watch } from "vue-property-decorator";
@@ -384,6 +388,10 @@ export default class OperationMng extends Vue {
   search_condition: any = {};
   operationOpt: any;
   operationRegiOpt: any;
+  objectList: any[] = [
+    name:'실험'
+  ];
+
   operationOrderList: any[] = [
     { equipment: "" },
     { edit: "" },
@@ -463,6 +471,25 @@ export default class OperationMng extends Vue {
     endDate.save(v);
   }
 
+  getOperationData() {
+    // const { page, itemsPerPage, sortBy, sortDesc } = this.operationOpt.options;
+    // this.search_condition.page = page;
+    // this.search_condition.size = itemsPerPage;
+    // this.search_condition.sortBy = sortBy;
+    // this.search_condition.sortDesc = sortDesc;
+    // this.operationOpt.loading = true;
+    api.production.getProdutionList(this.search_condition).then((res) => {
+      //this.operationReqList=res.data.re
+
+      try {
+        console.log("getOperationData", res.data.responseData);
+        this.operationOpt.loading = false;
+      } catch (error) {
+        console.log("error", error);
+      }
+    });
+  }
+
   editItem(item: any) {
     this.operation_modal = true;
     this.operation_modal_mode = "M";
@@ -481,7 +508,19 @@ export default class OperationMng extends Vue {
     this.operation_modal = false;
   }
 
-  saveOperationInfo() {}
+  saveOperationInfo(data: any) {
+    let reqData = {
+      itemId: data.itemId,
+      processId: data.processId,
+      counts: data.counts,
+      productionDate: data.productionDate,
+      facilityDetailIds: data.facilityDetailIds,
+    };
+
+    api.production.postProdutionData(reqData).then((res) => {
+      console.log("res", res);
+    });
+  }
   saveEquipmentInfo() {}
 
   createItem() {

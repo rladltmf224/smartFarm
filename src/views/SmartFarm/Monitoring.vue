@@ -47,7 +47,12 @@
     </v-row>
 
     <v-row dense class="d-flex justify-md-center align-stretch">
-      <v-col v-for="(n, index) in cards" :key="index" cols="3">
+      <v-col
+        v-for="(n, index) in cards"
+        :key="index"
+        lg="4"
+        :md="(12 / cards).toFixed(0)"
+      >
         <RoomInfo
           :roomData="n"
           @controllPage="goControllPage"
@@ -631,8 +636,8 @@
         <v-card-title class="headline">에어컨 설정정보</v-card-title>
         <v-card-text class="align-center">
           <v-btn-toggle mandatory v-model="airCon_mode">
-            <v-btn text color="blue" value="heat"> 냉방 </v-btn>
-            <v-btn text color="red" value="cool"> 난방 </v-btn>
+            <v-btn text color="blue" value="cool"> 냉방 </v-btn>
+            <v-btn text color="red" value="heat"> 난방 </v-btn>
           </v-btn-toggle>
           <v-text-field
             label="온도"
@@ -890,41 +895,37 @@ export default {
     },
   },
   async created() {
-    // this.cards = Object.assign({}, cfg.data.monitorData);
-    // var ws = new WebSocket("ws://192.168.0.231:8080/ws");
-    // this.socket = ws;
-    // console.log("웹소켓확인", ws);
-    // //이벤트 헨들러
-    // ws.onopen = function () {
-    //   // console.log('[open] 커넥션이 만들어졌습니다.');
-    //   var item = {
-    //     api: "roomValue",
-    //     method: "add",
-    //     parameters: {},
-    //   };
-    //   ws.send(JSON.stringify(item));
-    // };
-    // let _this = this; //소영선임님이 알려주신 this안될때 대처법
-    // ws.onmessage = function (event) {
-    //   if (event.data === undefined) {
-    //     console.log("웹소켓연결되지않음");
-    //   } else {
-    //     if (event.data.api == "roomValue") {
-    //       //console.log("웹소켓으로 받은데이터", event.data);
-    //       // JSON.parse로풀기
-    //       const obj = JSON.parse(event.data);
-    //       this.cards = obj[0];
-    //       console.log("obj", obj);
-    //     }
-    //   }
-    // };
-    // ws.onclose = (evt) => {
-    //   console.log(evt);
-    // };
-    // ws.onerror = (evt) => {
-    //   console.log(evt);
-    // };
-    // // 보내는 코드
+    //this.cards = Object.assign({}, cfg.data.monitorData);
+    var ws = new WebSocket("ws://192.168.0.231:8080/ws");
+    this.socket = ws;
+    console.log("웹소켓확인", ws);
+    //이벤트 헨들러
+    ws.onopen = function () {
+      // console.log('[open] 커넥션이 만들어졌습니다.');
+      var item = {
+        api: "roomValue",
+        method: "add",
+        parameters: {},
+      };
+      ws.send(JSON.stringify(item));
+    };
+    let vue_this = this;
+    let obj;
+    ws.onmessage = function (event) {
+      if (event !== null && event !== undefined) {
+        obj = JSON.parse(event.data);
+        if (obj.api == "roomValue") {
+          vue_this.cards = obj.data[0];
+        }
+      }
+    };
+    ws.onclose = (evt) => {
+      console.log(evt);
+    };
+    ws.onerror = (evt) => {
+      console.log(evt);
+    };
+    // 보내는 코드
   },
 
   methods: {
@@ -974,6 +975,8 @@ export default {
         this.airCon_modal = true;
         //item.loadBtn = true;
         this.airCon_data = item;
+        this.airCon_val = item.settingTemperature;
+        this.airCon_mode = item.acType;
         //this.getDeviceList();
         return false;
       }
@@ -985,7 +988,7 @@ export default {
       let req_data = {
         equipmentId: this.airCon_data.equipmentId,
         controlStatus: "ON",
-        ACType: this.airCon_mode,
+        acType: this.airCon_mode,
         settingTemperature: this.airCon_val,
       };
 
@@ -995,7 +998,7 @@ export default {
     closeAirConModal() {
       this.airCon_modal = false;
       this.airCon_val = 0;
-      this.airCon_mode = "cool";
+      this.airCon_mode = "";
       this.getDeviceList();
     },
     // 가습기 숫자입력 0~100
@@ -1068,10 +1071,12 @@ export default {
         (i) => i.equipmentId == this.airCon_data.equipmentId
       );
       //this.bala_data[dataIndex].loadBtn = true;
-      let resData = await api.smartfarm
+
+      await api.smartfarm
         .editEquipmentCtrl(item)
         .then((response) => {
-          console.log("editEquipmentCtrl", response.status);
+          console.log("editEquipmentCtrl", response.status, this);
+
           if (response.status == 200) {
             //
             this.getDeviceList();
@@ -1085,17 +1090,13 @@ export default {
               toast: true,
               timer: 1500,
             });
-            //this.bala_data[dataIndex].loadBtn = false;
+            // this.bala_data[dataIndex].loadBtn = false;
             this.getDeviceList();
           }
-          return response;
         })
         .catch((error) => {
           console.log(error);
         });
-      //this.bala_data[dataIndex].loadBtn = false;
-
-      console.log("resData", resData);
     },
     getDeviceList() {
       let reqData = {
