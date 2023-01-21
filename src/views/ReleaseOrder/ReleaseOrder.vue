@@ -198,7 +198,7 @@
             @page-count="releaseOrderOption.pageCount = $event"
             hide-default-footer
           >
-            <template v-slot:item.jobOrderStatus="{ item }">
+            <template v-slot:[`item.jobOrderStatus`]="{ item }">
               <v-btn
                 class="text-left"
                 small
@@ -211,7 +211,7 @@
                 {{ item.jobOrderStatus }}
               </v-btn>
             </template>
-            <template v-slot:item.releaseStatus="{ item }">
+            <template v-slot:[`item.releaseStatus`]="{ item }">
               <v-btn
                 class="text-left"
                 small
@@ -224,10 +224,10 @@
                 {{ item.releaseStatus }}
               </v-btn>
             </template>
-            <template v-slot:item.totalPrice="{ item }">
+            <template v-slot:[`item.totalPrice`]="{ item }">
               {{ item.totalPrice | comma }}원
             </template>
-            <template v-slot:item.edit="{ item }">
+            <template v-slot:[`item.edit`]="{ item }">
               <v-btn
                 v-if="item.status == '출고 요청'"
                 small
@@ -403,7 +403,7 @@ export default class ReleaseOrder extends Vue {
   releaseOrderOption: any = {};
   search_dateType: object[] = [];
   search_job_status_list: object[] = [];
-  search_condition: any;
+  search_condition: any={};
   max25chars: any = (v: any) => v.length <= 25 || "Input too long!";
   tabs: any = null;
   selectedId: number = -1;

@@ -13,18 +13,21 @@
                       :items="search_list2"
                       label="구역항목"
                       v-model="search_type_2"
-                      item-text="name"
-                      item-value="value"
+                      item-text="roomName"
+                      item-value="roomId"
+                      @change="changeRoomData()"
                       dense
                     ></v-select>
                   </v-col>
                   <v-col cols="2" class="d-flex align-center">
                     <v-select
+                  
                       :items="search_list1"
                       label="제어항목"
                       v-model="search_type_1"
-                      item-text="name"
-                      item-value="value"
+                      item-text="equipmentName"
+                      item-value="equipmentId"
+                      :disabled="search_list1.length == 0"
                       dense
                       multiple
                     ></v-select>
@@ -245,17 +248,11 @@ export default {
       menu1: false,
       menu2: false,
       search_list1: [
-        { name: "LED", value: "LED" },
-        { name: "가습기", value: "가습기" },
-        { name: "팬", value: "팬" },
-        { name: "에어컨", value: "에어컨" },
+    
       ],
-      search_type_1: ["LED", "가습기", "팬", "에어컨"],
-      search_list2: [
-        { name: "발아/활착실", value: "발아/활착실" },
-        { name: "육묘실", value: "육묘실" },
-      ],
-      search_type_2: "발아/활착실",
+      search_type_1: [],
+      search_list2: [],
+      search_type_2: "",
 
       search_condition: {
         controlItem: [],
@@ -266,11 +263,17 @@ export default {
     };
   },
   created() {
-    this.search_list1 = api.smartfarm.getEquipmentlist;
+    api.smartfarm.getRoomlist().then((res)=>{
+      console.log('getRoomlist',res)
+      this.search_list2=res.data.responseData
+    })
+
+ 
   },
   mounted() {
     this.BeforeWeeks();
     this.getHistory();
+  
   },
   watch: {
     options: {
@@ -281,6 +284,17 @@ export default {
     },
   },
   methods: {
+
+    changeRoomData(){
+      let reqData={
+        roomId:this.search_type_2
+      }
+
+      api.smartfarm.getEquipmentlist(reqData).then((res)=>{
+      console.log('getEquipmentlist',res)
+      this.search_list1 =res.data.responseData
+    })
+    },
     // 시작일을 일주일전으로
     BeforeWeeks() {
       let nowDate = new Date();
@@ -318,8 +332,8 @@ export default {
       var item = {
         room: this.search_type_2,
         equipmentIds: this.search_type_1,
-        startDate: this.s_date + " 00:00",
-        endDate: this.e_date + " 00:00",
+        startDate: this.s_date ,
+        endDate: this.e_date ,
         page: page,
         size: itemsPerPage, //보여주고싶은 행의개수
         sortBy: sortBy,
