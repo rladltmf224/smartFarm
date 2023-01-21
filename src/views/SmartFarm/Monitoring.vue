@@ -122,6 +122,7 @@
                         <v-date-picker
                           v-model="s_date"
                           @input="menu1 = false"
+                          :max="e_date"
                         ></v-date-picker>
                       </v-menu>
                     </v-col>
@@ -150,7 +151,6 @@
                           v-model="e_date"
                           @input="menu2 = false"
                           :min="s_date"
-                          :max="date"
                         ></v-date-picker>
                       </v-menu>
                     </v-col>
@@ -855,6 +855,7 @@ export default {
       socketId: "",
       bala_data: [],
       roomName_alarm: "",
+      roomID: "",
       warning_alarm: {
         min: 0,
         max: 0,
@@ -896,7 +897,7 @@ export default {
   },
   async created() {
     //this.cards = Object.assign({}, cfg.data.monitorData);
-    var ws = new WebSocket("ws://192.168.0.231:8080/ws");
+    var ws = new WebSocket("ws://14.47.96.237:8081/ws");
     this.socket = ws;
     console.log("웹소켓확인", ws);
     //이벤트 헨들러
@@ -1274,7 +1275,8 @@ export default {
       console.log("openDialog", data);
       this.dialog = true;
       this.section = data.roomName;
-      await this.selectedDate(data);
+      this.roomID = data.roomId;
+      await this.selectedDate();
     },
     closeDialog() {
       this.dialog = false;
@@ -1283,12 +1285,14 @@ export default {
     //  MonitoringGraph
 
     // 병수선임님이 알려준 비동기 api여러개 처리법
-    selectedDate(data) {
+    selectedDate() {
       let filter = {
-        roomId: data.roomId,
+        roomId: this.roomID,
         startDate: this.s_date,
         endDate: this.e_date,
       };
+
+      console.log("selectedDate", filter);
 
       this.isLoading = true;
 

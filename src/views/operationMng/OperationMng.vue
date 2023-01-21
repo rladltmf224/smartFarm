@@ -388,9 +388,7 @@ export default class OperationMng extends Vue {
   search_condition: any = {};
   operationOpt: any;
   operationRegiOpt: any;
-  objectList: any[] = [
-    name:'실험'
-  ];
+  objectList: any[] = [];
 
   operationOrderList: any[] = [
     { equipment: "" },

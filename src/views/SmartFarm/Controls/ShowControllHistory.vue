@@ -10,6 +10,16 @@
                 <v-row class="">
                   <v-col cols="2" class="d-flex align-center">
                     <v-select
+                      :items="search_list2"
+                      label="구역항목"
+                      v-model="search_type_2"
+                      item-text="name"
+                      item-value="value"
+                      dense
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="2" class="d-flex align-center">
+                    <v-select
                       :items="search_list1"
                       label="제어항목"
                       v-model="search_type_1"
@@ -20,16 +30,6 @@
                     ></v-select>
                   </v-col>
 
-                  <v-col cols="2" class="d-flex align-center">
-                    <v-select
-                      :items="search_list2"
-                      label="구역항목"
-                      v-model="search_type_2"
-                      item-text="name"
-                      item-value="value"
-                      dense
-                    ></v-select>
-                  </v-col>
                   <v-col md="2" class="d-flex align-center">
                     <!-- 시작일 -->
 
@@ -265,6 +265,9 @@ export default {
       },
     };
   },
+  created() {
+    this.search_list1 = api.smartfarm.getEquipmentlist;
+  },
   mounted() {
     this.BeforeWeeks();
     this.getHistory();
@@ -314,7 +317,7 @@ export default {
 
       var item = {
         room: this.search_type_2,
-        equipmentNames: this.search_type_1,
+        equipmentIds: this.search_type_1,
         startDate: this.s_date + " 00:00",
         endDate: this.e_date + " 00:00",
         page: page,
