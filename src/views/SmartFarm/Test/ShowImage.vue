@@ -57,17 +57,21 @@
           <v-row v-else class="mx-auto">
             <v-card style="overflow: auto" :loading="loading" class="mx-auto my-12" max-width="374" max-height="825"
               v-for="(item, i) in images" :key="i">
-              <v-card-text>
-                <div class="text-subtitle-1">
+              <v-card-text class="d-flex ">
+                <div>
                   {{ item.testName }}
                 </div>
+                <v-spacer></v-spacer>
+                <v-btn text small @click="Sort()">
+                  {{ sortImgText }}
+                </v-btn>
               </v-card-text>
               <v-divider class=""></v-divider>
               <v-card-text class="">
                 <!-- 사진들어갈곳 -->
-                <div v-for="(item, i) in 5">
-                  <h6 class="pa-0 ma-0">2022-12-24</h6>
-                  <v-img max-height="200" class="ma-4" src="https://cdn.vuetifyjs.com/images/cards/cooking.png"></v-img>
+                <div v-for="(child, i) in item.fileInfo" :key="i">
+                  <h6 class="pa-0 ma-0">{{ child.fileName }}</h6>
+                  <v-img max-height="200" max-width="374" class="ma-4" :src="child.fileData"></v-img>
                 </div>
               </v-card-text>
             </v-card>
@@ -89,6 +93,8 @@ export default {
     return {
       selected: [],
       images: [], //이미지 갤러리 데이터들 
+      sortImgText: '최근순 정렬', //이미지 갤러리 정렬 텍스트,
+      sortImgValue: false, //이미지 갤러리 정렬 불린값
       dialog: false,
       page: 1,
       loading: false,
@@ -125,6 +131,28 @@ export default {
     },
   },
   methods: {
+
+    closeModal() { //이미지 갤러리 모달 닫기  
+      this.sortImgText = '최근순 정렬'
+      this.dialog = false
+    },
+
+
+
+    Sort() {  //이미지 갤러리 정렬 버튼 클릭 시
+
+      this.sortImgValue = !this.sortImgValue
+
+      if (this.sortImgValue) {
+        this.sortImgText = '최근순 정렬'
+      } else {
+        this.sortImgText = '오래된 순 정렬'
+      }
+
+      this.getImageList()
+
+
+    },
     getData() {     // 생육조사 일지 조회 api
       this.loading = true;
       const { page, itemsPerPage, sortBy, sortDesc } = this.options;
@@ -146,86 +174,53 @@ export default {
     },
     dialogOpen() {     // 이미지리스트 다이아로그 오픈 
       let ids = _.map(this.selected, 'growthReportId')
-      console.log('셀렉티드', ids)
       this.dialog = true;
+
+
+
+
+
+
 
       let item = {
         growthReportIds: ids,
         sortBy: 'asc'
       }
       api.growthresearch.GetGrowthResearchOriginImageList(item).then((res) => {
-        this.images = res.data.responseData
-        let datas = res.data.responseData
-        console.log('데이타스확인', datas)
-        let testNames = _.map(datas, 'testName') //testNames 만 배열로 뽑는다.
+        console.log('이미지갤러리 조회성공', res)
 
-        let detailInfo = _.map(datas, 'detailInfo') //detailInfo 만 배열로 뽑는다.
+        let detailInfo = res.data.responseData[0].detailInfo
+        console.log('detailInfo detailInfo', detailInfo)
+        console.log('detailInfo detailInfo', detailInfo.length)
 
-        console.log('디테일인포스', detailInfo)
+        for (let top = 0; top < detailInfo.length; top++) {  //detailInfo의 length
+          for (let middle = 0; middle < detailInfo[top].fileInfo.length; middle++) {  //detailInfo의 length의 fileInfo의 length
 
-        let infos = []
-        for (let detailNum = 0; detailNum < detailInfo.length; detailNum++) {
-          let onlyFileInfo = _.map(detailInfo[detailNum], 'fileInfo')
-          console.log('파일인포 어레이', onlyFileInfo)
-          infos.push(onlyFileInfo)
+            let images = []
+            let imagedata = detailInfo[top].fileInfo[middle]
+            const contentType = "image/png";
+            const b64Data = imagedata.fileData;
+            const image_data = atob(b64Data);
+            const arraybuffer = new ArrayBuffer(image_data.length);
+            const view = new Uint8Array(arraybuffer);
+            for (let i = 0; i < image_data.length; i++) {
+              view[i] = image_data.charCodeAt(i) & 0xff;
+            }
+            const blob = new Blob([arraybuffer], { type: contentType }); // base64 -> blob
+            const blobUrl = URL.createObjectURL(blob);
+            console.log('블롭블롭', blobUrl)
+            detailInfo[top].fileInfo[middle].fileData = blobUrl
+          }
+
+          console.log('블롭화한 디테일인포', detailInfo)
+          this.images = detailInfo
         }
 
-        console.log('fileInfofileInfofileInfo', infos)
-
-
-
-        let fullDatas = [] //for문돌릴 껍데기 배열을 만든다.
-
-        for (let nameNum = 0; nameNum < testNames.length; nameNum++) {
-          fullDatas.push({
-            testName: testNames[nameNum],
-            fileInfo: infos[nameNum]
-          })
+        for (let nameLeng = 0; nameLeng < res.data.responseData.length; nameLeng++) { //실험군 명도 바인딩해준다.
+          this.images[nameLeng].testName = res.data.responseData[nameLeng].testName;
         }
+        console.log('실험군명바인딩한 detailInfo', this.images)
 
-
-        //fullDatas = 3번
-        //fileInfo
-
-
-        // for (let top = 0; top < fullDatas.length; top++) {
-        //   for (let mid = 0; mid < fullDatas[top].fileInfo.length; mid++) {
-        //     let imagedata = fullDatas[top].fileInfo[mid]
-        //     console.log('이미지데이타', imagedata)
-        //     const contentType = "image/png";
-        //     const b64Data = imagedata[top].fileData;
-        //     const image_data = atob(b64Data);
-        //     const arraybuffer = new ArrayBuffer(image_data.length);
-        //     const view = new Uint8Array(arraybuffer);
-        //     for (let i = 0; i < image_data.length; i++) {
-        //       view[i] = image_data.charCodeAt(i) & 0xff;
-        //     }
-        //     const blob = new Blob([arraybuffer], { type: contentType });
-        //     const blobUrl = URL.createObjectURL(blob);
-        //     fullDatas[top].fileInfo[mid].fileData = blobUrl
-        //     console.log('풀데이타', fullDatas[top].fileInfo[mid].fileData)
-        //   }
-        // }
-
-        console.log('블롭블롭블롭블롭블롭', fullDatas)
-
-
-
-
-
-
-        // this.images = res.data.responseData
-        // let res = res.data.responseData
-        // console.log('res', this.images)
-
-        // let testNames = _.map(res, 'testNames') //testNames 만 배열로 뽑는다.
-        // console.log('테스트네임스 확인', testNames)
-
-
-
-        // // for (let top = 0; top < res.length; top++) { 
-
-        // // }
 
 
 
@@ -238,6 +233,101 @@ export default {
 
 
     },
+    getImageList() {
+      let ids = _.map(this.selected, 'growthReportId')
+      if (this.sortImgValue) {
+        console.log('최근순 정렬합니다.')
+        let item = {
+          growthReportIds: ids,
+          sortBy: 'asc'
+        }
+        api.growthresearch.GetGrowthResearchOriginImageList(item).then((res) => {
+          console.log('이미지갤러리 조회성공', res)
+
+          let detailInfo = res.data.responseData[0].detailInfo
+          console.log('detailInfo detailInfo', detailInfo)
+          console.log('detailInfo detailInfo', detailInfo.length)
+
+          for (let top = 0; top < detailInfo.length; top++) {  //detailInfo의 length
+            for (let middle = 0; middle < detailInfo[top].fileInfo.length; middle++) {  //detailInfo의 length의 fileInfo의 length
+
+              let images = []
+              let imagedata = detailInfo[top].fileInfo[middle]
+              const contentType = "image/png";
+              const b64Data = imagedata.fileData;
+              const image_data = atob(b64Data);
+              const arraybuffer = new ArrayBuffer(image_data.length);
+              const view = new Uint8Array(arraybuffer);
+              for (let i = 0; i < image_data.length; i++) {
+                view[i] = image_data.charCodeAt(i) & 0xff;
+              }
+              const blob = new Blob([arraybuffer], { type: contentType }); // base64 -> blob
+              const blobUrl = URL.createObjectURL(blob);
+              console.log('블롭블롭', blobUrl)
+              detailInfo[top].fileInfo[middle].fileData = blobUrl
+            }
+
+            console.log('블롭화한 디테일인포', detailInfo)
+            this.images = detailInfo
+          }
+
+          for (let nameLeng = 0; nameLeng < res.data.responseData.length; nameLeng++) { //실험군 명도 바인딩해준다.
+            this.images[nameLeng].testName = res.data.responseData[nameLeng].testName;
+          }
+          console.log('실험군명바인딩한 detailInfo', this.images)
+
+
+
+
+
+
+
+
+
+        })
+      } else {
+        console.log('오로된순 정렬합니다.')
+        let item = {
+          growthReportIds: ids,
+          sortBy: 'dsc'
+        }
+        api.growthresearch.GetGrowthResearchOriginImageList(item).then((res) => {
+          console.log('이미지갤러리 조회성공', res)
+
+          let detailInfo = res.data.responseData[0].detailInfo
+          console.log('detailInfo detailInfo', detailInfo)
+          console.log('detailInfo detailInfo', detailInfo.length)
+
+          for (let top = 0; top < detailInfo.length; top++) {  //detailInfo의 length
+            for (let middle = 0; middle < detailInfo[top].fileInfo.length; middle++) {  //detailInfo의 length의 fileInfo의 length
+
+              let images = []
+              let imagedata = detailInfo[top].fileInfo[middle]
+              const contentType = "image/png";
+              const b64Data = imagedata.fileData;
+              const image_data = atob(b64Data);
+              const arraybuffer = new ArrayBuffer(image_data.length);
+              const view = new Uint8Array(arraybuffer);
+              for (let i = 0; i < image_data.length; i++) {
+                view[i] = image_data.charCodeAt(i) & 0xff;
+              }
+              const blob = new Blob([arraybuffer], { type: contentType }); // base64 -> blob
+              const blobUrl = URL.createObjectURL(blob);
+              console.log('블롭블롭', blobUrl)
+              detailInfo[top].fileInfo[middle].fileData = blobUrl
+            }
+
+            console.log('블롭화한 디테일인포', detailInfo)
+            this.images = detailInfo
+          }
+
+          for (let nameLeng = 0; nameLeng < res.data.responseData.length; nameLeng++) { //실험군 명도 바인딩해준다.
+            this.images[nameLeng].testName = res.data.responseData[nameLeng].testName;
+          }
+          console.log('실험군명바인딩한 detailInfo', this.images)
+        })
+      }
+    }
   },
 };
 </script>
