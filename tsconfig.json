@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "types": ["vuetify", "vue-jwt-decode"],
+    "types": ["vuetify"],
     "target": "es5",
     "module": "es6",
     "noImplicitAny": true,

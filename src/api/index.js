@@ -16,6 +16,8 @@ import storage from "./service/storage";
 import warehousingPrice from "./service/warehousingPrice";
 import smartfarm from "./service/smartfarm";
 import growthresearch from "./service/growthresearch";
+import production from "./service/production";
+import facility from "./service/facility";
 
 export {
   bom,
@@ -36,4 +38,6 @@ export {
   warehousingPrice,
   smartfarm,
   growthresearch,
+  production,
+  facility,
 };

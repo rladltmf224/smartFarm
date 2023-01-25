@@ -644,14 +644,25 @@ export default {
       api.smartfarm
         .waterECpHInfo(item)
         .then((res) => {
-          console.log("통신후", res.data);
-          console.log("통신후 데이타만있는거", res.data.responseData);
-          this.loading = false; //로딩바
-          this.datas = res.data.responseData;
-          this.totalData = res.totalCount;
+          console.log("통신후", res);
+          if (res.status == 200) {
+            console.log("통신후 데이타만있는거", res.data.responseData);
+            this.loading = false; //로딩바
+            this.datas = res.data.responseData;
+            this.totalData = res.totalCount;
+          } else {
+            console.log("통신후 데이타만있는거", res.data.responseData);
+            this.loading = false; //로딩바
+            this.$swal.fire(
+              "ERROR",
+              "서버와 통신이 원활하지않습니다.",
+              "ERROR"
+            );
+          }
         })
         .catch((error) => {
           console.log("에러입니다.");
+          this.loading = false; //로딩바
 
           console.log(error);
         });

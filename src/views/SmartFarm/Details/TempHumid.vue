@@ -34,6 +34,7 @@
                       v-model="s_date"
                       @input="menu1 = false"
                       no-title
+                      :max="e_date"
                     ></v-date-picker>
                   </v-menu>
                 </v-col>
@@ -69,7 +70,6 @@
                       v-model="e_date"
                       @input="menu2 = false"
                       :min="s_date"
-                      :max="date"
                     ></v-date-picker>
                   </v-menu>
                 </v-col>

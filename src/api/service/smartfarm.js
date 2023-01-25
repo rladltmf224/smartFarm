@@ -37,8 +37,15 @@ export default {
       params: params,
     }),
   getEquipmentInfo: () => AuthAPI.get("/api/equipment/info"),
-  editEquipmentInfo: (item) =>
-    AuthAPI.put("/api/equipment/info", JSON.stringify(item), {
+  getEquipmentlist: (item) => AuthAPI.get("/api/equipment/equipment",{params:item}),
+  getRoomlist: () => AuthAPI.get("/api/equipment/room"),
+  editEquipmentCtrl: (item) => {
+    return AuthAPI.put("/api/equipment/control", JSON.stringify(item), {
+      headers: { "Content-Type": "application/json" },
+    });
+  },
+  editEquipmentSetting: (item) =>
+    AuthAPI.put("/api/equipment/setting", JSON.stringify(item), {
       headers: { "Content-Type": "application/json" },
     }),
   getEquipmentHistory: (params) =>
