@@ -289,14 +289,12 @@ export default {
         console.log('오로된순 정렬합니다.')
         let item = {
           growthReportIds: ids,
-          sortBy: 'dsc'
+          sortBy: 'desc'
         }
         api.growthresearch.GetGrowthResearchOriginImageList(item).then((res) => {
           console.log('이미지갤러리 조회성공', res)
 
           let detailInfo = res.data.responseData[0].detailInfo
-          console.log('detailInfo detailInfo', detailInfo)
-          console.log('detailInfo detailInfo', detailInfo.length)
 
           for (let top = 0; top < detailInfo.length; top++) {  //detailInfo의 length
             for (let middle = 0; middle < detailInfo[top].fileInfo.length; middle++) {  //detailInfo의 length의 fileInfo의 length
