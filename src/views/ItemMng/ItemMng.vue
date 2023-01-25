@@ -192,7 +192,7 @@ export default class Item extends Vue {
         .then((response) => {
           console.log("updateItemList", response);
           this.alertResult(response.data.isSuccess);
-          this.$emit("closeModal", false);
+          this.closeModal();
         })
         .catch((error) => {
           console.log(error);
@@ -203,7 +203,7 @@ export default class Item extends Vue {
         .then((response) => {
           console.log("createCustomerItem", response);
           this.alertResult(response.data.isSuccess);
-          this.$emit("closeModal", false);
+          this.closeModal();
         })
         .catch((error) => {
           console.log(error);
@@ -263,18 +263,7 @@ export default class Item extends Vue {
       });
   }
 
-  deleteItem(item: any) {
-    api.item
-      .deleteItemList(item)
-      .then((response) => {
-        this.getCustomer();
-        this.$swal.fire("성공", "삭제되었습니다.", "success");
-        console.log("getCustomerList", response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
+  deleteItem(item: any) {}
 
   openModal() {
     this.itemDialog = true;
@@ -341,6 +330,20 @@ export default class Item extends Vue {
       })
       .then((result) => {
         if (result.isConfirmed) {
+          api.item
+            .deleteItemList(deleteItem)
+            .then((response) => {
+              if (response.status == 200) {
+                this.getCustomer();
+                this.$swal.fire("성공", "삭제되었습니다.", "success");
+                console.log("getCustomerList", response);
+              } else {
+                this.$swal.fire("실패", "관리자에게 문의바랍니다.", "error");
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
           this.deleteItem(deleteItem);
         }
       });

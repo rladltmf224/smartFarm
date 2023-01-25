@@ -187,7 +187,7 @@
                 </v-row>
               </v-card-text>
             </v-card> -->
-            <v-card class="mb-4" elevation="4">
+            <!-- <v-card class="mb-4" elevation="4">
               <v-card-text>
                 <v-data-table
                   height="200"
@@ -212,20 +212,42 @@
                   </v-icon>
                 </template>
               </v-card-text>
-            </v-card>
+            </v-card> -->
             <v-card elevation="4">
               <v-card-text>
                 <v-row dense class="align-self-center">
+                  <v-col cols="3">
+                    <v-autocomplete
+                      v-model="selectItem"
+                      :items="itemList"
+                      item-value="id"
+                      item-text="name"
+                      dense
+                      label="품종"
+                    ></v-autocomplete>
+                  </v-col>
                   <v-col cols="2">
-                    <v-select :items="objectList" label="목적" dense></v-select>
+                    <v-text-field
+                      v-model="selectItemCount"
+                      label="갯수"
+                      type="number"
+                      dense
+                    ></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row dense class="align-self-center">
                   <v-col cols="2">
-                    <v-select :items="objectList" label="목적" dense></v-select>
+                    <v-select
+                      :items="objectList"
+                      item-value="value"
+                      item-text="name"
+                      label="목적"
+                      dense
+                    ></v-select>
                   </v-col>
                   <v-col cols="2">
                     <v-select
+                      v-model="selectOperation"
                       :items="operationReqList"
                       label="공정"
                       dense
@@ -235,11 +257,61 @@
                     <v-btn color="primary" small>공정등록</v-btn>
                   </v-col>
                   <v-col cols="2">
-                    <v-select
+                    <v-menu
+                      ref="deadDate"
+                      v-model="deadDate"
+                      :close-on-content-click="false"
+                      :return-value.sync="deadDate"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="deadDate"
+                          label="마감일"
+                          prepend-icon="mdi-calendar"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                          dense
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="deadDate"
+                        no-title
+                        scrollable
+                        locale="ko-KR"
+                        :min="search_condition.endDate"
+                      >
+                        <v-spacer></v-spacer>
+                        <v-btn text color="primary" @click="startDate = false">
+                          취소
+                        </v-btn>
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="s_date_search(search_condition.startDate)"
+                        >
+                          확인
+                        </v-btn>
+                      </v-date-picker>
+                    </v-menu>
+                  </v-col>
+                  <v-col cols="2">
+                    <v-chip
+                      v-for="data in selectEquipData_regi"
+                      label
+                      color="success"
+                      :key="data.facilityDetailId"
+                    >
+                      {{ data.name }}
+                    </v-chip>
+                    <!-- <v-select
                       :items="operationReqList"
                       label="시설"
                       dense
-                    ></v-select>
+                    ></v-select> -->
                   </v-col>
                   <v-col cols="1">
                     <v-btn color="primary" small @click="openModal_equipment"
@@ -279,13 +351,22 @@
           </v-card-title>
           <v-card-text>
             <!-- 발아실 -->
-            <v-card class="mb-4">
+            <v-card
+              v-for="(el, index) in equipmentList"
+              :key="index"
+              class="mb-4"
+            >
+              <v-card-title>
+                {{ el.facilityName }}
+              </v-card-title>
               <v-card-text>
                 <v-item-group multiple :value="selectEquipData">
-                  <v-row class="d-flex justify-space-between">
-                    <v-item v-for="(n, i) in germination_arr" :key="i">
+                  <v-row class="d-flex justify-space-around">
+                    <v-item v-for="n in el.details" :key="n.facilityDetailId">
                       <v-card
-                        :color="n.use ? 'success' : n.active ? 'primary' : ''"
+                        :color="
+                          n.use ? 'success' : n.active ? 'primary' : 'normal'
+                        "
                         class="d-flex align-center text-center"
                         dark
                         height="200"
@@ -296,60 +377,7 @@
                           <div>
                             <span class="text-h6">{{ n.name }}</span>
                           </div>
-                          <div><span>상세정보</span></div>
-                        </v-card-text>
-                      </v-card>
-                    </v-item>
-                  </v-row>
-                </v-item-group>
-              </v-card-text>
-            </v-card>
-
-            <!-- 활착실 -->
-            <v-card class="mb-4">
-              <v-card-text>
-                <v-item-group multiple :value="selectEquipData">
-                  <v-row class="d-flex justify-space-between">
-                    <v-item v-for="(n, i) in survival_arr" :key="i">
-                      <v-card
-                        :color="n.use ? 'success' : n.active ? 'primary' : ''"
-                        class="d-flex align-center text-center"
-                        dark
-                        height="200"
-                        width="150"
-                        @click="toggleEquip(n)"
-                      >
-                        <v-card-text>
-                          <div>
-                            <span class="text-h6">{{ n.name }}</span>
-                          </div>
-                          <div><span>상세정보</span></div>
-                        </v-card-text>
-                      </v-card>
-                    </v-item>
-                  </v-row>
-                </v-item-group>
-              </v-card-text>
-            </v-card>
-            <!-- 육묘실 -->
-            <v-card elevation="4">
-              <v-card-text>
-                <v-item-group multiple :value="selectEquipData">
-                  <v-row class="d-flex justify-space-between">
-                    <v-item v-for="(n, i) in seeding_arr" :key="i">
-                      <v-card
-                        :color="n.use ? 'success' : n.active ? 'primary' : ''"
-                        class="d-flex align-center text-center"
-                        dark
-                        height="200"
-                        width="200"
-                        @click="toggleEquip(n)"
-                      >
-                        <v-card-text>
-                          <div>
-                            <span class="text-h6">{{ n.name }}</span>
-                          </div>
-                          <div><span>상세정보</span></div>
+                          <div><span v-if="n.use">상세정보</span></div>
                         </v-card-text>
                       </v-card>
                     </v-item>
@@ -379,16 +407,27 @@ import * as api from "@/api";
 import cfg from "./config";
 import { gridCfg } from "@/util/config";
 import { Component, Vue, Watch } from "vue-property-decorator";
+import _ from "lodash";
 
 @Component
 export default class OperationMng extends Vue {
   selectEquipData: any[] = [];
+  selectEquipData_regi: any[] = [];
   startDate: any = "";
   endDate: any = "";
+  deadDate: any = "";
   search_condition: any = {};
   operationOpt: any;
   operationRegiOpt: any;
-  objectList: any[] = [];
+  itemList: any[] = [];
+  selectItem: any = 0;
+  selectItemCount: number = 0;
+  selectOperation: any = 0;
+  objectList: any[] = [
+    { name: "납품", value: "납품" },
+    { name: "실험", value: "실험" },
+    { name: "기타", value: "기타" },
+  ];
 
   operationOrderList: any[] = [
     { equipment: "" },
@@ -398,6 +437,7 @@ export default class OperationMng extends Vue {
   operationReqList: any[] = [{ equipment: "" }, { edit: "" }, { delete: "`" }];
   operation_modal: boolean = false;
   equipment_modal: boolean = false;
+  equipmentList: any[] = [];
   operation_modal_mode: string = "C";
   germination_arr: any[] = [
     { name: "육묘다이1", use: true, active: true },
@@ -444,6 +484,21 @@ export default class OperationMng extends Vue {
   created() {
     this.operationOpt = Object.assign({}, gridCfg);
     this.operationRegiOpt = Object.assign({}, gridCfg);
+    this.getItemList();
+  }
+
+  getItemList() {
+    let reqData = {
+      page: 1,
+      size: 9999,
+      sortBy: [],
+      sortDesc: [false],
+    };
+
+    api.item.getItemList(reqData).then((res) => {
+      console.log("getItemList", res);
+      this.itemList = res.data.responseData;
+    });
   }
 
   toggleEquip(btnData: any) {
@@ -451,7 +506,16 @@ export default class OperationMng extends Vue {
     if (btnData.use) {
       return;
     }
-    return (btnData.active = !btnData.active);
+    btnData.active = !btnData.active;
+    if (btnData.active) {
+      this.selectEquipData.push(btnData);
+    } else {
+      this.selectEquipData = this.selectEquipData.filter(
+        (element) => element.facilityDetailId !== btnData.facilityDetailId
+      );
+    }
+
+    return;
   }
 
   s_date_search(v: any) {
@@ -463,6 +527,13 @@ export default class OperationMng extends Vue {
   }
 
   e_date_search(v: any) {
+    this.search_condition.endDate = v;
+    this.endDate = false;
+    let endDate: any = this.$refs.endDate;
+    endDate.save(v);
+  }
+
+  dead_date_search(v: any) {
     this.search_condition.endDate = v;
     this.endDate = false;
     let endDate: any = this.$refs.endDate;
@@ -496,30 +567,62 @@ export default class OperationMng extends Vue {
 
   openModal_equipment() {
     this.equipment_modal = true;
+    this.selectEquipData = _.cloneDeep(this.selectEquipData_regi);
+    api.facility.getFacilityList().then((res) => {
+      console.log("getFacilityList", res);
+      res.data.responseData.forEach((element: any) => {
+        element.details.forEach((element_sub: any) => {
+          element_sub.name = element.facilityName + element_sub.serialNumbers;
+          element_sub.use = element_sub.productionId !== null ? true : false;
+          if (
+            _.filter(this.selectEquipData_regi, {
+              facilityDetailId: element_sub.facilityDetailId,
+            }).length !== 0
+          ) {
+            element_sub.active = true;
+          } else {
+            element_sub.active = false;
+          }
+        });
+      });
+      this.equipmentList = res.data.responseData;
+
+      console.log("equipmentList", this.equipmentList);
+    });
   }
 
   closeModal_equipment() {
     this.equipment_modal = false;
+    this.selectEquipData = [];
   }
 
   closeModal_operation() {
     this.operation_modal = false;
+    this.selectEquipData_regi = [];
+    this.selectItem = 0;
+    this.selectItemCount = 0;
+    this.selectOperation = 0;
   }
 
   saveOperationInfo(data: any) {
     let reqData = {
-      itemId: data.itemId,
-      processId: data.processId,
-      counts: data.counts,
+      itemId: this.selectItem,
+      processId: this.selectOperation,
+      counts: this.selectItemCount,
       productionDate: data.productionDate,
-      facilityDetailIds: data.facilityDetailIds,
+      facilityDetailIds: this.selectEquipData_regi.map((el) => {
+        return el.facilityDetailId;
+      }),
     };
 
     api.production.postProdutionData(reqData).then((res) => {
       console.log("res", res);
     });
   }
-  saveEquipmentInfo() {}
+  saveEquipmentInfo() {
+    this.equipment_modal = false;
+    this.selectEquipData_regi = _.cloneDeep(this.selectEquipData);
+  }
 
   createItem() {
     this.operation_modal = true;

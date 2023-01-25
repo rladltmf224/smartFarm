@@ -256,6 +256,15 @@
               hide-default-footer
               class="elevation-1"
             >
+              <template v-slot:[`item.currentStatus`]="{ item }">
+                <div
+                  class="mr-1"
+                  :class="{
+                    on: item.currentStatus === 'ON',
+                    off: item.currentStatus === 'OFF',
+                  }"
+                ></div>
+              </template>
               <template v-slot:[`item.controlStatus`]="{ item }">
                 <v-btn-toggle mandatory v-model="item.controlStatus" disabled>
                   <v-btn
@@ -299,8 +308,7 @@
                   class="d-flex"
                   v-if="
                     item.equipmentName == 'LED-1' ||
-                    item.equipmentName == 'LED-2' ||
-                    item.equipmentName == '환기팬'
+                    item.equipmentName == 'LED-2'
                   "
                 >
                   <form class="d-flex align-center">
@@ -364,6 +372,59 @@
                   class="d-flex align-center"
                   style="width: 300x"
                   v-if="item.equipmentName == '가습기'"
+                >
+                  <div class="" style="width: 108px">
+                    <v-text-field
+                      dense
+                      v-model="item.minValue"
+                      min="1"
+                      max="100"
+                      type="number"
+                      suffix="%"
+                      @change="changeValue(item)"
+                    ></v-text-field>
+                  </div>
+
+                  <p class="pt-6 px-4">~</p>
+                  <div class="" style="width: 108px">
+                    <v-text-field
+                      dense
+                      min="1"
+                      max="100"
+                      type="number"
+                      suffix="%"
+                      v-model="item.maxValue"
+                      @change="changeValue(item)"
+                    ></v-text-field>
+                  </div>
+
+                  <v-btn
+                    class="ml-3 mt-2 mr-3"
+                    v-if="!item.modifiedBtn"
+                    @click="editValue(item)"
+                    >수정</v-btn
+                  >
+
+                  <v-btn
+                    class="ml-3 mt-2 mr-3"
+                    v-if="item.modifiedBtn"
+                    @click="saveChangeValue(item)"
+                    small
+                    >저장</v-btn
+                  >
+                  <v-btn
+                    class="ml-3 mt-2 mr-3"
+                    v-if="item.modifiedBtn"
+                    @click="cancelChangeValue(item)"
+                    small
+                    >취소</v-btn
+                  >
+                </div>
+                <!--환기팬부분 -->
+                <div
+                  class="d-flex align-center"
+                  style="width: 300x"
+                  v-if="item.equipmentName == '환기팬'"
                 >
                   <div class="" style="width: 108px">
                     <v-text-field
@@ -701,7 +762,14 @@ export default {
           width: "4%",
         },
         {
-          text: "상태",
+          text: "장비상태",
+          value: "currentStatus",
+          sortable: false,
+          width: "2%",
+          align: "center",
+        },
+        {
+          text: "제어상태",
           value: "controlStatus",
           sortable: false,
           width: "2%",
@@ -944,6 +1012,12 @@ export default {
         this.bala_data = res.data.responseData;
         this.roomName_control = data.roomName;
         this.control_modal = true;
+      });
+    },
+    getRoomData() {
+      api.smartfarm.getRoomData().then((res) => {
+        console.log("getRoomData", res);
+        this.cards = res.data.responseData;
       });
     },
     openAlarmSetting(roomData) {
@@ -1189,15 +1263,13 @@ export default {
         numOfRows: encodeURIComponent(36), //12시간의 데이터= 1시간
         dataType: encodeURIComponent("JSON"),
         base_date: encodeURIComponent(baseDate),
-        base_time: encodeURIComponent(
-          `${baseTime.toString().padStart(2, "0")}00`
-        ),
+        base_time: encodeURIComponent(`1655`),
         nx: encodeURIComponent("62"),
         ny: encodeURIComponent("119"),
       };
       axios
         .get(
-          "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst",
+          "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst",
           {
             headers: { "Content-Type": "text/xml;charset=UTF-8" },
             params: reqData,
