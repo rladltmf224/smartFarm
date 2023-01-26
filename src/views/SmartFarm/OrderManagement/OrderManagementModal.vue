@@ -64,7 +64,7 @@
                                             </v-menu>
                                         </v-col>
                                         <v-col cols="2" class="pa-0 pl-2 mr-2">
-                                            <v-text-field class="" label="거래처" v-model="accountName" disabled
+                                            <v-text-field class="" label="거래처" v-model="customerName" disabled
                                                 tabindex="6"></v-text-field>
                                         </v-col>
                                         <v-menu v-model="menuLoad" :close-on-content-click="false" :nudge-width="400"
@@ -205,16 +205,15 @@
                                     </template>
                                     <!-- 납품예정일 -->
                                     <template v-slot:item.expectedDeliveryDate="props">
-                                        <v-menu v-model="props.item.menu_expectedDeliveryDate"
-                                            :close-on-content-click="false" :nudge-right="40"
+                                        <v-menu :close-on-content-click="false" :nudge-right="40"
                                             transition="scale-transition" offset-y min-width="auto">
                                             <template v-slot:activator="{ on, attrs }">
                                                 <v-text-field v-model="props.item.expectedDeliveryDate" label="납품예정일"
                                                     prepend-icon="mdi-calendar" readonly v-bind="attrs"
                                                     v-on="on"></v-text-field>
                                             </template>
-                                            <v-date-picker no-title v-model="props.item.expectedDeliveryDate"
-                                                @input="props.item.menu_expectedDeliveryDate = false"></v-date-picker>
+                                            <v-date-picker no-title
+                                                v-model="props.item.expectedDeliveryDate"></v-date-picker>
                                         </v-menu>
                                     </template>
                                     <!-- 비고(메모) -->
@@ -241,7 +240,8 @@
                         <v-container fluid>
                             <v-row class="d-flex align-center">
                                 <v-col cols="12" class=" pa-0 d-flex align-center pt-6">
-                                    <v-text-field class="" label="요청사항" v-model="request" tabindex="6"></v-text-field>
+                                    <v-text-field class="" label="요청사항" v-model="order.request"
+                                        tabindex="6"></v-text-field>
                                 </v-col>
                             </v-row>
                         </v-container>
@@ -303,11 +303,13 @@ export default class OrderManagementModal extends Vue {
     order: any =
         {
             orderDate: "2023-01-13",  //수주일자
-            orderNum: 0, //수주번호
+            // orderNum: 0, //수주번호
             deliveryDate: '', //납품예정일
-            accountName: '' //거래처 
+            customerId: '',//거래처 고유아이디 
+            request: '',
+            details: [] //수주품목의 디테일
         }
-
+    customerName: '' //거래처 이름    
     request: string = ''; //요청사항
     itemData: any[] = []; //수주정보 상세조회 resData
 
@@ -764,14 +766,31 @@ export default class OrderManagementModal extends Vue {
     // }
     complete() { //최종 수주 등록
 
-        console.log('최종수주등록 리퀘스트바디', this.order)
-        let body = {
 
+
+
+        this.order.details = this.itemDetail
+
+
+
+        for (let i = 0; i < this.order.details.length; i++) { //this.order.details의itemName을 뺀다 (백엔드요청)
+            delete this.order.details[i].itemName
         }
 
-        // api.order.saveOrderInfo(body).then((res: any) => {
 
-        // })
+
+
+
+
+
+
+        console.log('최종수주등록 리퀘스트바디', this.order)
+
+        let body = this.order
+
+        api.order.saveOrderInfo(body).then((res: any) => {
+            console.log('수주정보 등록 api 성공', res)
+        })
 
 
     }
@@ -1088,7 +1107,6 @@ export default class OrderManagementModal extends Vue {
     }
     aboutTemp(event: any, item: any) {
         this.itemDetail = [];
-
         this.interimStorage = false;
         this.orderData.name = item.name;
         //customer 변수 확인 필요
@@ -1114,7 +1132,8 @@ export default class OrderManagementModal extends Vue {
     }
 
     cloneItem(item: any) { //거래처 명 클릭 시 
-        this.accountName = item.customerName
+        this.order.customerId = item.customerId
+        this.customerName = item.customerName
         this.getItems()
     }
     closeMenuLoadCard(event: any, item: any) { //그냥 닫기 클릭 시 
