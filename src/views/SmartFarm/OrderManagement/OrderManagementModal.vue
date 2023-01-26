@@ -36,7 +36,7 @@
                                         </v-col>
 
                                         <v-col cols="2" class="pa-0 pl-2 mr-2" v-show="change">
-                                            <v-text-field class="" label="수주번호:193871" disabled v-model="order.orderNum"
+                                            <v-text-field class="" label="수주번호" disabled v-model="order.orderNum"
                                                 tabindex="6"></v-text-field>
                                         </v-col>
 
@@ -173,17 +173,6 @@
                                     </template>
                                 </v-data-table>
                                 <!-- 등록버젼일때 -->
-
-
-
-
-
-
-
-
-
-
-
                                 <v-data-table multi-sort class="ml-2 mr-2 overflow-scroll elevation-4" fixed-header
                                     height="180" :headers="selectedheaders" :items="itemTable" return-object
                                     item-key="id" disable-pagination hide-default-footer dense v-show="!change">
@@ -225,7 +214,8 @@
                                     </template>
                                     <!-- 삭제 -->
                                     <template v-slot:item.delete="props">
-                                        <v-btn icon @click="minus()">
+                                        <!-- <p>{{ props.item }}</p> -->
+                                        <v-btn icon @click="minus(props.item)">
                                             <v-icon small class="mr-2">
                                                 mdi-trash-can-outline
                                             </v-icon>
@@ -240,7 +230,7 @@
                         <v-container fluid>
                             <v-row class="d-flex align-center">
                                 <v-col cols="12" class=" pa-0 d-flex align-center pt-6">
-                                    <v-text-field class="" label="요청사항" v-model="order.request"
+                                    <v-text-field class="" label="요청사항" v-model="order.memo"
                                         tabindex="6"></v-text-field>
                                 </v-col>
                             </v-row>
@@ -250,6 +240,9 @@
                                 <v-col class="text-right">
                                     <v-btn class="mr-1" v-show="!change" color="primary" @click="complete()">
                                         수주등록
+                                    </v-btn>
+                                    <v-btn class="mr-1" v-show="change" color="primary" @click="edit()">
+                                        수주수정
                                     </v-btn>
                                     <v-btn class="closeBtn" color="primary" text @click="openModal = false">
                                         닫기
@@ -266,9 +259,10 @@
 <script lang="ts">
 import * as api from "@/api";
 import cfg from "./config/index";
-import _ from "lodash";
+import _, { functionsIn } from "lodash";
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import { checkPropertyChange } from "json-schema";
+import { it } from "node:test";
 
 @Component
 export default class OrderManagementModal extends Vue {
@@ -303,10 +297,10 @@ export default class OrderManagementModal extends Vue {
     order: any =
         {
             orderDate: "2023-01-13",  //수주일자
-            // orderNum: 0, //수주번호
+            orderNum: '', //수주번호
             deliveryDate: '', //납품예정일
             customerId: '',//거래처 고유아이디 
-            request: '',
+            memo: '',
             details: [] //수주품목의 디테일
         }
     customerName: '' //거래처 이름    
@@ -336,7 +330,7 @@ export default class OrderManagementModal extends Vue {
     itemList: any[] = [];
     search: string = "";
     searchlist: any[] = [];
-    selectedProduct: [] = [];
+    selectedProduct: [{ itemId?: number, itemName?: string }];
     itemDetail: any[] = [];
     selected: [] = [];
     interimStorage: boolean = false;
@@ -350,6 +344,8 @@ export default class OrderManagementModal extends Vue {
     @Prop({ required: true }) open: boolean;
     @Prop({ required: true }) change: boolean;
     @Prop({ required: true }) orderInfoId: any;
+    @Prop({ required: true }) orderInfo: any;
+
     @Prop({
         required: true,
         default: () => {
@@ -435,26 +431,30 @@ export default class OrderManagementModal extends Vue {
 
     @Watch("orderInfoId") //orderInfoId로 수주 정보 상세 조회 api 연결함.
     getOrderInfoId() {
-
+        console.log('오더넘', this.order.orderNum)
         this.order.orderNum = this.orderInfoId //수주번호를 바인딩
 
 
+
+
+
         this.getData()
-
-        // let id = {
-        //     orderInfoId: this.orderInfoId
-        // }
-
-
-        // api.order.getOrderInfoDetail(id).then((res) => {
-        //     console.log('수주정보 상세조회 성공', res)
-        //     this.itemData = res.data.responseData
-        //     console.log(this.order.orderNum, '오더넘오더넘오더넘')
-        //     console.log(res.data.responseData.orderInfoDetailId, 'orderInfoDetailId')
-        //     this.order.orderNum = res.data.responseData.orderInfoDetailId //수주번호를 바인딩
-
-        // })
     }
+
+
+    @Watch("orderInfo") //부모에서 받은 orderInfo
+    getOrderInfo() {
+        console.log('오더인포', this.orderInfo)
+        console.log('오더', this.order)
+        if (this.change) {
+            this.customerName = this.orderInfo.customerName
+            this.order.memo = this.orderInfo.memo
+        }
+
+
+    }
+
+
 
 
 
@@ -468,9 +468,22 @@ export default class OrderManagementModal extends Vue {
         return this.open;
     }
     set openModal(val: any) {
-        this.order.orderNum = 0
-        this.itemData = []
-        this.$emit("closeModal", false);
+        if (this.change) {
+            console.log('등록버젼입니다.')
+            this.order = []
+            this.itemData = []
+            this.$emit("closeModal", false);
+        } else if (!this.change) {
+            console.log('수정버젼입니다.')
+            this.order.orderNum = 0
+            this.order = []
+            this.itemData = []
+            this.$emit("closeModal", false);
+        }
+
+
+
+
     }
     get customerData() {
         return this.customerList;
@@ -612,9 +625,9 @@ export default class OrderManagementModal extends Vue {
         }
     }
     plus() {
-
-        console.log('선택된품목', this.selectedProduct)
-        if (this.selectedProduct.length == 0) {
+        let selectedProductLength: number = this.selectedProduct.length
+        console.log('selectedProductLength', this.selectedProduct.length)
+        if (selectedProductLength == 0) {
             this.$swal({
                 title: "품목이 선택되지 않았습니다.",
                 icon: "warning",
@@ -625,9 +638,11 @@ export default class OrderManagementModal extends Vue {
                 timer: 1500,
             });
         } else {
-            if (this.selectedProduct.length != 0) {
-                let totalID: any = _.map(this.itemDetail, "itemId");
+            console.log('selectedProduct', this.selectedProduct)
+            console.log('itemDetail', this.itemDetail)
 
+            if (this.itemDetail.length == 0) {
+                let totalID: any = _.map(this.itemDetail, "itemId");
                 for (var i = 0; i < this.selectedProduct.length; i++) {
                     let plusItem: any = this.selectedProduct[i];
                     if (totalID.includes(plusItem.id)) continue;
@@ -638,36 +653,76 @@ export default class OrderManagementModal extends Vue {
                     plusItem["memo"] = null;
                     this.itemDetail.push(plusItem);
                 }
-                console.log('플러스아이템', this.itemDetail)
+            } else {
+                let dupYN: boolean = false
+                let origin: any[] = this.selectedProduct
+                let anys: any[] = this.itemDetail
+                origin.forEach(function (el) {
+                    anys.forEach(function (el2) {
+                        if (el == el2) {
+                            dupYN = true
+                        }
+                    })
+                })
 
-                this.selectedProduct = [];
+                if (dupYN) {
+                    this.$swal({
+                        title: "중복입니다.",
+                        icon: "warning",
+                        position: "top",
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                        toast: true,
+                        timer: 1500,
+                    });
+                } else {
+                    let totalID: any = _.map(this.itemDetail, "itemId");
+                    for (var i = 0; i < this.selectedProduct.length; i++) {
+                        let plusItem: any = this.selectedProduct[i];
+                        if (totalID.includes(plusItem.id)) continue;
+                        //plusItem["id"] = plusItem["id"];
+                        plusItem["quantity"] = null;
+                        plusItem["expectedDeliveryDate"] = null;
+                        plusItem["supplyUnitPrice"] = null;
+                        plusItem["memo"] = null;
+                        this.itemDetail.push(plusItem);
+                    }
+                }
             }
+
+
+
+
+
+
+
         }
     }
-    minus() {
+    minus(item: any) {
+
+
+
+
+        console.log('itemitemitemitemitemitem', item)
+        console.log('orderorderorderorder', this.order)
         console.log('itemTableitemTableitemTable', this.itemDetail)
-        if (this.orderData.details.length == 0) {
-            this.$swal({
-                title: "취소시킬 원자재가 선택되지 않았습니다.",
-                icon: "warning",
-                position: "top",
-                showCancelButton: false,
-                showConfirmButton: false,
-                toast: true,
-                timer: 1500,
-            });
-        } else {
-            if (this.orderData.details.length != 0) {
-                let removeID: any = [];
-                for (var i = 0; i < this.orderData.details.length; i++) {
-                    removeID.push(this.orderData.details[i].id);
-                }
-                this.itemDetail = _.reject(this.itemDetail, function (o) {
-                    return removeID.includes(o.id);
-                });
-                this.orderData.details = [];
+
+        for (let i = 0; i < this.itemDetail.length; i++) {
+            if (this.itemDetail[i].itemId === item.itemId) {
+                this.itemDetail.splice(i, 1);
+                i--;
             }
         }
+
+
+
+
+
+
+
+
+
+
     }
     // complete() {
     //     this.selectedData = [];
@@ -765,36 +820,27 @@ export default class OrderManagementModal extends Vue {
     //     }
     // }
     complete() { //최종 수주 등록
-
-
-
-
         this.order.details = this.itemDetail
-
-
-
         for (let i = 0; i < this.order.details.length; i++) { //this.order.details의itemName을 뺀다 (백엔드요청)
             delete this.order.details[i].itemName
         }
-
-
-
-
-
-
-
-
-        console.log('최종수주등록 리퀘스트바디', this.order)
-
         let body = this.order
-
         api.order.saveOrderInfo(body).then((res: any) => {
             console.log('수주정보 등록 api 성공', res)
         })
-
-
     }
 
+    edit() {  //수주 정보 수정
+        console.log('수주 정보 수정', this.order)
+        this.order.details = this.itemDetail
+        for (let i = 0; i < this.order.details.length; i++) { //this.order.details의itemName을 뺀다 (백엔드요청)
+            delete this.order.details[i].itemName
+        }
+        let body = this.order
+        api.order.editOrderInfo(body).then((res: any) => {
+            console.log('수주정보 수정 성공', res)
+        })
+    }
 
 
 
@@ -905,7 +951,8 @@ export default class OrderManagementModal extends Vue {
 
         api.order.getOrderInfoDetail(id).then((res) => {
             console.log('수주정보 상세조회 성공', res)
-            this.itemData = res.data.responseData
+            this.itemDetail = res.data.responseData
+            this.order.memo = res.data.responseData.memo
         })
     }
 
@@ -1149,11 +1196,6 @@ export default class OrderManagementModal extends Vue {
             console.log(this.datas_simple, '데이타스심플데이타스심플데이타스심플')
         })
     }
-
-
-
-
-
 }
 </script>
 <style src="./OrderManagement.scss" lang="scss">

@@ -16,6 +16,7 @@ export default {
       { text: "수주번호", value: "orderInfoCode" },
       { text: "거래처", value: "customerName" },
       { text: "요청사항", value: "memo" },
+      { text: "상세", value: "detail" },
       { text: "수정", value: "edit" },
       { text: "삭제", value: "delete" },
     ],

@@ -18,7 +18,7 @@ export default {
   saveOrderInfo: (
     params //수주 정보 등록
   ) =>
-    AuthAPI.get("/api/orderinfo", JSON.stringify(params), {
+    AuthAPI.post("/api/orderinfo", JSON.stringify(params), {
       headers: { "Content-Type": "application/json" },
     }),
 
@@ -33,6 +33,13 @@ export default {
     params //수주 정보 등록 - 품목 조회
   ) =>
     AuthAPI.post("/api/orderinfo/item", JSON.stringify(params), {
+      headers: { "Content-Type": "application/json" },
+    }),
+
+  editOrderInfo: (
+    params //수주 정보 등록 - 품목 조회
+  ) =>
+    AuthAPI.put("/api/orderinfo/item", JSON.stringify(params), {
       headers: { "Content-Type": "application/json" },
     }),
 };
