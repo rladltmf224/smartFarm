@@ -9,7 +9,7 @@
                             <v-col cols="10">
                                 <v-row>
                                     <v-col cols="2">
-                                        <v-text-field label="수주번호" v-model="search_condition.order_num"
+                                        <v-text-field label="수주번호" v-model="search_condition.orderInfoCode"
                                             dense></v-text-field>
                                     </v-col>
                                     <v-col cols="2">
@@ -124,9 +124,6 @@
                         <v-col class="text-right" offset-md="7" md="3">
                             <v-btn small color="primary" @click="add()"><v-icon left>
                                     mdi-book-account </v-icon>수주 등록</v-btn>
-                            <!-- <v-btn class="ml-4" small color="primary"
-                ><v-icon left> mdi-microsoft-excel </v-icon>엑셀다운</v-btn
-              > -->
                         </v-col>
                     </v-row>
 
@@ -159,7 +156,7 @@
             </v-row>
         </v-container>
         <!-- 거래처 생성 모달 -->
-        <OrderManagementModal :open="orderDialog" :orderInfoId="orderInfoId" :change="change"
+        <OrderManagementModal :open="orderDialog" :orderInfoId="orderInfoId" :orderInfo="orderInfo" :change="change"
             :editedCustomerData="editedOrder" @closeModal="closeModal">
         </OrderManagementModal>
     </div>
@@ -207,7 +204,7 @@ export default class Customer extends Vue {
 
 
     search_condition: any = {
-        order_num: 13254,
+        orderInfoCode: '',
         order_startDate: "",
         order_endDate: "",
         delivery_startDate: "",
@@ -218,7 +215,9 @@ export default class Customer extends Vue {
     order_endDate: boolean = false;
     delivery_startDate: boolean = false;
     delivery_endDate: boolean = false;
+    orderInfo: [] = []; // 수주정보상세조회 orderInfo
     orderInfoId: number = 0; // 수주정보상세조회 orderInfoId
+
 
     // 2023-01-12
     change: boolean = false;
@@ -330,11 +329,9 @@ export default class Customer extends Vue {
         }
     }
     closeModal() {
-
         this.orderDialog = false;
         this.editedCustomer = Object.assign({}, this.customer);
         this.getCustomer();
-        console.log("closeModal");
     }
     s_date_search_order(v: any) {
         this.search_condition.order_startDate = v;
@@ -405,9 +402,8 @@ export default class Customer extends Vue {
 
     getCustomer() {  // 수주 정보 조회 
         let item = {
-            orderInfoCode: "", // 수주 코드
+            orderInfoCode: this.search_condition.orderInfoCode, // 수주 코드
             orderDate: "", // 수주 일자
-            customerName: "", // 고객사 명
             page: 1, // 페이징 기능
             size: 20, // 페이징 기능
             sortBy: [], // 정렬 기능
@@ -443,14 +439,7 @@ export default class Customer extends Vue {
         // this.editedIndex = this.customer_list.indexOf(JSON.stringify(item));
         this.change = true
         this.orderInfoId = item.orderInfoId
-
-
-
-
-
-
-
-
+        this.orderInfo = item
         //this.editedCustomer = Object.assign({}, item);
         // this.customerDialog_type = edit_type;
         // this.edit_customer = true;
