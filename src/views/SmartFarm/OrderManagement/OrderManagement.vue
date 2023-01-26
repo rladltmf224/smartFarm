@@ -144,8 +144,8 @@
                             </v-btn>
                         </template>
                         <template v-slot:item.delete="{ item }">
-                            <v-btn icon>
-                                <v-icon small class="mr-2" @click="editItem(item, (customerDialog_type = false))">
+                            <v-btn icon @click="deleteItem(item)">
+                                <v-icon small class="mr-2">
                                     mdi-trash-can-outline
                                 </v-icon>
                             </v-btn>
@@ -305,6 +305,28 @@ export default class Customer extends Vue {
                 });
         }
     }
+    deleteItem(item: any) {
+        this.$swal
+            .fire({
+                title: "삭제",
+                text: "해당 수주를 삭제하시겠습니까?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "삭제",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let id = {
+                        orderInfoId: item.orderInfoId
+                    }
+                    api.order.deleteOrderInfo(id).then((res) => {
+                        console.log('수주 정보 삭제 성공')
+                        this.getCustomer()
+                    })
+                }
+            })
+    }
     alertResult(isSuccess: boolean) {
         if (isSuccess) {
             this.$swal({
@@ -329,6 +351,7 @@ export default class Customer extends Vue {
         }
     }
     closeModal() {
+        this.orderInfoId = 0
         this.orderDialog = false;
         this.editedCustomer = Object.assign({}, this.customer);
         this.getCustomer();

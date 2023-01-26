@@ -42,4 +42,18 @@ export default {
     AuthAPI.put("/api/orderinfo/item", JSON.stringify(params), {
       headers: { "Content-Type": "application/json" },
     }),
+
+  // editOrderInfo: (
+  //   params //수주 정보 수정
+  // ) =>
+  //   AuthAPI.put("/api/orderinfo", JSON.stringify(params), {
+  //     headers: { "Content-Type": "application/json" },
+  //   }),
+
+  deleteOrderInfo: (
+    params //수주 정보 삭제
+  ) =>
+    AuthAPI.delete("/api/orderinfo", {
+      params: params,
+    }),
 };

@@ -52,7 +52,7 @@ export default {
       { text: "비고", value: "memo" },
     ],
     register_itemheaders: [
-      { text: "itemId", value: "itemId" },
+      { text: "itemId", value: "itemId", align: " d-none" },
       { text: "품목명", value: "itemName" },
       { text: "납품예정일", value: "expectedDeliveryDate", align: " d-none" },
       { text: "단가", value: "supplyUnitPrice", align: " d-none" },
