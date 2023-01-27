@@ -87,7 +87,7 @@
                 </v-col>
               </v-row>
               <v-col cols="2" class="d-flex align-center justify-center">
-                <v-btn @click="getTempHumidData()" color="primary">조회</v-btn>
+                <v-btn @click="getDataforTable()" color="primary">조회</v-btn>
               </v-col>
               <v-row></v-row>
             </v-col>
@@ -98,7 +98,7 @@
     <v-container fluid="fluid" class="pa-0 pa-0">
       <v-row class="ma-0 pa-0">
         <v-col class="" md="12">
-          <v-row class="mb-2">
+          <!-- <v-row class="mb-2">
             <h5 class="searchbox-title pl-3 pt-2">온습도 데이터</h5>
             <v-btn
               icon
@@ -108,7 +108,6 @@
             >
               <v-icon>mdi-chevron-down</v-icon>
             </v-btn>
-            <!-- 접기버튼 -->
             <v-btn
               icon
               color="grey"
@@ -129,11 +128,6 @@
                     {{ this.nowValue[1].unit }}
                   </h5>
                 </div>
-
-                <!-- <LoadingSpinner v-show="this.isLoading"></LoadingSpinner> -->
-                <!-- v-show써도됨 -->
-                <!-- <div v-show="this.isLoading">로딩중입니다.</div> -->
-
                 <LoadingSpinner v-if="this.isLoading"></LoadingSpinner>
 
                 <div class="d-flex justify-center" v-if="!this.isLoading">
@@ -142,18 +136,9 @@
                     v-show="!this.isLoading"
                   ></TempHumidGraph>
                 </div>
-
-                <!-- <div v-show="!this.isLoading" class="">
-                  <canvas
-                    class="j pa-6"
-                    ref="barChart"
-                    height="300"
-                    width="1300"
-                  />
-                </div> -->
               </v-sheet>
             </v-col>
-          </v-row>
+          </v-row> -->
           <v-col md="2" class="pa-0 ma-0">
             <h5 class="searchbox-title">온습도 데이터 표</h5>
           </v-col>
@@ -215,6 +200,7 @@ import _ from "lodash";
 import * as api from "@/api/index.js";
 export default {
   name: "TempHumid",
+  props: ["search_type_1"],
   components: {
     VueTimepicker,
     DetailGraph,
@@ -404,7 +390,7 @@ export default {
       page: 1,
       totalData: 0,
       loading: false,
-      itemsPerPage: 6,
+      itemsPerPage: 18,
       pageCount: 10,
       options: {},
       //   데이터테이블
@@ -458,23 +444,22 @@ export default {
       // 조회단위 조회단위
       startDate: false,
       endDate: false,
-      search_type_1: "육묘실",
+      // search_type_1: {
+      //   name: "육묘실",
+      //   value: 1,
+      // },
       search_type_2: 1,
 
-      search_list1: [
-        {
-          name: "육묘실",
-          value: "육묘실",
-        },
-        {
-          name: "발아실",
-          value: "발아실",
-        },
-        {
-          name: "활착실",
-          value: "활착실",
-        },
-      ],
+      // search_list1: [
+      //   {
+      //     name: "육묘실",
+      //     value: 1,
+      //   },
+      //   {
+      //     name: "발아활착실",
+      //     value: 2,
+      //   },
+      // ],
       search_list2: [
         {
           name: "1번구역",
@@ -547,20 +532,24 @@ export default {
       ],
     };
   },
-  watch: {
-    options: {
-      handler() {
-        this.getTempHumidData();
-      },
-      deep: true,
-    },
+  // watch: {
+  //   options: {
+  //     handler() {
+  //       this.getTempHumidData();
+  //     },
+  //     deep: true,
+  //   },
+  // },
+  mounted() {
+    this.getDataforTable();
   },
-  mounted() {},
 
   methods: {
     btnShow() {
       this.btnShow_Value = !this.btnShow_Value;
     },
+
+    /*
     // api
     getTempHumidData() {
       this.loading = true;
@@ -568,7 +557,7 @@ export default {
       this.isLoading = true;
 
       let GetTempHumidParams = {
-        room: this.search_type_1, //실
+        roomId: this.search_type_1.value, //실
         section: this.search_type_2, //구역 넘버
         startDate: this.s_date + " " + this.startTime, //시작일
         endDate: this.e_date + " " + this.endTime, //종료일
@@ -737,13 +726,28 @@ export default {
         }
       });
     },
+    */
+
+    // 그래프 삭제
+    // -> 그래프용 데이터 불러오는 getTempHumidData() 삭제하면서 만듦
+    getDataforTable() {
+      // this.getNowValue(); 그래프 사라지면서 현재 온습도 보여주는 것도 사라짐
+      if (this.user_auth == "minute") {
+        this.getTableData_TempHumid();
+      } else if (this.user_auth == "hour") {
+        this.getTableData_TempHumid_Hour();
+      } else {
+        console.log("user_auth가 이상하다!!!");
+      }
+    },
     // 페이징용 데이타테이블 api 분단위
     getTableData_TempHumid() {
       this.loading = true;
       const { page, itemsPerPage, sortBy, sortDesc } = this.options;
       // sortBy, sortDesc
       let GetTempHumidParams = {
-        room: this.search_type_1, //실
+        room: "육묘실", //this.search_type_1.name, // 해당 파라미터는 사라질 예정. 지금은 무조건 "육묘실"로 던져야함
+        roomId: this.search_type_1.value, //실
         section: this.search_type_2, //구역 넘버
         startDate: this.s_date + " " + this.startTime, //시작일
         endDate: this.e_date + " " + this.endTime, //종료일
@@ -774,7 +778,8 @@ export default {
       const { page, itemsPerPage, sortBy, sortDesc } = this.options;
 
       let GetTempHumidParams = {
-        room: this.search_type_1, //실
+        room: "육묘실", // this.search_type_1.name, // 해당 파라미터는 사라질 예정. 지금은 무조건 "육묘실"로 던져야함
+        roomId: this.search_type_1.value, //실
         section: this.search_type_2, //구역 넘버
         startDate: this.s_date + " " + this.startTime, //시작일
         endDate: this.e_date + " " + this.endTime, //종료일
@@ -798,7 +803,7 @@ export default {
     //현재온습도
     getNowValue() {
       let item = {
-        room: this.search_type_1,
+        roomId: this.search_type_1.value,
         section: this.search_type_2,
       };
       api.smartfarm.temphumidValue(item).then((res) => {

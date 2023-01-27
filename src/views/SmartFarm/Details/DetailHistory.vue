@@ -16,6 +16,7 @@
                     item-value="value"
                     dense="dense"
                     single-line
+                    return-object
                   ></v-select>
                 </v-col>
 
@@ -59,8 +60,14 @@
           </v-row>
         </v-col>
       </v-row>
-      <TempHumid v-if="this.selectedTabs == '온/습도'"></TempHumid>
-      <WaterpH v-if="this.selectedTabs == '양액pH/EC'"></WaterpH>
+      <TempHumid
+        v-if="this.selectedTabs == '온/습도'"
+        :search_type_1="search_type_1"
+      ></TempHumid>
+      <WaterpH
+        v-if="this.selectedTabs == '양액pH/EC'"
+        :search_type_1="search_type_1"
+      ></WaterpH>
       <v-row> </v-row>
     </v-container>
   </div>
@@ -164,21 +171,20 @@ export default {
       // 조회단위 조회단위
       startDate: false,
       endDate: false,
-      search_type_1: "육묘실",
+      search_type_1: {
+        name: "육묘실",
+        value: 1,
+      },
       search_type_2: 1,
 
       search_list1: [
         {
           name: "육묘실",
-          value: "육묘실",
+          value: 1,
         },
         {
-          name: "발아실",
-          value: "발아실",
-        },
-        {
-          name: "활착실",
-          value: "활착실",
+          name: "발아활착실",
+          value: 2,
         },
       ],
       search_list2: [
