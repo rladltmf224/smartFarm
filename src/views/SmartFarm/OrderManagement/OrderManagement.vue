@@ -130,7 +130,7 @@
                     <v-data-table height="640" :headers="headers" :items="customer_list" item-key="barcode"
                         class="elevation-4" :search="search" multi-sort fixed-header dense
                         :options.sync="customerOption.options" :server-items-length="customerOption.totalCount"
-                        :loading="customerOption.loading" :items-per-page="customerOption.itemsPerPage"
+                        :loading="loading" :items-per-page="customerOption.itemsPerPage"
                         :page.sync="customerOption.page" @page-count="customerOption.pageCount = $event"
                         hide-default-footer>
                         <template v-slot:item.edit="{ item }">
@@ -223,7 +223,7 @@ export default class Customer extends Vue {
     change: boolean = false;
     customerDialog: boolean = false;
     customerDialog_type: boolean = false;
-
+    loading: boolean = false;
     customerOption: any = {};
     customer_type: object[] = [];
     edit_customer: boolean = false;
@@ -258,12 +258,6 @@ export default class Customer extends Vue {
     search_list4: object[] = [];
     editedIndex: number = -1;
     customer_list: [] = [];
-
-    created() {
-
-    }
-
-
 
     @Watch("edit_customer")
     onEditCustomerChange(val: object) {
@@ -384,46 +378,11 @@ export default class Customer extends Vue {
         let endDate: any = this.$refs.delivery_endDate;
         endDate.save(v);
     }
-
     selectCustomer(data: object) {
         console.log("selectCustomer", data);
     }
-    // getCustomer() {
-    //     console.log('search_condition', this.search_condition)
-    //     if (this.search_type_1 != "") {
-    //         this.search_condition.customer =
-    //             this.search_type_1 + "-" + this.search_text_1;
-    //     }
-    //     if (this.search_type_2 != "") {
-    //         this.search_condition.business =
-    //             this.search_type_2 + "-" + this.search_text_2;
-    //     }
-
-    //     const { page, itemsPerPage, sortBy, sortDesc } =
-    //         this.customerOption.options;
-    //     this.search_condition.page = page;
-    //     this.search_condition.size = itemsPerPage;
-    //     this.search_condition.sortBy = sortBy;
-    //     this.search_condition.sortDesc = sortDesc;
-    //     this.customerOption.loading = true;
-    //     console.log("customerOption", this.customerOption);
-
-    //     api.customer
-    //         .postCustomerList(this.search_condition)
-    //         .then((response) => {
-    //             console.log("postCustomerList", response);
-    //             this.customer_list = response.data.responseData;
-    //             this.customerOption.totalCount = response.data.totalCount;
-    //             this.customerOption.loading = false;
-    //         })
-    //         .catch((error) => {
-    //             console.log(error);
-    //             this.customerOption.loading = false;
-    //         });
-    // }
-
-
     getCustomer() {  // 수주 정보 조회 
+        this.loading = true
         let item = {
             orderInfoCode: this.search_condition.orderInfoCode, // 수주 코드
             orderDate: "", // 수주 일자
@@ -432,18 +391,12 @@ export default class Customer extends Vue {
             sortBy: [], // 정렬 기능
             sortDesc: [false] // 정렬 기능
         }
-        console.log('내가보낸 아이템', item)
         api.order.getOrderInfo(item).then((res: any) => {
+            this.loading = false
             this.customer_list = res.data.responseData
             console.log('수주 정보 조회 성공', res)
         })
     }
-
-
-
-
-
-
     closeModal_customer() {
         this.edit_customer = false;
         this.$nextTick(() => {

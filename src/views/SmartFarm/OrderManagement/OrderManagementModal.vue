@@ -126,7 +126,7 @@
                                     :search="searchItem" :items="itemData" return-object item-key="itemId" dense
                                     :items-per-page="50" :footer-props="footer_option" v-show="change">
                                     <template v-slot:no-data>
-                                        <h5>조회된 수주품목이 없습니다.</h5>
+                                        <h5>조회된 수주품목이 없습니다.(수정버젼)</h5>
                                     </template>
                                 </v-data-table>
 
@@ -136,7 +136,7 @@
                                     :items="itemData" return-object item-key="itemId" dense :items-per-page="50"
                                     :footer-props="footer_option" v-show="!change">
                                     <template v-slot:no-data>
-                                        <h5>조회된 수주품목이 없습니다.</h5>
+                                        <h5>조회된 수주품목이 없습니다.(등록버젼)</h5>
                                     </template>
                                 </v-data-table>
                             </v-container>
@@ -200,7 +200,7 @@
                                         </v-btn>
                                     </template>
                                     <template v-slot:no-data>
-                                        <h5>선택된 수주품목이 없습니다.(수정버젼)</h5>
+                                        <h5>선택된 수주품목이 없습니다.</h5>
                                     </template>
                                 </v-data-table>
                                 <!-- 등록버젼일때 -->
@@ -252,7 +252,7 @@
                                         </v-btn>
                                     </template>
                                     <template v-slot:no-data>
-                                        <h5>선택된 수주품목이 없습니다.(등록버젼)</h5>
+                                        <h5>선택된 수주품목이 없습니다.</h5>
                                     </template>
                                 </v-data-table>
                             </v-container>
@@ -293,10 +293,10 @@ import _, { functionsIn } from "lodash";
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import { checkPropertyChange } from "json-schema";
 import { it } from "node:test";
+import { strict } from "node:assert";
 
 @Component
 export default class OrderManagementModal extends Vue {
-
     footer_option: {
         disableItemsPerPage: boolean;
         itemsPerPageAllText: string;
@@ -336,20 +336,8 @@ export default class OrderManagementModal extends Vue {
     customerName: '' //거래처 이름    
     request: string = ''; //요청사항
     itemData: any[] = []; //수주정보 상세조회 resData
-
-
-
-
-
     menu_orderDate: boolean = false; //수주일자 datepicker
     menu_deliveryDate: boolean = false; //납품예정일 datepicker
-
-
-
-
-
-
-
     customerId: number | "" = "";
     customerList: any[] = [];
     departmentList: any[] = [];
@@ -361,7 +349,7 @@ export default class OrderManagementModal extends Vue {
     search: string = "";
     searchItem: string = "";
     searchlist: any[] = [];
-    selectedProduct: [{ itemId?: number, itemName?: string }];
+    selectedProduct: [{ itemId?: number, itemName?: string }] | any[] = [];
     itemDetail: any[] = [];
     selected: [] = [];
     interimStorage: boolean = false;
@@ -392,49 +380,18 @@ export default class OrderManagementModal extends Vue {
         },
     })
     editedCustomerData: any;
-
-    @Watch("orderData.department")
-    onOrderDataChange() {
-        if (
-            this.orderData.department != "" &&
-            this.orderData.department.departmentName != "전체"
-        ) {
-            this.getDepartmentCrewList();
-        } else {
-            this.orderData.departmentchargeName = "";
-        }
-    }
-
-
-
-
-
-    @Watch("editedCustomerData")
-    onEditedCustomerDataChange() {
-        this.itemDetail = [];
-        this.orderData = this.editedCustomerData;
-        var resultDetails: any = _.get(this.editedCustomerData, "details");
-        const newArray = resultDetails.map((item: any) => {
-            return {
-                id: item.itemId,
-                name: item.itemName,
-                version: item.itemVersion,
-                count: item.count,
-            };
-        });
-        this.itemDetail = newArray;
-    }
-
     @Watch("item")
     onItemChange() {
         if (this.item != null) {
             this.itemName = this.item.name;
         }
     }
-    @Watch("change")
-    checkChange() {
-        console.log('체인지체크', this.change)
+    @Watch('selectedProduct')
+    chack() {
+        console.log('셀렉티드프로덕트', this.selectedProduct)
     }
+
+
     @Watch("orderInfoId") //orderInfoId로 수주 정보 상세 조회 api 연결함.
     getOrderInfoId() {
         console.log('오더넘', this.order.orderNum)
@@ -472,25 +429,19 @@ export default class OrderManagementModal extends Vue {
         })
     }
     get openModal() {
-        api.order.getItems().then((res) => {
-            console.log('품목조회 api 연결 성공', res)
-            this.itemData = res.data.responseData
-        })
-        api.order.getCustomerNameList().then((res) => {
-            console.log('거래처 조회 성공', res)
-            this.datas_simple = res.data.responseData
-        })
-
+        if (this.change) {
+            api.order.getItems().then((res) => {
+                console.log('품목조회 api 연결 성공', res)
+                this.itemData = res.data.responseData
+            })
+            api.order.getCustomerNameList().then((res) => {
+                console.log('거래처 조회 성공', res)
+                this.datas_simple = res.data.responseData
+            })
+        }
         return this.open;
     }
     set openModal(val: any) {
-        console.log('닫는다닫는다닫는다닫는다')
-        console.log('체인지?체인지?체인지?', this.change)
-
-
-
-
-
         if (this.change) {
             console.log('등록버젼입니다.')
             this.order = []
@@ -503,10 +454,6 @@ export default class OrderManagementModal extends Vue {
             this.itemData = []
             this.$emit("closeModal", false);
         }
-
-
-
-
     }
     get customerData() {
         return this.customerList;
@@ -529,127 +476,98 @@ export default class OrderManagementModal extends Vue {
     get departmentCrewData() {
         return this.departmentCrewList;
     }
-    // get itemData() {
-
-    //     if (this.search != "") {
-    //         this.searchlist = [];
-
-    //         for (var i = 0; i < this.itemList.length; i++) {
-    //             if (this.itemList[i].name.includes(this.search)) {
-    //                 this.searchlist.push(this.itemList[i]);
-    //             }
-    //         }
-    //     } else {
-    //         this.searchlist = this.itemList;
-    //     }
-    //     return this.searchlist;
-    // }
-
-
-
-
-
     get itemTable() {
         return this.itemDetail
     }
-
     mounted() {
-        //this.getDataList();
-        //this.getDepartmentList();
         this.itemDetail = [];
         this.search = "";
     }
-
-
-
-
     d_date_search_order(v: any) { //수주일자
         this.order.orderDate = v;
         this.menu_orderDate = false;
         let orderDate: any = this.$refs.menu_orderDate;
         orderDate.save(v);
     }
-
     d_date_search_delivery(v: any) { //수주일자
         this.order.deliveryDate = v;
         this.menu_deliveryDate = false;
         let deliveryDate: any = this.$refs.menu_deliveryDate;
         deliveryDate.save(v);
     }
-
-
-
-
-
-
-    getDataList() {
-        api.operation
-            .getBasicDataPage()
-            .then((response) => {
-                this.customerList = [{ name: "전체", code: "", id: "" }];
-                this.customerList.push(...response.data.responseData.basicCustomers);
-                this.itemList = response.data.responseData.basicItems;
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }
-    getDepartmentList() {
-
-        api.operation
-            .getDepartmentDataPage()
-            .then((response) => {
-                this.departmentList = [{ departmentName: "전체", departmentId: "" }];
-                this.departmentList.push(...response.data.responseData);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }
-    getDepartmentCrewList() {
-        let joborder;
-        if (this.orderData.department != "") {
-            this.keyword = this.orderData.department.departmentId;
-        }
-
-        joborder = {
-            departmentId: this.keyword,
-        };
-        if (this.keyword != null) {
-            api.operation
-                .getDepartmentCrewDataPage(joborder)
-                .then((response) => {
-                    this.departmentCrewList = response.data.responseData;
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-        }
-    }
-    getTempList() {
-        api.operation
-            .getOrderTempListPage()
-            .then((response) => {
-                this.templist = response.data.responseData;
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }
-    selectedDepartment() {
-        if (
-            this.orderData.department != "" &&
-            this.orderData.department.departmentName != "전체"
-        ) {
-            this.getDepartmentCrewList();
-        } else {
-            this.orderData.departmentchargeName = "";
-        }
-    }
     plus() {
-        let selectedProductLength: number = this.selectedProduct.length
-        console.log('selectedProductLength', this.selectedProduct.length)
-        if (selectedProductLength == 0) {
+
+        // if (this.selectedProduct == null) { //선택된게 있어?
+        //     console.log('선택된게 없어,swal띄울게', this.selectedProduct)
+        //     this.$swal({
+        //         title: "품목이 선택되지 않았습니다.",
+        //         icon: "warning",
+        //         position: "top",
+        //         showCancelButton: false,
+        //         showConfirmButton: false,
+        //         toast: true,
+        //         timer: 1500,
+        //     });
+        // } else {
+        //     console.log('선택된게있어', this.selectedProduct.length)
+        //     console.log('선택된게있어.그안의내용물이야', this.selectedProduct)
+
+        //     if (this.itemDetail.length == 0) { //장바구니 비었어? 
+        //         console.log('장바구니 비었어,넣을게')
+        //         let totalID: any = _.map(this.itemDetail, "itemId");
+        //         for (var i = 0; i < this.selectedProduct.length; i++) {
+        //             let plusItem: any = this.selectedProduct[i];
+        //             if (totalID.includes(plusItem.id)) continue;
+        //             plusItem["quantity"] = null;
+        //             plusItem["expectedDeliveryDate"] = null;
+        //             plusItem["supplyUnitPrice"] = null;
+        //             plusItem["memo"] = null;
+        //             this.itemDetail.push(plusItem);
+        //         }
+        //     } else {
+        //         console.log('장바구니에 상품담겨있어,중복값체크할게', this.selectedProduct, this.itemDetail)
+        //         let dupYN: boolean = false //forEach를 통한 중복값체크 중..
+        //         let origin: any[] = this.selectedProduct
+        //         let anys: any[] = this.itemDetail
+        //         origin.forEach(function (el) {
+        //             anys.forEach(function (el2) {
+        //                 if (el.itemId == el2.itemId) {
+        //                     dupYN = true
+        //                 }
+        //             })
+        //         })
+        //         if (dupYN) { //장바구니안에 중복값있어?
+        //             console.log('장바구니 안에 중복된상품있어,swal띄울게.')
+        //             this.$swal({
+        //                 title: "중복해서 품목을 등록할 수 없습니다.",
+        //                 icon: "warning",
+        //                 position: "top",
+        //                 showCancelButton: false,
+        //                 showConfirmButton: false,
+        //                 toast: true,
+        //                 timer: 1500,
+        //             });
+        //             dupYN = false
+        //         } else { //장바구니안에 중복값 없어?
+        //             console.log('장바구니 안에 중복값없어.넣을게.', this.selectedProduct, this.itemDetail)
+        //             let totalID: any = _.map(this.itemDetail, "itemId");
+        //             for (var i = 0; i < this.selectedProduct.length; i++) {
+        //                 let plusItem: any = this.selectedProduct[i];
+        //                 if (totalID.includes(plusItem.id)) continue;
+        //                 plusItem["quantity"] = null;
+        //                 plusItem["expectedDeliveryDate"] = null;
+        //                 plusItem["supplyUnitPrice"] = null;
+        //                 plusItem["memo"] = null;
+        //                 this.itemDetail.push(plusItem);
+        //             }
+        //         }
+        //     }
+        // }
+        // this.selectedProduct = null
+
+        //let selectedProductLength: number = this.selectedProduct.length
+        //console.log('selectedProductLength', this.selectedProduct.length)
+        if (this.selectedProduct.length == 0) {
             this.$swal({
                 title: "품목이 선택되지 않았습니다.",
                 icon: "warning",
@@ -662,7 +580,6 @@ export default class OrderManagementModal extends Vue {
         } else {
             console.log('selectedProduct', this.selectedProduct)
             console.log('itemDetail', this.itemDetail)
-
             if (this.itemDetail.length == 0) {
                 let totalID: any = _.map(this.itemDetail, "itemId");
                 for (var i = 0; i < this.selectedProduct.length; i++) {
@@ -686,7 +603,6 @@ export default class OrderManagementModal extends Vue {
                         }
                     })
                 })
-
                 if (dupYN) {
                     this.$swal({
                         title: "중복입니다.",
@@ -712,6 +628,7 @@ export default class OrderManagementModal extends Vue {
                 }
             }
         }
+        this.selectedProduct = []
     }
     minus(item: any) {
         for (let i = 0; i < this.itemDetail.length; i++) {
@@ -722,11 +639,6 @@ export default class OrderManagementModal extends Vue {
         }
     }
     complete() { //최종 수주 등록
-        console.log('최종수주등록정보', this.order)
-
-
-
-
         this.$swal
             .fire({
                 title: "등록",
@@ -742,138 +654,30 @@ export default class OrderManagementModal extends Vue {
                     for (let i = 0; i < this.order.details.length; i++) { //this.order.details의itemName을 뺀다 (백엔드요청)
                         delete this.order.details[i].itemName
                     }
-
-                    let validYN: boolean = false //수주품목 유효성 검사
-                    for (let i = 0; i < this.order.details.length; i++) {
-                        let temp = this.order.details[i]
-                        let order = this.order
-                        if (temp.expectedDeliveryDate == null || temp.quantity == null || temp.supplyUnitPrice == null || order.customerId == '' || order.deliveryDate == '' || order.details == null) {
-                            validYN = true
-                        }
-                    }
-
-                    if (!validYN) {
-                        let body = this.order
-                        api.order.saveOrderInfo(body).then((res: any) => {
-                            if (res.status == 200) {
-                                this.openModal = false
-                                this.$swal({
-                                    title: "등록되었습니다.",
-                                    icon: "success",
-                                    position: "top",
-                                    showCancelButton: false,
-                                    showConfirmButton: false,
-                                    toast: true,
-                                    timer: 1500,
-                                });
-                            } else {
-                                this.$swal({
-                                    title: "등록이 실패되었습니다.",
-                                    icon: "error",
-                                    position: "top",
-                                    showCancelButton: false,
-                                    showConfirmButton: false,
-                                    toast: true,
-                                    timer: 1500,
-                                });
-                            }
-                        })
-                    } else {
-                        this.$swal({
-                            title: "유효성 검사 실패",
-                            icon: "error",
-                            position: "top",
-                            showCancelButton: false,
-                            showConfirmButton: false,
-                            toast: true,
-                            timer: 1500,
-                        });
-                    }
-
-
-
-
-
-
-
-
-
+                    this.validCheck()
 
 
 
                 }
             })
     }
-    edit() {  //수주 정보 수정
-        this.order.details = this.itemDetail
-        for (let i = 0; i < this.order.details.length; i++) { //this.order.details의itemName을 뺀다 (백엔드요청)
-            delete this.order.details[i].itemName
+    validCheck() { //수주 정보 유효성 검사 
+        let validYN: boolean = false //수주품목 유효성 검사
+        for (let i = 0; i < this.order.details.length; i++) {
+            let temp = this.order.details[i]
+            let order = this.order
+            if (temp.expectedDeliveryDate == null || temp.quantity == null || temp.supplyUnitPrice == null || order.customerId == '' || order.deliveryDate == '' || order.details == null) {
+                validYN = true
+            }
         }
-        this.$swal
-            .fire({
-                title: "수정",
-                text: "수정하시겠습니까?",
-                icon: "info",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "수정",
-            })
-            .then((res) => {
-                if (res.isConfirmed) {
-                    let body = {
-                        orderInfoId: this.orderInfoId,
-                        orderDate: this.order.deliveryDate,
-                        customerId: this.customerId,
-                        memo: this.order.memo,
-                        details: this.order.details
-                    }
-                    api.order.editOrderInfo(body).then((res: any) => {
-                        console.log('수주정보 수정 성공', res)
-                        this.$swal({
-                            title: "수정되었습니다.",
-                            icon: "success",
-                            position: "top",
-                            showCancelButton: false,
-                            showConfirmButton: false,
-                            toast: true,
-                            timer: 1500,
-                        });
-                    })
+        if (!validYN) {
+            let body = this.order
+            api.order.saveOrderInfo(body).then((res: any) => {
+                if (res.status == 200) {
                     this.openModal = false
-                }
-            })
-
-    }
-    changeOn() {
-        this.selectedData = [];
-
-        if (
-            this.orderData.name == "" ||
-            this.orderData.customer == "" ||
-            this.orderData.department == "" ||
-            this.orderData.departmentchargeName == "" ||
-            this.orderData.deadline == "" ||
-            this.itemTable.length == 0
-        ) {
-            this.$swal({
-                title: "입력칸의 공백을 확인해주세요",
-                icon: "error",
-                position: "top",
-                showCancelButton: false,
-                showConfirmButton: false,
-                toast: true,
-                timer: 1500,
-            });
-        } else {
-            let check = true;
-
-            for (var i = 0; i < this.itemTable.length; i++) {
-                if (this.itemTable[i].count == null) {
-                    check = false;
                     this.$swal({
-                        title: "입력된 수량이 없는 품목은 등록되지않습니다.",
-                        icon: "error",
+                        title: "등록되었습니다.",
+                        icon: "success",
                         position: "top",
                         showCancelButton: false,
                         showConfirmButton: false,
@@ -881,65 +685,36 @@ export default class OrderManagementModal extends Vue {
                         timer: 1500,
                     });
                 } else {
-                    this.selectedData.push({
-                        itemId: this.itemTable[i].id,
-                        itemName: this.itemTable[i].name,
-                        count: this.itemTable[i].count,
+                    this.$swal({
+                        title: "등록이 실패되었습니다.",
+                        icon: "error",
+                        position: "top",
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                        toast: true,
+                        timer: 1500,
                     });
                 }
-            }
-
-            if (check) {
-                let joborder;
-
-                joborder = {
-                    name: this.orderData.name,
-                    accountId: this.departmentCrewList[0].id,
-                    id: this.orderData.id,
-                    deadline: this.orderData.deadline,
-                    memo: this.orderData.memo,
-                    details: this.selectedData,
-                };
-                api.operation
-                    .getOperationOrderChangePage(joborder)
-                    .then((response) => {
-                        if (response.status == 200) {
-                            this.$swal({
-                                title: "수정되었습니다.",
-                                icon: "success",
-                                position: "top",
-                                showCancelButton: false,
-                                showConfirmButton: false,
-                                toast: true,
-                                timer: 1500,
-                            });
-                        } else {
-                            this.$swal({
-                                title: "수정이 실패되었습니다.",
-                                icon: "error",
-                                position: "top",
-                                showCancelButton: false,
-                                showConfirmButton: false,
-                                toast: true,
-                                timer: 1500,
-                            });
-                        }
-                        this.orderData = {
-                            name: "",
-                            customer: "",
-                            department: "",
-                            departmentchargeName: "",
-                            deadline: "",
-                            memo: "",
-                            details: [],
-                        };
-                        this.openModal = false;
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    });
-            }
+            })
+        } else {
+            this.$swal({
+                title: "유효성 검사 실패",
+                icon: "error",
+                position: "top",
+                showCancelButton: false,
+                showConfirmButton: false,
+                toast: true,
+                timer: 1500,
+            });
         }
+
+    }
+    edit() {  //수주 정보 수정
+        this.order.details = this.itemDetail
+        for (let i = 0; i < this.order.details.length; i++) { //this.order.details의itemName을 뺀다 (백엔드요청)
+            delete this.order.details[i].itemName
+        }
+        this.validCheck()
     }
     getData() {  //거래처 상세조회 불러오기 api
         console.log('거래처 상세조회 api 연결하겠습니다.')
@@ -958,220 +733,7 @@ export default class OrderManagementModal extends Vue {
             console.log('품목조회 api 연결 성공', res)
             this.itemData = res.data.responseData
         })
-
     }
-    getTemp() {
-        this.selectedData = [];
-        let joborderTemp;
-
-        joborderTemp = {
-            accountId: null,
-            name: this.orderData.name,
-            customerId: null,
-            deadline: this.orderData.deadline,
-            memo: this.orderData.memo,
-            details: this.selectedData,
-        };
-
-        if (this.itemTable != null) {
-            for (var i = 0; i < this.itemTable.length; i++) {
-                this.selectedData.push({
-                    itemId: this.itemTable[i].id,
-                    count: this.itemTable[i].count,
-                });
-            }
-        }
-
-        if (this.orderData.departmentchargeName == null) {
-            joborderTemp["accountId"] = null;
-        } else if (this.orderData.departmentchargeName != "") {
-            joborderTemp["accountId"] = this.orderData.departmentchargeName.id;
-        }
-
-        if (this.orderData.customer == null) {
-            joborderTemp["customerId"] = null;
-        } else if (
-            this.orderData.customer != "" ||
-            this.orderData.customer != null
-        ) {
-            joborderTemp["customerId"] = this.orderData.customer.id;
-        }
-        api.operation
-            .getOrderTempPage(joborderTemp)
-            .then((response) => {
-                if (response.status == 200) {
-                    this.$swal({
-                        title: "임시 저장되었습니다.",
-                        icon: "success",
-                        position: "top",
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                        toast: true,
-                        timer: 1500,
-                    });
-                    this.getTempList();
-                    this.itemName = null;
-                } else {
-                    this.$swal({
-                        title: "임시 저장이 실패되었습니다.",
-                        icon: "error",
-                        position: "top",
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                        toast: true,
-                        timer: 1500,
-                    });
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }
-    tempOpen() {
-        this.interimStorage = true;
-        this.getTempList();
-    }
-
-    removeTemp() {
-        let joborderTemp: any = {
-            id: [],
-        };
-
-        for (var k = 0; k < this.templist.length; k++) {
-            joborderTemp.id.push(this.templist[k].id);
-        }
-
-        this.$swal
-            .fire({
-                title: "삭제",
-                text: "해당 데이터를 전체 삭제 하시겠습니까?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "삭제",
-            })
-            .then((result) => {
-                if (result.isConfirmed) {
-                    api.operation
-                        .deletetempList(joborderTemp)
-                        .then((response) => {
-                            if (response.status == 200) {
-                                this.$swal({
-                                    title: "삭제되었습니다",
-                                    icon: "success",
-                                    position: "top",
-                                    showCancelButton: false,
-                                    showConfirmButton: false,
-                                    toast: true,
-                                    timer: 1500,
-                                });
-                                this.interimStorage = true;
-                                this.getTempList();
-                            } else {
-                                this.$swal({
-                                    title: "삭제가 실패되었습니다.",
-                                    icon: "error",
-                                    position: "top",
-                                    showCancelButton: false,
-                                    showConfirmButton: false,
-                                    toast: true,
-                                    timer: 1500,
-                                });
-                            }
-                        })
-                        .catch((error) => {
-                            console.log(error);
-                        });
-                }
-            });
-    }
-    tempDelete(item: any) {
-        let joborderTemp = {
-            id: item.id,
-        };
-
-        this.$swal
-            .fire({
-                title: "삭제",
-                text: "해당 데이터를 삭제 하시겠습니까?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "삭제",
-            })
-            .then((result) => {
-                if (result.isConfirmed) {
-                    api.operation
-                        .deletetempList(joborderTemp)
-                        .then((response) => {
-                            if (response.status == 200) {
-                                this.$swal({
-                                    title: "삭제되었습니다",
-                                    icon: "success",
-                                    position: "top",
-                                    showCancelButton: false,
-                                    showConfirmButton: false,
-                                    toast: true,
-                                    timer: 1500,
-                                });
-                                this.getTempList();
-                                this.interimStorage = true;
-                                this.orderData = {
-                                    name: "",
-                                    customer: "",
-                                    department: "",
-                                    departmentchargeName: "",
-                                    deadline: "",
-                                    memo: "",
-                                    details: [],
-                                };
-                            } else {
-                                this.$swal({
-                                    title: "삭제 실패되었습니다.",
-                                    icon: "error",
-                                    position: "top",
-                                    showCancelButton: false,
-                                    showConfirmButton: false,
-                                    toast: true,
-                                    timer: 1500,
-                                });
-                            }
-                        })
-                        .catch((error) => {
-                            console.log(error);
-                        });
-                }
-            });
-    }
-
-    aboutTemp(event: any, item: any) {
-        this.itemDetail = [];
-        this.interimStorage = false;
-        this.orderData.name = item.name;
-        //customer 변수 확인 필요
-        // if (this.customer != null) {
-        //   this.orderData.customer = item.customer.id;
-        // }
-        this.orderData.department = {
-            departmentId: item.departmentId,
-            departmentName: item.departmentName,
-        };
-        this.orderData.departmentchargeName = item.chargeName;
-        this.orderData.deadline = item.deadline;
-        this.orderData.memo = item.memo;
-
-        for (var i = 0; i < item.details.length; i++) {
-            this.itemDetail[i] = {
-                count: item.details[i].count,
-                id: item.details[i].itemId,
-                name: item.details[i].itemName,
-                version: item.details[i].itemVersion,
-            };
-        }
-    }
-
     cloneItem(item: any) { //거래처 명 클릭 시 
         this.order.customerId = item.customerId
         this.customerName = item.customerName
