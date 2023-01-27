@@ -115,8 +115,8 @@
                             </v-container>
                             <v-container fluid class="d-flex pt-0 pb-0">
                                 <v-col cols="3" class=" pa-0 d-flex align-center">
-                                    <v-text-field class="mr-10 pa-0 ml-3" v-model="searchItem"
-                                        placeholder="수주품목명 검색"></v-text-field>
+                                    <v-text-field class="mr-10 pa-0 ml-3" v-model="searchItem" placeholder="수주품목명 검색"
+                                        append-icon="mdi-magnify"></v-text-field>
                                 </v-col>
                             </v-container>
 
@@ -125,10 +125,6 @@
                                     fixed-header v-model="selectedProduct" height="180" :headers="register_itemheaders"
                                     :search="searchItem" :items="itemData" return-object item-key="itemId" dense
                                     :items-per-page="50" :footer-props="footer_option" v-show="change">
-                                    <template v-slot:top>
-                                        <v-text-field v-model="searchItem" label="거래처명으로 검색" class="mx-4"
-                                            append-icon="mdi-magnify"></v-text-field>
-                                    </template>
                                     <template v-slot:no-data>
                                         <h5>조회된 수주품목이 없습니다.</h5>
                                     </template>
@@ -163,7 +159,7 @@
                                     <template v-slot:item.quantity="props">
                                         <v-text-field class="pa-0 countFont"
                                             oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');"
-                                            placeholder="*수량" v-model="props.item.quantity" single-line>
+                                            placeholder="* 수량 필수" v-model="props.item.quantity" single-line>
                                             {{ props.item.quantity }}
                                         </v-text-field>
                                     </template>
@@ -435,14 +431,10 @@ export default class OrderManagementModal extends Vue {
             this.itemName = this.item.name;
         }
     }
-
     @Watch("change")
     checkChange() {
         console.log('체인지체크', this.change)
     }
-
-
-
     @Watch("orderInfoId") //orderInfoId로 수주 정보 상세 조회 api 연결함.
     getOrderInfoId() {
         console.log('오더넘', this.order.orderNum)
@@ -455,8 +447,6 @@ export default class OrderManagementModal extends Vue {
             this.itemDetail = res.data.responseData
         })
     }
-
-
     @Watch("orderInfo") //부모에서 받은 orderInfo
     getOrderInfo() {
         console.log('오더인포', this.orderInfo)
@@ -465,11 +455,10 @@ export default class OrderManagementModal extends Vue {
             this.customerName = this.orderInfo.customerName
             this.customerId = this.orderInfo.customerId
             this.order.deliveryDate = this.orderInfo.orderDate
+            this.order.orderDate = this.orderInfo.orderDate
             this.order.memo = this.orderInfo.memo
         }
     }
-
-
     @Watch('customerId')
     getCustomerInfo() {
         console.log('거래처고유아이디거래처고유아이디', this.customerId)
@@ -481,20 +470,19 @@ export default class OrderManagementModal extends Vue {
             console.log('거래처 조회 성공', res)
             this.datas_simple = res.data.responseData
         })
-
     }
-
-
-
-
-
-
-
     get openModal() {
+        api.order.getItems().then((res) => {
+            console.log('품목조회 api 연결 성공', res)
+            this.itemData = res.data.responseData
+        })
+        api.order.getCustomerNameList().then((res) => {
+            console.log('거래처 조회 성공', res)
+            this.datas_simple = res.data.responseData
+        })
+
         return this.open;
     }
-
-
     set openModal(val: any) {
         console.log('닫는다닫는다닫는다닫는다')
         console.log('체인지?체인지?체인지?', this.change)
@@ -734,14 +722,87 @@ export default class OrderManagementModal extends Vue {
         }
     }
     complete() { //최종 수주 등록
-        this.order.details = this.itemDetail
-        for (let i = 0; i < this.order.details.length; i++) { //this.order.details의itemName을 뺀다 (백엔드요청)
-            delete this.order.details[i].itemName
-        }
-        let body = this.order
-        api.order.saveOrderInfo(body).then((res: any) => {
-            console.log('수주정보 등록 api 성공', res)
-        })
+        console.log('최종수주등록정보', this.order)
+
+
+
+
+        this.$swal
+            .fire({
+                title: "등록",
+                text: "해당 데이터를 등록하시겠습니까?",
+                icon: "info",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "등록",
+            }).then((res) => {
+                if (res.isConfirmed) {
+                    this.order.details = this.itemDetail
+                    for (let i = 0; i < this.order.details.length; i++) { //this.order.details의itemName을 뺀다 (백엔드요청)
+                        delete this.order.details[i].itemName
+                    }
+
+                    let validYN: boolean = false //수주품목 유효성 검사
+                    for (let i = 0; i < this.order.details.length; i++) {
+                        let temp = this.order.details[i]
+                        let order = this.order
+                        if (temp.expectedDeliveryDate == null || temp.quantity == null || temp.supplyUnitPrice == null || order.customerId == '' || order.deliveryDate == '' || order.details == null) {
+                            validYN = true
+                        }
+                    }
+
+                    if (!validYN) {
+                        let body = this.order
+                        api.order.saveOrderInfo(body).then((res: any) => {
+                            if (res.status == 200) {
+                                this.openModal = false
+                                this.$swal({
+                                    title: "등록되었습니다.",
+                                    icon: "success",
+                                    position: "top",
+                                    showCancelButton: false,
+                                    showConfirmButton: false,
+                                    toast: true,
+                                    timer: 1500,
+                                });
+                            } else {
+                                this.$swal({
+                                    title: "등록이 실패되었습니다.",
+                                    icon: "error",
+                                    position: "top",
+                                    showCancelButton: false,
+                                    showConfirmButton: false,
+                                    toast: true,
+                                    timer: 1500,
+                                });
+                            }
+                        })
+                    } else {
+                        this.$swal({
+                            title: "유효성 검사 실패",
+                            icon: "error",
+                            position: "top",
+                            showCancelButton: false,
+                            showConfirmButton: false,
+                            toast: true,
+                            timer: 1500,
+                        });
+                    }
+
+
+
+
+
+
+
+
+
+
+
+
+                }
+            })
     }
     edit() {  //수주 정보 수정
         this.order.details = this.itemDetail
