@@ -12,7 +12,7 @@ export default {
       },
     }),
   temphumidValue: (params) =>
-    AuthAPI.get("/api/temphumid/value/", {
+    AuthAPI.get("/api/temphumid/value", {
       headers: { "Content-Type": "application/json" },
       params: params,
     }),
@@ -37,7 +37,8 @@ export default {
       params: params,
     }),
   getEquipmentInfo: () => AuthAPI.get("/api/equipment/info"),
-  getEquipmentlist: (item) => AuthAPI.get("/api/equipment/equipment",{params:item}),
+  getEquipmentlist: (item) =>
+    AuthAPI.get("/api/equipment/equipment", { params: item }),
   getRoomlist: () => AuthAPI.get("/api/equipment/room"),
   editEquipmentCtrl: (item) => {
     return AuthAPI.put("/api/equipment/control", JSON.stringify(item), {

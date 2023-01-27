@@ -140,24 +140,40 @@ export default class Sidebar extends Vue {
     menu_Data = _.filter(menu_Data, { use: "Y" });
     //this.items_dev = _.filter(demo_side_data, { use: "N" });
     this.items = _.sortBy(menu_Data, "sort");
-    this.items.push({
-      title: "환경관리",
-      active: true,
-      icon: "mdi-folder",
-      role: "ROLE_operationManagement",
-      use: "Y",
-      sort: 5,
-      subItems: [
-        {
-          title: "환경 조회 및 제어",
-          to: "Monitoring",
-        },
-        {
-          title: "이력 조회",
-          to: "DetailHistory",
-        },
-      ],
-    });
+    this.items.push(
+      {
+        title: "완제품관리",
+        active: true,
+        icon: "mdi-folder",
+        role: "ROLE_operationManagement",
+        use: "Y",
+        sort: 5,
+        subItems: [
+          {
+            title: "공정관리",
+            to: "processmng",
+          },
+        ],
+      },
+      {
+        title: "환경관리",
+        active: true,
+        icon: "mdi-folder",
+        role: "ROLE_operationManagement",
+        use: "Y",
+        sort: 5,
+        subItems: [
+          {
+            title: "환경 조회 및 제어",
+            to: "Monitoring",
+          },
+          {
+            title: "이력 조회",
+            to: "DetailHistory",
+          },
+        ],
+      }
+    );
     this.items.push({
       title: "양액",
       active: true,

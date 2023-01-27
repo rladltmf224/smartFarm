@@ -18,6 +18,7 @@ import smartfarm from "./service/smartfarm";
 import growthresearch from "./service/growthresearch";
 import production from "./service/production";
 import facility from "./service/facility";
+import process from "./service/process";
 
 export {
   bom,
@@ -40,4 +41,5 @@ export {
   growthresearch,
   production,
   facility,
+  process,
 };

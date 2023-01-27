@@ -4,7 +4,7 @@
       <v-card
         v-for="(item, i) in outdoorSensor"
         :key="i"
-        class="d-flex justify-center flex-column align-center mx-1"
+        class="d-flex justify-center flex-column align-center mx-1 text-center"
         min-width="100"
       >
         <v-card-text>
@@ -64,180 +64,188 @@
 
     <!-- 다이아로그 -->
     <v-row justify="center">
-      <v-dialog
-        v-model="dialog"
-        fullscreen
-        hide-overlay
-        transition="dialog-bottom-transition"
-      >
+      <v-dialog v-model="dialog" max-width="1300">
         <v-card>
-          <v-toolbar dense color="#CFD8DC" elevation="0">
-            <v-btn icon @click="dialog = false">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-
+          <v-card-title class="d-flex">
             <h4 class="px-1">모니터링</h4>
             <h4 class="px-1">></h4>
             <h4 class="px-1">{{ this.section }}</h4>
+            <v-btn class="ml-auto" icon @click="dialog = false">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </v-card-title>
+          <v-card-text class="mb-4" color="#F6F8F9" elevation="4">
+            <!-- MonitoringGraph내용 -->
 
-            <v-spacer></v-spacer>
-          </v-toolbar>
+            <!-- 조회일,조회시간 -->
+            <v-card elevation="3">
+              <v-card-text>
+                <v-row dense class="align-center">
+                  <v-col cols="1">
+                    <h4 class="searchbox-title">조회정보</h4>
+                  </v-col>
 
-          <!-- MonitoringGraph내용 -->
-          <v-container fluid class="pa-0 ma-0">
-            <v-row class="pa-0">
-              <v-col lg="12" class="pa-0 ma-0">
-                <v-sheet
-                  class="pa-8"
-                  color="#F6F8F9"
-                  max-width="auto"
-                  height="100vh"
-                  style="overflow: auto"
-                >
-                  <!-- 조회일,조회시간 -->
-                  <v-row class="align-center">
-                    <div class="px-4">
-                      <h4 class="searchbox-title">조회정보</h4>
-                    </div>
-                    <!-- 시작일 -->
-                    <v-col cols="3" lg="2" class="">
-                      <v-menu
-                        v-model="menu1"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        transition="scale-transition"
-                        offset-y
-                        min-width="auto"
-                      >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            v-model="s_date"
-                            label="시작일"
-                            prepend-icon="mdi-calendar"
-                            readonly
-                            v-bind="attrs"
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker
-                          v-model="s_date"
-                          @input="menu1 = false"
-                          :max="e_date"
-                        ></v-date-picker>
-                      </v-menu>
-                    </v-col>
-
-                    <!-- 종료일 -->
-                    <v-col cols="3" md="3" lg="2" class="">
-                      <v-menu
-                        v-model="menu2"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        transition="scale-transition"
-                        offset-y
-                        min-width="auto"
-                      >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            v-model="e_date"
-                            label="종료일"
-                            prepend-icon="mdi-calendar"
-                            readonly
-                            v-bind="attrs"
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker
-                          v-model="e_date"
-                          @input="menu2 = false"
-                          :min="s_date"
-                        ></v-date-picker>
-                      </v-menu>
-                    </v-col>
-
-                    <v-btn class="ml-6 primary" @click="selectedDate()"
-                      >조회</v-btn
+                  <!-- 시작일 -->
+                  <v-col cols="3" lg="2" class="">
+                    <v-menu
+                      v-model="menu1"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
                     >
-                  </v-row>
-                  <!-- 선택된 조회값 -->
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="s_date"
+                          label="시작일"
+                          prepend-icon="mdi-calendar"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="s_date"
+                        @input="menu1 = false"
+                        :max="e_date"
+                      ></v-date-picker>
+                    </v-menu>
+                  </v-col>
 
-                  <v-row>
-                    <v-col cols="12">
-                      <div class="pa-0 d-flex align-center">
-                        <h4
-                          class="searchbox-title pr-4"
+                  <!-- 종료일 -->
+                  <v-col cols="3" md="3" lg="2" class="">
+                    <v-menu
+                      v-model="menu2"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="e_date"
+                          label="종료일"
+                          prepend-icon="mdi-calendar"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="e_date"
+                        @input="menu2 = false"
+                        :min="s_date"
+                      ></v-date-picker>
+                    </v-menu>
+                  </v-col>
+
+                  <v-btn class="ml-6 primary" @click="selectedDate()"
+                    >조회</v-btn
+                  >
+                </v-row>
+              </v-card-text>
+            </v-card>
+
+            <!-- 선택된 조회값 -->
+
+            <v-row dense>
+              <v-col cols="12">
+                <div class="pa-0 d-flex align-center">
+                  <h4 class="searchbox-title pr-4" style="white-space: nowrap">
+                    조회 센서
+                  </h4>
+
+                  <v-chip-group
+                    v-model="selection"
+                    multiple
+                    active-class="primary--text"
+                  >
+                    <v-chip v-for="tag in tags" :key="tag">
+                      {{ tag }}
+                    </v-chip>
+                  </v-chip-group>
+                </div>
+              </v-col>
+              <v-col cols="12">
+                <LoadingSpinner v-if="this.isLoading"></LoadingSpinner>
+                <!-- 온습도카드 -->
+                <div v-if="!this.isLoading">
+                  <v-card
+                    class="ma-2"
+                    v-if="this.selection.includes(0)"
+                    :height="500"
+                    elevation="4"
+                  >
+                    <v-card-title>
+                      <div class="d-flex align-center">
+                        <h3
+                          class="pr-3 searchbox-title"
                           style="white-space: nowrap"
                         >
-                          조회 센서
-                        </h4>
+                          {{ newData[0].name }}
+                        </h3>
+                        <h5>
+                          현재 온도:
+                          {{ Data_TempHumid.nowValue_Temp }}
+                          {{ Data_TempHumid[0].unit[0].unit }}
+                          습도:
+                          {{ Data_TempHumid.nowValue_Humid }}
+                          {{ Data_TempHumid[0].unit[1].unit }}
+                        </h5>
 
-                        <v-chip-group
-                          v-model="selection"
-                          multiple
-                          active-class="primary--text"
-                        >
-                          <v-chip v-for="tag in tags" :key="tag">
-                            {{ tag }}
-                          </v-chip>
-                        </v-chip-group>
+                        <v-select
+                          class="ml-10"
+                          size="1"
+                          :items="selectSearchUnit"
+                          v-model="temphumid_TimeUnit"
+                          item-text="name"
+                          item-value="value"
+                          label="조회단위"
+                          dense
+                          @change="selectedDate()"
+                        ></v-select>
                       </div>
-                    </v-col>
-                  </v-row>
-                  <v-row class="d-flex">
-                    <v-col cols="12">
-                      <LoadingSpinner v-if="this.isLoading"></LoadingSpinner>
-                      <!-- 온습도카드 -->
-                      <div class="d-flex" v-if="!this.isLoading">
-                        <v-card
-                          class="pa-3 ma-2"
-                          v-if="this.selection.includes(0)"
-                        >
-                          <div class="d-flex align-center">
-                            <h3
-                              class="pr-3 searchbox-title"
-                              style="white-space: nowrap"
-                            >
-                              {{ newData[0].name }}
-                            </h3>
-                            <h5>
-                              현재 온도:
-                              {{ Data_TempHumid.nowValue_Temp }}
-                              {{ Data_TempHumid[0].unit[0].unit }}
-                              습도:
-                              {{ Data_TempHumid.nowValue_Humid }}
-                              {{ Data_TempHumid[0].unit[1].unit }}
-                            </h5>
-                          </div>
-
+                    </v-card-title>
+                    <v-card-text>
+                      <v-row>
+                        <v-col cols="12">
                           <TestGraphTemp
                             :Data_TempHumid="Data_TempHumid"
                             name="humid"
                           ></TestGraphTemp>
-                        </v-card>
-                        <!-- 양액ECPH카드 -->
-                        <v-card
-                          class="ma-2 pa-3"
-                          v-if="this.selection.includes(1)"
-                        >
-                          <h3
-                            class="searchbox-title"
-                            style="white-space: nowrap"
-                          >
-                            {{ newData[1].name }}
-                          </h3>
-                          <TestGraphWater
-                            :Data_Water="Data_Water"
-                            name="ECPH"
-                          ></TestGraphWater>
-                        </v-card>
-                      </div>
-                    </v-col>
-                  </v-row>
-                </v-sheet>
+                        </v-col>
+                      </v-row>
+                    </v-card-text>
+                  </v-card>
+                </div>
+              </v-col>
+              <v-col cols="12">
+                <div v-if="!this.isLoading">
+                  <!-- 양액ECPH카드 -->
+                  <v-card
+                    class="ma-2 pa-3"
+                    v-if="this.selection.includes(1)"
+                    elevation="4"
+                  >
+                    <v-card-title>
+                      <h3 class="searchbox-title" style="white-space: nowrap">
+                        {{ newData[1].name }}
+                      </h3>
+                    </v-card-title>
+                    <v-card-text>
+                      <TestGraphWater
+                        :Data_Water="Data_Water"
+                        name="ECPH"
+                      ></TestGraphWater>
+                    </v-card-text>
+                  </v-card>
+                </div>
               </v-col>
             </v-row>
-          </v-container>
-          <!-- MonitoringGraph내용 -->
+            <!-- MonitoringGraph내용 -->
+          </v-card-text>
         </v-card>
       </v-dialog>
     </v-row>
@@ -304,13 +312,7 @@
               <!-- 시간설정 -->
               <template v-slot:[`item.setting`]="{ item }">
                 <!-- LED부분 -->
-                <div
-                  class="d-flex"
-                  v-if="
-                    item.equipmentName == 'LED-1' ||
-                    item.equipmentName == 'LED-2'
-                  "
-                >
+                <div class="d-flex" v-if="item.equipmentType == 'LED'">
                   <form class="d-flex align-center">
                     <label for="Timeinput">시작 : </label>
                     <input
@@ -371,7 +373,7 @@
                 <div
                   class="d-flex align-center"
                   style="width: 300x"
-                  v-if="item.equipmentName == '가습기'"
+                  v-if="item.equipmentType == 'HUM'"
                 >
                   <div class="" style="width: 108px">
                     <v-text-field
@@ -424,7 +426,7 @@
                 <div
                   class="d-flex align-center"
                   style="width: 300x"
-                  v-if="item.equipmentName == '환기팬'"
+                  v-if="item.equipmentType == 'ACF'"
                 >
                   <div class="" style="width: 108px">
                     <v-text-field
@@ -476,7 +478,7 @@
                 <!-- 에어컨부분 -->
                 <div
                   class="d-flex align-center"
-                  v-if="item.equipmentName == '에어컨'"
+                  v-if="item.equipmentType == 'ACN'"
                 >
                   <div class="d-flex align-center">
                     <v-text-field
@@ -529,8 +531,7 @@
                 <div
                   class="d-flex"
                   v-if="
-                    item.equipmentName == '급수펌프' ||
-                    item.equipmentName == '배수펌프'
+                    item.equipmentType == 'WSP' || item.equipmentType == 'WDP'
                   "
                 >
                   <form class="d-flex align-center">
@@ -553,27 +554,29 @@
                       :readonly="!item.modifiedBtn"
                     />
                   </form>
-                  <v-btn
-                    class="ml-3 mt-2 mr-3"
-                    v-if="!item.modifiedBtn"
-                    @click="editValue(item)"
-                    >수정</v-btn
-                  >
+                  <div class="d-flex justify-space-around">
+                    <v-btn
+                      class="ml-3 mt-2 mr-3"
+                      v-if="!item.modifiedBtn"
+                      @click="editValue(item)"
+                      >수정</v-btn
+                    >
 
-                  <v-btn
-                    class="ml-3 mt-2 mr-3"
-                    v-if="item.modifiedBtn"
-                    @click="saveChangeValue(item)"
-                    small
-                    >저장</v-btn
-                  >
-                  <v-btn
-                    class="ml-3 mt-2 mr-3"
-                    v-if="item.modifiedBtn"
-                    @click="cancelChangeValue(item)"
-                    small
-                    >취소</v-btn
-                  >
+                    <v-btn
+                      class="ml-3 mt-2 mr-3"
+                      v-if="item.modifiedBtn"
+                      @click="saveChangeValue(item)"
+                      small
+                      >저장</v-btn
+                    >
+                    <v-btn
+                      class="ml-3 mt-2 mr-3"
+                      v-if="item.modifiedBtn"
+                      @click="cancelChangeValue(item)"
+                      small
+                      >취소</v-btn
+                    >
+                  </div>
                 </div>
               </template>
               <template v-slot:[`item.alarm`]="{ item }">
@@ -731,6 +734,7 @@ import TestGraphWater from "./TestGraphWater.vue";
 import RoomInfo from "./Monitoring/RoomInfo.vue";
 
 const data = Data;
+let weatherFn;
 
 export default {
   name: "MESFE2Monitoring",
@@ -786,6 +790,12 @@ export default {
       loading3: false,
       loading4: false,
       loading5: false,
+      selectSearchUnit: [
+        { name: "1분", value: "1M" },
+        { name: "5분", value: "5M" },
+        { name: "1시간", value: "1H" },
+      ],
+      temphumid_TimeUnit: "1H",
 
       // 외부센서로딩
       // MonitoringGraph
@@ -893,7 +903,7 @@ export default {
           unit: "m/s",
         },
         {
-          sensorname: "풍향",
+          sensorname: "풍향/풍속",
           value: "-",
           unit: "",
         },
@@ -944,6 +954,10 @@ export default {
 
   mounted() {
     this.getOutDoor();
+
+    weatherFn = setInterval(() => {
+      this.getOutDoor();
+    }, 60 * 1000);
     this.BeforeWeeks;
     //this.getEquipMentInFormation();
     console.log("템프휴미드", this.Data_TempHumid[0].unit[0].unit);
@@ -952,6 +966,9 @@ export default {
       console.log("getRoomData", res);
       this.cards = res.data.responseData;
     });
+  },
+  destroyed() {
+    clearInterval(weatherFn);
   },
   watch: {
     loader() {
@@ -1227,23 +1244,29 @@ export default {
     // 기상센서api
     getOutDoor() {
       this.resetOutDoorValue();
-      //- Base_time : 0200, 0500, 0800, 1100, 1400, 1700, 2000, 2300 (1일 8회) 두시,다섯시 ... 이때 예보를함 (업데이트시간)
       let baseTime = 0;
       let date = new Date();
-      let baseArr = [2, 5, 8, 11, 14, 17, 20, 23];
+      let pty_code = [
+        "없음",
+        "비",
+        "비/눈",
+        "눈",
+        "빗방울",
+        "빗방울눈날림",
+        "눈날림",
+      ];
 
-      for (let i = 0; i < baseArr.length; i++) {
-        console.log(baseArr[i], i, date.getHours());
-        if (baseArr[i] > date.getHours()) {
-          //지금시간이랑 비교해서 baseArr[i]이 크면,
-          console.log(baseArr[i - 1]); //하나뺀걸 가져옴.
-          baseTime = baseArr[i - 1];
-          break;
-        } else if (baseArr[i] > date.getHours() && i == 0) {
-          //만약에 0시나 1시일 경우 baseTime을 23시로
-          baseTime = 23;
-          break;
-        }
+      if (date.getMinutes() < 30) {
+        baseTime = `${(date.getHours() - 1).toString().padStart(2, "0")}59`;
+      } else {
+        baseTime = `${date.getHours().toString().padStart(2, "0")}${date
+          .getMinutes()
+          .toString()
+          .padStart(2, "0")}`;
+      }
+
+      if (date.getHours() == 0 && date.getMinutes() < 30) {
+        baseTime = `2359`;
       }
 
       console.log("baseTime", baseTime);
@@ -1263,7 +1286,7 @@ export default {
         numOfRows: encodeURIComponent(36), //12시간의 데이터= 1시간
         dataType: encodeURIComponent("JSON"),
         base_date: encodeURIComponent(baseDate),
-        base_time: encodeURIComponent(`1655`),
+        base_time: encodeURIComponent(baseTime),
         nx: encodeURIComponent("62"),
         ny: encodeURIComponent("119"),
       };
@@ -1278,31 +1301,55 @@ export default {
         .then((res) => {
           console.log(res);
 
+          if (res.data.response.body === undefined) {
+            this.getOutDoor();
+            return;
+          }
+
           console.log(res.data.response.body.items);
           var Arr = res.data.response.body.items.item;
 
-          var Out_RainFall = _.filter(Arr, { category: "PCP" });
-          console.log("강수량", Out_RainFall[0].fcstValue);
-          this.outdoorSensor[1].value = Out_RainFall[0].fcstValue;
+          var Out_RainFall = _.filter(Arr, { category: "RN1" });
+          console.log("강수량", Out_RainFall[0].obsrValue);
+          this.outdoorSensor[1].value = Out_RainFall[0].obsrValue;
+          let Out_RainType = _.filter(Arr, { category: "PTY" });
+          let Out_RainFall_str = "";
+          switch (Out_RainFall) {
+            case Out_RainFall < 1:
+              Out_RainFall_str = "1.0mm미만";
+              break;
+            case 30:
+              Out_RainFall_str = "30.0~50.0mm";
+              break;
+            case 50:
+              Out_RainFall_str = "50.0mm이상";
+              break;
+            default:
+              Out_RainFall_str = `${Out_RainFall[0].obsrValue}mm`;
+          }
+          this.outdoorSensor[1].value = `${Out_RainFall_str} (${
+            pty_code[Out_RainType[0].obsrValue]
+          })`;
 
           var Out_Humid = _.filter(Arr, { category: "REH" });
-          console.log("습도", Out_Humid[0].fcstValue);
-          this.outdoorSensor[5].value = Out_Humid[0].fcstValue;
+          console.log("습도", Out_Humid[0].obsrValue);
+          this.outdoorSensor[5].value = Out_Humid[0].obsrValue;
 
-          var Out_Temp = _.filter(Arr, { category: "TMP" });
-          console.log("온도", Out_Temp[0].fcstValue);
-          this.outdoorSensor[4].value = Out_Temp[0].fcstValue;
+          var Out_Temp = _.filter(Arr, { category: "T1H" });
+          console.log("온도", Out_Temp[0].obsrValue);
+          this.outdoorSensor[4].value = Out_Temp[0].obsrValue;
 
           var Out_WindSpeed_South = _.filter(Arr, { category: "VVV" });
-          console.log("남북쪽풍속", Out_WindSpeed_South[0].fcstValue);
+          console.log("남북쪽풍속", Out_WindSpeed_South[0].obsrValue);
           console.log("남북쪽풍속", Out_WindSpeed_South);
-          this.outdoorSensor[2].value = Out_WindSpeed_South[0].fcstValue;
+          this.outdoorSensor[2].value = Out_WindSpeed_South[0].obsrValue;
 
           var Out_WindDirection = _.filter(Arr, { category: "VEC" });
+          var Out_WindSpeed = _.filter(Arr, { category: "WSD" });
 
           //(풍향값 + 22.5 * 0.5) / 22.5)
           this.outdoorSensor[3].value = Math.floor(
-            (parseInt(Out_WindDirection[0].fcstValue) + 22.5 * 0.5) / 22.5
+            (parseInt(Out_WindDirection[0].obsrValue) + 22.5 * 0.5) / 22.5
           );
           // console.log(
           //   "outdoorSensor",
@@ -1317,7 +1364,7 @@ export default {
           );
           //console.log(this.outdoorSensor[3].value);
           this.outdoorSensor[3].value = this.outdoorSensor[3].value[0].DI;
-
+          this.outdoorSensor[3].value = `${this.outdoorSensor[3].value} ${Out_WindSpeed[0].obsrValue}m/s`;
           //console.log(cfg.data.windDirectionData);
         });
     },
@@ -1387,7 +1434,7 @@ export default {
         });
       });
       let item = {
-        roomId: data.roomId,
+        roomId: this.roomID,
       };
       let p3 = new Promise((resolve, reject) => {
         api.smartfarm.temphumidValue(item).then((res) => {

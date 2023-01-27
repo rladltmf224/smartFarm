@@ -47,8 +47,8 @@ import { Component, Vue } from "vue-property-decorator";
 
 @Component
 export default class Login extends Vue {
-  username?: string = "master";
-  password?: string = "qwer1234!@";
+  username?: string = "bswoo";
+  password?: string = "a12345678!@";
 
   created() {
     this.$store.commit("setCurrent", "nothing");
