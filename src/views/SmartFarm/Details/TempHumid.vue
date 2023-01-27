@@ -162,7 +162,7 @@
             <div class="text-center pt-2">
               <v-pagination
                 v-model="page"
-                :total-visible="7"
+                :total-visible="11"
                 :length="pageCount"
               ></v-pagination>
             </div>
