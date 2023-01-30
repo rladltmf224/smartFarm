@@ -285,6 +285,7 @@ export default {
 
       api.smartfarm.getEquipmentlist(reqData).then((res) => {
         console.log("getEquipmentlist", res);
+        this.search_type_1 = [];
         this.search_list1 = res.data.responseData;
       });
     },
