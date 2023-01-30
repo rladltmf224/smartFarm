@@ -13,6 +13,10 @@
                                             dense></v-text-field>
                                     </v-col>
                                     <v-col cols="2">
+                                        <v-text-field label="거래처명" v-model="search_condition.customerName"
+                                            dense></v-text-field>
+                                    </v-col>
+                                    <v-col cols="2">
                                         <v-menu ref="order_startDate" v-model="order_startDate"
                                             :close-on-content-click="false"
                                             :return-value.sync="search_condition.order_startDate"
@@ -204,6 +208,7 @@ export default class Customer extends Vue {
 
 
     search_condition: any = {
+        customerName: '',
         orderInfoCode: '',
         order_startDate: "",
         order_endDate: "",
@@ -316,6 +321,15 @@ export default class Customer extends Vue {
                     }
                     api.order.deleteOrderInfo(id).then((res) => {
                         console.log('수주 정보 삭제 성공')
+                        this.$swal({
+                            title: "삭제되었습니다.",
+                            icon: "info",
+                            position: "top",
+                            showCancelButton: false,
+                            showConfirmButton: false,
+                            toast: true,
+                            timer: 1500,
+                        });
                         this.getCustomer()
                     })
                 }
@@ -384,6 +398,7 @@ export default class Customer extends Vue {
     getCustomer() {  // 수주 정보 조회 
         this.loading = true
         let item = {
+            customerName: this.search_condition.customerName,//거래처명
             orderInfoCode: this.search_condition.orderInfoCode, // 수주 코드
             orderDate: "", // 수주 일자
             page: 1, // 페이징 기능

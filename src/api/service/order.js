@@ -36,19 +36,19 @@ export default {
       headers: { "Content-Type": "application/json" },
     }),
 
-  editOrderInfo: (
-    params //수주 정보 등록 - 품목 조회
-  ) =>
-    AuthAPI.put("/api/orderinfo/item", JSON.stringify(params), {
-      headers: { "Content-Type": "application/json" },
-    }),
-
   // editOrderInfo: (
-  //   params //수주 정보 수정
+  //   params //수주 정보 등록 - 품목 조회
   // ) =>
-  //   AuthAPI.put("/api/orderinfo", JSON.stringify(params), {
+  //   AuthAPI.put("/api/orderinfo/item", JSON.stringify(params), {
   //     headers: { "Content-Type": "application/json" },
   //   }),
+
+  editOrderInfo: (
+    params //수주 정보 수정
+  ) =>
+    AuthAPI.put("/api/orderinfo", JSON.stringify(params), {
+      headers: { "Content-Type": "application/json" },
+    }),
 
   deleteOrderInfo: (
     params //수주 정보 삭제
