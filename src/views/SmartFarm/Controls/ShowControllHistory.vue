@@ -21,7 +21,6 @@
                   </v-col>
                   <v-col cols="2" class="d-flex align-center">
                     <v-select
-                  
                       :items="search_list1"
                       label="제어항목"
                       v-model="search_type_1"
@@ -247,9 +246,7 @@ export default {
       e_date: new Date().toISOString().substr(0, 10),
       menu1: false,
       menu2: false,
-      search_list1: [
-    
-      ],
+      search_list1: [],
       search_type_1: [],
       search_list2: [],
       search_type_2: "",
@@ -263,17 +260,14 @@ export default {
     };
   },
   created() {
-    api.smartfarm.getRoomlist().then((res)=>{
-      console.log('getRoomlist',res)
-      this.search_list2=res.data.responseData
-    })
-
- 
+    api.smartfarm.getRoomlist().then((res) => {
+      console.log("getRoomlist", res);
+      this.search_list2 = res.data.responseData;
+    });
   },
   mounted() {
     this.BeforeWeeks();
     this.getHistory();
-  
   },
   watch: {
     options: {
@@ -284,16 +278,15 @@ export default {
     },
   },
   methods: {
+    changeRoomData() {
+      let reqData = {
+        roomId: this.search_type_2,
+      };
 
-    changeRoomData(){
-      let reqData={
-        roomId:this.search_type_2
-      }
-
-      api.smartfarm.getEquipmentlist(reqData).then((res)=>{
-      console.log('getEquipmentlist',res)
-      this.search_list1 =res.data.responseData
-    })
+      api.smartfarm.getEquipmentlist(reqData).then((res) => {
+        console.log("getEquipmentlist", res);
+        this.search_list1 = res.data.responseData;
+      });
     },
     // 시작일을 일주일전으로
     BeforeWeeks() {
@@ -332,8 +325,8 @@ export default {
       var item = {
         room: this.search_type_2,
         equipmentIds: this.search_type_1,
-        startDate: this.s_date ,
-        endDate: this.e_date ,
+        startDate: this.s_date,
+        endDate: this.e_date,
         page: page,
         size: itemsPerPage, //보여주고싶은 행의개수
         sortBy: sortBy,
