@@ -2,7 +2,7 @@
   <div>
     <div class="d-flex justify-center">
       <div class="chart-container">
-        <canvas class="j" ref="barChart" height="300" />
+        <canvas v-if="" class="j" ref="barChart" height="350" />
       </div>
     </div>
   </div>
@@ -30,11 +30,6 @@ export default {
   },
 
   mounted() {
-    // this.MakeGraph();
-    console.log(
-      "마운티드됐습니다마운티드됐습니다마운티드됐습니다마운티드됐습니다",
-      this.name
-    );
     this.$nextTick(function () {
       this.MakeGraph();
     });

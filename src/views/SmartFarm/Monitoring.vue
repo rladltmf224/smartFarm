@@ -204,7 +204,7 @@
                           item-value="value"
                           label="조회단위"
                           dense
-                          @change="selectedDate()"
+                          @change="changeGraphDivision()"
                         ></v-select>
                       </div>
                     </v-card-title>
@@ -214,6 +214,7 @@
                           <TestGraphTemp
                             :Data_TempHumid="Data_TempHumid"
                             name="humid"
+                            ref="graphtemp"
                           ></TestGraphTemp>
                         </v-col>
                       </v-row>
@@ -347,13 +348,13 @@
                     small
                     >저장</v-btn
                   >
-                  <v-btn
+                  <!-- <v-btn
                     class="ml-3 mt-2 mr-3"
                     v-if="item.modifiedBtn"
                     @click="editValue(item)"
                     small
                     >추가</v-btn
-                  >
+                  > -->
                   <v-btn
                     class="ml-3 mt-2 mr-3"
                     v-if="item.modifiedBtn"
@@ -375,7 +376,7 @@
                   style="width: 300x"
                   v-if="item.equipmentType == 'HUM'"
                 >
-                  <div class="" style="width: 108px">
+                  <div>
                     <v-text-field
                       dense
                       v-model="item.minValue"
@@ -384,11 +385,12 @@
                       type="number"
                       suffix="%"
                       @change="changeValue(item)"
+                      width="30px"
                     ></v-text-field>
                   </div>
 
                   <p class="pt-6 px-4">~</p>
-                  <div class="" style="width: 108px">
+                  <div>
                     <v-text-field
                       dense
                       min="1"
@@ -396,6 +398,7 @@
                       type="number"
                       suffix="%"
                       v-model="item.maxValue"
+                      width="30px"
                       @change="changeValue(item)"
                     ></v-text-field>
                   </div>
@@ -766,7 +769,7 @@ export default {
           width: "4%",
         },
         {
-          text: "장비상태",
+          text: "상태",
           value: "currentStatus",
           sortable: false,
           width: "2%",
@@ -1405,46 +1408,12 @@ export default {
 
     // 병수선임님이 알려준 비동기 api여러개 처리법
     selectedDate() {
-      let filter = {
-        roomId: this.roomID,
-        startDate: this.s_date,
-        endDate: this.e_date,
-      };
-
-      console.log("selectedDate", filter);
-
       this.isLoading = true;
 
-      let p1 = new Promise((resolve, reject) => {
-        api.smartfarm.getGraphTempHumid(filter).then((res) => {
-          let result = res.data.responseData;
-          this.Data_TempHumid.value = result;
-          this.Data_TempHumid.startDate = this.s_date;
-          this.Data_TempHumid.endDate = this.e_date;
-          resolve(res);
-        });
-      });
-      let p2 = new Promise((resolve, reject) => {
-        api.smartfarm.getGraphWaterPhEC(filter).then((res) => {
-          let result = res.data.responseData;
-          this.Data_Water.value = result;
-          this.Data_Water.startDate = this.s_date;
-          this.Data_Water.endDate = this.e_date;
-          resolve(res);
-        });
-      });
-      let item = {
-        roomId: this.roomID,
-      };
-      let p3 = new Promise((resolve, reject) => {
-        api.smartfarm.temphumidValue(item).then((res) => {
-          let result = res.data.responseData;
-          this.Data_TempHumid.nowValue = result;
-          this.Data_TempHumid.nowValue_Temp = result.temperature;
-          this.Data_TempHumid.nowValue_Humid = result.humidity;
-          resolve(res);
-        });
-      });
+      let p1 = this.getGraphTempData();
+      let p2 = this.getGraphWaterData();
+
+      let p3 = this.getCurrntTempHumidData();
 
       Promise.all([p1, p2, p3])
         .then((values) => {
@@ -1459,6 +1428,65 @@ export default {
       // 줄여볼수있으면줄여보기
 
       // 병수선임님이 알려준 비동기 api여러개 처리법
+    },
+    getGraphTempData() {
+      let filter = {
+        roomId: this.roomID,
+        startDate: this.s_date,
+        endDate: this.e_date,
+        division: this.temphumid_TimeUnit,
+      };
+
+      return new Promise((resolve, reject) => {
+        api.smartfarm.getGraphTempHumid(filter).then((res) => {
+          let result = res.data.responseData;
+          this.Data_TempHumid.value = result;
+          this.Data_TempHumid.startDate = this.s_date;
+          this.Data_TempHumid.endDate = this.e_date;
+          resolve(res);
+        });
+      });
+    },
+    async changeGraphDivision() {
+      let resData = await this.getGraphTempData();
+      let resData2 = await this.getCurrntTempHumidData();
+      console.log("changeGraphDivision", resData);
+      if (resData2.data.isSuccess) {
+        this.$refs.graphtemp.reloadChart();
+      }
+    },
+    getGraphWaterData() {
+      let filter = {
+        roomId: this.roomID,
+        startDate: this.s_date,
+        endDate: this.e_date,
+      };
+
+      return new Promise((resolve, reject) => {
+        api.smartfarm.getGraphWaterPhEC(filter).then((res) => {
+          let result = res.data.responseData;
+          this.Data_Water.value = result;
+          this.Data_Water.startDate = this.s_date;
+          this.Data_Water.endDate = this.e_date;
+          resolve(res);
+        });
+      });
+    },
+    getCurrntTempHumidData() {
+      let item = {
+        roomId: this.roomID,
+      };
+
+      return new Promise((resolve, reject) => {
+        api.smartfarm.temphumidValue(item).then((res) => {
+          let result = res.data.responseData;
+          this.Data_TempHumid.nowValue = result;
+          this.Data_TempHumid.nowValue_Temp = result.temperature;
+          this.Data_TempHumid.nowValue_Humid = result.humidity;
+          console.log("result", this.Data_TempHumid);
+          resolve(res);
+        });
+      });
     },
     //  MonitoringGraph
     sendRequestBody() {

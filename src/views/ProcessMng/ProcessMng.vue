@@ -379,4 +379,3 @@ export default class ProcessMng extends Vue {
   }
 }
 </script>
->
