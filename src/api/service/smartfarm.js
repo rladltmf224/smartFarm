@@ -1,8 +1,8 @@
 import AuthAPI from "../api/AuthAPI";
 
 export default {
-  indoorHistory: () =>
-    AuthAPI.get("/api/sensor/history/indoor", {
+  indoorHistory: () => {
+    return AuthAPI.get("/api/sensor/history/indoor", {
       headers: { "Content-Type": "application/json" },
       params: {
         createdDate: "2022-09-26 14:05", //조회날짜
@@ -10,12 +10,14 @@ export default {
         room: 1, //실 이름
         section: 1, //구역 이름
       },
-    }),
-  temphumidValue: (params) =>
-    AuthAPI.get("/api/temphumid/value/", {
+    });
+  },
+  temphumidValue: (params) => {
+    return AuthAPI.get("/api/temphumid/value", {
       headers: { "Content-Type": "application/json" },
       params: params,
-    }),
+    });
+  },
   crop: (params) =>
     AuthAPI.get("/api/crop", {
       params: params,
@@ -37,7 +39,8 @@ export default {
       params: params,
     }),
   getEquipmentInfo: () => AuthAPI.get("/api/equipment/info"),
-  getEquipmentlist: (item) => AuthAPI.get("/api/equipment/equipment",{params:item}),
+  getEquipmentlist: (item) =>
+    AuthAPI.get("/api/equipment/equipment", { params: item }),
   getRoomlist: () => AuthAPI.get("/api/equipment/room"),
   editEquipmentCtrl: (item) => {
     return AuthAPI.put("/api/equipment/control", JSON.stringify(item), {
@@ -96,15 +99,16 @@ export default {
     AuthAPI.post("/api/temphumid/history/table/hour", JSON.stringify(params), {
       headers: { "Content-Type": "application/json" },
     }),
-  getGraphWaterPhEC: (params) =>
-    AuthAPI.get("/api/fertilizer/monitoring", {
+  getGraphWaterPhEC: (params) => {
+    return AuthAPI.get("/api/fertilizer/monitoring", {
       params: params,
-    }),
-
-  getGraphTempHumid: (params) =>
-    AuthAPI.get("/api/temphumid/monitoring", {
+    });
+  },
+  getGraphTempHumid: (params) => {
+    return AuthAPI.get("/api/temphumid/monitoring", {
       params: params,
-    }),
+    });
+  },
   getRoomData: (params) =>
     AuthAPI.get("/api/monitoring", {
       params: params,

@@ -1,22 +1,18 @@
 <template>
   <div>
-    <h3 class="d-flex align-center searchbox-title" style=""></h3>
-
     <div class="d-flex justify-center">
-      <div
-        class="chart-container"
-        style="position: relative; height: 50vh; width: 45vw"
-      >
-        <canvas class="j" ref="barChart" />
+      <div class="chart-container">
+        <canvas v-if="" class="j" ref="barChart" height="350" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { Chart, registerables } from 'chart.js';
-import zoomPlugin from 'chartjs-plugin-zoom';
-import annotationPlugin from 'chartjs-plugin-annotation';
+import { Chart, registerables } from "chart.js";
+import zoomPlugin from "chartjs-plugin-zoom";
+import annotationPlugin from "chartjs-plugin-annotation";
+import _ from "lodash";
 
 Chart.register(...registerables);
 Chart.register(zoomPlugin);
@@ -34,42 +30,37 @@ export default {
   },
 
   mounted() {
-    // this.MakeGraph();
-    console.log(
-      '마운티드됐습니다마운티드됐습니다마운티드됐습니다마운티드됐습니다',
-      this.name
-    );
     this.$nextTick(function () {
       this.MakeGraph();
     });
   },
   data: () => ({
-    unit: '온도',
-    type: 'line',
+    unit: "온도",
+    type: "line",
     data: {
       labels: [],
       datasets: [
         {
-          label: '양액pH',
+          label: "양액pH",
           data: [],
           fill: false,
-          borderColor: 'red',
+          borderColor: "red",
           tension: 0.1,
-          backgroundColor: 'red',
+          backgroundColor: "red",
           pointRadius: 3,
           borderWidth: 1,
-          yAxisID: 'y1',
+          yAxisID: "y1",
         },
         {
-          label: '양액EC',
+          label: "양액EC",
           data: [],
           fill: false,
-          borderColor: 'blue',
+          borderColor: "blue",
           tension: 0.1,
-          backgroundColor: 'blue',
+          backgroundColor: "blue",
           pointRadius: 3, //점 크기
           borderWidth: 1, //라인굵기
-          yAxisID: 'y',
+          yAxisID: "y",
         },
       ],
     },
@@ -79,33 +70,33 @@ export default {
 
       stacked: false,
 
-      events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
+      events: ["mousemove", "mouseout", "click", "touchstart", "touchmove"],
       interaction: {
-        mode: 'index',
+        mode: "index",
         intersect: false,
       },
       pan: {
         enabled: true,
-        mode: 'x',
+        mode: "x",
       },
       scales: {
         y: {
           // beginAtZero: true,
           min: 0,
           max: 4,
-          type: 'linear',
+          type: "linear",
           display: true,
 
-          position: 'left',
+          position: "left",
           title: {
             display: true,
-            text: ' ',
+            text: " ",
           },
         },
         y1: {
-          type: 'linear',
+          type: "linear",
           display: true,
-          position: 'right',
+          position: "right",
           grid: {
             drawOnChartArea: false, // only want the grid lines for one axis to show up
           },
@@ -113,10 +104,7 @@ export default {
           max: 8,
           title: {
             display: true,
-            text: ' ',
-          },
-          grid: {
-            drawOnChartArea: false, // only want the grid lines for one axis to show up
+            text: " ",
           },
         },
         x: {
@@ -130,18 +118,17 @@ export default {
       plugins: {
         tooltip: {
           // Tooltip will only receive click events
-          events: ['mousemove'],
+          events: ["mousemove"],
         },
         title: {
           display: true,
         },
         autocolors: false,
         interaction: {
-          mode: 'index',
+          mode: "index",
           intersect: false,
         },
         stacked: false,
-        autocolors: false,
         // annotation: {
         //   annotations: {
         //     line1: {
@@ -161,7 +148,7 @@ export default {
             pinch: {
               enabled: true,
             },
-            mode: 'xy',
+            mode: "xy",
           },
           pan: {
             enabled: true,
@@ -182,26 +169,26 @@ export default {
       }
 
       var chart = new Chart(this.$refs.barChart, {
-        type: 'line',
+        type: "line",
         data: this.data,
         options: this.options,
       });
       // this.graph_TempHumid();
-      console.log('createChartttttttttttttttttt', this.name);
+      console.log("createChartttttttttttttttttt", this.name);
       chart.update();
-      console.log('createChartttttttttttttttttt', this.name);
+      console.log("createChartttttttttttttttttt", this.name);
     },
     MakeGraph() {
-      let AM = _.filter(this.Data_Water.value, { division: '오전' });
+      let AM = _.filter(this.Data_Water.value, { division: "오전" });
 
-      let PM = _.filter(this.Data_Water.value, { division: '오후' });
+      let PM = _.filter(this.Data_Water.value, { division: "오후" });
 
-      let inputDate = _.map(this.Data_Water.value, 'inputDate');
-      console.log('inputDate', inputDate);
+      let inputDate = _.map(this.Data_Water.value, "inputDate");
+      console.log("inputDate", inputDate);
 
-      let AMPM_Result_PH = _.map(this.Data_Water.value, 'ph');
-      let AMPM_Result_EC = _.map(this.Data_Water.value, 'ec');
-      console.log('오전오후순서대로값', AMPM_Result_PH, AMPM_Result_EC);
+      let AMPM_Result_PH = _.map(this.Data_Water.value, "ph");
+      let AMPM_Result_EC = _.map(this.Data_Water.value, "ec");
+      console.log("오전오후순서대로값", AMPM_Result_PH, AMPM_Result_EC);
 
       // 오전/오후 + inputData
       var PluseDivAndInputDate = [];
@@ -209,11 +196,11 @@ export default {
       for (var i = 0; i < this.Data_Water.value.length; i++) {
         PluseDivAndInputDate.push(
           this.Data_Water.value[i].inputDate +
-            ' ' +
+            " " +
             this.Data_Water.value[i].division
         );
       }
-      console.log('PluseDivAndInputDate', PluseDivAndInputDate);
+      console.log("PluseDivAndInputDate", PluseDivAndInputDate);
       // 소영선임님이 알려준신 nextTick
 
       this.data.labels = PluseDivAndInputDate;

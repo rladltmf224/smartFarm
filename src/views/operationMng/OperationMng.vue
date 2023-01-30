@@ -120,30 +120,22 @@
             height="700"
             :headers="headers_operation"
             :items="operationOrderList"
-            item-key="barcode"
             class="elevation-4"
             multi-sort
             fixed-header
             dense
-            :options.sync="operationOpt.options"
-            :server-items-length="operationOpt.totalCount"
-            :loading="operationOpt.loading"
-            :items-per-page="operationOpt.itemsPerPage"
-            :page.sync="operationOpt.page"
-            @page-count="operationOpt.pageCount = $event"
-            hide-default-footer
           >
+            <template v-slot:[`item.edit`]="{ item }">
+              <v-icon small class="mr-2" @click="editItem(item)">
+                mdi-pencil
+              </v-icon>
+            </template>
           </v-data-table>
-          <template v-slot:[`item.edit`]="{ item }">
-            <v-icon small class="mr-2" @click="editItem(item)">
-              mdi-pencil
-            </v-icon>
-          </template>
 
-          <v-pagination
+          <!-- <v-pagination
             v-model="operationOpt.page"
             :length="operationOpt.pageCount"
-          ></v-pagination>
+          ></v-pagination> -->
         </v-col>
       </v-row>
       <!-- 생산등록 -->
@@ -261,14 +253,14 @@
                       ref="deadDate"
                       v-model="deadDate"
                       :close-on-content-click="false"
-                      :return-value.sync="deadDate"
+                      :return-value.sync="deadDate_date"
                       transition="scale-transition"
                       offset-y
                       min-width="auto"
                     >
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
-                          v-model="deadDate"
+                          v-model="deadDate_date"
                           label="마감일"
                           prepend-icon="mdi-calendar"
                           readonly
@@ -278,25 +270,31 @@
                         ></v-text-field>
                       </template>
                       <v-date-picker
-                        v-model="deadDate"
+                        v-model="deadDate_date"
                         no-title
                         scrollable
                         locale="ko-KR"
-                        :min="search_condition.endDate"
                       >
                         <v-spacer></v-spacer>
-                        <v-btn text color="primary" @click="startDate = false">
+                        <v-btn text color="primary" @click="deadDate = false">
                           취소
                         </v-btn>
                         <v-btn
                           text
                           color="primary"
-                          @click="s_date_search(search_condition.startDate)"
+                          @click="dead_date_search(deadDate_date)"
                         >
                           확인
                         </v-btn>
                       </v-date-picker>
                     </v-menu>
+                  </v-col>
+                </v-row>
+                <v-row dense class="align-self-center">
+                  <v-col cols="1">
+                    <v-btn color="primary" small @click="openModal_equipment"
+                      >시설등록</v-btn
+                    >
                   </v-col>
                   <v-col cols="2">
                     <v-chip
@@ -307,17 +305,9 @@
                     >
                       {{ data.name }}
                     </v-chip>
-                    <!-- <v-select
-                      :items="operationReqList"
-                      label="시설"
-                      dense
-                    ></v-select> -->
                   </v-col>
-                  <v-col cols="1">
-                    <v-btn color="primary" small @click="openModal_equipment"
-                      >시설등록</v-btn
-                    >
-                  </v-col>
+                </v-row>
+                <v-row dense class="align-self-center">
                   <v-col cols="12"
                     ><v-text-field
                       label="요청사항"
@@ -415,13 +405,15 @@ export default class OperationMng extends Vue {
   selectEquipData_regi: any[] = [];
   startDate: any = "";
   endDate: any = "";
-  deadDate: any = "";
+  deadDate: any = false;
+  deadDate_date: any = "";
   search_condition: any = {};
   operationOpt: any;
   operationRegiOpt: any;
   itemList: any[] = [];
   selectItem: any = 0;
   selectItemCount: number = 0;
+  selectOprationID: any = 0;
   selectOperation: any = 0;
   objectList: any[] = [
     { name: "납품", value: "납품" },
@@ -429,11 +421,7 @@ export default class OperationMng extends Vue {
     { name: "기타", value: "기타" },
   ];
 
-  operationOrderList: any[] = [
-    { equipment: "" },
-    { edit: "" },
-    { delete: "`" },
-  ];
+  operationOrderList: any[] = [];
   operationReqList: any[] = [{ equipment: "" }, { edit: "" }, { delete: "`" }];
   operation_modal: boolean = false;
   equipment_modal: boolean = false;
@@ -485,6 +473,7 @@ export default class OperationMng extends Vue {
     this.operationOpt = Object.assign({}, gridCfg);
     this.operationRegiOpt = Object.assign({}, gridCfg);
     this.getItemList();
+    this.getOperationData();
   }
 
   getItemList() {
@@ -534,10 +523,10 @@ export default class OperationMng extends Vue {
   }
 
   dead_date_search(v: any) {
-    this.search_condition.endDate = v;
-    this.endDate = false;
-    let endDate: any = this.$refs.endDate;
-    endDate.save(v);
+    this.deadDate_date = v;
+    this.deadDate = false;
+    let deadDate: any = this.$refs.deadDate;
+    deadDate.save(v);
   }
 
   getOperationData() {
@@ -546,12 +535,13 @@ export default class OperationMng extends Vue {
     // this.search_condition.size = itemsPerPage;
     // this.search_condition.sortBy = sortBy;
     // this.search_condition.sortDesc = sortDesc;
-    // this.operationOpt.loading = true;
+    this.operationOpt.loading = true;
     api.production.getProdutionList(this.search_condition).then((res) => {
       //this.operationReqList=res.data.re
 
       try {
         console.log("getOperationData", res.data.responseData);
+        this.operationOrderList = res.data.responseData;
         this.operationOpt.loading = false;
       } catch (error) {
         console.log("error", error);
@@ -562,6 +552,7 @@ export default class OperationMng extends Vue {
   editItem(item: any) {
     this.operation_modal = true;
     this.operation_modal_mode = "M";
+    this.selectOprationID = item.productionId;
     console.log("editItem", item);
   }
 
@@ -602,22 +593,130 @@ export default class OperationMng extends Vue {
     this.selectItem = 0;
     this.selectItemCount = 0;
     this.selectOperation = 0;
+    this.deadDate_date = "";
   }
 
-  saveOperationInfo(data: any) {
-    let reqData = {
+  saveOperationInfo() {
+    let reqData: any = {
       itemId: this.selectItem,
-      processId: this.selectOperation,
+      //processId: this.selectOperation,
+      processId: 1,
       counts: this.selectItemCount,
-      productionDate: data.productionDate,
+      productionDate: this.deadDate_date,
       facilityDetailIds: this.selectEquipData_regi.map((el) => {
         return el.facilityDetailId;
       }),
     };
 
-    api.production.postProdutionData(reqData).then((res) => {
-      console.log("res", res);
-    });
+    if (reqData.itemId == 0) {
+      return this.$swal({
+        title: "품목을 선택해주세요.",
+        icon: "error",
+        position: "top",
+        showCancelButton: false,
+        showConfirmButton: false,
+        toast: true,
+        timer: 1500,
+      });
+    }
+
+    if (reqData.processId == 0) {
+      return this.$swal({
+        title: "공정을 선택해주세요.",
+        icon: "error",
+        position: "top",
+        showCancelButton: false,
+        showConfirmButton: false,
+        toast: true,
+        timer: 1500,
+      });
+    }
+
+    if (reqData.counts == 0) {
+      return this.$swal({
+        title: "갯수를 입력해주세요.",
+        icon: "error",
+        position: "top",
+        showCancelButton: false,
+        showConfirmButton: false,
+        toast: true,
+        timer: 1500,
+      });
+    }
+
+    if (reqData.counts == 0) {
+      return this.$swal({
+        title: "갯수를 입력해주세요.",
+        icon: "error",
+        position: "top",
+        showCancelButton: false,
+        showConfirmButton: false,
+        toast: true,
+        timer: 1500,
+      });
+    }
+
+    if (reqData.productionDate == "") {
+      this.$swal({
+        title: "마감일을 선택해주세요.",
+        icon: "error",
+        position: "top",
+        showCancelButton: false,
+        showConfirmButton: false,
+        toast: true,
+        timer: 1500,
+      });
+    }
+
+    if (reqData.facilityDetailIds.length == 0) {
+      this.$swal({
+        title: "시설을 선택해주세요.",
+        icon: "error",
+        position: "top",
+        showCancelButton: false,
+        showConfirmButton: false,
+        toast: true,
+        timer: 1500,
+      });
+    }
+    if (this.operation_modal_mode == "C") {
+      api.production.postProdutionData(reqData).then((res) => {
+        console.log("res", res);
+        if (res.status == 200) {
+          this.closeModal_operation();
+          this.$swal({
+            title: "추가되었습니다.",
+            icon: "success",
+            position: "top",
+            showCancelButton: false,
+            showConfirmButton: false,
+            toast: true,
+            timer: 1500,
+          });
+        } else {
+          this.$swal("경고", "관리자에게 문의주시기바랍니다.", "error");
+        }
+      });
+    } else if (this.operation_modal_mode == "M") {
+      reqData.productionId = this.selectOprationID;
+      api.production.putProdutionData(reqData).then((res) => {
+        console.log("res", res);
+        if (res.status == 200) {
+          this.closeModal_operation();
+          this.$swal({
+            title: "수정되었습니다.",
+            icon: "success",
+            position: "top",
+            showCancelButton: false,
+            showConfirmButton: false,
+            toast: true,
+            timer: 1500,
+          });
+        } else {
+          this.$swal("경고", "관리자에게 문의주시기바랍니다.", "error");
+        }
+      });
+    }
   }
   saveEquipmentInfo() {
     this.equipment_modal = false;
