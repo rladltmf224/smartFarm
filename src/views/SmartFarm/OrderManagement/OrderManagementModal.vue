@@ -301,10 +301,6 @@ export default class OrderManagementModal extends Vue {
             itemsPerPageAllText: "ALL",
             itemsPerPageOptions: [10, 20, 50, -1],
         };
-    ordername_rule: any[] = [
-        (v: any) =>
-            !(v && v.length >= 50) || "작업지시서명 50자 이상 입력할 수 없습니다.",
-    ];
     name: string = "";
     menuLoad: boolean = false; //거래처명으로 검색 모달 
     datas_simple: any[] = [];
@@ -318,7 +314,6 @@ export default class OrderManagementModal extends Vue {
             value: "customerId", align: ' d-none'
         }
     ];
-    accountName: string = "";
     order: any =
         {
             orderDate: "2023-01-13",  //수주일자
@@ -329,31 +324,18 @@ export default class OrderManagementModal extends Vue {
             details: [] //수주품목의 디테일
         }
     customerName: '' //거래처 이름    
-    request: string = ''; //요청사항
     itemData: any[] = []; //수주정보 상세조회 resData
     menu_orderDate: boolean = false; //수주일자 datepicker
     menu_deliveryDate: boolean = false; //납품예정일 datepicker
     customerId: number | "" = "";
     customerList: any[] = [];
-    departmentList: any[] = [];
-    keyword: string = "";
-    deadline: string = "";
-    menu_deadline_date: boolean = false;
     memo: string = "";
-    itemList: any[] = [];
     search: string = "";
     searchItem: string = "";
-    searchlist: any[] = [];
     selectedProduct: [{ itemId?: number, itemName?: string }] | any[] = [];
     itemDetail: any[] = [];
     selected: [] = [];
-    interimStorage: boolean = false;
-    templist: any[] = [];
     item: any = "";
-    departmentCrewList: any[] = [];
-    orderData: any = [];
-    itemName: any = "";
-    selectedData: any;
 
     @Prop({ required: true }) open: boolean;
     @Prop({ required: true }) change: boolean;
@@ -375,12 +357,7 @@ export default class OrderManagementModal extends Vue {
         },
     })
     editedCustomerData: any;
-    @Watch("item")
-    onItemChange() {
-        if (this.item != null) {
-            this.itemName = this.item.name;
-        }
-    }
+
     @Watch('selectedProduct')
     chack() {
         console.log('셀렉티드프로덕트', this.selectedProduct)
@@ -469,12 +446,6 @@ export default class OrderManagementModal extends Vue {
     get tempheader() {
         return cfg.header.tempheader;
     }
-    get departmentData() {
-        return this.departmentList;
-    }
-    get departmentCrewData() {
-        return this.departmentCrewList;
-    }
     get itemTable() {
         return this.itemDetail
     }
@@ -495,77 +466,6 @@ export default class OrderManagementModal extends Vue {
         deliveryDate.save(v);
     }
     plus() {
-
-        // if (this.selectedProduct == null) { //선택된게 있어?
-        //     console.log('선택된게 없어,swal띄울게', this.selectedProduct)
-        //     this.$swal({
-        //         title: "품목이 선택되지 않았습니다.",
-        //         icon: "warning",
-        //         position: "top",
-        //         showCancelButton: false,
-        //         showConfirmButton: false,
-        //         toast: true,
-        //         timer: 1500,
-        //     });
-        // } else {
-        //     console.log('선택된게있어', this.selectedProduct.length)
-        //     console.log('선택된게있어.그안의내용물이야', this.selectedProduct)
-
-        //     if (this.itemDetail.length == 0) { //장바구니 비었어? 
-        //         console.log('장바구니 비었어,넣을게')
-        //         let totalID: any = _.map(this.itemDetail, "itemId");
-        //         for (var i = 0; i < this.selectedProduct.length; i++) {
-        //             let plusItem: any = this.selectedProduct[i];
-        //             if (totalID.includes(plusItem.id)) continue;
-        //             plusItem["quantity"] = null;
-        //             plusItem["expectedDeliveryDate"] = null;
-        //             plusItem["supplyUnitPrice"] = null;
-        //             plusItem["memo"] = null;
-        //             this.itemDetail.push(plusItem);
-        //         }
-        //     } else {
-        //         console.log('장바구니에 상품담겨있어,중복값체크할게', this.selectedProduct, this.itemDetail)
-        //         let dupYN: boolean = false //forEach를 통한 중복값체크 중..
-        //         let origin: any[] = this.selectedProduct
-        //         let anys: any[] = this.itemDetail
-        //         origin.forEach(function (el) {
-        //             anys.forEach(function (el2) {
-        //                 if (el.itemId == el2.itemId) {
-        //                     dupYN = true
-        //                 }
-        //             })
-        //         })
-        //         if (dupYN) { //장바구니안에 중복값있어?
-        //             console.log('장바구니 안에 중복된상품있어,swal띄울게.')
-        //             this.$swal({
-        //                 title: "중복해서 품목을 등록할 수 없습니다.",
-        //                 icon: "warning",
-        //                 position: "top",
-        //                 showCancelButton: false,
-        //                 showConfirmButton: false,
-        //                 toast: true,
-        //                 timer: 1500,
-        //             });
-        //             dupYN = false
-        //         } else { //장바구니안에 중복값 없어?
-        //             console.log('장바구니 안에 중복값없어.넣을게.', this.selectedProduct, this.itemDetail)
-        //             let totalID: any = _.map(this.itemDetail, "itemId");
-        //             for (var i = 0; i < this.selectedProduct.length; i++) {
-        //                 let plusItem: any = this.selectedProduct[i];
-        //                 if (totalID.includes(plusItem.id)) continue;
-        //                 plusItem["quantity"] = null;
-        //                 plusItem["expectedDeliveryDate"] = null;
-        //                 plusItem["supplyUnitPrice"] = null;
-        //                 plusItem["memo"] = null;
-        //                 this.itemDetail.push(plusItem);
-        //             }
-        //         }
-        //     }
-        // }
-        // this.selectedProduct = null
-
-        //let selectedProductLength: number = this.selectedProduct.length
-        //console.log('selectedProductLength', this.selectedProduct.length)
         if (this.selectedProduct.length == 0) {
             this.$swal({
                 title: "품목이 선택되지 않았습니다.",
@@ -577,14 +477,11 @@ export default class OrderManagementModal extends Vue {
                 timer: 1500,
             });
         } else {
-            console.log('selectedProduct', this.selectedProduct)
-            console.log('itemDetail', this.itemDetail)
             if (this.itemDetail.length == 0) {
                 let totalID: any = _.map(this.itemDetail, "itemId");
                 for (var i = 0; i < this.selectedProduct.length; i++) {
                     let plusItem: any = this.selectedProduct[i];
                     if (totalID.includes(plusItem.id)) continue;
-                    //plusItem["id"] = plusItem["id"];
                     plusItem["quantity"] = null;
                     plusItem["expectedDeliveryDate"] = null;
                     plusItem["supplyUnitPrice"] = null;
@@ -604,7 +501,7 @@ export default class OrderManagementModal extends Vue {
                 })
                 if (dupYN) {
                     this.$swal({
-                        title: "중복입니다.",
+                        title: "품목을 중복해서 등록할 수 없습니다.",
                         icon: "warning",
                         position: "top",
                         showCancelButton: false,

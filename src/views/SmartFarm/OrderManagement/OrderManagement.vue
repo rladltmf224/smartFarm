@@ -203,10 +203,6 @@ export default class Customer extends Vue {
         details: [], //추가한 품목 목록
     };
     // 2023-01-12
-
-
-
-
     search_condition: any = {
         customerName: '',
         orderInfoCode: '',
@@ -215,7 +211,6 @@ export default class Customer extends Vue {
         delivery_startDate: "",
         delivery_endDate: "",
     };
-
     order_startDate: boolean = false;
     order_endDate: boolean = false;
     delivery_startDate: boolean = false;
