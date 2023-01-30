@@ -1,160 +1,150 @@
 <template>
-    <div>
-        <v-dialog v-model="openModal" persistent max-width="1500px">
-            <v-card>
-                <v-card-title class="display-flex justify-space-between pa-0 pl-2 pt-2 pr-10">
-                    <span class="text-h5 dialog-title font-weight-bold pt-3 pl-3" v-show="!change">수주 등록</span>
-                    <span class="text-h5 dialog-title font-weight-bold pt-3 pl-3" v-show="change">수주 수정</span>
-                </v-card-title>
-                <v-card-text>
-                    <v-container id="dialogBox" max-width="1400px " class="overflow-hidden" fluid>
-                        <v-container fluid class="pa-0">
-                            <v-container id="main" grid-list-md text-xs-center fluid>
-                                <v-form ref="form" lazy-validation>
-                                    <v-row class="d-flex align-center">
-                                        <v-col cols="2" class="pa-0 pl-2 mr-2">
-                                            <v-menu tabindex="5" ref="menu_orderDate" v-model="menu_orderDate"
-                                                :close-on-content-click="false" :return-value.sync="menu_orderDate"
-                                                transition="scale-transition" offset-y min-width="auto">
-                                                <template v-slot:activator="{ on, attrs }">
-                                                    <v-text-field label="수주일자" v-model="order.orderDate"
-                                                        prepend-icon="mdi-calendar" readonly v-bind="attrs"
-                                                        v-on="on"></v-text-field>
-                                                </template>
-                                                <v-date-picker v-model="order.orderDate" no-title scrollable
-                                                    locale="ko-KR">
-                                                    <v-spacer></v-spacer>
-                                                    <v-btn text color="primary" @click="menu_orderDate = false">
-                                                        취소
-                                                    </v-btn>
-                                                    <v-btn text color="primary"
-                                                        @click="d_date_search_order(order.orderDate)">
-                                                        확인
-                                                    </v-btn>
-                                                </v-date-picker>
-                                            </v-menu>
-                                        </v-col>
-
-                                        <v-col cols="2" class="pa-0 pl-2 mr-2" v-show="change">
-                                            <v-text-field class="" label="수주번호" disabled v-model="order.orderNum"
-                                                tabindex="6"></v-text-field>
-                                        </v-col>
-
-
-                                        <v-col cols="2" class="pa-0 pl-2 mr-2">
-                                            <v-menu tabindex="5" ref="menu_deliveryDate" v-model="menu_deliveryDate"
-                                                :close-on-content-click="false" :return-value.sync="menu_deliveryDate"
-                                                transition="scale-transition" offset-y min-width="auto">
-                                                <template v-slot:activator="{ on, attrs }">
-                                                    <v-text-field label="납품예정일" v-model="order.deliveryDate"
-                                                        prepend-icon="mdi-calendar" readonly v-bind="attrs"
-                                                        v-on="on"></v-text-field>
-                                                </template>
-                                                <v-date-picker v-model="order.deliveryDate" no-title scrollable
-                                                    locale="ko-KR">
-                                                    <v-spacer></v-spacer>
-                                                    <v-btn text color="primary" @click="menu_deliveryDate = false">
-                                                        취소
-                                                    </v-btn>
-                                                    <v-btn text color="primary"
-                                                        @click="d_date_search_delivery(order.deliveryDate)">
-                                                        확인
-                                                    </v-btn>
-                                                </v-date-picker>
-                                            </v-menu>
-                                        </v-col>
-                                        <v-col cols="2" class="pa-0 pl-2 mr-2">
-                                            <v-text-field class="" label="거래처" v-model="customerName" disabled
-                                                tabindex="6"></v-text-field>
-                                        </v-col>
-                                        <v-menu v-model="menuLoad" :close-on-content-click="false" :nudge-width="400"
-                                            offset-x max-height="600">
-                                            <template v-slot:activator="{ on, attrs }">
-                                                <v-btn v-bind="attrs" v-on="on" small @click="getCustomer()">
-                                                    불러오기
-                                                </v-btn>
-                                            </template>
-
-                                            <v-card class="pa-3">
-                                                <v-data-table :headers="datas_header_simple" :items="datas_simple" dense
-                                                    :items-per-page=100 item-key="name" class="elevation-1"
-                                                    :search="search" hide-default-footer height="300">
-                                                    <template v-slot:top>
-                                                        <v-text-field v-model="search" label="거래처명으로 검색" class="mx-4"
-                                                            append-icon="mdi-magnify"></v-text-field>
-                                                    </template>
-                                                    <template v-slot:item.customerName="{ item }">
-                                                        <v-btn @click="cloneItem(item)" class="ma-2" outlined
-                                                            color="indigo">
-                                                            {{ item.customerName }}
-                                                        </v-btn>
-                                                    </template>
-                                                </v-data-table>
-                                                </v-list-item>
-                                                </v-list>
-                                                <v-divider></v-divider>
-                                                <v-card-actions>
-                                                    <v-spacer></v-spacer>
-                                                    <v-btn text @click="closeMenuLoadCard()">
-                                                        닫기
-                                                    </v-btn>
-                                                </v-card-actions>
-                                            </v-card>
-                                        </v-menu>
-                                    </v-row>
-                                </v-form>
-                            </v-container>
-                        </v-container>
-                        <v-sheet color="#F6F8F9" height="600">
-                            <v-container fluid>
-                                <v-row>
-                                    <v-col class="pa-0">
-                                        <h4 class="searchbox-title pt-3 ml-5">수주품목 목록</h4>
-                                    </v-col>
-                                </v-row>
-                            </v-container>
-                            <v-container fluid class="d-flex pt-0 pb-0">
-                                <v-col cols="3" class=" pa-0 d-flex align-center">
-                                    <v-text-field class="mr-10 pa-0 ml-3" v-model="searchItem" placeholder="수주품목명 검색"
-                                        append-icon="mdi-magnify"></v-text-field>
-                                </v-col>
-                            </v-container>
-
-                            <v-container fluid class="pa-0">
+    <v-dialog v-model="openModal" persistent max-width="1600px" max-height="">
+        <v-card class="mx-auto " tile>
+            <v-card-title class="text-h5" v-show="!change">
+                수주 등록
+            </v-card-title>
+            <v-card-title class="text-h5" v-show="change">
+                수주 수정
+            </v-card-title>
+            <v-card-text style="overflow:auto">
+                <v-container id="dialogBox" max-width="1400px " class="overflow-hidden" fluid>
+                    <v-row dense class="d-flex align-center">
+                        <v-col cols="2" class="pa-0 pl-2 mr-2">
+                            <v-menu tabindex="5" ref="menu_orderDate" v-model="menu_orderDate"
+                                :close-on-content-click="false" :return-value.sync="menu_orderDate"
+                                transition="scale-transition" offset-y min-width="auto">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field label="수주일자" v-model="order.orderDate" prepend-icon="mdi-calendar"
+                                        readonly v-bind="attrs" dense v-on="on"></v-text-field>
+                                </template>
+                                <v-date-picker v-model="order.orderDate" no-title scrollable locale="ko-KR">
+                                    <v-spacer></v-spacer>
+                                    <v-btn text color="primary" @click="menu_orderDate = false">
+                                        취소
+                                    </v-btn>
+                                    <v-btn text color="primary" @click="d_date_search_order(order.orderDate)">
+                                        확인
+                                    </v-btn>
+                                </v-date-picker>
+                            </v-menu>
+                        </v-col>
+                        <v-col cols="2" class="pa-0 pl-2 mr-2" v-show="change">
+                            <v-text-field class="" label="수주번호" disabled v-model="order.orderNum"
+                                tabindex="6"></v-text-field>
+                        </v-col>
+                        <v-col cols="2" class="pa-0 pl-2 mr-2">
+                            <v-menu tabindex="5" ref="menu_deliveryDate" v-model="menu_deliveryDate"
+                                :close-on-content-click="false" :return-value.sync="menu_deliveryDate"
+                                transition="scale-transition" offset-y min-width="auto">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field label="납품예정일" v-model="order.deliveryDate" prepend-icon="mdi-calendar"
+                                        readonly v-bind="attrs" dense v-on="on"></v-text-field>
+                                </template>
+                                <v-date-picker v-model="order.deliveryDate" no-title scrollable locale="ko-KR">
+                                    <v-spacer></v-spacer>
+                                    <v-btn text color="primary" @click="menu_deliveryDate = false">
+                                        취소
+                                    </v-btn>
+                                    <v-btn text color="primary" @click="d_date_search_delivery(order.deliveryDate)">
+                                        확인
+                                    </v-btn>
+                                </v-date-picker>
+                            </v-menu>
+                        </v-col>
+                        <v-col cols="2" class="pa-0 pl-2 mr-2">
+                            <v-text-field class="" label="거래처" v-model="customerName" disabled dense
+                                tabindex="6"></v-text-field>
+                        </v-col>
+                        <v-col cols="2" class="pa-0 pl-2 ">
+                            <v-menu v-model="menuLoad" :close-on-content-click="false" :nudge-width="400" offset-x
+                                max-height="600">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-btn v-bind="attrs" v-on="on" x-small @click="getCustomer()" class="">
+                                        불러오기
+                                    </v-btn>
+                                </template>
+                                <v-card class="pa-3">
+                                    <v-data-table :headers="datas_header_simple" :items="datas_simple" dense
+                                        :items-per-page=100 item-key="name" class="elevation-1" :search="search"
+                                        hide-default-footer height="300">
+                                        <template v-slot:top>
+                                            <v-text-field v-model="search" label="거래처명으로 검색" class="mx-4" dense
+                                                append-icon="mdi-magnify"></v-text-field>
+                                        </template>
+                                        <template v-slot:item.customerName="{ item }">
+                                            <v-btn @click="cloneItem(item)" class="ma-2" outlined color="indigo">
+                                                {{ item.customerName }}
+                                            </v-btn>
+                                        </template>
+                                    </v-data-table>
+                                    </v-list-item>
+                                    </v-list>
+                                    <v-divider></v-divider>
+                                    <v-card-actions>
+                                        <v-spacer></v-spacer>
+                                        <v-btn text @click="closeMenuLoadCard()">
+                                            닫기
+                                        </v-btn>
+                                    </v-card-actions>
+                                </v-card>
+                            </v-menu>
+                        </v-col>
+                    </v-row>
+                    <v-sheet color="#F6F8F9" height="650">
+                        <v-row dense class=" d-flex align-center">
+                            <v-col class="pa-0">
+                                <h4 class="searchbox-title pt-3 ml-5">수주품목 목록</h4>
+                            </v-col>
+                        </v-row>
+                        <v-row dense class="">
+                            <v-col cols="2" class="  d-flex align-center ">
+                                <v-text-field class="mr-10 pa-0 ml-3" v-model="searchItem" placeholder="수주품목명 검색"
+                                    append-icon="mdi-magnify" dense></v-text-field>
+                            </v-col>
+                        </v-row>
+                        <v-row v-show="change">
+                            <v-col cols="12">
                                 <v-data-table multi-sort class="ml-2 mr-2 overflow-scroll elevation-4" show-select
-                                    fixed-header v-model="selectedProduct" height="180" :headers="register_itemheaders"
+                                    fixed-header v-model="selectedProduct" height="150" :headers="register_itemheaders"
                                     :search="searchItem" :items="itemData" return-object item-key="itemId" dense
                                     :items-per-page="50" :footer-props="footer_option" v-show="change">
                                     <template v-slot:no-data>
                                         <h5>조회된 수주품목이 없습니다.(수정버젼)</h5>
                                     </template>
                                 </v-data-table>
-
-                                <!-- check가 false일때 (등록화면일때) -->
-                                <v-data-table multi-sort class="ml-2 mr-2 overflow-scroll elevation-4" show-select
-                                    fixed-header v-model="selectedProduct" height="180" :headers="register_itemheaders"
+                            </v-col>
+                        </v-row>
+                        <v-row v-show="!change" dense>
+                            <v-col cols="12" class="">
+                                <v-data-table multi-sort :search="searchItem"
+                                    class="ml-2 mr-2 overflow-scroll elevation-4" show-select fixed-header
+                                    v-model="selectedProduct" height="180" :headers="register_itemheaders"
                                     :items="itemData" return-object item-key="itemId" dense :items-per-page="50"
                                     :footer-props="footer_option" v-show="!change">
                                     <template v-slot:no-data>
                                         <h5>조회된 수주품목이 없습니다.(등록버젼)</h5>
                                     </template>
                                 </v-data-table>
-                            </v-container>
-                            <v-container fluid class="d-flex justify-center pa-0">
-                                <v-col cols="1">
-                                    <v-btn small fluid color="deep-orange" @click="plus">
-                                        <v-icon>mdi-arrow-down-bold-outline</v-icon>
-                                    </v-btn>
-                                </v-col>
-                            </v-container>
-                            <v-container fluid class="pa-0">
-                                <v-col class="pa-0">
-                                    <h4 class="searchbox-title mx-5">등록된 수주품목</h4>
-                                </v-col>
-                                <!-- 수정버젼일때 -->
+                            </v-col>
+                        </v-row>
+                        <v-row dense class="d-flex justify-center">
+                            <v-col cols="1">
+                                <v-btn small fluid color="deep-orange" @click="plus">
+                                    <v-icon>mdi-arrow-down-bold-outline</v-icon>
+                                </v-btn>
+                            </v-col>
+                        </v-row>
+                        <v-row dense>
+                            <v-col>
+                                <h4 class="searchbox-title mx-5">등록된 수주품목</h4>
+                            </v-col>
+                        </v-row>
+                        <v-row dense v-show="change">
+                            <v-col cols="12">
                                 <v-data-table multi-sort class="ml-2 mr-2 overflow-scroll elevation-4" fixed-header
                                     height="180" :headers="selectedheaders" :items="itemTable" return-object
-                                    item-key="id" disable-pagination hide-default-footer dense v-show="change">
+                                    item-key="id" disable-pagination hide-default-footer dense>
                                     <!-- 수량 -->
                                     <template v-slot:item.quantity="props">
                                         <v-text-field class="pa-0 countFont"
@@ -203,7 +193,10 @@
                                         <h5>선택된 수주품목이 없습니다.</h5>
                                     </template>
                                 </v-data-table>
-                                <!-- 등록버젼일때 -->
+                            </v-col>
+                        </v-row>
+                        <v-row dense v-show="!change">
+                            <v-col cols="12">
                                 <v-data-table multi-sort class="ml-2 mr-2 overflow-scroll elevation-4" fixed-header
                                     height="180" :headers="selectedheaders" :items="itemTable" return-object
                                     item-key="id" disable-pagination hide-default-footer dense v-show="!change">
@@ -255,36 +248,37 @@
                                         <h5>선택된 수주품목이 없습니다.</h5>
                                     </template>
                                 </v-data-table>
-                            </v-container>
-                        </v-sheet>
-                        <v-container fluid>
-                            <v-row class="d-flex align-center">
-                                <v-col cols="12" class=" pa-0 d-flex align-center pt-6">
-                                    <v-text-field class="" label="요청사항" v-model="order.memo"
-                                        tabindex="6"></v-text-field>
-                                </v-col>
-                            </v-row>
-                        </v-container>
-                        <v-container fluid>
-                            <v-row>
-                                <v-col class="text-right">
-                                    <v-btn class="mr-1" v-show="!change" color="primary" @click="complete()">
-                                        수주등록
-                                    </v-btn>
-                                    <v-btn class="mr-1" v-show="change" color="primary" @click="edit()">
-                                        수주수정
-                                    </v-btn>
-                                    <v-btn class="closeBtn" color="primary" text @click="openModal = false">
-                                        닫기
-                                    </v-btn>
-                                </v-col>
-                            </v-row>
-                        </v-container>
-                    </v-container>
-                </v-card-text>
-            </v-card>
-        </v-dialog>
-    </div>
+                            </v-col>
+                        </v-row>
+                    </v-sheet>
+                    <v-row dense class="d-flex align-center  justify-center">
+                        <v-col cols="12">
+                            <v-text-field class="" label="요청사항" v-model="order.memo" tabindex="6"></v-text-field>
+                        </v-col>
+                    </v-row>
+                </v-container>
+            </v-card-text>
+            <v-card-actions>
+                <v-row dense>
+                    <v-col class="text-right">
+                        <v-btn class="mr-1" v-show="!change" color="primary" @click="complete()">
+                            수주등록
+                        </v-btn>
+                        <v-btn class="mr-1" v-show="change" color="primary" @click="edit()">
+                            수주수정
+                        </v-btn>
+                        <v-btn class="closeBtn" color="primary" text @click="openModal = false">
+                            닫기
+                        </v-btn>
+                    </v-col>
+                </v-row>
+            </v-card-actions>
+        </v-card>
+
+
+
+    </v-dialog>
+
 </template>
 <script lang="ts">
 import * as api from "@/api";
