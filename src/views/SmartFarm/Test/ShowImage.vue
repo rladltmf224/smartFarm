@@ -60,7 +60,6 @@
               <v-card-text class="">
                 <!-- 사진들어갈곳 -->
                 <div v-for="(child, i) in item.detailInfo" :key="i">
-
                   <div v-for="(mini, i) in child.fileInfo" :key="i">
                     <v-img max-height="200" max-width="374" class="ma-4" :src="mini.fileData"></v-img>
                     <h6>{{ child.reportDate }}</h6>
@@ -181,10 +180,25 @@ export default class ShowImage extends Vue {
   getImageAPI(item: any) { //이미지 리스트 api 연결하는 메서드
     this.isLoading = true;
     api.growthresearch.GetGrowthResearchOriginImageList(item).then((res) => {
-      console.log('이미지갤러리 조회성공', res)
-      this.resImages = res.data.responseData
-      this.makeImageArr()
-      this.isLoading = false;
+      if (res.status == 200) {
+        console.log('이미지갤러리 조회성공', res)
+        this.resImages = res.data.responseData
+        this.makeImageArr()
+        this.isLoading = false;
+      } else {
+        this.dialog = false;
+        this.$swal({
+          title: "오류입니다.다시 시도해주세요.",
+          icon: "info",
+          position: "top",
+          showCancelButton: false,
+          showConfirmButton: false,
+          toast: true,
+          timer: 1500,
+        });
+
+      }
+
     })
   }
   makeImageArr() {
