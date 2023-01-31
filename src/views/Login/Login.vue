@@ -9,29 +9,12 @@
               <div class="pa-10">
                 <h1 style="text-align: center">MES</h1>
                 <form>
-                  <v-text-field
-                    label="사번"
-                    prepend-inner-icon="mdi-account"
-                    v-model="username"
-                  >
+                  <v-text-field label="사번" prepend-inner-icon="mdi-account" v-model="username">
                   </v-text-field>
-                  <v-text-field
-                    prepend-inner-icon="mdi-lock"
-                    type="password"
-                    label="비밀번호"
-                    v-model="password"
-                  ></v-text-field>
-                  <v-btn
-                    type="button"
-                    color="blue lighten-1 text-capitalize"
-                    depressed
-                    large
-                    block
-                    dark
-                    class="mb-3"
-                    @click="loginManager"
-                    >접속</v-btn
-                  >
+                  <v-text-field prepend-inner-icon="mdi-lock" type="password" label="비밀번호"
+                    v-model="password"></v-text-field>
+                  <v-btn type="button" color="blue lighten-1 text-capitalize" depressed large block dark class="mb-3"
+                    @click="loginManager">접속</v-btn>
                 </form>
               </div>
             </v-card>
@@ -47,7 +30,13 @@ import { Component, Vue } from "vue-property-decorator";
 
 @Component
 export default class Login extends Vue {
-  username?: string = "bswoo";
+
+ // username?: string = "yskim";
+
+ // username?: string = "bswoo";
+
+  //password?: string = "a12345678!@";
+   username?: string = "qwert";
   password?: string = "a12345678!@";
 
   created() {

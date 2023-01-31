@@ -171,6 +171,11 @@ const routes = [
         props: true,
       },
       {
+        path: "OrderManagement",
+        name: "OrderManagement",
+        component: () =>
+          import("@/views/SmartFarm/OrderManagement/OrderManagement"),
+
         path: "operationmng",
         name: "operationmng",
         component: () => import("@/views/operationMng/OperationMng"),

@@ -2,33 +2,16 @@
   <div>
     <v-container dense class="ma-0 pa-0">
       <v-col class="pa-0 ma-0" md="12">
-        <v-sheet
-          class="mx-4 mt-3 pa-0 ma-0 d-flex align-center"
-          color="#F6F8F9"
-          height="60"
-          elevation="2"
-        >
+        <v-sheet class="mx-4 mt-3 pa-0 ma-0 d-flex align-center" color="#F6F8F9" height="60" elevation="2">
           <v-row>
             <v-col cols="12  " class="d-flex">
               <v-row class="pa-0 ma-0">
                 <v-col cols="2 " class="">
-                  <v-menu
-                    v-model="menu1"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="auto"
-                  >
+                  <v-menu v-model="menu1" :close-on-content-click="false" :nudge-right="40"
+                    transition="scale-transition" offset-y min-width="auto">
                     <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
-                        v-model="s_date"
-                        label="시작일"
-                        prepend-icon="mdi-calendar"
-                        readonly
-                        v-bind="attrs"
-                        v-on="on"
-                      ></v-text-field>
+                      <v-text-field v-model="s_date" label="시작일" prepend-icon="mdi-calendar" readonly v-bind="attrs"
+                        v-on="on"></v-text-field>
                     </template>
                     <v-date-picker
                       v-model="s_date"
@@ -40,50 +23,31 @@
                 </v-col>
                 <v-col cols="2" class="d-flex justify-center align-center">
                   <!-- 시작시간 -->
-                  <vue-timepicker
-                    class="timeBox"
-                    v-model="startTime"
-                  ></vue-timepicker>
+                  <vue-timepicker class="timeBox" v-model="startTime"></vue-timepicker>
                 </v-col>
-
                 <v-col cols="2" class="">
-                  <v-menu
-                    v-model="menu2"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    transition="scale-transition"
-                    offset-y="offset-y"
-                    min-width="auto"
-                  >
+                  <v-menu v-model="menu2" :close-on-content-click="false" :nudge-right="40"
+                    transition="scale-transition" offset-y="offset-y" min-width="auto">
                     <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
-                        v-model="e_date"
-                        label="종료일"
-                        prepend-icon="mdi-calendar"
-                        readonly="readonly"
-                        v-bind="attrs"
-                        v-on="on"
-                      ></v-text-field>
+                      <v-text-field v-model="e_date" label="종료일" prepend-icon="mdi-calendar" readonly="readonly"
+                        v-bind="attrs" v-on="on"></v-text-field>
                     </template>
+
                     <v-date-picker
                       no-title
                       v-model="e_date"
                       @input="menu2 = false"
                       :min="s_date"
                     ></v-date-picker>
+
                   </v-menu>
                 </v-col>
                 <v-col cols="2" class="d-flex justify-center align-center">
                   <vue-timepicker v-model="endTime"></vue-timepicker>
                 </v-col>
                 <v-col cols="1" class="d-flex align-center justify-center">
-                  <v-select
-                    v-model="user_auth"
-                    label="조회단위"
-                    :items="authList"
-                    item-text="name"
-                    item-value="value"
-                  ></v-select>
+                  <v-select v-model="user_auth" label="조회단위" :items="authList" item-text="name"
+                    item-value="value"></v-select>
                 </v-col>
               </v-row>
               <v-col cols="2" class="d-flex align-center justify-center">
@@ -100,21 +64,11 @@
         <v-col class="" md="12">
           <v-row class="mb-2">
             <h5 class="searchbox-title pl-3 pt-2">온습도 데이터</h5>
-            <v-btn
-              icon
-              color="grey"
-              v-if="this.btnShow_Value"
-              @click="btnShow()"
-            >
+            <v-btn icon color="grey" v-if="this.btnShow_Value" @click="btnShow()">
               <v-icon>mdi-chevron-down</v-icon>
             </v-btn>
             <!-- 접기버튼 -->
-            <v-btn
-              icon
-              color="grey"
-              v-if="!this.btnShow_Value"
-              @click="btnShow()"
-            >
+            <v-btn icon color="grey" v-if="!this.btnShow_Value" @click="btnShow()">
               <v-icon>mdi-chevron-up</v-icon>
             </v-btn>
             <v-col cols="12" v-show="!this.btnShow_Value">
@@ -129,20 +83,10 @@
                     {{ this.nowValue[1].unit }}
                   </h5>
                 </div>
-
-                <!-- <LoadingSpinner v-show="this.isLoading"></LoadingSpinner> -->
-                <!-- v-show써도됨 -->
-                <!-- <div v-show="this.isLoading">로딩중입니다.</div> -->
-
                 <LoadingSpinner v-if="this.isLoading"></LoadingSpinner>
-
                 <div class="d-flex justify-center" v-if="!this.isLoading">
-                  <TempHumidGraph
-                    :graph="graph"
-                    v-show="!this.isLoading"
-                  ></TempHumidGraph>
+                  <TempHumidGraph :graph="graph" v-show="!this.isLoading"></TempHumidGraph>
                 </div>
-
                 <!-- <div v-show="!this.isLoading" class="">
                   <canvas
                     class="j pa-6"
@@ -159,27 +103,18 @@
           </v-col>
           <!-- 데이터 테이블 -->
           <div>
-            <v-data-table
-              :headers="datas_header"
-              :items="datas"
-              multi-sort
-              :page.sync="page"
-              :options.sync="options"
-              :server-items-length="totalData"
-              :items-per-page="itemsPerPage"
-              :loading="loading"
-              dense
-              hide-default-footer
-              @page-count="pageCount = $event"
-              class="elevation-1"
-            >
+            <v-data-table :headers="datas_header" :items="datas" multi-sort :page.sync="page" :options.sync="options"
+              :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" dense
+              hide-default-footer @page-count="pageCount = $event" class="elevation-1">
             </v-data-table>
             <div class="text-center pt-2">
+
               <v-pagination
                 v-model="page"
                 :total-visible="12"
                 :length="pageCount"
               ></v-pagination>
+
             </div>
           </div>
         </v-col>
@@ -215,6 +150,11 @@ import _ from "lodash";
 import * as api from "@/api/index.js";
 export default {
   name: "TempHumid",
+  props: {
+    search_type_1: {
+      type: Number
+    },
+  },
   components: {
     VueTimepicker,
     DetailGraph,
@@ -224,7 +164,6 @@ export default {
   data() {
     return {
       btnShow_Value: false,
-
       //프롭스용
       graph: [
         {
@@ -394,9 +333,8 @@ export default {
         },
         { text: "온도", value: "temperature" },
         { text: "센서명", value: "sensorCode" },
-        { text: "실 이름", value: "room" },
-        { text: "구역 숫자", value: "sectionNumber" },
-
+        { text: "실 이름", value: "room", align: " d-none" },
+        { text: "구역 숫자", value: "sectionNumber", align: " d-none" },
         { text: "습도", value: "humidity" },
       ],
 
@@ -453,27 +391,12 @@ export default {
         },
       ],
       user_auth: "minute",
-
       user_auth_rule: [(v) => !!v || "조회단위는 필수 선택 사항입니다."],
       // 조회단위 조회단위
       startDate: false,
       endDate: false,
-      search_type_1: "육묘실",
       search_type_2: 1,
-
       search_list1: [
-        {
-          name: "육묘실",
-          value: "육묘실",
-        },
-        {
-          name: "발아실",
-          value: "발아실",
-        },
-        {
-          name: "활착실",
-          value: "활착실",
-        },
       ],
       search_list2: [
         {
@@ -555,7 +478,6 @@ export default {
       deep: true,
     },
   },
-  mounted() {},
 
   methods: {
     btnShow() {
@@ -568,14 +490,12 @@ export default {
       this.isLoading = true;
 
       let GetTempHumidParams = {
-        room: this.search_type_1, //실
-        section: this.search_type_2, //구역 넘버
+        roomId: this.search_type_1, //룸아이디
         startDate: this.s_date + " " + this.startTime, //시작일
         endDate: this.e_date + " " + this.endTime, //종료일
         division: this.user_auth, //조회단위
       };
 
-      console.log("내가보낸파라미터", GetTempHumidParams);
       api.smartfarm.temphumid(GetTempHumidParams).then((res) => {
         if (this.user_auth == "minute") {
           //for문 탈출하기 with 소영선임님
@@ -658,7 +578,6 @@ export default {
           //for문 탈출하기 with 소영선임님
           let input_start = this.s_date + " " + this.startTime;
           let input_end = this.e_date + " " + this.endTime;
-
           let start_date = new Date(input_start);
           let end_date = new Date(input_end);
           console.log("엔드데이트", end_date);
@@ -741,10 +660,10 @@ export default {
     getTableData_TempHumid() {
       this.loading = true;
       const { page, itemsPerPage, sortBy, sortDesc } = this.options;
-      // sortBy, sortDesc
       let GetTempHumidParams = {
-        room: this.search_type_1, //실
-        section: this.search_type_2, //구역 넘버
+        roomId: 1,
+        room: "육묘실",
+        section: 1,
         startDate: this.s_date + " " + this.startTime, //시작일
         endDate: this.e_date + " " + this.endTime, //종료일
         page: page,
@@ -774,7 +693,8 @@ export default {
       const { page, itemsPerPage, sortBy, sortDesc } = this.options;
 
       let GetTempHumidParams = {
-        room: this.search_type_1, //실
+        room: '육묘실', //실
+        roomId: 1,
         section: this.search_type_2, //구역 넘버
         startDate: this.s_date + " " + this.startTime, //시작일
         endDate: this.e_date + " " + this.endTime, //종료일
@@ -788,7 +708,6 @@ export default {
         .getTableDataTempHumidHour(GetTempHumidParams)
         .then((res) => {
           this.loading = false; //로딩바
-
           this.datas_header[1].value = "temperatureAVG";
           this.datas_header[5].value = "humidityAVG";
           this.datas = res.data.responseData;
@@ -798,9 +717,11 @@ export default {
     //현재온습도
     getNowValue() {
       let item = {
-        room: this.search_type_1,
-        section: this.search_type_2,
+        //room: this.search_type_1,
+        //section: this.search_type_2,
+        roomId: 1
       };
+
       api.smartfarm.temphumidValue(item).then((res) => {
         this.nowValue[0].value = res.data.responseData.temperature;
         this.nowValue[1].value = res.data.responseData.humidity;
@@ -810,4 +731,6 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+
+</style>
