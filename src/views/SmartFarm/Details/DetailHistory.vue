@@ -8,44 +8,21 @@
             <v-col cols="11" class="">
               <v-row class="pa-0 ma-0 d-flex">
                 <v-col cols="2" class="pa-0 ma-0">
-                  <v-select
-                    :items="search_list1"
-                    label="실 선택"
-                    v-model="search_type_1"
-                    item-text="name"
-                    item-value="value"
-                    dense="dense"
-                    single-line
-                  ></v-select>
+                  <v-select :items="search_list1" label="실 선택" v-model="search_type_1" item-text="name" item-value="id"
+                    dense="dense" single-line></v-select>
                 </v-col>
-
-                <v-col cols="2" class="pa-0 ma-0 pl-4">
-                  <v-select
-                    :items="search_list2"
-                    label="구역 선택"
-                    v-model="search_type_2"
-                    item-text="name"
-                    item-value="value"
-                    dense="dense"
-                    single-line
-                  ></v-select>
-                </v-col>
+                <!-- <v-col cols="2" class="pa-0 ma-0 pl-4">
+                  <v-select :items="search_list2" label="구역 선택" v-model="search_type_2" item-text="name"
+                    item-value="value" dense="dense" single-line></v-select>
+                </v-col> -->
               </v-row>
               <v-row dense class="">
                 <!-- 탭스 -->
                 <v-col class="pa-0 ma-0">
-                  <v-tabs
-                    v-model="tab"
-                    align-with-title="align-with-title"
-                    background-color=""
-                  >
+                  <v-tabs v-model="tab" align-with-title="align-with-title" background-color="">
                     <v-tabs-slider color="primary"></v-tabs-slider>
 
-                    <v-tab
-                      v-for="item in items"
-                      :key="item"
-                      @click="clickTest(item)"
-                    >
+                    <v-tab v-for="item in items" :key="item" @click="clickTest(item)">
                       {{ item }}
                     </v-tab>
                   </v-tabs>
@@ -59,7 +36,7 @@
           </v-row>
         </v-col>
       </v-row>
-      <TempHumid v-if="this.selectedTabs == '온/습도'"></TempHumid>
+      <TempHumid v-if="this.selectedTabs == '온/습도'" :search_type_1="search_type_1"></TempHumid>
       <WaterpH v-if="this.selectedTabs == '양액pH/EC'"></WaterpH>
       <v-row> </v-row>
     </v-container>
@@ -164,54 +141,9 @@ export default {
       // 조회단위 조회단위
       startDate: false,
       endDate: false,
-      search_type_1: "육묘실",
-      search_type_2: 1,
-
+      search_type_1: 1,
       search_list1: [
-        {
-          name: "육묘실",
-          value: "육묘실",
-        },
-        {
-          name: "발아실",
-          value: "발아실",
-        },
-        {
-          name: "활착실",
-          value: "활착실",
-        },
       ],
-      search_list2: [
-        {
-          name: "1번구역",
-          value: 1,
-        },
-        {
-          name: "2번구역",
-          value: 2,
-        },
-        {
-          name: "3번구역",
-          value: 3,
-        },
-        {
-          name: "4번구역",
-          value: 4,
-        },
-        {
-          name: "5번구역",
-          value: 5,
-        },
-        {
-          name: "6번구역",
-          value: 6,
-        },
-        {
-          name: "7번구역",
-          value: 7,
-        },
-      ],
-
       editedIndex: -1,
       customer_list: [],
       rules: {
@@ -253,7 +185,9 @@ export default {
       ],
     };
   },
-  mounted() {},
+  mounted() {
+    this.getRoomLists()
+  },
   watch: {
     options: {
       handler() {
@@ -269,16 +203,23 @@ export default {
     WaterpH,
     LoadingSpinner,
   },
-  watch: {},
   methods: {
-    // 이슬
 
+    // 이슬
+    getRoomLists() {
+      api.smartfarm.getRoomLists().then((res) => {
+        console.log('룸 리스트 조회성공1111', this.search_list1)
+        this.search_list1 = res.data.responseData
+        console.log('룸 리스트 조회성공222', this.search_list1)
+
+      })
+    },
     //온/습도 데이터 가져오는api
     getTempHumidData() {
       this.isLoading = true;
       let GetTempHumidParams = {
         room: this.search_type_1, //실
-        section: this.search_type_2, //구역 넘버
+        section: 1, //구역 넘버
         startDate: this.s_date + " " + this.startTime, //시작일
         endDate: this.e_date + " " + this.endTime, //종료일
         division: this.user_auth, //조회단위
@@ -345,7 +286,7 @@ export default {
 
       let GetTempHumidParams = {
         room: this.search_type_1, //실
-        section: this.search_type_2, //구역 넘버
+        section: 1, //구역 넘버
         startDate: this.s_date + " " + this.startTime, //시작일
         endDate: this.e_date + " " + this.endTime, //종료일
         page: page - 1,
@@ -355,12 +296,9 @@ export default {
         .getTableDataTempHumid(GetTempHumidParams)
         .then((res) => {
           console.log(res);
-          // 이걸로 테이블만들기
-
           this.loading = false; //로딩바
           this.datas = res.data.readTempHumidSensorResponseDtos;
           this.totalData = res.totalCount;
-          console.log("테이블데이타테이블데이타테이블데이타", this.datas);
         })
         .catch((error) => {
           console.log(error);
@@ -415,9 +353,11 @@ export default {
 .vue__time-picker input.display-time {
   border: 1px solid #d2d2d2;
 }
+
 .timeBox {
   border: 1px solid #000000;
 }
+
 .v-text-field.v-text-field--enclosed .v-text-field__details {
   padding-top: 0px;
   margin-bottom: 0px;

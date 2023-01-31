@@ -8,7 +8,7 @@
       </v-row>
       <v-row>
         <v-col cols="12" class="d-flex ">
-          <v-chip-group multiple active-class="primary--text pa-0 ma-0">
+          <v-chip-group multiple active-class=" primary--text pa-0 ma-0">
             <v-chip v-for="(item, i) in selected" :key="i">
               {{ item.testName }}
             </v-chip>
@@ -44,7 +44,7 @@
           <v-card-text v-if="selected.length == 0" class="d-flex justify-center py-12 ">
             이미지가 없습니다.
           </v-card-text>
-          <v-row v-else class="mx-auto">
+          <v-row v-if="!isLoading" class="mx-auto">
             <v-card style="overflow: auto" min-width="374" :loading="loading" class="mx-auto my-12" max-width="374"
               max-height="825" v-for="(item, i) in images" :key="i">
               <v-card-text class="d-flex ">
@@ -86,13 +86,11 @@ import _ from "lodash";
 import * as api from "@/api/index.js";
 import LoadingSpinner from '@/views/SmartFarm/Loading/LodingSpinner.vue'
 import { component } from "vue/types/umd";
-
 @Component({
   components: {
     LoadingSpinner
   }
 })
-
 export default class ShowImage extends Vue {
   selected: any = [];
   resImages: any = []; //서버에서 받은 이미지데이터들을 변수로저장
@@ -115,9 +113,6 @@ export default class ShowImage extends Vue {
     },
   ];
   datas: any = [];
-
-
-
   mounted() {
     this.getData();
   }
@@ -147,7 +142,6 @@ export default class ShowImage extends Vue {
     }
     this.getImageList()
   }
-
   getData() {     // 생육조사 일지 조회 api
     this.loading = true;
     const { page, itemsPerPage, sortBy, sortDesc } = this.options;
@@ -242,9 +236,6 @@ export default class ShowImage extends Vue {
     }
   }
 }
-
-
-
 </script>
 <style>
 tr.v-data-table__selected {
