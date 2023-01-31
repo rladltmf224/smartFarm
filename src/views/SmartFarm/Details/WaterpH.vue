@@ -61,14 +61,22 @@
     <v-container fluid="fluid" class="pa-0 pa-0">
       <v-row class="ma-0 pa-0">
         <v-col class="mx-2" md="12">
-          <v-row class="mb-2">
+          <!-- <v-row class="mb-2">
             <h5 class="searchbox-title pl-3 pt-2">양액pH 데이터</h5>
-            <!-- 펼치기버튼 -->
-            <v-btn icon color="grey" v-if="this.btnShow_Value" @click="btnShow()">
+            <v-btn
+              icon
+              color="grey"
+              v-if="this.btnShow_Value"
+              @click="btnShow()"
+            >
               <v-icon>mdi-chevron-down</v-icon>
             </v-btn>
-            <!-- 접기버튼 -->
-            <v-btn icon color="grey" v-if="!this.btnShow_Value" @click="btnShow()">
+            <v-btn
+              icon
+              color="grey"
+              v-if="!this.btnShow_Value"
+              @click="btnShow()"
+            >
               <v-icon>mdi-chevron-up</v-icon>
             </v-btn>
             <v-col cols="12" v-show="!this.btnShow_Value">
@@ -77,26 +85,29 @@
                 <div v-if="!this.isLoading">
                   <WaterPHGraph :graph="graph" v-show="!this.isLoading"></WaterPHGraph>
                 </div>
-
-                <!-- <div v-show="!this.isLoading" class="">
-                  <canvas
-                    class="j pa-6"
-                    ref="barChart"
-                    height="300"
-                    width="1300"
-                  />
-                </div> -->
               </v-sheet>
             </v-col>
-          </v-row>
+          </v-row> -->
           <v-col md="2" class="pa-0 ma-0">
             <h5 class="searchbox-title">양액pH 데이터 표</h5>
           </v-col>
           <!-- 데이터 테이블 -->
           <div>
-            <v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options"
-              :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" hide-default-footer
-              class="elevation-1" @page-count="pageCount = $event" dense multi-sort :height="230">
+            <v-data-table
+              :headers="datas_header"
+              :items="datas"
+              :page.sync="page"
+              :options.sync="options"
+              :server-items-length="totalData"
+              :items-per-page="itemsPerPage"
+              :loading="loading"
+              hide-default-footer
+              class="elevation-1"
+              @page-count="pageCount = $event"
+              dense
+              multi-sort
+            >
+
             </v-data-table>
             <div class="text-center pt-2">
               <v-pagination v-model="page" :length="pageCount"></v-pagination>
@@ -127,6 +138,7 @@ import _ from "lodash";
 import * as api from "@/api/index.js";
 export default {
   name: "TempHumid",
+  props: ["search_type_1"],
   components: {
     VueTimepicker,
     DetailGraph,
@@ -294,7 +306,7 @@ export default {
       page: 1,
       totalData: 0,
       loading: false,
-      itemsPerPage: 6,
+      itemsPerPage: 18,
       pageCount: 10,
       options: {},
       //   데이터테이블
@@ -488,6 +500,7 @@ export default {
     // 시작일을 일주일전으로
     // 그래프 그릴 용도 api
 
+    /*
     getWaterECData() {
       this.isLoading = true;
       let item = {
@@ -527,13 +540,19 @@ export default {
         this.graph.date = PluseDivAndInputDate;
       });
     },
+    */
     // 데이터 테이블 만들 용도 api
     getWaterHistory() {
-      this.getWaterECData();
+      // this.getWaterECData(); // 그래프 삭제
 
       // getAmPm();
       this.loading = true;
       const { page, itemsPerPage, sortBy, sortDesc } = this.options;
+
+      for (let i = 0; i < sortBy.length; i++) {
+        if (sortBy[i] == "ph") sortBy[i] = "pH";
+      }
+
       var item = {
         searchTarget: "ph",
         startDate: this.s_date,
