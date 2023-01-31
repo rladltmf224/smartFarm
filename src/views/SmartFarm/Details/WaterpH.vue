@@ -609,6 +609,10 @@ export default {
       this.loading = true;
       const { page, itemsPerPage, sortBy, sortDesc } = this.options;
 
+      for (let i = 0; i < sortBy.length; i++) {
+        if (sortBy[i] == "ph") sortBy[i] = "pH";
+      }
+
       var item = {
         searchTarget: "ph",
         startDate: this.s_date,
