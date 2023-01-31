@@ -364,7 +364,7 @@ export default {
                   detail["minValueAfter"] ||
                   detail["maxValueAfter"]
                 ) {
-                  row["after"] =
+                  row["after"] +=
                     detail["startTimeAfter"] +
                     "~" +
                     detail["endTimeAfter"] +
