@@ -746,8 +746,8 @@ export default {
       const { page, itemsPerPage, sortBy, sortDesc } = this.options;
       // sortBy, sortDesc
       let GetTempHumidParams = {
-        room: "육묘실", //this.search_type_1.name, // 해당 파라미터는 사라질 예정. 지금은 무조건 "육묘실"로 던져야함
-        roomId: this.search_type_1.value, //실
+        room: this.search_type_1.name,
+        roomId: this.search_type_1.id, //실
         section: this.search_type_2, //구역 넘버
         startDate: this.s_date + " " + this.startTime, //시작일
         endDate: this.e_date + " " + this.endTime, //종료일
@@ -778,8 +778,8 @@ export default {
       const { page, itemsPerPage, sortBy, sortDesc } = this.options;
 
       let GetTempHumidParams = {
-        room: "육묘실", // this.search_type_1.name, // 해당 파라미터는 사라질 예정. 지금은 무조건 "육묘실"로 던져야함
-        roomId: this.search_type_1.value, //실
+        room: this.search_type_1.name,
+        roomId: this.search_type_1.id, //실
         section: this.search_type_2, //구역 넘버
         startDate: this.s_date + " " + this.startTime, //시작일
         endDate: this.e_date + " " + this.endTime, //종료일
@@ -803,7 +803,7 @@ export default {
     //현재온습도
     getNowValue() {
       let item = {
-        roomId: this.search_type_1.value,
+        roomId: this.search_type_1.id,
         section: this.search_type_2,
       };
       api.smartfarm.temphumidValue(item).then((res) => {
