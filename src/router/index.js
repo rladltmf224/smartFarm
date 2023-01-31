@@ -99,12 +99,7 @@ const routes = [
         name: "Stock ",
         component: () => import("@/views/Stock/Stock"),
       },
-      {
-        path: "notdev",
-        alias: ["barcodemng", "processmng", "qualitymng", "equipment"],
-        name: "NotDev ",
-        component: () => import("@/components/page/NotDev/NotDev"),
-      },
+
       {
         path: "SensorGraph",
         name: "SensorGraph",
@@ -176,10 +171,26 @@ const routes = [
         props: true,
       },
       {
+        path: "OrderManagement",
+        name: "OrderManagement",
+        component: () =>
+          import("@/views/SmartFarm/OrderManagement/OrderManagement"),
+
         path: "operationmng",
         name: "operationmng",
         component: () => import("@/views/operationMng/OperationMng"),
         props: true,
+      },
+      {
+        path: "processmng",
+        name: "processmng",
+        component: () => import("@/views/ProcessMng/ProcessMng"),
+      },
+      {
+        path: "notdev",
+        alias: ["barcodemng", "processmng", "qualitymng", "equipment"],
+        name: "NotDev ",
+        component: () => import("@/components/page/NotDev/NotDev"),
       },
     ],
   },
