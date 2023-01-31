@@ -31,12 +31,13 @@ import { Component, Vue } from "vue-property-decorator";
 @Component
 export default class Login extends Vue {
 
- // username?: string = "yskim";
+  // username?: string = "yskim";
+  // 브랜치테스트;
 
- // username?: string = "bswoo";
+  // username?: string = "bswoo";
 
   //password?: string = "a12345678!@";
-   username?: string = "qwert";
+  username?: string = "qwert";
   password?: string = "a12345678!@";
 
   created() {
