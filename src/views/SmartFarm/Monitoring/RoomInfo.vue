@@ -8,14 +8,14 @@
         <v-col cols="12">
           <v-row no-gutters>
             <v-col cols="12">
-              <b class="text-h6 font-weight-bold">대기 </b>
-              <span class="text-subtitle-2 font-weight-bold"
+              <b class="text-h6 font-weight-regular">대기 </b>
+              <span class="text-h6 font-weight-bold"
                 >온도 : {{ roomInfo_prop.atmosphere.temperature }} °C
               </span>
-              <span class="text-subtitle-2 font-weight-bold"
+              <span class="text-h6 font-weight-bold"
                 >습도 : {{ roomInfo_prop.atmosphere.humidity }} %
               </span>
-              <span class="text-subtitle-2 font-weight-bold"
+              <span class="text-h6 font-weight-bold"
                 >Co2 농도 : {{ roomInfo_prop.atmosphere.co2 }} %</span
               >
             </v-col>
@@ -23,10 +23,10 @@
           <v-row no-gutters>
             <v-col cols="12">
               <b class="text-h6 font-weight-bold">양액 </b>
-              <span class="text-subtitle-2 font-weight-bold"
+              <span class="text-h6 font-weight-bold"
                 >EC : {{ roomInfo_prop.fertilizer.ec }}
               </span>
-              <span class="text-subtitle-2 font-weight-bold"
+              <span class="text-h6 font-weight-bold"
                 >pH : {{ roomInfo_prop.fertilizer.ph }}
               </span>
             </v-col>
@@ -34,16 +34,16 @@
           <v-row no-gutters>
             <v-col cols="12">
               <b class="text-h6 font-weight-bold">토양 </b>
-              <span class="text-subtitle-2 font-weight-bold"
+              <span class="text-h6 font-weight-bold"
                 >온도 : {{ roomInfo_prop.soil.temperature }}°C
               </span>
-              <span class="text-subtitle-2 font-weight-bold"
+              <span class="text-h6 font-weight-bold"
                 >습도 : {{ roomInfo_prop.soil.temperature }}%
               </span>
-              <span class="text-subtitle-2 font-weight-bold"
+              <span class="text-h6 font-weight-bold"
                 >EC : {{ roomInfo_prop.soil.ec }}
               </span>
-              <span class="text-subtitle-2 font-weight-bold"
+              <span class="text-h6 font-weight-bold"
                 >pH : {{ roomInfo_prop.soil.ph }}
               </span>
             </v-col>
@@ -51,7 +51,7 @@
           <v-row no-gutters>
             <v-col cols="12">
               <b class="text-h6 font-weight-bold">광원 </b>
-              <span class="text-subtitle-2 font-weight-bold"
+              <span class="text-h6 font-weight-bold"
                 >광도 : {{ roomInfo_prop.light.luminosity }}</span
               >
             </v-col>
@@ -72,7 +72,7 @@
               off: equipData.currentStatus === 'OFF',
             }"
           ></div>
-          <b class="text-caption font-weight-bold mr-1 text-truncate">{{
+          <b class="text-subtitle-1 font-weight-bold mr-1 text-truncate">{{
             equipData.equipmentName
           }}</b>
           <EquipStatusChip :status="equipData.controlStatus"></EquipStatusChip>

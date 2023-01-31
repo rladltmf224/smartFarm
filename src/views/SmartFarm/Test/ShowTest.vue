@@ -57,23 +57,20 @@
 						:server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" dense
 						hide-default-footer multi-sort @page-count="pageCount = $event" class="elevation-1">
 						<template v-slot:item.showmore="{ item }">
-							<v-btn class="my-2"
-								@click="$router.push({ name: 'ShowTestForm', params: { id: item.growthReportId } })" fab
-								x-small color="white" elevation="2">
-								<v-icon dark>
-									mdi-magnify
-								</v-icon>
-							</v-btn>
+							<v-icon @click="$router.push({ name: 'ShowTestForm', params: { id: item.growthReportId } })"
+								small>
+								mdi-magnify
+							</v-icon>
 						</template>
 						<template v-slot:item.load="{ item }">
-							<v-btn small class="ma-1" @click="editItem(item)">생성</v-btn>
+							<v-btn small fab icon class="ma-1" @click="editItem(item)">
+								<v-icon small>mdi-plus </v-icon></v-btn>
 						</template>
 						<template v-slot:item.delete="{ item }">
 							<v-icon @click="deleteItem(item)" small>
 								mdi-delete
 							</v-icon>
 						</template>
-
 						<!-- 수정 -->
 						<!-- 제어명칭 -->
 					</v-data-table>
@@ -151,8 +148,8 @@
 									type="number" label="처리구 수" hint="2~15개">
 								</v-text-field>
 							</v-col>
-							<v-col v-for="idx in Array.from({ length: editedItem.numTreatment }, (v, i) => i + 1)" :key="idx"
-								cols="12" sm="6" md="4">
+							<v-col v-for="idx in Array.from({ length: editedItem.numTreatment }, (v, i) => i + 1)"
+								:key="idx" cols="12" sm="6" md="4">
 
 								<v-text-field clearable :placeholder="idx + '번 처리구명'" hint="최대 50자"
 									v-model="nameArr[idx - 1]" type="text"> </v-text-field>
@@ -195,7 +192,13 @@
 		<!-- 삭제되었습니다 스낵바 -->
 		<v-snackbar v-model="delete_snackbar" :timeout="timeout">
 			{{ delete_text }}
+			<template v-slot:action="{ attrs }">
+				<v-btn color="blue" text v-bind="attrs" @click="snackbar = false">
+					Close
+				</v-btn>
+			</template>
 		</v-snackbar>
+
 	</v-app>
 </template>
 <script>

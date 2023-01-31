@@ -35,18 +35,10 @@
               <v-row dense class="">
                 <!-- 탭스 -->
                 <v-col class="pa-0 ma-0">
-                  <v-tabs
-                    v-model="tab"
-                    align-with-title="align-with-title"
-                    background-color=""
-                  >
+                  <v-tabs v-model="tab" align-with-title="align-with-title" background-color="">
                     <v-tabs-slider color="primary"></v-tabs-slider>
 
-                    <v-tab
-                      v-for="item in items"
-                      :key="item"
-                      @click="clickTest(item)"
-                    >
+                    <v-tab v-for="item in items" :key="item" @click="clickTest(item)">
                       {{ item }}
                     </v-tab>
                   </v-tabs>
@@ -171,39 +163,8 @@ export default {
       // 조회단위 조회단위
       startDate: false,
       endDate: false,
-      search_type_1: null,
-      search_type_2: 1,
-
-      search_list1: [],
-      search_list2: [
-        {
-          name: "1번구역",
-          value: 1,
-        },
-        {
-          name: "2번구역",
-          value: 2,
-        },
-        {
-          name: "3번구역",
-          value: 3,
-        },
-        {
-          name: "4번구역",
-          value: 4,
-        },
-        {
-          name: "5번구역",
-          value: 5,
-        },
-        {
-          name: "6번구역",
-          value: 6,
-        },
-        {
-          name: "7번구역",
-          value: 7,
-        },
+      search_type_1: 1,
+      search_list1: [
       ],
 
       editedIndex: -1,
@@ -268,9 +229,15 @@ export default {
     WaterpH,
     LoadingSpinner,
   },
-  watch: {},
   methods: {
+
     // 이슬
+    getRoomLists() {
+      api.smartfarm.getRoomLists().then((res) => {
+        console.log('룸 리스트 조회성공1111', this.search_list1)
+        this.search_list1 = res.data.responseData
+        console.log('룸 리스트 조회성공222', this.search_list1)
+
 
     // //온/습도 데이터 가져오는api
     // getTempHumidData() {
@@ -414,9 +381,11 @@ export default {
 .vue__time-picker input.display-time {
   border: 1px solid #d2d2d2;
 }
+
 .timeBox {
   border: 1px solid #000000;
 }
+
 .v-text-field.v-text-field--enclosed .v-text-field__details {
   padding-top: 0px;
   margin-bottom: 0px;

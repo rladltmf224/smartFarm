@@ -21,23 +21,13 @@
             <v-icon v-text="item.icon"></v-icon>
           </v-list-item-icon>
           <v-list-item-content>
-            <v-list-item-title
-              class="text-subtitle-1"
-              v-text="item.title"
-            ></v-list-item-title>
+            <v-list-item-title class="text-subtitle-1" v-text="item.title"></v-list-item-title>
           </v-list-item-content>
         </template>
 
-        <v-list-item
-          v-for="subItem in item.subItems"
-          :key="subItem.title"
-          :to="subItem.to"
-          dense
-        >
+        <v-list-item v-for="subItem in item.subItems" :key="subItem.title" :to="subItem.to" dense>
           <v-list-item-content>
-            <v-list-item-title
-              v-text="'- ' + subItem.title"
-            ></v-list-item-title>
+            <v-list-item-title v-text="'- ' + subItem.title"></v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list-group>
@@ -45,21 +35,12 @@
     <!-- <v-list dense>
       <v-subheader>개발예정</v-subheader>
       <v-divider></v-divider>
-      <v-list-item
-        v-for="(item, i) in items_dev"
-        :key="i"
-        :to="item.to"
-        color="primary"
-        mandatory
-      >
+      <v-list-item v-for="(item, i) in items_dev" :key="i" :to="item.to" color="primary" mandatory>
         <v-list-item-icon>
           <v-icon v-text="item.icon"></v-icon>
         </v-list-item-icon>
 
-        <v-list-item-title
-          class="text-subtitle-1"
-          v-text="item.title"
-        ></v-list-item-title>
+        <v-list-item-title class="text-subtitle-1" v-text="item.title"></v-list-item-title>
       </v-list-item>
     </v-list> -->
     <template v-slot:append>
@@ -75,11 +56,7 @@
     </template>
 
     <!--비밀번호 변경 dialog-->
-    <SidebarUserInfo
-      :open="userInfoDialog"
-      @closeModal="close"
-      @save-info="handlerSaveInfo"
-    ></SidebarUserInfo>
+    <SidebarUserInfo :open="userInfoDialog" @closeModal="close" @save-info="handlerSaveInfo"></SidebarUserInfo>
   </v-navigation-drawer>
 </template>
 
@@ -140,24 +117,40 @@ export default class Sidebar extends Vue {
     menu_Data = _.filter(menu_Data, { use: "Y" });
     //this.items_dev = _.filter(demo_side_data, { use: "N" });
     this.items = _.sortBy(menu_Data, "sort");
-    this.items.push({
-      title: "환경관리",
-      active: true,
-      icon: "mdi-folder",
-      role: "ROLE_operationManagement",
-      use: "Y",
-      sort: 5,
-      subItems: [
-        {
-          title: "환경 조회 및 제어",
-          to: "Monitoring",
-        },
-        {
-          title: "이력 조회",
-          to: "DetailHistory",
-        },
-      ],
-    });
+    this.items.push(
+      {
+        title: "완제품관리",
+        active: true,
+        icon: "mdi-folder",
+        role: "ROLE_operationManagement",
+        use: "Y",
+        sort: 5,
+        subItems: [
+          {
+            title: "공정관리",
+            to: "processmng",
+          },
+        ],
+      },
+      {
+        title: "환경관리",
+        active: true,
+        icon: "mdi-folder",
+        role: "ROLE_operationManagement",
+        use: "Y",
+        sort: 5,
+        subItems: [
+          {
+            title: "환경 조회 및 제어",
+            to: "Monitoring",
+          },
+          {
+            title: "이력 조회",
+            to: "DetailHistory",
+          },
+        ],
+      }
+    );
     this.items.push({
       title: "양액",
       active: true,
@@ -204,9 +197,25 @@ export default class Sidebar extends Vue {
         },
       ],
     });
+    this.items.push({
+      title: "수주관리",
+      active: true,
+      icon: "mdi-folder",
+      role: "ROLE_operationManagement",
+      use: "Y",
+      sort: 5,
+      subItems: [
+        {
+          title: "수주관리",
+          to: "OrderManagement",
+        },
+      ],
+    });
   }
   goHome(): void {
+
     this.$router.push("/monitoring").catch(() => {});
+
     return;
   }
 
@@ -268,4 +277,6 @@ export default class Sidebar extends Vue {
 }
 </script>
 
-<style src="./Sidebar.scss" lang="scss"></style>
+<style src="./Sidebar.scss" lang="scss">
+
+</style>
