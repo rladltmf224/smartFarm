@@ -190,11 +190,26 @@
                 <span v-else v-html="item.after"></span>
                 <!-- <div v-else>{{ item.after }}</div> -->
               </template>
-              <!-- 제어명칭 -->
-              <template v-slot:item.targetValue="{ item }">
-                {{ item.targetValue }}
+              <template v-slot:item.humidifier="{ item }">
+                <v-chip :color="getColor(item.humidifier)" dark>
+                  {{ item.humidifier }}
+                </v-chip>
               </template>
-              <!-- 제어명칭 -->
+              <template v-slot:item.airFan="{ item }">
+                <v-chip :color="getColor(item.airFan)" dark>
+                  {{ item.airFan }}
+                </v-chip>
+              </template>
+              <template v-slot:item.ledFirst="{ item }">
+                <v-chip :color="getColor(item.ledFirst)" dark>
+                  {{ item.ledFirst }}
+                </v-chip>
+              </template>
+              <template v-slot:item.ledSecond="{ item }">
+                <v-chip :color="getColor(item.ledSecond)" dark>
+                  {{ item.ledSecond }}
+                </v-chip>
+              </template>
             </v-data-table>
             <div class="text-center pt-2">
               <v-pagination v-model="page" :length="pageCount"></v-pagination>
@@ -233,6 +248,13 @@ export default {
         { text: "수정전", value: "before" },
         { text: "수정후", value: "after" },
         { text: "수정시간", value: "createdDate" },
+        { text: "온도", value: "temperature" },
+        { text: "습도", value: "humidity" },
+        { text: "에어컨", value: "settingTemperature" },
+        { text: "가습기", value: "humidifier" },
+        { text: "환기팬", value: "airFan" },
+        { text: "LED1", value: "ledFirst" },
+        { text: "LED2", value: "ledSecond" },
       ],
       datas: [],
       startDate: false,
