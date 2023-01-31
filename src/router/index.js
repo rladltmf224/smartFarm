@@ -175,6 +175,8 @@ const routes = [
         name: "OrderManagement",
         component: () =>
           import("@/views/SmartFarm/OrderManagement/OrderManagement"),
+          },
+          {
 
         path: "operationmng",
         name: "operationmng",
