@@ -2,16 +2,33 @@
   <div>
     <v-container dense class="ma-0 pa-0">
       <v-col class="pa-0 ma-0" md="12">
-        <v-sheet class="mx-4 mt-3 pa-0 ma-0 d-flex align-center" color="#F6F8F9" height="60" elevation="2">
+        <v-sheet
+          class="mx-4 mt-3 pa-0 ma-0 d-flex align-center"
+          color="#F6F8F9"
+          height="60"
+          elevation="2"
+        >
           <v-row>
             <v-col cols="12  " class="d-flex">
               <v-row class="pa-0 ma-0">
                 <v-col cols="2 " class="">
-                  <v-menu v-model="menu1" :close-on-content-click="false" :nudge-right="40"
-                    transition="scale-transition" offset-y min-width="auto">
+                  <v-menu
+                    v-model="menu1"
+                    :close-on-content-click="false"
+                    :nudge-right="40"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="auto"
+                  >
                     <template v-slot:activator="{ on, attrs }">
-                      <v-text-field v-model="s_date" label="시작일" prepend-icon="mdi-calendar" readonly v-bind="attrs"
-                        v-on="on"></v-text-field>
+                      <v-text-field
+                        v-model="s_date"
+                        label="시작일"
+                        prepend-icon="mdi-calendar"
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                      ></v-text-field>
                     </template>
                     <v-date-picker
                       v-model="s_date"
@@ -23,14 +40,29 @@
                 </v-col>
                 <v-col cols="2" class="d-flex justify-center align-center">
                   <!-- 시작시간 -->
-                  <vue-timepicker class="timeBox" v-model="startTime"></vue-timepicker>
+                  <vue-timepicker
+                    class="timeBox"
+                    v-model="startTime"
+                  ></vue-timepicker>
                 </v-col>
                 <v-col cols="2" class="">
-                  <v-menu v-model="menu2" :close-on-content-click="false" :nudge-right="40"
-                    transition="scale-transition" offset-y="offset-y" min-width="auto">
+                  <v-menu
+                    v-model="menu2"
+                    :close-on-content-click="false"
+                    :nudge-right="40"
+                    transition="scale-transition"
+                    offset-y="offset-y"
+                    min-width="auto"
+                  >
                     <template v-slot:activator="{ on, attrs }">
-                      <v-text-field v-model="e_date" label="종료일" prepend-icon="mdi-calendar" readonly="readonly"
-                        v-bind="attrs" v-on="on"></v-text-field>
+                      <v-text-field
+                        v-model="e_date"
+                        label="종료일"
+                        prepend-icon="mdi-calendar"
+                        readonly="readonly"
+                        v-bind="attrs"
+                        v-on="on"
+                      ></v-text-field>
                     </template>
 
                     <v-date-picker
@@ -39,15 +71,19 @@
                       @input="menu2 = false"
                       :min="s_date"
                     ></v-date-picker>
-
                   </v-menu>
                 </v-col>
                 <v-col cols="2" class="d-flex justify-center align-center">
                   <vue-timepicker v-model="endTime"></vue-timepicker>
                 </v-col>
                 <v-col cols="1" class="d-flex align-center justify-center">
-                  <v-select v-model="user_auth" label="조회단위" :items="authList" item-text="name"
-                    item-value="value"></v-select>
+                  <v-select
+                    v-model="user_auth"
+                    label="조회단위"
+                    :items="authList"
+                    item-text="name"
+                    item-value="value"
+                  ></v-select>
                 </v-col>
               </v-row>
               <v-col cols="2" class="d-flex align-center justify-center">
@@ -94,14 +130,14 @@
                   <TempHumidGraph :graph="graph" v-show="!this.isLoading"></TempHumidGraph>
                 </div>
 
-                <!-- <div v-show="!this.isLoading" class="">
+                <div v-show="!this.isLoading" class="">
                   <canvas
                     class="j pa-6"
                     ref="barChart"
                     height="300"
                     width="1300"
                   />
-                </div> -->
+                </div>
 
               </v-sheet>
             </v-col>
@@ -111,18 +147,27 @@
           </v-col>
           <!-- 데이터 테이블 -->
           <div>
-            <v-data-table :headers="datas_header" :items="datas" multi-sort :page.sync="page" :options.sync="options"
-              :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" dense
-              hide-default-footer @page-count="pageCount = $event" class="elevation-1">
+            <v-data-table
+              :headers="datas_header"
+              :items="datas"
+              multi-sort
+              :page.sync="page"
+              :options.sync="options"
+              :server-items-length="totalData"
+              :items-per-page="itemsPerPage"
+              :loading="loading"
+              dense
+              hide-default-footer
+              @page-count="pageCount = $event"
+              class="elevation-1"
+            >
             </v-data-table>
             <div class="text-center pt-2">
-
               <v-pagination
                 v-model="page"
                 :total-visible="11"
                 :length="pageCount"
               ></v-pagination>
-
             </div>
           </div>
         </v-col>
@@ -771,6 +816,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

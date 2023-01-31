@@ -119,9 +119,4 @@ export default {
     AuthAPI.get("/api/equipment/info", {
       params: params,
     }),
-
-  getRoomLists: (params) =>
-    AuthAPI.get("/api/temphumid/roomlist", {
-      params: params,
-    }),
 };
