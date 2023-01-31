@@ -32,7 +32,7 @@ export default new Vuex.Store({
   mutations: {
     // 로그인 성공하면 토큰 저장
     setUserId(state, loginData) {
-      console.log("#####");
+      console.log("#####", state, loginData);
       console.log(loginData);
       state.userId = loginData["userId"]; //강서버
       // state.userId = loginData['username']  // 노서버
@@ -73,16 +73,18 @@ export default new Vuex.Store({
           if (response.status == 200) {
             console.log(response.data.responseData);
             commit("setUserId", response.data.responseData);
+            return response;
           } else {
             commit("setCurrent", "fail");
-            return;
+            return response;
           }
         })
         .catch((error) => {
           console.log("Error in getUserInfo");
-          console.log(error.response.data.detailMessage);
+          //console.log(error.response.data.detailMessage);
+
           commit("setCurrent", "error");
-          return;
+          return error;
         });
     },
     getUserData: async function ({ commit }, userId) {

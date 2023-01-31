@@ -30,21 +30,37 @@ import { Component, Vue } from "vue-property-decorator";
 
 @Component
 export default class Login extends Vue {
-  username?: string = "yskim";
+
+ // username?: string = "yskim";
+
+ // username?: string = "bswoo";
+
+  //password?: string = "a12345678!@";
+   username?: string = "qwert";
   password?: string = "a12345678!@";
-  // username?: string = "qwert";
-  // password?: string = "a12345678!@";
 
   created() {
     this.$store.commit("setCurrent", "nothing");
   }
 
   async loginManager(): Promise<unknown> {
-    await this.$store.dispatch("getUserInfo", {
-      account: { userId: this.username, userPw: this.password },
-    });
+    await this.$store
+      .dispatch("getUserInfo", {
+        account: { userId: this.username, userPw: this.password },
+      })
+      .then((res) => {
+        console.log("res", res);
+      });
+    console.log("loginManager", this.$store.state.userId);
+    if (this.$store.state.userId !== "") {
+      this.$router.push({ path: "monitoring" });
+      return;
+    }
+    // this.$router.push({ path: "monitoring" });
 
-    this.$router.push({ path: "home" });
+    this.username = "";
+    this.password = "";
+    this.$swal.fire("ERROR", "ID/PW를 확인해주시길 바랍니다", "error");
     return;
   }
 }

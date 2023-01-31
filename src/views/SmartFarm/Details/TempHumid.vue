@@ -13,7 +13,12 @@
                       <v-text-field v-model="s_date" label="시작일" prepend-icon="mdi-calendar" readonly v-bind="attrs"
                         v-on="on"></v-text-field>
                     </template>
-                    <v-date-picker v-model="s_date" @input="menu1 = false" no-title></v-date-picker>
+                    <v-date-picker
+                      v-model="s_date"
+                      @input="menu1 = false"
+                      no-title
+                      :max="e_date"
+                    ></v-date-picker>
                   </v-menu>
                 </v-col>
                 <v-col cols="2" class="d-flex justify-center align-center">
@@ -27,8 +32,14 @@
                       <v-text-field v-model="e_date" label="종료일" prepend-icon="mdi-calendar" readonly="readonly"
                         v-bind="attrs" v-on="on"></v-text-field>
                     </template>
-                    <v-date-picker no-title v-model="e_date" @input="menu2 = false" :min="s_date"
-                      :max="date"></v-date-picker>
+
+                    <v-date-picker
+                      no-title
+                      v-model="e_date"
+                      @input="menu2 = false"
+                      :min="s_date"
+                    ></v-date-picker>
+
                   </v-menu>
                 </v-col>
                 <v-col cols="2" class="d-flex justify-center align-center">
@@ -97,7 +108,13 @@
               hide-default-footer @page-count="pageCount = $event" class="elevation-1">
             </v-data-table>
             <div class="text-center pt-2">
-              <v-pagination v-model="page" :total-visible="7" :length="pageCount"></v-pagination>
+
+              <v-pagination
+                v-model="page"
+                :total-visible="12"
+                :length="pageCount"
+              ></v-pagination>
+
             </div>
           </div>
         </v-col>

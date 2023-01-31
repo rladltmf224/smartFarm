@@ -34,6 +34,7 @@ let demo_side_data = [
       },
     ],
   },
+
   {
     title: "생산관리",
     active: true,
@@ -42,6 +43,10 @@ let demo_side_data = [
     use: "Y",
     sort: 5,
     subItems: [
+      {
+        title: "생산관리",
+        to: "operationMng",
+      },
       {
         title: "작업지시서 등록",
         to: "operationOrder",
