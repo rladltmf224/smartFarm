@@ -26,6 +26,7 @@ export default {
     AuthAPI.get("/api/temphumid/history", {
       params: params,
     }),
+  temphumidRoomList: () => AuthAPI.get("/api/temphumid/roomlist"),
   co2: (params) =>
     AuthAPI.get("/api/sensor/history/co2", {
       params: params,

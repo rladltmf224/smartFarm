@@ -156,43 +156,39 @@
               multi-sort
             >
               <!-- 버튼을 chip으로 표현 -->
-              <template v-slot:item.valueBefore="{ item }">
+              <template v-slot:item.before="{ item }">
                 <!-- 수정전 버튼만-->
                 <div
                   v-if="
-                    item.valueBefore == 'ON' ||
-                    item.valueBefore == 'OFF' ||
-                    item.valueBefore == 'AUTO' ||
-                    item.valueAfter == 'ON' ||
-                    item.valueAfter == 'AUTO' ||
-                    item.valueAfter == 'OFF'
+                    item.before == 'ON' ||
+                    item.before == 'OFF' ||
+                    item.before == 'AUTO'
                   "
                 >
-                  <v-chip :color="getColor(item.valueBefore)" dark>
-                    {{ item.valueBefore }}
+                  <v-chip :color="getColor(item.before)" dark>
+                    {{ item.before }}
                   </v-chip>
                 </div>
                 <!-- 수정전 숫자만 -->
-                <div v-else>{{ item.valueBefore }}</div>
+                <span v-else v-html="item.before"></span>
+                <!-- <div v-else>{{ item.before }}</div> -->
               </template>
-              <template v-slot:item.valueAfter="{ item }">
+              <template v-slot:item.after="{ item }">
                 <!-- 수정후 버튼만 -->
                 <div
                   v-if="
-                    item.valueBefore == 'ON' ||
-                    item.valueAfter == 'OFF' ||
-                    item.valueAfter == 'AUTO' ||
-                    item.valueAfter == 'ON' ||
-                    item.valueAfter == 'AUTO' ||
-                    item.valueAfter == 'OFF'
+                    item.after == 'ON' ||
+                    item.after == 'AUTO' ||
+                    item.after == 'OFF'
                   "
                 >
-                  <v-chip :color="getColor(item.valueAfter)" dark>
-                    {{ item.valueAfter }}
+                  <v-chip :color="getColor(item.after)" dark>
+                    {{ item.after }}
                   </v-chip>
                 </div>
                 <!-- 수정후 숫자만 -->
-                <div v-else>{{ item.valueAfter }}</div>
+                <span v-else v-html="item.after"></span>
+                <!-- <div v-else>{{ item.after }}</div> -->
               </template>
               <!-- 제어명칭 -->
               <template v-slot:item.targetValue="{ item }">
@@ -234,8 +230,8 @@ export default {
         },
         { text: "제어명칭", value: "targetValue" },
 
-        { text: "수정전", value: "valueBefore" },
-        { text: "수정후", value: "valueAfter" },
+        { text: "수정전", value: "before" },
+        { text: "수정후", value: "after" },
         { text: "수정시간", value: "createdDate" },
       ],
       datas: [],
@@ -312,10 +308,10 @@ export default {
     },
     // 시작일을 일주일전으로
     // 수정전,수정후 버튼색
-    getColor(valueBefore) {
-      if (valueBefore == "ON") return "green";
-      else if (valueBefore == "OFF") return "grey";
-      else if (valueBefore == "AUTO") return "blue";
+    getColor(value) {
+      if (value == "ON") return "green";
+      else if (value == "OFF") return "grey";
+      else if (value == "AUTO") return "blue";
       else return "yellow";
     },
     // 제어상태 히스토리 api
@@ -339,6 +335,53 @@ export default {
           console.log("리스폰스리스폰스리스폰스리스폰스", response);
           this.loading = false; //로딩바
           this.datas = response.data.responseData;
+          this.datas.forEach((row) => {
+            row["before"] = "";
+            row["after"] = "";
+
+            if (row["targetValue"] == "설정변경") {
+              row["details"].forEach((detail) => {
+                if (
+                  detail["startTimeBefore"] ||
+                  detail["endTimeBefore"] ||
+                  detail["minValueBefore"] ||
+                  detail["maxValueBefore"]
+                ) {
+                  row["before"] +=
+                    detail["startTimeBefore"] +
+                    "~" +
+                    detail["endTimeBefore"] +
+                    "  " +
+                    detail["minValueBefore"];
+                  if (detail["minValueBefore"] != detail["maxValueBefore"]) {
+                    row["before"] += "~" + detail["maxValueBefore"];
+                  }
+                  row["before"] += "<br>";
+                }
+                if (
+                  detail["startTimeAfter"] ||
+                  detail["endTimeAfter"] ||
+                  detail["minValueAfter"] ||
+                  detail["maxValueAfter"]
+                ) {
+                  row["after"] =
+                    detail["startTimeAfter"] +
+                    "~" +
+                    detail["endTimeAfter"] +
+                    "  " +
+                    detail["minValueAfter"];
+                  if (detail["minValueAfter"] != detail["maxValueAfter"]) {
+                    row["after"] += "~" + detail["maxValueAfter"];
+                  }
+                  row["after"] += "<br>";
+                }
+              });
+            } else {
+              row["before"] = row["statusBefore"];
+              row["after"] = row["statusAfter"];
+            }
+          });
+          console.log("SSSSSSSSSSS", this.datas);
           this.totalData = response.data.totalCount; //나타낼 행의 개수
         })
         .catch((error) => {

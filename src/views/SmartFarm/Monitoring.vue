@@ -32,15 +32,22 @@
       </v-btn>
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
-          <v-badge overlap content="3">
+          <v-badge overlap :content="alarmList.length">
             <v-btn depressed v-bind="attrs" v-on="on" icon>
               <v-icon color="black" large> mdi-bell </v-icon>
             </v-btn>
           </v-badge>
         </template>
         <v-list>
-          <v-list-item v-for="(item, index) in items" :key="index">
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          <v-list-item
+            v-for="(alarm, index) in alarmList"
+            :key="index"
+            two-line
+          >
+            <v-list-item-content @click="removeAlarm(alarm)" class="alarmItem">
+              <v-list-item-title>{{ alarm.title }}</v-list-item-title>
+              <v-list-item-subtitle>{{ alarm.body }}</v-list-item-subtitle>
+            </v-list-item-content>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -736,6 +743,8 @@ import TestGraphTemp from "./TestGraphTemp.vue";
 import TestGraphWater from "./TestGraphWater.vue";
 import RoomInfo from "./Monitoring/RoomInfo.vue";
 
+import { mapGetters } from "vuex";
+
 const data = Data;
 let weatherFn;
 
@@ -755,11 +764,11 @@ export default {
       airCon_data: "",
       // 외부센서로딩
       roomName_control: "",
-      items: [
-        { title: "알람이력1" },
-        { title: "알람이력2" },
-        { title: "알람이력3" },
-      ],
+      // items: [
+      //   { title: "알람이력1" },
+      //   { title: "알람이력2" },
+      //   { title: "알람이력3" },
+      // ],
       headers_bala: [
         {
           text: "이름",
@@ -1547,6 +1556,16 @@ export default {
       });
     },
     // 제어항목조회
+
+    // 알람 삭제
+    removeAlarm(alarm) {
+      this.$store.commit("ALARM/removeAlarm", alarm);
+    },
+  },
+  computed: {
+    ...mapGetters({
+      alarmList: "ALARM/GET_ALARM_LIST",
+    }),
   },
 };
 </script>
@@ -1572,5 +1591,9 @@ div {
     @extend %circle;
     background: red;
   }
+}
+
+.alarmItem:hover {
+  background: lightgrey;
 }
 </style>
