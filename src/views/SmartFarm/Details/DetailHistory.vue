@@ -35,10 +35,18 @@
               <v-row dense class="">
                 <!-- 탭스 -->
                 <v-col class="pa-0 ma-0">
-                  <v-tabs v-model="tab" align-with-title="align-with-title" background-color="">
+                  <v-tabs
+                    v-model="tab"
+                    align-with-title="align-with-title"
+                    background-color=""
+                  >
                     <v-tabs-slider color="primary"></v-tabs-slider>
 
-                    <v-tab v-for="item in items" :key="item" @click="clickTest(item)">
+                    <v-tab
+                      v-for="item in items"
+                      :key="item"
+                      @click="clickTest(item)"
+                    >
                       {{ item }}
                     </v-tab>
                   </v-tabs>
@@ -163,9 +171,8 @@ export default {
       // 조회단위 조회단위
       startDate: false,
       endDate: false,
-      search_type_1: 1,
-      search_list1: [
-      ],
+      search_type_1: null,
+      search_list1: [],
 
       editedIndex: -1,
       customer_list: [],
@@ -230,15 +237,6 @@ export default {
     LoadingSpinner,
   },
   methods: {
-
-    // 이슬
-    getRoomLists() {
-      api.smartfarm.getRoomLists().then((res) => {
-        console.log('룸 리스트 조회성공1111', this.search_list1)
-        this.search_list1 = res.data.responseData
-        console.log('룸 리스트 조회성공222', this.search_list1)
-
-
     // //온/습도 데이터 가져오는api
     // getTempHumidData() {
     //   this.isLoading = true;
