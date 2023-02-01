@@ -30,27 +30,6 @@
       >
         <v-icon dark> mdi-reload </v-icon>
       </v-btn>
-      <v-menu offset-y>
-        <template v-slot:activator="{ on, attrs }">
-          <v-badge overlap :content="alarmList.length">
-            <v-btn depressed v-bind="attrs" v-on="on" icon>
-              <v-icon color="black" large> mdi-bell </v-icon>
-            </v-btn>
-          </v-badge>
-        </template>
-        <v-list>
-          <v-list-item
-            v-for="(alarm, index) in alarmList"
-            :key="index"
-            two-line
-          >
-            <v-list-item-content @click="removeAlarm(alarm)" class="alarmItem">
-              <v-list-item-title>{{ alarm.title }}</v-list-item-title>
-              <v-list-item-subtitle>{{ alarm.body }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-menu>
     </v-row>
 
     <v-row dense class="d-flex justify-md-center align-stretch">
@@ -1556,16 +1535,6 @@ export default {
       });
     },
     // 제어항목조회
-
-    // 알람 삭제
-    removeAlarm(alarm) {
-      this.$store.commit("ALARM/removeAlarm", alarm);
-    },
-  },
-  computed: {
-    ...mapGetters({
-      alarmList: "ALARM/GET_ALARM_LIST",
-    }),
   },
 };
 </script>
@@ -1591,9 +1560,5 @@ div {
     @extend %circle;
     background: red;
   }
-}
-
-.alarmItem:hover {
-  background: lightgrey;
 }
 </style>

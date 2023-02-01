@@ -2,6 +2,39 @@
   <v-navigation-drawer app clipped permanent :width="240" color="#F6F8F9">
     <v-container class="text-h4 sidebar-main-text home" @click="goHome">
       T-MES
+      <v-menu offset-y>
+        <template v-slot:activator="{ on, attrs }">
+          <v-badge
+            overlap
+            :content="alarmList.length"
+            :value="alarmList.length"
+            color="error"
+          >
+            <v-btn id="alarmBell" depressed v-bind="attrs" v-on="on" icon>
+              <v-icon :color="alarmList.length > 0 ? 'error' : 'black'" large>
+                mdi-bell
+              </v-icon>
+            </v-btn>
+          </v-badge>
+        </template>
+        <v-list>
+          <v-list-item
+            v-for="(alarm, index) in alarmList"
+            :key="index"
+            two-line
+          >
+            <v-list-item-content @click="removeAlarm(alarm)" class="alarmItem">
+              <v-list-item-title>
+                <v-chip class="mr-3" color="warning"> 주의 </v-chip
+                >{{ alarm.title }}
+              </v-list-item-title>
+              <v-list-item-subtitle class="pl-15">{{
+                alarm.body
+              }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-container>
 
     <v-divider></v-divider>
@@ -21,13 +54,23 @@
             <v-icon v-text="item.icon"></v-icon>
           </v-list-item-icon>
           <v-list-item-content>
-            <v-list-item-title class="text-subtitle-1" v-text="item.title"></v-list-item-title>
+            <v-list-item-title
+              class="text-subtitle-1"
+              v-text="item.title"
+            ></v-list-item-title>
           </v-list-item-content>
         </template>
 
-        <v-list-item v-for="subItem in item.subItems" :key="subItem.title" :to="subItem.to" dense>
+        <v-list-item
+          v-for="subItem in item.subItems"
+          :key="subItem.title"
+          :to="subItem.to"
+          dense
+        >
           <v-list-item-content>
-            <v-list-item-title v-text="'- ' + subItem.title"></v-list-item-title>
+            <v-list-item-title
+              v-text="'- ' + subItem.title"
+            ></v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list-group>
@@ -56,7 +99,11 @@
     </template>
 
     <!--비밀번호 변경 dialog-->
-    <SidebarUserInfo :open="userInfoDialog" @closeModal="close" @save-info="handlerSaveInfo"></SidebarUserInfo>
+    <SidebarUserInfo
+      :open="userInfoDialog"
+      @closeModal="close"
+      @save-info="handlerSaveInfo"
+    ></SidebarUserInfo>
   </v-navigation-drawer>
 </template>
 
@@ -65,12 +112,18 @@ import { demo_side_data } from "@/demo/demo_data";
 import _ from "lodash";
 import jwt_decode from "jwt-decode";
 import * as api from "@/api/index.js";
-import { Component, Vue, Ref } from "vue-property-decorator";
+import { Component, Vue, Ref, Watch } from "vue-property-decorator";
 import SidebarUserInfo from "./SidebarUserInfo.vue";
+import { mapGetters } from "vuex";
 
 @Component({
   components: {
     SidebarUserInfo,
+  },
+  computed: {
+    ...mapGetters({
+      alarmList: "ALARM/GET_ALARM_LIST",
+    }),
   },
 })
 export default class Sidebar extends Vue {
@@ -213,13 +266,13 @@ export default class Sidebar extends Vue {
     });
   }
   goHome(): void {
-
     this.$router.push("/monitoring").catch(() => {});
 
     return;
   }
 
   logout(): void {
+    api.webpush.unsubscribe();
     this.$store.commit("logout");
     this.$router.push({ path: "login" });
     return;
@@ -274,9 +327,21 @@ export default class Sidebar extends Vue {
     this.userInfoDialog = false;
     return;
   }
+
+  // 알람 삭제
+  removeAlarm(alarm: Object): void {
+    this.$store.commit("ALARM/removeAlarm", alarm);
+  }
+
+  @Watch("alarmList.length", { deep: true })
+  onAlarmListChanged(newVal: number, oldVal: number): void {
+    // 새로운 알림이 생긴 경우
+    if (newVal - oldVal > 0) {
+      let alarmIcon: HTMLElement | null = document.getElementById("alarmBell");
+      if (alarmIcon) alarmIcon.click();
+    }
+  }
 }
 </script>
 
-<style src="./Sidebar.scss" lang="scss">
-
-</style>
+<style src="./Sidebar.scss" lang="scss"></style>
