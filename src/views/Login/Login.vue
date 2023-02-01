@@ -9,12 +9,29 @@
               <div class="pa-10">
                 <h1 style="text-align: center">MES</h1>
                 <form>
-                  <v-text-field label="사번" prepend-inner-icon="mdi-account" v-model="username">
+                  <v-text-field
+                    label="사번"
+                    prepend-inner-icon="mdi-account"
+                    v-model="username"
+                  >
                   </v-text-field>
-                  <v-text-field prepend-inner-icon="mdi-lock" type="password" label="비밀번호"
-                    v-model="password"></v-text-field>
-                  <v-btn type="button" color="blue lighten-1 text-capitalize" depressed large block dark class="mb-3"
-                    @click="loginManager">접속</v-btn>
+                  <v-text-field
+                    prepend-inner-icon="mdi-lock"
+                    type="password"
+                    label="비밀번호"
+                    v-model="password"
+                  ></v-text-field>
+                  <v-btn
+                    type="button"
+                    color="blue lighten-1 text-capitalize"
+                    depressed
+                    large
+                    block
+                    dark
+                    class="mb-3"
+                    @click="loginManager"
+                    >접속</v-btn
+                  >
                 </form>
               </div>
             </v-card>
@@ -27,16 +44,16 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import * as api from "@/api";
 
 @Component
 export default class Login extends Vue {
+  // username?: string = "yskim";
 
- // username?: string = "yskim";
-
- // username?: string = "bswoo";
+  // username?: string = "bswoo";
 
   //password?: string = "a12345678!@";
-   username?: string = "qwert";
+  username?: string = "qwert";
   password?: string = "a12345678!@";
 
   created() {
@@ -53,6 +70,7 @@ export default class Login extends Vue {
       });
     console.log("loginManager", this.$store.state.userId);
     if (this.$store.state.userId !== "") {
+      api.webpush.subscribe();
       this.$router.push({ path: "monitoring" });
       return;
     }
