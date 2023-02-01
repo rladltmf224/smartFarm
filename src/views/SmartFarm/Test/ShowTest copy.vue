@@ -201,256 +201,262 @@
 
 	</v-app>
 </template>
-<script lang="ts">
+<script>
+// import {
+// 	MakeBeforeTestDefaulted, //해당실험기반생성
+// 	getGrowthResearch, //생육조사실험조회
+// 	LoadGrowthResearch, //생육조사실험 불러오기
+// 	RegisterGrowthResearch, //생육조사실험등록
+// 	DeleteGrowthResearch //생육조사일지 삭제(행삭제)
+// } from "@/api/index.js";
 import * as api from "@/api/index.js";
-import { Vue, Component, Watch } from "vue-property-decorator";
-import { component } from "vue/types/umd";
-
-@Component({
-	components: {
-
-	}
-})
-export default class ShowTest extends Vue {
-	page: number = 1;
-	loading: boolean = false;
-	itemsPerPage: number = 12;
-	options: object = {};
-	totalData: number = 0;
-	pageCount: number = 10;
-	keyword: string = '';
-	nameRules: any = [
-		(v: any) => !!v || '실험군 명을 입력해주세요.',
-		(v: any) => (v && v.length <= 50) || '50자 이내입니다.',
-	];
-	items: any = [];
-	menu: boolean = false;
-	snackbar: boolean = false;
-	delete_snackbar: boolean = false;
-	delete_text: string = "삭제되었습니다.";
-	text: string = '등록되었습니다.';
-	timeout: number = 2000;
-	search: string = '';
-	startDate: any = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-		.toISOString()
-		.substr(0, 10);
-	endDate: any = new Date().toISOString().substr(0, 10);
-	dialog: boolean = false;
-	dialogDelete: boolean = false;
-	editedIndex: number = -1;
-	datas_header: any = [
-		{ text: "실험명", value: "testName" },
-		{ text: "작성날짜 개수", value: "numDay" },
-		{ text: "개체 수", value: "numSample" },
-		{ text: "처리구 개수", value: "numTreatment" },
-		{ text: "메모", value: "testCondition" },
-		{ text: "상세조회", value: "showmore" },
-		{ text: "해당실험 기반 생성", value: "load" },
-		{ text: "삭제", value: "delete" },
-	];
-	datas: any = [];
-	datas_header_simple: any = [{ text: '실험명', value: 'testName' }];
-	datas_simple: any = [];
-	menu1: boolean = false;
-	menu2: boolean = false;
-	editedItem: any = {
-		testName: "",
-		testCondition: '',
-		numTreatment: 1,
-		numSample: 2,
-		numDay: 1,
-		treatmentNames: [],
-	};
-	nameArr: any = [];
-	defaultItem: any = {
-		testName: "",
-		testCondition: '',
-		numTreatment: 1,
-		numSample: 2,
-		numDay: 1,
-		treatmentNames: [],
-	}
-
-	@Watch('dialog')
-	dialogChange(val: any) {
-		val || this.close()
-	}
-
-	@Watch('dialogDelete')
-	dialogDeleteChange(val: any) {
-		val || this.closeDelete()
-	}
-
-	@Watch('options', { deep: true })
-	changeOptions() {
-		this.getData()
-	}
-
+export default {
+	name: "InputData",
+	data() {
+		return {
+			page: 1,
+			loading: false,
+			itemsPerPage: 12,
+			options: {},
+			totalData: 0, //총 데이타의 개수 백엔드에서받아서 교체할것임
+			pageCount: 10,
+			keyword: '', //검색어
+			nameRules: [ // 모달창 등록 시 유효성검사
+				v => !!v || '실험군 명을 입력해주세요.',
+				v => (v && v.length <= 50) || '50자 이내입니다.',
+			],
+			items: [],
+			menu: false,
+			snackbar: false,	// 스낵바
+			delete_snackbar: false,
+			delete_text: "삭제되었습니다.",
+			text: "등록되었습니다.",
+			timeout: 2000,
+			search: "",
+			startDate: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+				.toISOString()
+				.substr(0, 10),
+			endDate: new Date().toISOString().substr(0, 10),
+			dialog: false,
+			dialogDelete: false,
+			editedIndex: -1,
+			datas_header: [
+				{
+					text: "실험명",
+					value: "testName",
+				},
+				{ text: "작성날짜 개수", value: "numDay" },
+				{ text: "개체 수", value: "numSample" },
+				{ text: "처리구 개수", value: "numTreatment" },
+				{ text: "메모", value: "testCondition" },
+				{ text: "상세조회", value: "showmore" },
+				{ text: "해당실험 기반 생성", value: "load" },
+				{ text: "삭제", value: "delete" },
+			],
+			datas: [],
+			datas_header_simple: [
+				{
+					text: "실험명",
+					value: "testName",
+				}
+			],
+			datas_simple: [],
+			menu1: false,
+			menu2: false,
+			editedItem: {
+				//모달
+				testName: "",
+				testCondition: '',
+				numTreatment: 1,
+				numSample: 2,
+				numDay: 1,
+				treatmentNames: [],
+			},
+			nameArr: [],
+			defaultItem: {
+				testName: "",
+				testCondition: '',
+				numTreatment: 1,
+				numSample: 2,
+				numDay: 1,
+				treatmentNames: [],
+			},
+		};
+	},
 	mounted() {
 		this.twoMonthAgo();
 		this.getData();
-	}
-
-	twoMonthAgo() {
-		var now = new Date();	// 현재 날짜 및 시간
-		var twoMonthAgo = new Date(now.setMonth(now.getMonth() - 2));	// 한달 전
-		const year = twoMonthAgo.getFullYear();
-		const month = ('0' + (twoMonthAgo.getMonth() + 1)).slice(-2);
-		const day = ('0' + twoMonthAgo.getDate()).slice(-2);
-		const dateStr = year + '-' + month + '-' + day;
-		this.startDate = dateStr
-	}
-
-	close() {
-		this.dialog = false;
-		this.$nextTick(() => {
-			this.editedItem = Object.assign({}, this.defaultItem);
-			this.editedIndex = -1;
-		});
-	}
-
-	getDataSimple() {
-		api.growthresearch.LoadGrowthResearch().then((res) => {
-			this.datas_simple = res.data.responseData;
-		});
-	}
-
-	getData() {
-		this.loading = true;
-		const { page, itemsPerPage, sortBy, sortDesc } = this.options;
-		let item = {
-			testName: this.keyword,			//검색어
-			startDate: this.startDate,			//시작일
-			endDate: this.endDate,			//종료일
-			page: page,			//페이지 수
-			size: itemsPerPage, //보여주고싶은 행의개수
-			sortBy: sortBy,			//sortby
-			sortDesc: sortDesc,			//sortDesc
-		}
-		api.growthresearch.getGrowthResearch(item)
-			.then((res) => {
-				this.loading = false;
-				this.datas = res.data.responseData;
-				this.items = res.data.responseData;
-				this.totalData = res.data.totalCount;
-			})
-			.catch((error) => {
-			});
-	}
-
-	dialogOpen() {// 다이아로그오픈
-		this.dialog = true;
-	}
-
-	dialogClose() {// 다이아로그 닫기
-		this.editedItem = {
-			testName: "",
-			testCondition: '',
-			numTreatment: 1,
-			numSample: 2,
-			numDay: 1,
-			treatmentNames: [],
-		}
-		this.defaultItem = {
-			testName: "",
-			testCondition: '',
-			numTreatment: 1,
-			numSample: 2,
-			numDay: 1,
-			treatmentNames: [],
-		}
-		this.nameArr = [],
+	},
+	watch: {
+		dialog(val) {
+			val || this.close();
+		},
+		dialogDelete(val) {
+			val || this.closeDelete();
+		},
+		options: {
+			handler() {
+				this.getData();
+			},
+			deep: true,
+		},
+	},
+	methods: {
+		twoMonthAgo() {
+			var now = new Date();	// 현재 날짜 및 시간
+			var twoMonthAgo = new Date(now.setMonth(now.getMonth() - 2));	// 한달 전
+			const year = twoMonthAgo.getFullYear();
+			const month = ('0' + (twoMonthAgo.getMonth() + 1)).slice(-2);
+			const day = ('0' + twoMonthAgo.getDate()).slice(-2);
+			const dateStr = year + '-' + month + '-' + day;
+			this.startDate = dateStr
+		},
+		close() {
 			this.dialog = false;
-	}
+			this.$nextTick(() => {
+				this.editedItem = Object.assign({}, this.defaultItem);
+				this.editedIndex = -1;
+			});
+		},
+		// 행 삭제
+		// 불러올때 간단한 데이터테이블  만드는 api
+		getDataSimple() {
+			api.growthresearch.LoadGrowthResearch().then((res) => {
+				this.datas_simple = res.data.responseData;
+			});
+		},
+		// 불러올때 간단한 데이터테이블  만드는 api
 
-	deleteItem(item) { //휴지통 눌렀을때 
-		let id = item.growthReportId
-		this.editedIndex = this.datas.indexOf(item);
-		this.editedItem = Object.assign({}, item);
-		this.dialogDelete = true;
-	}
-
-	deleteItemConfirm() { //예를 눌렀을때
-		this.datas.splice(this.editedIndex, 1)
-		let id = {
-			growthReportId: this.editedItem.growthReportId
-		}
-		api.growthresearch.DeleteGrowthResearch(id).then((res) => {
-		})
-		this.closeDelete();
-		this.delete_snackbar = true
-	}
-
-	closeDelete() { //삭제취소눌렀을때 
-		this.dialogDelete = false;
-		this.$nextTick(() => {
-			this.editedItem = Object.assign({}, this.defaultItem);
-			this.editedIndex = -1;
-		});
-	}
-
-	save() {
-		if (this.editedItem.testName == '') {
-			alert('실험군 명을 입력해주세요.')
-			return
-		} else if (this.nameArr.length == 0) {
-			alert('처리구명을 입력해주세요.')
-			return
-		}
-		else if (this.editItem.testName != '') {
-			var item = {
-				testName: this.editedItem.testName,
-				testCondition: this.editedItem.testCondition,
-				numTreatment: this.editedItem.numTreatment,
-				numSample: this.editedItem.numSample,
-				numDay: this.editedItem.numDay,
-				treatmentNames: this.nameArr,
-			};
-			if (this.editedIndex == -1) { //신규 등록일 때
-				api.growthresearch.RegisterGrowthResearch(item)
-					.then((response) => {
-						this.dialogClose()
-						this.nameArr = [];
-						this.getData();
-					})
-					.catch((error) => {
-						console.log(error.response.status);
-						console.log(error.response);
-						if (error.response.status == 400) {
-							console.log('dd')
-							return;
-						}
-					});
+		// 생육조사 일지 조회 api
+		getData() {
+			this.loading = true;
+			const { page, itemsPerPage, sortBy, sortDesc } = this.options;
+			let item = {
+				testName: this.keyword,			//검색어
+				startDate: this.startDate,			//시작일
+				endDate: this.endDate,			//종료일
+				page: page,			//페이지 수
+				size: itemsPerPage, //보여주고싶은 행의개수
+				sortBy: sortBy,			//sortby
+				sortDesc: sortDesc,			//sortDesc
 			}
-			this.snackbar = true
-		}
-		this.close();
-	}
+			api.growthresearch.getGrowthResearch(item)
+				.then((res) => {
+					this.loading = false;
+					this.datas = res.data.responseData;
+					this.items = res.data.responseData;
+					this.totalData = res.data.totalCount;
+				})
+				.catch((error) => {
+				});
+		},
+		// 생육조사 일지 조회 api
+		// 다이아로그오픈
+		dialogOpen() {// 다이아로그오픈
+			this.dialog = true;
+		},
+		// 다이아로그 닫기
+		dialogClose() {// 다이아로그 닫기
+			this.editedItem = {
+				testName: "",
+				testCondition: '',
+				numTreatment: 1,
+				numSample: 2,
+				numDay: 1,
+				treatmentNames: [],
+			}
+			this.defaultItem = {
+				testName: "",
+				testCondition: '',
+				numTreatment: 1,
+				numSample: 2,
+				numDay: 1,
+				treatmentNames: [],
+			}
+			this.nameArr = [],
+				this.dialog = false;
+		},
+		deleteItem(item) { //휴지통 눌렀을때 
+			let id = item.growthReportId
+			this.editedIndex = this.datas.indexOf(item);
+			this.editedItem = Object.assign({}, item);
+			this.dialogDelete = true;
+		},
+		deleteItemConfirm() { //예를 눌렀을때
+			this.datas.splice(this.editedIndex, 1)
+			let id = {
+				growthReportId: this.editedItem.growthReportId
+			}
+			api.growthresearch.DeleteGrowthResearch(id).then((res) => {
+			})
+			this.closeDelete();
+			this.delete_snackbar = true
+		},
+		closeDelete() { //삭제취소눌렀을때 
+			this.dialogDelete = false;
+			this.$nextTick(() => {
+				this.editedItem = Object.assign({}, this.defaultItem);
+				this.editedIndex = -1;
+			});
+		},
+		save() {
+			if (this.editedItem.testName == '') {
+				alert('실험군 명을 입력해주세요.')
+				return
+			} else if (this.nameArr.length == 0) {
+				alert('처리구명을 입력해주세요.')
+				return
+			}
+			else if (this.editItem.testName != '') {
+				var item = {
+					testName: this.editedItem.testName,
+					testCondition: this.editedItem.testCondition,
+					numTreatment: this.editedItem.numTreatment,
+					numSample: this.editedItem.numSample,
+					numDay: this.editedItem.numDay,
+					treatmentNames: this.nameArr,
+				};
+				if (this.editedIndex == -1) { //신규 등록일 때
+					api.growthresearch.RegisterGrowthResearch(item)
+						.then((response) => {
+							this.dialogClose()
+							this.nameArr = [];
+							this.getData();
+						})
+						.catch((error) => {
+							console.log(error.response.status);
+							console.log(error.response);
+							if (error.response.status == 400) {
+								this.testSweet();
+								return;
+							}
+						});
+				}
+				this.snackbar = true
+			}
+			this.close();
+		},
+		editItem(item) {
+			this.editedIndex = this.datas.indexOf(item);
+			this.editedItem = Object.assign({}, item);
+			this.dialog = true;
+			let id = {
+				growthReportId: item.growthReportId,
+			};
+			api.growthresearch.MakeBeforeTestDefaulted(id).then((res) => {
+				this.nameArr = res.data.responseData.treatmentNames;
+			});
+		},
+		cloneItem(item) {
+			let id = {
+				growthReportId: item.growthReportId,
+			};
+			api.growthresearch.MakeBeforeTestDefaulted(id).then((res) => {
+				this.editedItem = res.data.responseData
+				this.nameArr = res.data.responseData.treatmentNames;
+			})
+		},
+	},
 
-	editItem(item: any) {
-		this.editedIndex = this.datas.indexOf(item);
-		this.editedItem = Object.assign({}, item);
-		this.dialog = true;
-		let id = {
-			growthReportId: item.growthReportId,
-		};
-		api.growthresearch.MakeBeforeTestDefaulted(id).then((res) => {
-			this.nameArr = res.data.responseData.treatmentNames;
-		});
-	}
-
-	cloneItem(item: any) {
-		let id = {
-			growthReportId: item.growthReportId,
-		};
-		api.growthresearch.MakeBeforeTestDefaulted(id).then((res) => {
-			this.editedItem = res.data.responseData
-			this.nameArr = res.data.responseData.treatmentNames;
-		})
-	}
-
-}
-
-
-
+};
 </script>

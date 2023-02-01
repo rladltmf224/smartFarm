@@ -51,13 +51,6 @@ export default {
       params: params,
     }),
 
-  sortImageList: (
-    params //이미지 리스트 개별 정렬
-  ) =>
-    AuthAPI.post("/api/growth/originalImageList/sort", JSON.stringify(params), {
-      headers: { "Content-Type": "application/json" },
-    }),
-
   SaveGrowthResearchImage: (groupData) => {
     let form = new FormData();
     form.append("growthReportId", groupData["growthReportId"]); //growthReportId
