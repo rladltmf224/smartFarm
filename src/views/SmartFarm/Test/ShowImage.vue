@@ -86,18 +86,25 @@ import _ from "lodash";
 import * as api from "@/api/index.js";
 import LoadingSpinner from '@/views/SmartFarm/Loading/LodingSpinner.vue'
 import { component } from "vue/types/umd";
+import { timingSafeEqual } from "crypto";
 @Component({
   components: {
     LoadingSpinner
   }
 })
 export default class ShowImage extends Vue {
+
+  arr: any = [
+    { name: 'test' }
+  ]
+
+
   selected: any = [];
   resImages: any = []; //서버에서 받은 이미지데이터들을 변수로저장
   sortImages: any = []; //이미지 정렬시 정렬된 데이터들,나중에 this.images에 넣을것임.
   images: any = []; //이미지 갤러리 데이터들
   sortImgText: string = '최근순 정렬'; //이미지 갤러리 정렬 텍스트,
-  sortImgValue: boolean = false; //이미지 갤러리 정렬 불린값
+  sortImgValue: boolean = true; //이미지 갤러리 정렬 불린값
   dialog: boolean = false;
   page: number = 1;
   loading: boolean = false;
@@ -136,18 +143,21 @@ export default class ShowImage extends Vue {
 
 
   closeModal() { //이미지 갤러리 모달 닫기  
-    this.sortImgText = '최근순 정렬'
     this.dialog = false
     this.images = []
   }
+  PlusSortText() { //this.images에 sortText="최근순 정렬" 넣어주기
+
+
+
+  }
   Sort(item: any) {  //이미지 갤러리 정렬 버튼 클릭 시
-    // item.sortYN = false
     this.sortImgValue = !this.sortImgValue
     if (this.sortImgValue) {
-      //item.sortText = '최근순 정렬'
+      item.sortText = '최신순 정렬'
       this.sortImgValue = true
     } else {
-      //item.sortText = '오래된 순 정렬'
+      item.sortText = '오래된 순 정렬'
       this.sortImgValue = false
     }
     // console.log('정렬아이템', item, this.sortImgValue)
@@ -255,6 +265,8 @@ export default class ShowImage extends Vue {
           const blob = new Blob([arraybuffer], { type: contentType }); // base64 -> blob
           const blobUrl = URL.createObjectURL(blob);
           data[top].detailInfo[mid].fileInfo[bottom].fileData = blobUrl
+          data[top].sortText = '최신순 정렬'
+
         }
         this.images = data
       }
@@ -305,11 +317,18 @@ export default class ShowImage extends Vue {
     }
   }
 
-  changeSortedImg() { //정렬된 이미지만 this.images에 넣기
 
+  test() {
+    this.arr.value = 'newValue'
+  }
+
+
+
+
+
+  changeSortedImg() { //정렬된 이미지만 this.images에 넣기
     let originArr = this.images
     let sortedArr = this.sortImages
-
     originArr.forEach(function (el: any) {
       sortedArr.forEach(function (el2: any) {
         if (el.growthReportId == el2.growthReportId) {
@@ -318,9 +337,6 @@ export default class ShowImage extends Vue {
       })
     })
     this.images = originArr
-
-
-
   }
 
 

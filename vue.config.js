@@ -10,7 +10,7 @@ module.exports = defineConfig({
   devServer: {
     proxy: {
       "/api/": {
-        target: "http://192.168.0.84:8080", // 노서버2
+        target: "http://192.168.0.84:8080",
 
         changeOrigin: true,
       },
@@ -19,4 +19,6 @@ module.exports = defineConfig({
 });
 
 //target: "http://192.168.0.84:8080", // 설님 서버
-//target: "http://192.168.0.231:8080", // 테육 서버
+//target: "http://14.47.96.237:8081", // 테육 서버
+//설님 서버 id:master
+//설님 서버 password:qwer1234!@
