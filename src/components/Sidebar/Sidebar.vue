@@ -1,7 +1,25 @@
 <template>
-  <v-navigation-drawer app clipped permanent :width="240" color="#F6F8F9">
-    <v-container class="text-h4 sidebar-main-text home" @click="goHome">
-      T-MES
+  <v-navigation-drawer
+    app
+    clipped
+    permanent
+    color="#F6F8F9"
+    :mini-variant="mini"
+  >
+    <v-container class="px-0 text-h4 sidebar-main-text home" @click="goHome">
+      <v-icon
+        v-if="!mini"
+        @click.stop="mini = !mini"
+        color="lightgrey"
+        transparent
+      >
+        mdi-arrow-expand-left
+      </v-icon>
+
+      <v-icon v-else @click.stop="mini = !mini" color="lightgrey">
+        mdi-arrow-expand-right
+      </v-icon>
+
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
           <v-badge
@@ -129,6 +147,7 @@ import { mapGetters } from "vuex";
 export default class Sidebar extends Vue {
   @Ref() form: HTMLFormElement;
 
+  mini: boolean = false;
   userInfoDialog: boolean = false;
   to_home?: string = "monitoring";
   to_notdev?: string = "notdev";
