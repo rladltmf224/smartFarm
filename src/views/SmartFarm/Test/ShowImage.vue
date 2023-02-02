@@ -115,6 +115,7 @@ export default class ShowImage extends Vue {
     },
   ];
   datas: any = [];
+
   mounted() {
     this.getData();
   }
@@ -126,6 +127,7 @@ export default class ShowImage extends Vue {
       })
     }
   }
+
   @Watch('options', { deep: true })
   changeOptions() {
     this.getData()
@@ -304,8 +306,6 @@ export default class ShowImage extends Vue {
     })
     this.images = originArr
   }
-
-
 }
 </script>
 <style>

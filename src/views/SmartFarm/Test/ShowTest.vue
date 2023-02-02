@@ -215,7 +215,7 @@ export default class ShowTest extends Vue {
 	page: number = 1;
 	loading: boolean = false;
 	itemsPerPage: number = 12;
-	options: object = {};
+	options: any = {};
 	totalData: number = 0;
 	pageCount: number = 10;
 	keyword: string = '';
@@ -272,12 +272,12 @@ export default class ShowTest extends Vue {
 	}
 
 	@Watch('dialog')
-	dialogChange(val: any) {
+	dialogChange(val: boolean) {
 		val || this.close()
 	}
 
 	@Watch('dialogDelete')
-	dialogDeleteChange(val: any) {
+	dialogDeleteChange(val: boolean) {
 		val || this.closeDelete()
 	}
 
@@ -363,7 +363,7 @@ export default class ShowTest extends Vue {
 			this.dialog = false;
 	}
 
-	deleteItem(item) { //휴지통 눌렀을때 
+	deleteItem(item: any) { //휴지통 눌렀을때 
 		let id = item.growthReportId
 		this.editedIndex = this.datas.indexOf(item);
 		this.editedItem = Object.assign({}, item);
@@ -397,7 +397,7 @@ export default class ShowTest extends Vue {
 			alert('처리구명을 입력해주세요.')
 			return
 		}
-		else if (this.editItem.testName != '') {
+		else if (this.editedItem.testName != '') {
 			var item = {
 				testName: this.editedItem.testName,
 				testCondition: this.editedItem.testCondition,
