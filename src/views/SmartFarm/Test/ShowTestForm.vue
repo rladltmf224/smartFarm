@@ -120,6 +120,7 @@
   </v-container>
 </template>
 <script lang="ts">
+
 import { Vue, Component, Watch } from "vue-property-decorator";
 import TableCard from "./TableCard.vue";
 import TableGraph from "./TableGraph.vue";
@@ -138,6 +139,7 @@ import LoadingSpinner from "../Loading/LodingSpinner.vue"; // 로딩스피너
 
 export default class ShowTestForm extends Vue {
   deletePageNum: number = 0;
+
   graphData: any = [];
   graph_dialog: boolean = false;
   growthReportId: any = '';
@@ -395,19 +397,18 @@ export default class ShowTestForm extends Vue {
   getGraphData() {
     this.graph_dialog = true;
 
-    let id = {
+    let id: any = {
       growthReportId: this.growthReportId,
     };
 
     api.growthresearch.GetGrowthResearchGraphData(id).then((res) => {
       //1.resData의 averageDatas를 합친다.
-      let resData = res.data.responseData;
-
+      let resData: any = res.data.responseData;
       let fullData: any = [];
       let dates: any = [];
-      for (let dataLeng = 0; dataLeng < resData.length; dataLeng++) {
+      for (let dataLeng: any = 0; dataLeng < resData.length; dataLeng++) {
         for (
-          let avgLeng = 0;
+          let avgLeng: any = 0;
           avgLeng < resData[dataLeng].averageDatas.length;
           avgLeng++
         ) {
@@ -415,8 +416,8 @@ export default class ShowTestForm extends Vue {
           fullData.push(resData[dataLeng].averageDatas[avgLeng]);
         }
       }
-
-      let uniqDates: any = _.uniqBy(dates);
+      let uniqDates: any = _.uniq(dates);
+      console.log('uniqDatesuniqDatesuniqDates', uniqDates)
 
       console.log(
         "1.resData의 averageDatas를 합친다.",
@@ -424,26 +425,26 @@ export default class ShowTestForm extends Vue {
       );
       console.log("1-1 데이트로만 이루어진 어레이.", uniqDates);
 
-      let uniqData = _.uniqBy(fullData, "treatmentName"); //2.uniqBy만 써서 한개의 고유  treatmentName 을 가진 배열만 담는다.
+      let uniqData: any = _.uniqBy(fullData, "treatmentName"); //2.uniqBy만 써서 한개의 고유  treatmentName 을 가진 배열만 담는다.
 
       console.log(
         "2.uniqBy만 써서 한개의 고유  treatmentName 을 가진 배열만 담는다.",
         uniqData
       );
 
-      let onlyName = _.map(uniqData, "treatmentName"); //3.map을 써서 treatmentName으로만 배열에 담는다.['처치구1,'처치구2','처치구3'..]
+      let onlyName: any = _.map(uniqData, "treatmentName"); //3.map을 써서 treatmentName으로만 배열에 담는다.['처치구1,'처치구2','처치구3'..]
 
       console.log(
         "3.map을 써서 treatmentName으로만 배열에 담는다.",
         onlyName
       );
 
-      let setObj_avgInternodeLength = []; //4. name:'',data:[] <== 오브젝트 형태를 담은 배열을 담는다.
-      let setObj_avgLeafHeight = []; //4. name:'',data:[] <== 오브젝트 형태를 담은 배열을 담는다.
-      let setObj_avgLeafLength = []; //4. name:'',data:[] <== 오브젝트 형태를 담은 배열을 담는다.
-      let setObj_avgLeafStage = []; //4. name:'',data:[] <== 오브젝트 형태를 담은 배열을 담는다.
-      let setObj_avgLeafWidth = []; //4. name:'',data:[] <== 오브젝트 형태를 담은 배열을 담는다.
-      let setObj_avgStemThickness = []; //4. name:'',data:[] <== 오브젝트 형태를 담은 배열을 담는다.
+      let setObj_avgInternodeLength: any = []; //4. name:'',data:[] <== 오브젝트 형태를 담은 배열을 담는다.
+      let setObj_avgLeafHeight: any = []; //4. name:'',data:[] <== 오브젝트 형태를 담은 배열을 담는다.
+      let setObj_avgLeafLength: any = []; //4. name:'',data:[] <== 오브젝트 형태를 담은 배열을 담는다.
+      let setObj_avgLeafStage: any = []; //4. name:'',data:[] <== 오브젝트 형태를 담은 배열을 담는다.
+      let setObj_avgLeafWidth: any = []; //4. name:'',data:[] <== 오브젝트 형태를 담은 배열을 담는다.
+      let setObj_avgStemThickness: any = []; //4. name:'',data:[] <== 오브젝트 형태를 담은 배열을 담는다.
 
       for (
         let onlyNameLeng = 0;
@@ -473,7 +474,7 @@ export default class ShowTestForm extends Vue {
           }
         });
       });
-      let avgInternodeLength_data = {
+      let avgInternodeLength_data: any = {
         treatmentData: setObj_avgInternodeLength,
         dataName: "avgInternodeLength",
         date: uniqDates,
@@ -488,7 +489,7 @@ export default class ShowTestForm extends Vue {
           }
         });
       });
-      let avgLeafHeight_data = {
+      let avgLeafHeight_data: any = {
         treatmentData: setObj_avgLeafHeight,
         dataName: "avgLeafHeight",
         date: uniqDates,
@@ -504,7 +505,7 @@ export default class ShowTestForm extends Vue {
         });
       });
 
-      let avgLeafLength_data = {
+      let avgLeafLength_data: any = {
         treatmentData: setObj_avgLeafLength,
         dataName: "avgLeafLength",
         date: uniqDates,
@@ -520,7 +521,7 @@ export default class ShowTestForm extends Vue {
         });
       });
 
-      let avgLeafStage_data = {
+      let avgLeafStage_data: any = {
         treatmentData: setObj_avgLeafStage,
         dataName: "avgLeafStage",
         date: uniqDates,
@@ -536,7 +537,7 @@ export default class ShowTestForm extends Vue {
         });
       });
 
-      let avgLeafWidth_data = {
+      let avgLeafWidth_data: any = {
         treatmentData: setObj_avgLeafWidth,
         dataName: "avgLeafWidth",
         date: uniqDates,
@@ -552,13 +553,13 @@ export default class ShowTestForm extends Vue {
         });
       });
 
-      let avgStemThickness_data = {
+      let avgStemThickness_data: any = {
         treatmentData: setObj_avgStemThickness,
         dataName: "avgStemThickness",
         date: uniqDates,
       };
 
-      let graphData = [];
+      let graphData: any = [];
 
       graphData.push(
         avgInternodeLength_data,
