@@ -30,20 +30,6 @@
       >
         <v-icon dark> mdi-reload </v-icon>
       </v-btn>
-      <v-menu offset-y>
-        <template v-slot:activator="{ on, attrs }">
-          <v-badge overlap content="3">
-            <v-btn depressed v-bind="attrs" v-on="on" icon>
-              <v-icon color="black" large> mdi-bell </v-icon>
-            </v-btn>
-          </v-badge>
-        </template>
-        <v-list>
-          <v-list-item v-for="(item, index) in items" :key="index">
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
     </v-row>
 
     <v-row dense class="d-flex justify-md-center align-stretch">
@@ -792,6 +778,8 @@ import TestGraphTemp from "./TestGraphTemp.vue";
 import TestGraphWater from "./TestGraphWater.vue";
 import RoomInfo from "./Monitoring/RoomInfo.vue";
 
+import { mapGetters } from "vuex";
+
 const data = Data;
 let weatherFn;
 
@@ -811,11 +799,11 @@ export default {
       airCon_data: "",
       // 외부센서로딩
       roomName_control: "",
-      items: [
-        { title: "알람이력1" },
-        { title: "알람이력2" },
-        { title: "알람이력3" },
-      ],
+      // items: [
+      //   { title: "알람이력1" },
+      //   { title: "알람이력2" },
+      //   { title: "알람이력3" },
+      // ],
       headers_bala: [
         {
           text: "이름",

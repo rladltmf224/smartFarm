@@ -2,81 +2,36 @@
   <div>
     <v-container dense class="ma-0 pa-0">
       <v-col class="pa-0 ma-0" md="12">
-        <v-sheet
-          class="mx-4 mt-3 pa-0 ma-0 d-flex align-center"
-          color="#F6F8F9"
-          height="60"
-          elevation="2"
-        >
+        <v-sheet class="mx-4 mt-3 pa-0 ma-0 d-flex align-center" color="#F6F8F9" height="60" elevation="2">
           <v-row>
             <v-col cols="12 " class="d-flex">
               <v-col cols="2" class="">
-                <v-menu
-                  v-model="menu1"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y="offset-y"
-                  min-width="auto"
-                >
+                <v-menu v-model="menu1" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
+                  offset-y="offset-y" min-width="auto">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="s_date"
-                      label="시작일"
-                      prepend-icon="mdi-calendar"
-                      readonly="readonly"
-                      v-bind="attrs"
-                      v-on="on"
-                    ></v-text-field>
+                    <v-text-field v-model="s_date" label="시작일" prepend-icon="mdi-calendar" readonly="readonly"
+                      v-bind="attrs" v-on="on"></v-text-field>
                   </template>
-                  <v-date-picker
-                    v-model="s_date"
-                    @input="menu1 = false"
-                    no-title
-                  ></v-date-picker>
+                  <v-date-picker v-model="s_date" @input="menu1 = false" no-title></v-date-picker>
                 </v-menu>
               </v-col>
 
               <v-col cols="2" class="">
-                <v-menu
-                  v-model="menu2"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y="offset-y"
-                  min-width="auto"
-                >
+                <v-menu v-model="menu2" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
+                  offset-y="offset-y" min-width="auto">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="e_date"
-                      label="종료일"
-                      prepend-icon="mdi-calendar"
-                      readonly="readonly"
-                      v-bind="attrs"
-                      v-on="on"
-                    ></v-text-field>
+                    <v-text-field v-model="e_date" label="종료일" prepend-icon="mdi-calendar" readonly="readonly"
+                      v-bind="attrs" v-on="on"></v-text-field>
                   </template>
-                  <v-date-picker
-                    v-model="e_date"
-                    @input="menu2 = false"
-                    no-title
-                    :min="s_date"
-                    :max="date"
-                  ></v-date-picker>
+                  <v-date-picker v-model="e_date" @input="menu2 = false" no-title :min="s_date"
+                    :max="date"></v-date-picker>
                 </v-menu>
               </v-col>
               <!-- 슬라이더 -->
               <v-col class="pr-12 d-flex align-center mt-4" md="2">
                 <p class="px-4" style="font-size: 12px">양액pH</p>
-                <v-range-slider
-                  v-model="range_ph"
-                  step=".1"
-                  :max="max_ph"
-                  thumb-label="always"
-                  :min="min_ph"
-                  hide-details
-                  class="align-center"
-                >
+                <v-range-slider v-model="range_ph" step=".1" :max="max_ph" thumb-label="always" :min="min_ph"
+                  hide-details class="align-center">
                   <template v-slot:prepend> </template>
                   <template v-slot:append> </template>
                 </v-range-slider>
@@ -85,15 +40,8 @@
               </v-col>
               <v-col class="pr-12 d-flex align-center mt-4" md="2">
                 <p class="px-4" style="font-size: 12px">양액EC</p>
-                <v-range-slider
-                  v-model="range_ec"
-                  step=".1"
-                  :max="max_ec"
-                  thumb-label="always"
-                  :min="min_ec"
-                  hide-details
-                  class="align-center"
-                >
+                <v-range-slider v-model="range_ec" step=".1" :max="max_ec" thumb-label="always" :min="min_ec"
+                  hide-details class="align-center">
                   <template v-slot:prepend> </template>
                   <template v-slot:append> </template>
                 </v-range-slider>
@@ -113,9 +61,8 @@
     <v-container fluid="fluid" class="pa-0 pa-0">
       <v-row class="ma-0 pa-0">
         <v-col class="mx-2" md="12">
-          <v-row class="mb-2">
+          <!-- <v-row class="mb-2">
             <h5 class="searchbox-title pl-3 pt-2">양액pH 데이터</h5>
-            <!-- 펼치기버튼 -->
             <v-btn
               icon
               color="grey"
@@ -124,7 +71,6 @@
             >
               <v-icon>mdi-chevron-down</v-icon>
             </v-btn>
-            <!-- 접기버튼 -->
             <v-btn
               icon
               color="grey"
@@ -134,31 +80,14 @@
               <v-icon>mdi-chevron-up</v-icon>
             </v-btn>
             <v-col cols="12" v-show="!this.btnShow_Value">
-              <v-sheet
-                class="pa-12 d-flex justify-center align-center"
-                color="#F6F8F9"
-                height="400"
-                elevation="2"
-              >
+              <v-sheet class="pa-12 d-flex justify-center align-center" color="#F6F8F9" height="400" elevation="2">
                 <LoadingSpinner v-if="this.isLoading"></LoadingSpinner>
                 <div v-if="!this.isLoading">
-                  <WaterPHGraph
-                    :graph="graph"
-                    v-show="!this.isLoading"
-                  ></WaterPHGraph>
+                  <WaterPHGraph :graph="graph" v-show="!this.isLoading"></WaterPHGraph>
                 </div>
-
-                <!-- <div v-show="!this.isLoading" class="">
-                  <canvas
-                    class="j pa-6"
-                    ref="barChart"
-                    height="300"
-                    width="1300"
-                  />
-                </div> -->
               </v-sheet>
             </v-col>
-          </v-row>
+          </v-row> -->
           <v-col md="2" class="pa-0 ma-0">
             <h5 class="searchbox-title">양액pH 데이터 표</h5>
           </v-col>
@@ -177,8 +106,8 @@
               @page-count="pageCount = $event"
               dense
               multi-sort
-              :height="230"
             >
+
             </v-data-table>
             <div class="text-center pt-2">
               <v-pagination v-model="page" :length="pageCount"></v-pagination>
@@ -209,6 +138,7 @@ import _ from "lodash";
 import * as api from "@/api/index.js";
 export default {
   name: "TempHumid",
+  props: ["search_type_1"],
   components: {
     VueTimepicker,
     DetailGraph,
@@ -376,7 +306,7 @@ export default {
       page: 1,
       totalData: 0,
       loading: false,
-      itemsPerPage: 6,
+      itemsPerPage: 18,
       pageCount: 10,
       options: {},
       //   데이터테이블
@@ -570,15 +500,16 @@ export default {
     // 시작일을 일주일전으로
     // 그래프 그릴 용도 api
 
+    /*
     getWaterECData() {
       this.isLoading = true;
-
       let item = {
         startDate: this.s_date,
         endDate: this.e_date,
         ec: this.range_ec,
         ph: this.range_ph,
       };
+
       api.smartfarm.getWaterpHECHistory(item).then((res) => {
         console.log("EC의 리스폰스 데이타", res);
         let AM = _.filter(res.data.responseData, { division: "오전" });
@@ -595,8 +526,8 @@ export default {
         for (var i = 0; i < res.data.responseData.length; i++) {
           PluseDivAndInputDate.push(
             res.data.responseData[i].inputDate +
-              " " +
-              res.data.responseData[i].division
+            " " +
+            res.data.responseData[i].division
           );
         }
         // // 소영선임님이 알려준신 nextTick
@@ -604,19 +535,23 @@ export default {
         //   this.createChart();
         // });
         this.isLoading = false;
-
         this.graph.AllData_PH = AMPM_Result_PH;
         this.graph.AllData_EC = AMPM_Result_EC;
         this.graph.date = PluseDivAndInputDate;
       });
     },
+    */
     // 데이터 테이블 만들 용도 api
     getWaterHistory() {
-      this.getWaterECData();
+      // this.getWaterECData(); // 그래프 삭제
 
       // getAmPm();
       this.loading = true;
       const { page, itemsPerPage, sortBy, sortDesc } = this.options;
+
+      for (let i = 0; i < sortBy.length; i++) {
+        if (sortBy[i] == "ph") sortBy[i] = "pH";
+      }
 
       var item = {
         searchTarget: "ph",
@@ -630,6 +565,7 @@ export default {
         sortDesc: sortDesc,
       };
       console.log("리퀘스트파라미터", item);
+
       api.smartfarm
         .waterECpHInfo(item)
         .then((res) => {
@@ -649,4 +585,6 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+
+</style>

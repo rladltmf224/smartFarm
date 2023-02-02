@@ -44,13 +44,23 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import * as api from "@/api";
 
 @Component
 export default class Login extends Vue {
-  // username?: string = "bswoo";
-  // password?: string = "a12345678!@";
+
+
   username?: string = "master";
   password?: string = "qwer1234!@";
+
+  // username?: string = "yskim";
+
+  // username?: string = "bswoo";
+
+  //password?: string = "a12345678!@";
+
+
+
   created() {
     this.$store.commit("setCurrent", "nothing");
   }
@@ -65,6 +75,7 @@ export default class Login extends Vue {
       });
     console.log("loginManager", this.$store.state.userId);
     if (this.$store.state.userId !== "") {
+      api.webpush.subscribe();
       this.$router.push({ path: "monitoring" });
       return;
     }

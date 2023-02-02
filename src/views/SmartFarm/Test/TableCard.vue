@@ -26,7 +26,7 @@
 
 
         <v-row class="pa-4 mx-0">
-            <v-data-table :headers="datas_header" hide-default-footer :items="table.carousel_data" class="elevation-1 ">
+            <v-data-table :headers="datas_header" hide-default-footer :items="table.carousel_data" class="elevation-1">
                 <!-- ㅁㄴㅇㅁㄴㅇ -->
                 <template #item="{ item, index }">
                     <tr :class="index === selectedRow ? 'custom-highlight-row' : ''"
@@ -35,8 +35,6 @@
                         <td v-if="index == 0" :rowspan="item.datas.length">
                             <input type="text" disabled name="text" size="20" style="width:100%; border: 0"
                                 v-model="item.treatmentName"> </input>
-
-
                         </td>
                         <!-- 개체수  -->
                         <td>
@@ -94,15 +92,17 @@
 
 
 
-
+        <!-- 사진 조회 및 등록 -->
         <v-dialog v-model="dialog" persistent max-width="1000" max-height="1000">
-            <v-card height="800">
+            <v-card style="overflow:auto">
+
                 <v-card-title class="text-h5 grey lighten-2">
                     사진 조회 및 등록
                     <v-spacer></v-spacer>
                     <v-btn icon text @click="closeDialog()"><v-icon>mdi-close</v-icon></v-btn>
                 </v-card-title>
-                <v-card-text class="pa-5">
+
+                <v-card-text class="pa-5 ">
                     <v-row class="">
                         <v-col cols="4" class="mx-0">
                             <h5 class="   searchbox-title ">사진 업로드</h5>
@@ -125,38 +125,37 @@
 
                             </v-col>
                         </v-col>
-
                     </v-row>
+                    <LoadingSpinner v-if="isLoading"></LoadingSpinner>
+                    <!-- 이미지 미리보기 -->
+                    <v-row v-else>
+                        <v-col cols="12" v-for=" (item, i) in imageDatas " :key="i">
+                            <h4 class="searchbox-title"> {{ item.treatmentName }} </h4>
+                            <v-row>
+                                <v-col cols="2" v-for="(child, i) in item.fileNames" :key="i">
+                                    <v-img v-if="child != ['이미지 없음']" max-height="200" max-width="200" ref="myimg"
+                                        :src="child.fileData" class="grey lighten-2 pa-0 ma-0" aspect-ratio="1"
+                                        @dblclick="getSingleImage(item, child)">
+                                        <v-btn v-if="child != ['이미지 없음']" icon color="red"
+                                            @click="openDeleteImageDialog(item, child)">
+                                            <v-icon small color="grey lighten-1">mdi-trash-can-outline
+                                            </v-icon>
+                                        </v-btn>
+                                    </v-img>
+                                    <h6>
+                                        {{ child.fileName }}
+                                    </h6>
+                                    <p v-if="child == ['이미지 없음']">이미지가 없습니다.</p>
 
-                    <v-row class="">
-                        <v-col cols="4" class="mx-0">
-                            <h5 class="   searchbox-title ">처치구명</h5>
+
+                                </v-col>
+                            </v-row>
+
                         </v-col>
                     </v-row>
-                    <v-row class="">
-                        <v-col cols="12" class="pa-0 ma-0">
-                            <v-list-group v-for="item in imageDatas" :key="item.treatmentName" v-model="item.active"
-                                :prepend-icon="item.action" no-action>
-                                <template v-slot:activator>
-                                    <v-list-item-content>
-                                        <v-list-item-title v-text="item.treatmentName"></v-list-item-title>
-                                    </v-list-item-content>
-                                </template>
-                                <v-list-item v-for="child in item.fileNames" :key="child">
-                                    <v-list-item-content>
-                                        <v-list-item-title v-text="child"></v-list-item-title>
-                                    </v-list-item-content>
-                                    <v-btn v-if="child != ['이미지 없음']" icon @click="getSingleImage(item, child)">
-                                        <v-icon color="grey lighten-1">mdi-magnify</v-icon>
-                                    </v-btn>
-                                    <v-btn v-if="child != ['이미지 없음']" icon @click="openDeleteImageDialog(item, child)">
-                                        <v-icon color="grey lighten-1">mdi-trash-can-outline
-                                        </v-icon>
-                                    </v-btn>
-                                </v-list-item>
-                            </v-list-group>
-                        </v-col>
-                    </v-row>
+
+
+
 
 
 
@@ -195,8 +194,15 @@
                             </v-btn>
                         </template>
                     </v-snackbar>
-
                 </v-card-text>
+                <v-divider></v-divider>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="primary" text @click="dialog = false">
+                        닫기
+                    </v-btn>
+                </v-card-actions>
+
             </v-card>
         </v-dialog>
         <v-snackbar v-model="snackbar_delete" :timeout="timeout">
@@ -213,7 +219,7 @@
                 <v-card-title>{{ zoomItem.fileName }}</v-card-title>
                 <v-card-text class="d-flex align-center justify-center">
                     <LoadingSpinner v-if="isLoading"></LoadingSpinner>
-                    <v-img v-else max-height="800" max-width="800" ref="myimg" :src="this.url" :alt="emptyImage"
+                    <v-img v-else max-height="800" max-width="800" ref="myimg" :src="this.url"
                         class="grey lighten-2 pa-0 ma-0" aspect-ratio="1"></v-img>
 
                 </v-card-text>
@@ -222,6 +228,7 @@
     </div>
 </template>           
 <script>
+
 import LoadingSpinner from '../Loading/LodingSpinner.vue'; // 로딩스피너
 import * as api from '@/api'
 import { el } from 'vuetify/lib/locale';
@@ -241,9 +248,12 @@ export default {
         },
     },
     name: 'MESFETableCard',
-
+    components: {
+        LoadingSpinner
+    },
     data() {
         return {
+            yes: false, //임시
             selectedRow: null,
             snackForParents: '',
             deletePageNum: 0, //현재페이지 삭제 시, 해당 i 번째 num을 emit 부모로 보냄.
@@ -275,15 +285,15 @@ export default {
             growthReportId: '',
             datas_header: [
                 {
-                    text: "처리구명", value: "treatmentName",
+                    text: "처리구명", value: "treatmentName", sortable: false
                 },
-                { text: "개체수", value: "sampleNumber", },
-                { text: "엽수", value: "leafStage" },
-                { text: "초장", value: "leafHeight" },
-                { text: "엽폭", value: "leafWidth" },
-                { text: "엽장", value: "leafLength" },
-                { text: "경경", value: "stemThickness" },
-                { text: "절간장", value: "internodeLength" },
+                { text: "개체수", value: "sampleNumber", sortable: false },
+                { text: "엽수", value: "leafStage", sortable: false },
+                { text: "초장", value: "leafHeight", sortable: false },
+                { text: "엽폭", value: "leafWidth", sortable: false },
+                { text: "엽장", value: "leafLength", sortable: false },
+                { text: "경경", value: "stemThickness", sortable: false },
+                { text: "절간장", value: "internodeLength", sortable: false },
             ],
             datas: [
             ],
@@ -315,17 +325,16 @@ export default {
                 let checkLength = _.map(this.table.carousel_data[top].datas, 'internodeLength')
                 avgArr.push({
                     growthDataId: '평균입니다.',
-                    internodeLength: _.map(this.table.carousel_data[top].datas, 'internodeLength').reduce(reduer) / checkLength.length.toFixed(2),
-                    leafHeight: _.map(this.table.carousel_data[top].datas, 'leafHeight').reduce(reduer) / checkLength.length.toFixed(2),
-                    leafLength: _.map(this.table.carousel_data[top].datas, 'leafLength').reduce(reduer) / checkLength.length.toFixed(2),
-                    leafStage: _.map(this.table.carousel_data[top].datas, 'leafStage').reduce(reduer) / checkLength.length.toFixed(2),
-                    leafWidth: _.map(this.table.carousel_data[top].datas, 'leafWidth').reduce(reduer) / checkLength.length.toFixed(2),
+                    internodeLength: (_.map(this.table.carousel_data[top].datas, 'internodeLength').reduce(reduer) / checkLength.length).toFixed(2),
+                    leafHeight: (_.map(this.table.carousel_data[top].datas, 'leafHeight').reduce(reduer) / checkLength.length).toFixed(2),
+                    leafLength: (_.map(this.table.carousel_data[top].datas, 'leafLength').reduce(reduer) / checkLength.length).toFixed(2),
+                    leafStage: (_.map(this.table.carousel_data[top].datas, 'leafStage').reduce(reduer) / checkLength.length).toFixed(2),
+                    leafWidth: (_.map(this.table.carousel_data[top].datas, 'leafWidth').reduce(reduer) / checkLength.length).toFixed(2),
                     sampleNumber: '평균입니다.',
-                    stemThickness: _.map(this.table.carousel_data[top].datas, 'stemThickness').reduce(reduer) / checkLength.length.toFixed(2)
+                    stemThickness: (_.map(this.table.carousel_data[top].datas, 'stemThickness').reduce(reduer) / checkLength.length).toFixed(2)
                 })
                 this.table.carousel_data[top].datas.push(avgArr[top])
             }
-
         },
         closeDialog() { //다이아로그 닫으면 데이터 초기화해준다.
             this.input.image = null
@@ -349,6 +358,7 @@ export default {
                 this.$refs.serveyImage.value = ''
             }
             else {
+                console.log('인풋이미지', this.input.image)
                 for (let i = 0; i < this.input.image.length; i++) {
                     let fileArr = Array.from(this.input.image)
                     let paramData = { //서버로 보낼 폼 데이타의  형태를 만든다.
@@ -357,49 +367,65 @@ export default {
                         treatmentId: this.selectTreatMent.treatmentId,
                         files: fileArr[i]
                     };
-                    api.growthresearch.SaveGrowthResearchImage(paramData).then((res) => {
+                    api.growthresearch.SaveGrowthResearchImage(paramData).then((response) => {
                         this.openAlbum()
                         this.$refs.serveyImage.value = ''
                         this.$refs.serveyImage.files = null
                         this.selectTreatMent.treatmentName = ''
                         this.snackbar_save = true
-                    }).catch((err) => {
-                        alert('이미 등록된 이미지는 중복하여 등록할 수 없습니다.')
-                        this.$refs.serveyImage.files = null
-                        this.$refs.serveyImage.value = ''
-                        this.input.image = null
-                        this.selectTreatMent = null
                     })
                 }
+
+                // let paramData = { //서버로 보낼 폼 데이타의  형태를 만든다.
+                //     growthReportId: this.growthReportDetailId,
+                //     growthReportDetailId: this.table.growthReportDetailId,
+                //     treatmentId: this.selectTreatMent.treatmentId,
+                //     files: fileArr
+
+                // };
+
+                // console.log('이미지보낼것임,', paramData)
+                // api.growthresearch.SaveGrowthResearchImage(paramData).then((response) => {
+                //     this.openAlbum()
+                //     this.$refs.serveyImage.value = ''
+                //     this.$refs.serveyImage.files = null
+                //     this.selectTreatMent.treatmentName = ''
+                //     this.snackbar_save = true
+                // })
+
+
             }
         },
         DeleteNowImage() {
             let body = this.delete_item
+            console.log('삭제할때body', body)
             api.growthresearch.DeleteGrowthResearchImage(body).then((res) => {
-                this.snackbar_delete = true
+                this.sendSnackDelete()
                 this.openAlbum()
                 this.deleteImageDialog = false
             })
         },
         openDeleteImageDialog(item, child) { //사진을 삭제하시겠습니까? 다이아로그
             let fileNameArr = []
-            fileNameArr.push(child)
+            fileNameArr.push(child.fileName)
             let body = {
                 growthReportId: this.growthReportId,
                 growthReportDetailId: this.table.growthReportDetailId,
                 treatmentId: item.treatmentId,
                 fileNames: fileNameArr
             }
+
             this.delete_item = body
             this.deleteImageDialog = true
         },
         getSingleImage(item, child) { //개별이미지 조회 api 
+            console.log('개별이미지보냅니다')
             this.isLoading = false
             let params = {
                 growthReportId: this.growthReportId,
                 growthReportDetailId: this.table.growthReportDetailId,
                 treatmentId: item.treatmentId,
-                imageName: child.toString()
+                imageName: child.fileName
             }
 
             console.log('내가보낸파라미터', params)
@@ -415,6 +441,7 @@ export default {
             // 서버에서 받은 이미지 데이터를 인코딩한다
             let images = []
             let imagedata = paramImg
+            console.log('이미지데이타확인', imagedata)
             const contentType = "image/png";
             const b64Data = imagedata.fileData;
             const image_data = atob(b64Data); // base64 인코딩을 풀어준다
@@ -510,6 +537,7 @@ export default {
             if (this.table.growthReportDetailId == '') {
                 alert('날짜먼저발급해주세요.')
             } else {
+                this.isLoading = true
                 let params = {
                     growthReportId: this.growthReportId,
                     growthReportDetailId: this.table.growthReportDetailId,
@@ -517,31 +545,55 @@ export default {
                 api.growthresearch.GetGrowthResearchImageList(params).then((res) => {
                     console.log('-------------사진조회성공-------------------', res)
                     let imgObj = []
-                    //처치구명,트리트먼트아이디,파일네임스로 디폴트 어레이만든다.
+                    //처치구명,트리트먼트아이디,파일네임스로 어레이 틀을 만든다.
                     let defaultArr = []
                     for (let i = 0; i < this.table.carousel_data.length; i++) {
                         let tableNum = this.table.carousel_data[i]
                         defaultArr.push({
                             treatmentId: tableNum.treatmentId,
                             treatmentName: tableNum.treatmentName,
-                            fileNames: ['이미지 없음']
+                            fileNames: ['이미지 없음'],
                         })
                     }
                     if (res.data.responseData[0].detailInfo.length == 0) {
                         this.imageDatas = defaultArr
                     } else {
-                        //데이터가있으면 데이터를 넣고 없으면 그대로 데이터없음이라고 둔다.
-                        for (let arrNum = 0; arrNum < defaultArr.length; arrNum++) {
-                            for (let dataNum = 0; dataNum < res.data.responseData[0].detailInfo.length; dataNum++) {
-                                if (defaultArr[arrNum].treatmentName == res.data.responseData[0].detailInfo[dataNum].treatmentName) {
-                                    defaultArr[arrNum].fileNames = res.data.responseData[0].detailInfo[dataNum].fileNames
+                        //데이터가있으면 데이터를 넣고 없으면 그대로  둔다.
+                        let detailInfo = res.data.responseData[0].detailInfo  //1.res.data.responseData를 detailInfo로 함축.
+
+                        console.log('detailInfo', detailInfo)
+
+                        for (let top = 0; top < detailInfo.length; top++) { //2.detailInfo의fileData를 blob화한다.
+                            for (let mid = 0; mid < detailInfo[top].fileInfo.length; mid++) {
+                                let imagedata = detailInfo[top].fileInfo[mid]
+                                const contentType = "image/png";
+                                const b64Data = imagedata.fileData;
+                                const image_data = atob(b64Data);
+                                const arraybuffer = new ArrayBuffer(image_data.length);
+                                const view = new Uint8Array(arraybuffer);
+                                for (let i = 0; i < image_data.length; i++) {
+                                    view[i] = image_data.charCodeAt(i) & 0xff;
+                                    // charCodeAt() 메서드는 주어진 인덱스에 대한 UTF-16 코드를코드를 나타내는 0부터 65535 사이의 정수를 반환
+                                    // 비트연산자 & 와 0xff(255) 값은 숫자를 양수로 표현하기 위한 설정
                                 }
+                                const blob = new Blob([arraybuffer], { type: contentType });
+                                const blobUrl = URL.createObjectURL(blob);
+                                detailInfo[top].fileInfo[mid].fileData = blobUrl  // 보여질 img의 url에 바인딩한다
                             }
                         }
 
+                        for (let arrNum = 0; arrNum < defaultArr.length; arrNum++) { //3.만들어놓은 틀에다가 실제데이터를 바인딩한다.
+                            for (let dataNum = 0; dataNum < detailInfo.length; dataNum++) {
+                                if (defaultArr[arrNum].treatmentName == detailInfo[dataNum].treatmentName) {
+                                    defaultArr[arrNum].fileNames = detailInfo[dataNum].fileInfo
+                                }
+                            }
+                        }
+                        console.log('defaultArr', defaultArr)
                         this.imageDatas = defaultArr
-
                     }
+                    this.isLoading = false
+
                 })
                 this.dialog = true
             }
@@ -577,6 +629,10 @@ export default {
             this.snackForParents = 'save'
             this.$emit("snackBarTrue", this.snackForParents);
         },
+        sendSnackDelete() {
+            this.snackForParents = 'delete'
+            this.$emit("snackBarTrue", this.snackForParents);
+        }
     },
     computed: {
         table: function () {
@@ -595,5 +651,9 @@ export default {
 <style style lang ="scss" scoped>
 .custom-highlight-row {
     background-color: rgb(224, 238, 255)
+}
+
+.scroll {
+    overflow-y: scroll
 }
 </style>

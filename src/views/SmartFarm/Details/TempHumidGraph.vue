@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="chart-container"
-    style="position: relative; height: 35vh; width: 80vw"
-  >
+  <div class="chart-container" style="position: relative; height: 35vh; width: 80vw">
     <canvas class="j" ref="barChart" />
   </div>
 </template>
@@ -57,9 +54,7 @@ export default {
       options: {
         responsive: true,
         maintainAspectRatio: false, //반응형
-
         stacked: false,
-
         events: ["mousemove", "mouseout", "click", "touchstart", "touchmove"],
         interaction: {
           mode: "index",
@@ -160,11 +155,9 @@ export default {
   mounted() {
     console.log("부모에서받은거", this.graph);
     console.log("그래프데이터", this.data);
-
     this.data.labels = this.graph.date;
     this.data.datasets[0].data = this.graph.min_data_1;
     this.data.datasets[1].data = this.graph.min_data_2;
-
     this.createChart();
   },
 
@@ -180,4 +173,6 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+
+</style>

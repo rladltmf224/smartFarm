@@ -26,6 +26,7 @@ export default {
     AuthAPI.get("/api/temphumid/history", {
       params: params,
     }),
+  temphumidRoomList: () => AuthAPI.get("/api/temphumid/roomlist"),
   co2: (params) =>
     AuthAPI.get("/api/sensor/history/co2", {
       params: params,
@@ -84,9 +85,10 @@ export default {
       params: params,
     }),
   getWaterpHECHistory: (params) =>
-    AuthAPI.post("/api/fertilizer", JSON.stringify(params), {
+    AuthAPI.post("/api/fertilizer/history", JSON.stringify(params), {
       headers: { "Content-Type": "application/json" },
     }),
+
   getTableDataTempHumid: (params) =>
     AuthAPI.post(
       "/api/temphumid/history/table/minute",
