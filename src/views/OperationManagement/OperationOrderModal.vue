@@ -2,7 +2,6 @@
   <div>
     <v-dialog v-model="openModal" persistent max-width="1500px">
       <v-card>
-
         <v-card-title>
           <span class="text-h5 dialog-title font-weight-bold" v-show="!change"
             >작업지시서 등록</span
@@ -231,7 +230,6 @@
               </v-data-table>
             </v-col>
           </v-row>
-
         </v-card-text>
         <v-card-actions>
           <v-col class="text-right">
@@ -269,10 +267,10 @@ export default class OperationOrderModal extends Vue {
     itemsPerPageAllText: string;
     itemsPerPageOptions: number[];
   } = {
-      disableItemsPerPage: false,
-      itemsPerPageAllText: "ALL",
-      itemsPerPageOptions: [10, 20, 50, -1],
-    };
+    disableItemsPerPage: false,
+    itemsPerPageAllText: "ALL",
+    itemsPerPageOptions: [10, 20, 50, -1],
+  };
   ordername_rule: any[] = [
     (v: any) =>
       !(v && v.length >= 50) || "작업지시서명 50자 이상 입력할 수 없습니다.",
@@ -470,6 +468,15 @@ export default class OperationOrderModal extends Vue {
     } else {
       this.orderData.departmentchargeName = "";
     }
+  }
+  checkTempSave() {
+    return (
+      this.orderData.name == "" &&
+      this.orderData.customer == "" &&
+      this.orderData.departmentName == "" &&
+      this.orderData.item == "" &&
+      this.orderData.memo == ""
+    );
   }
   plus() {
     if (this.selectedProduct.length == 0) {
@@ -925,6 +932,4 @@ export default class OperationOrderModal extends Vue {
   }
 }
 </script>
-<style src="./OperationOrder.scss" lang="scss">
-
-</style>
+<style src="./OperationOrder.scss" lang="scss"></style>

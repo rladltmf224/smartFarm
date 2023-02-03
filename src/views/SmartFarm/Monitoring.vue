@@ -237,7 +237,7 @@
       </v-dialog>
     </v-row>
     <!-- 다이아로그 -->
-    <v-dialog v-model="control_modal" max-width="1200">
+    <v-dialog v-model="control_modal" max-width="1300">
       <v-card>
         <v-card-title>
           <span>{{ roomName_control }}</span>
@@ -298,6 +298,21 @@
                     <p class="pa-0 ma-0">auto</p>
                   </v-btn>
                 </v-btn-toggle>
+              </template>
+              <template v-slot:[`item.repeatPeriod`]="{ item }">
+                <div v-if="item.repeatPeriod != null">
+                  <v-text-field
+                    prefix="일"
+                    type="number"
+                    :max="99"
+                    :min="0"
+                    v-model="item.repeatPeriod"
+                    reverse
+                    readonly
+                    @click="changePeriodValue(item)"
+                  ></v-text-field>
+                </div>
+                <div v-else>주기없음</div>
               </template>
               <!-- 시간설정 -->
               <template v-slot:[`item.setting`]="{ item }">
@@ -761,6 +776,40 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <!-- 주기설정 -->
+    <v-dialog v-model="period_modal" persistent max-width="350">
+      <v-card>
+        <v-card-title class="headline">주기 설정</v-card-title>
+        <v-card-text>
+          <v-row dense>
+            <v-col offset="8" cols="4">
+              <v-text-field
+                label="설정주기"
+                type="number"
+                :min="0"
+                :max="99"
+                v-model.number="period_data.repeatPeriod"
+                reverse
+                prefix="일"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" class="text-right">
+              <span>
+                현재시간이 설정시간전일 경우 금일 실행되고
+                <v-spacer></v-spacer>
+                {{ addData(period_data.repeatPeriod) }}부터
+                실행예정입니다.</span
+              >
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="error" @click="period_modal = false">취소</v-btn>
+          <v-btn color="primary" @click="savePeriodValue">저장</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -793,6 +842,8 @@ export default {
   },
   data() {
     return {
+      period_data: "",
+      period_modal: false,
       airCon_modal: false,
       airCon_mode: "heat",
       airCon_val: 0,
@@ -824,6 +875,13 @@ export default {
           value: "controlStatus",
           sortable: false,
           width: "2%",
+          align: "center",
+        },
+        {
+          text: "주기",
+          value: "repeatPeriod",
+          sortable: false,
+          width: "4%",
           align: "center",
         },
 
@@ -1690,6 +1748,43 @@ export default {
         console.log("제어항목조회후", this.cards);
       });
     },
+    changePeriodValue(data) {
+      this.period_modal = true;
+      console.log("data", data);
+      this.period_data = Object.assign({}, data);
+    },
+    addData(add) {
+      let date = new Date();
+      date.setDate(date.getDate() + add);
+      return `${date.getFullYear()}년 ${
+        date.getMonth() + 1
+      }월 ${date.getDate()}일`;
+    },
+    savePeriodValue() {
+      this.period_modal = false;
+      let reqData = {
+        equipmentId: this.period_data.equipmentId,
+        repeatPeriod: this.period_data.repeatPeriod, // 입력 안하면 기본값 1로 입력
+      };
+      api.smartfarm.editPeriodSetting(reqData).then((res) => {
+        if (res.status == 200) {
+          console.log("editPeriodSetting", res);
+          this.$swal({
+            title: "주기일자가 변경되었습니다.",
+            icon: "success",
+            position: "top",
+            showCancelButton: false,
+            showConfirmButton: false,
+            toast: true,
+            timer: 1500,
+          });
+          this.getDeviceList();
+        }
+      });
+
+      return;
+    },
+
     // 제어항목조회
   },
 };

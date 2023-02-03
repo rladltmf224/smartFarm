@@ -119,4 +119,8 @@ export default {
     AuthAPI.get("/api/equipment/info", {
       params: params,
     }),
+  editPeriodSetting: (item) =>
+    AuthAPI.put("/api/equipment/period", JSON.stringify(item), {
+      headers: { "Content-Type": "application/json" },
+    }),
 };
