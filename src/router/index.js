@@ -188,11 +188,6 @@ const routes = [
         props: true,
       },
       {
-        path: "processmng",
-        name: "processmng",
-        component: () => import("@/views/ProcessMng/ProcessMng"),
-      },
-      {
         path: "notdev",
         alias: ["barcodemng", "processmng", "qualitymng", "equipment"],
         name: "NotDev ",

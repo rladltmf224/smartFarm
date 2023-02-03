@@ -19,7 +19,6 @@ import growthresearch from "./service/growthresearch";
 import order from "./service/order"; //수주관리 api 2023/01/31 추가 - 이슬
 import production from "./service/production";
 import facility from "./service/facility";
-import process from "./service/process";
 import webpush from "./webpush/firebase";
 
 export {
@@ -44,6 +43,5 @@ export {
   order, //수주관리 api
   production,
   facility,
-  process,
   webpush,
 };

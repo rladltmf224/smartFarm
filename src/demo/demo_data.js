@@ -29,6 +29,10 @@ let demo_side_data = [
         to: "storagemng",
       },
       {
+        title: "시설관리",
+        to: "facilitymng",
+      },
+      {
         title: "구매단가(거래처)",
         to: "warehousingprice",
       },
