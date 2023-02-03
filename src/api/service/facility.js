@@ -19,7 +19,11 @@ export default {
   postFacilityDetailData: (params) =>
     AuthAPI.post("/api/facility/detail", JSON.stringify(params)),
   deleteFacilityDetailData: (params) =>
-    AuthAPI.delete("/api/facility/detail", {
-      params: params,
-    }),
+    AuthAPI.delete(
+      "/api/facility/detail",
+      { data: { ids: params } },
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    ),
 };
