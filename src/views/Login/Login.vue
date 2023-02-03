@@ -48,8 +48,6 @@ import * as api from "@/api";
 
 @Component
 export default class Login extends Vue {
-
-
   username?: string = "master";
   password?: string = "qwer1234!@";
 
@@ -58,8 +56,6 @@ export default class Login extends Vue {
   // username?: string = "bswoo";
 
   //password?: string = "a12345678!@";
-
-
 
   created() {
     this.$store.commit("setCurrent", "nothing");
