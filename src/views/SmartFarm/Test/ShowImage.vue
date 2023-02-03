@@ -52,8 +52,8 @@
                   {{ item.testName }}
                 </div>
                 <v-spacer></v-spacer>
-                <v-btn text small @click="Sort()">
-                  {{ sortImgText }}
+                <v-btn text small @click="Sort(item)">
+                  {{ item.sortText }}
                 </v-btn>
               </v-card-text>
               <v-divider class=""></v-divider>
@@ -66,7 +66,7 @@
                   </div>
                 </div>
               </v-card-text>
-              <v-card-text v-if="item.detailInfo" class="d-flex align-center justify-center">
+              <v-card-text v-if="!item.detailInfo" class="d-flex align-center justify-center">
                 <p>이미지가 없습니다.</p>
               </v-card-text>
             </v-card>
@@ -86,6 +86,7 @@ import _ from "lodash";
 import * as api from "@/api/index.js";
 import LoadingSpinner from '@/views/SmartFarm/Loading/LodingSpinner.vue'
 import { component } from "vue/types/umd";
+import { timingSafeEqual } from "crypto";
 @Component({
   components: {
     LoadingSpinner
@@ -94,9 +95,10 @@ import { component } from "vue/types/umd";
 export default class ShowImage extends Vue {
   selected: any = [];
   resImages: any = []; //서버에서 받은 이미지데이터들을 변수로저장
+  sortImages: any = []; //이미지 정렬시 정렬된 데이터들,나중에 this.images에 넣을것임.
   images: any = []; //이미지 갤러리 데이터들
-  sortImgText: string = '최근순 정렬'; //이미지 갤러리 정렬 텍스트,
-  sortImgValue: boolean = false; //이미지 갤러리 정렬 불린값
+  sortImgText: string = '오래된 순 정렬'; //이미지 갤러리 정렬 텍스트,
+  sortImgValue: boolean = true; //이미지 갤러리 정렬 불린값
   dialog: boolean = false;
   page: number = 1;
   loading: boolean = false;
@@ -113,6 +115,7 @@ export default class ShowImage extends Vue {
     },
   ];
   datas: any = [];
+
   mounted() {
     this.getData();
   }
@@ -124,25 +127,51 @@ export default class ShowImage extends Vue {
       })
     }
   }
+
   @Watch('options', { deep: true })
   changeOptions() {
     this.getData()
   }
+
   closeModal() { //이미지 갤러리 모달 닫기  
-    this.sortImgText = '최근순 정렬'
     this.dialog = false
     this.images = []
   }
-  Sort() {  //이미지 갤러리 정렬 버튼 클릭 시
+
+  Sort(item: any) {  //이미지 갤러리 정렬 버튼 클릭 시
     this.sortImgValue = !this.sortImgValue
     if (this.sortImgValue) {
-      this.sortImgText = '최근순 정렬'
+      item.sortText = '오래된 순 정렬'
+      this.sortImgValue = true
     } else {
-      this.sortImgText = '오래된 순 정렬'
+      item.sortText = '최신순 정렬'
+      this.sortImgValue = false
     }
-    this.getImageList()
+    if (this.sortImgValue) {
+      let growthArr = []
+      growthArr.push(item.growthReportId)
+      let id = {
+        growthReportIds: growthArr,
+        sortBy: 'asc'
+      }
+      api.growthresearch.GetGrowthResearchOriginImageList(id).then((res) => {
+        this.sortImages = res.data.responseData
+        this.makeSortImage()
+      })
+    } else {
+      let growthArr = []
+      growthArr.push(item.growthReportId)
+      let id = {
+        growthReportIds: growthArr,
+        sortBy: 'desc'
+      }
+      api.growthresearch.GetGrowthResearchOriginImageList(id).then((res) => {
+        this.sortImages = res.data.responseData
+        this.makeSortImage()
+      })
+    }
   }
-  getData() {     // 생육조사 일지 조회 api
+  getData() {     // 생육조사 일지 리스트 조회 api
     this.loading = true;
     const { page, itemsPerPage, sortBy, sortDesc } = this.options;
 
@@ -190,7 +219,6 @@ export default class ShowImage extends Vue {
           toast: true,
           timer: 1500,
         });
-
       }
 
     })
@@ -214,6 +242,8 @@ export default class ShowImage extends Vue {
           const blob = new Blob([arraybuffer], { type: contentType }); // base64 -> blob
           const blobUrl = URL.createObjectURL(blob);
           data[top].detailInfo[mid].fileInfo[bottom].fileData = blobUrl
+          data[top].sortText = '오래된 순 정렬'
+
         }
         this.images = data
       }
@@ -234,6 +264,47 @@ export default class ShowImage extends Vue {
       }
       this.getImageAPI(item)
     }
+  }
+
+  makeSortImage() {
+    let newImgArr = []
+    let data = this.sortImages
+    for (let top = 0; top < data.length; top++) {
+      for (let mid = 0; mid < data[top].detailInfo.length; mid++) {
+        for (let bottom = 0; bottom < data[top].detailInfo[mid].fileInfo.length; bottom++) {
+          let images = []
+          let imagedata = data[top].detailInfo[mid].fileInfo[bottom]
+          const contentType = "image/png";
+          const b64Data = imagedata.fileData;
+          const image_data = atob(b64Data);
+          const arraybuffer = new ArrayBuffer(image_data.length);
+          const view = new Uint8Array(arraybuffer);
+          for (let i = 0; i < image_data.length; i++) {
+            view[i] = image_data.charCodeAt(i) & 0xff;
+          }
+          const blob = new Blob([arraybuffer], { type: contentType }); // base64 -> blob
+          const blobUrl = URL.createObjectURL(blob);
+          data[top].detailInfo[mid].fileInfo[bottom].fileData = blobUrl
+        }
+        //this.images = data
+        console.log('원본 이미지 리스트', this.images)
+        console.log('넣을 정렬된 이미지 리스트 ', this.sortImages)
+        this.changeSortedImg()
+      }
+    }
+  }
+
+  changeSortedImg() { //정렬된 이미지만 this.images에 넣기
+    let originArr = this.images
+    let sortedArr = this.sortImages
+    originArr.forEach(function (el: any) {
+      sortedArr.forEach(function (el2: any) {
+        if (el.growthReportId == el2.growthReportId) {
+          el.detailInfo = el2.detailInfo
+        }
+      })
+    })
+    this.images = originArr
   }
 }
 </script>
