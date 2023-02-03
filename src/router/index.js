@@ -41,6 +41,11 @@ const routes = [
         component: () => import("@/views/StorageMng/StorageMng"),
       },
       {
+        path: "facilitymng",
+        name: "Facilitymng ",
+        component: () => import("@/views/Facilitymng/Facilitymng"),
+      },
+      {
         path: "operationOrder",
         name: "OperationOrder",
         component: () => import("@/views/OperationManagement/OperationOrder"),
@@ -175,18 +180,12 @@ const routes = [
         name: "OrderManagement",
         component: () =>
           import("@/views/SmartFarm/OrderManagement/OrderManagement"),
-          },
-          {
-
+      },
+      {
         path: "operationmng",
         name: "operationmng",
         component: () => import("@/views/operationMng/OperationMng"),
         props: true,
-      },
-      {
-        path: "processmng",
-        name: "processmng",
-        component: () => import("@/views/ProcessMng/ProcessMng"),
       },
       {
         path: "notdev",
