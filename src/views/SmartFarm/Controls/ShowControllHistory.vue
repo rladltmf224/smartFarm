@@ -398,6 +398,21 @@ export default {
                   row["after"] += "<br>";
                 }
               });
+            } else if (row["targetValue"] == "주기설정") {
+              row["before"] =
+                "설정값 : " +
+                row["settingTemperatureBefore"] +
+                "<br>기준날짜 : " +
+                row["standardDateBefore"] +
+                "<br>반복기간 : " +
+                row["repeatPeriodBefore"];
+              row["after"] =
+                "설정값 : " +
+                row["settingTemperatureAfter"] +
+                "<br>기준날짜 : " +
+                row["standardDateAfter"] +
+                "<br>반복기간 : " +
+                row["repeatPeriodAfter"];
             } else {
               row["before"] = row["statusBefore"];
               row["after"] = row["statusAfter"];
