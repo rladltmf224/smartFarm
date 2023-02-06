@@ -267,6 +267,8 @@ export default {
         { text: "환기팬", value: "airFan" },
         { text: "LED1", value: "ledFirst" },
         { text: "LED2", value: "ledSecond" },
+        { text: "수정자", value: "createdId" },
+        { text: "메모", value: "memo" },
       ],
       datas: [],
       startDate: false,
