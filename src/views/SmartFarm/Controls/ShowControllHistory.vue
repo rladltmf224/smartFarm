@@ -191,22 +191,34 @@
                 <!-- <div v-else>{{ item.after }}</div> -->
               </template>
               <template v-slot:item.humidifier="{ item }">
-                <v-chip :color="getColor(item.humidifier)" dark>
+                <v-chip
+                  v-if="item.humidifier"
+                  :color="getColor(item.humidifier)"
+                  dark
+                >
                   {{ item.humidifier }}
                 </v-chip>
               </template>
               <template v-slot:item.airFan="{ item }">
-                <v-chip :color="getColor(item.airFan)" dark>
+                <v-chip v-if="item.airFan" :color="getColor(item.airFan)" dark>
                   {{ item.airFan }}
                 </v-chip>
               </template>
               <template v-slot:item.ledFirst="{ item }">
-                <v-chip :color="getColor(item.ledFirst)" dark>
+                <v-chip
+                  v-if="item.ledFirst"
+                  :color="getColor(item.ledFirst)"
+                  dark
+                >
                   {{ item.ledFirst }}
                 </v-chip>
               </template>
               <template v-slot:item.ledSecond="{ item }">
-                <v-chip :color="getColor(item.ledSecond)" dark>
+                <v-chip
+                  v-if="item.ledSecond"
+                  :color="getColor(item.ledSecond)"
+                  dark
+                >
                   {{ item.ledSecond }}
                 </v-chip>
               </template>
