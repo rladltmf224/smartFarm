@@ -48,7 +48,7 @@
       </v-col>
     </v-row>
 
-    <!-- 다이아로그 -->
+    <!-- 조회 다이아로그 -->
     <v-row justify="center">
       <v-dialog v-model="dialog" max-width="1300">
         <v-card>
@@ -236,7 +236,7 @@
         </v-card>
       </v-dialog>
     </v-row>
-    <!-- 다이아로그 -->
+    <!-- 제어 다이아로그 -->
     <v-dialog v-model="control_modal" max-width="1300">
       <v-card>
         <v-card-title>
@@ -268,7 +268,7 @@
                   <v-btn
                     color="green"
                     text
-                    @click="clickChangeStatus(item, 'ON')"
+                    @click="openMemoModal('control', item, 'ON')"
                     value="ON"
                     dense
                     :loading="item.loadBtn"
@@ -280,7 +280,7 @@
                     color="red "
                     text
                     value="OFF"
-                    @click="clickChangeStatus(item, 'OFF')"
+                    @click="openMemoModal('control', item, 'OFF')"
                     dense
                     :loading="item.loadBtn"
                   >
@@ -291,7 +291,7 @@
                     color="blue"
                     text
                     value="AUTO"
-                    @click="clickChangeStatus(item, 'AUTO')"
+                    @click="openMemoModal('control', item, 'AUTO')"
                     dense
                     :loading="item.loadBtn"
                   >
@@ -385,7 +385,7 @@
                     <v-btn
                       class="ml-1 mr-1"
                       v-if="item.modifiedBtn"
-                      @click="saveChangeValue(item)"
+                      @click="openMemoModal('setting', item, null)"
                       small
                       >저장</v-btn
                     >
@@ -501,7 +501,7 @@
                     <v-btn
                       class="ml-1 mr-1"
                       v-if="item.modifiedBtn"
-                      @click="saveChangeValue(item)"
+                      @click="openMemoModal('setting', item, null)"
                       small
                       >저장</v-btn
                     >
@@ -616,7 +616,7 @@
                     <v-btn
                       class="ml-1 mr-1"
                       v-if="item.modifiedBtn"
-                      @click="saveChangeValue(item)"
+                      @click="openMemoModal('setting', item, null)"
                       small
                       >저장</v-btn
                     >
@@ -776,6 +776,29 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- 메모 입력 -->
+    <v-dialog v-model="memo_modal" persistent max-width="650">
+      <v-card>
+        <v-card-title class="headline">메모 작성</v-card-title>
+        <v-card-text class="align-center">
+          <v-textarea
+            label="메모입력"
+            v-model="memo_text"
+            outlined
+            maxlength="100"
+          ></v-textarea>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="success" @click.native="okModal()">확인</v-btn>
+          <v-btn text color="success" @click.native="memo_modal = false"
+            >취소</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <!-- 주기설정 -->
     <v-dialog v-model="period_modal" persistent max-width="350">
       <v-card>
@@ -1054,7 +1077,12 @@ export default {
       ControlModal_currentVal: "",
       detailData_before: "",
 
-      // 웹소켓
+      // memo
+      memo_modal: false,
+      memo_version: "",
+      memo_text: "",
+      temp_save_item: null,
+      temp_save_status: null,
     };
   },
 
@@ -1180,15 +1208,18 @@ export default {
       this.bala_data = [];
       this.roomName_control = "";
     },
-    clickChangeStatus(item, status) {
+    clickChangeStatus(item, status, memo) {
       console.log("clickChangeStatus", item, status);
-      if (item.controlStatus === status) {
-        return false;
-      }
+
+      // openMemoModal에서 체크함
+      // if (item.controlStatus === status) {
+      //   return false;
+      // }
 
       let req_data = {
         equipmentId: item.equipmentId,
         controlStatus: status,
+        memo: memo,
       };
 
       if (item.equipmentName === "에어컨" && status == "ON") {
@@ -1262,10 +1293,36 @@ export default {
         return (this.detailData_before = Object.assign({}, item.details));
       }
     },
-    saveChangeValue(item) {
+    openMemoModal(mode, item, status) {
+      if (mode == "control") {
+        if (item.controlStatus === status) return;
+      }
+      this.memo_text = "";
+      this.memo_modal = true;
+      this.memo_version = mode;
+      this.temp_save_item = item;
+      this.temp_save_status = status;
+    },
+    okModal() {
+      if (this.memo_version == "control")
+        this.clickChangeStatus(
+          this.temp_save_item,
+          this.temp_save_status,
+          this.memo_text
+        );
+      else if (this.memo_version == "setting")
+        this.saveChangeValue(this.temp_save_item, this.memo_text);
+      else console.log("???");
+      this.memo_modal = false;
+      this.memo_version = "";
+      this.temp_save_item = null;
+      this.temp_save_status = null;
+    },
+    saveChangeValue(item, memo) {
       let req_data = {
         equipmentId: item.equipmentId,
         details: item.details,
+        memo: memo,
       };
 
       let validationYN_date = true;
@@ -1393,6 +1450,7 @@ export default {
         })
         .catch((error) => {
           console.log(error);
+          this.getDeviceList();
         });
     },
     getDeviceList() {
