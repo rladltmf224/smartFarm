@@ -1335,6 +1335,7 @@ export default {
         })
         .catch((error) => {
           console.log(error);
+          this.getDeviceList();
         });
     },
     getDeviceList() {
