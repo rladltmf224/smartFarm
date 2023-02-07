@@ -4,17 +4,20 @@
       <v-card
         v-for="(item, i) in outdoorSensor"
         :key="i"
-        class="d-flex justify-center flex-column align-center mx-1 text-center"
+        class="d-flex justify-center flex-column align-center mx-1 my-1 text-center"
         min-width="100"
       >
-        <v-card-text>
-          <span class="text-h5 font-weight-bold">
+        <v-card-text class="py-2">
+          <span class="text-subtitle-1 font-weight-bold">
             {{ outdoorSensor[i].sensorname }}
           </span>
           <v-spacer></v-spacer>
 
-          <span class="text-h6"
-            >{{ outdoorSensor[i].value }}{{ outdoorSensor[i].unit }}</span
+          <span class="text-h5 font-weight-bold" color="primary">{{
+            outdoorSensor[i].value.replace(" (없음)", "")
+          }}</span>
+          <span class="text-subtitle-2 font-weight-bold"
+            >&nbsp;{{ outdoorSensor[i].unit }}</span
           >
         </v-card-text>
       </v-card>
@@ -36,8 +39,11 @@
       <v-col
         v-for="(n, index) in cards"
         :key="index"
-        lg="4"
-        :md="(12 / cards).toFixed(0)"
+        lg="6"
+        md="12"
+        sm="12"
+        xs="12"
+        class="d-flex justify-center"
       >
         <RoomInfo
           :roomData="n"
