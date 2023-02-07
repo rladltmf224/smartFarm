@@ -9,18 +9,39 @@
               <div class="pa-10">
                 <h1 style="text-align: center">MES</h1>
                 <form>
-                  <v-text-field
-                    label="사번"
-                    prepend-inner-icon="mdi-account"
-                    v-model="username"
-                  >
-                  </v-text-field>
-                  <v-text-field
-                    prepend-inner-icon="mdi-lock"
-                    type="password"
-                    label="비밀번호"
-                    v-model="password"
-                  ></v-text-field>
+                  <v-row dense>
+                    <v-col cols="12">
+                      <v-text-field
+                        label="사번"
+                        prepend-inner-icon="mdi-account"
+                        v-model="username"
+                      >
+                      </v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-text-field
+                        prepend-inner-icon="mdi-lock"
+                        type="password"
+                        label="비밀번호"
+                        v-model="password"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                      <v-checkbox
+                        v-model="checkbox_ID"
+                        label="ID 저장"
+                        dense
+                      ></v-checkbox>
+                    </v-col>
+                    <v-col cols="6">
+                      <v-checkbox
+                        v-model="checkbox_IDPW"
+                        label="ID/PW 저장"
+                        dense
+                      ></v-checkbox>
+                    </v-col>
+                  </v-row>
+
                   <v-btn
                     type="button"
                     color="blue lighten-1 text-capitalize"
@@ -43,7 +64,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import * as api from "@/api";
 
 @Component
@@ -53,18 +74,60 @@ export default class Login extends Vue {
 
   // username?: string = "yskim";
 
-  username?: string = "bswoo";
+  // username?: string = "bswoo";
 
-  password?: string = "a12345678!@";
+  // password?: string = "a12345678!@";
+  checkbox_ID: boolean = false;
+  checkbox_IDPW: boolean = false;
+  check_Type: string = "";
+
+  username?: string = "" || this.$cookies.get("id");
+
+  password?: string = "" || this.$cookies.get("pw");
 
   created() {
     this.$store.commit("setCurrent", "nothing");
+
+    if (this.$cookies.isKey("id") && this.$cookies.isKey("pw")) {
+      this.checkbox_IDPW = true;
+    } else if (this.$cookies.isKey("id")) {
+      this.checkbox_ID = true;
+    }
+  }
+
+  @Watch("checkbox_ID")
+  onCheckboxIDChange() {
+    if (this.checkbox_ID) {
+      this.checkbox_IDPW = false;
+    }
+  }
+
+  @Watch("checkbox_IDPW")
+  onCheckboxIDPWChange() {
+    if (this.checkbox_IDPW) {
+      this.checkbox_ID = false;
+    }
   }
 
   async loginManager(): Promise<unknown> {
+    if (this.checkbox_ID) {
+      this.check_Type = "ID";
+      this.$store.commit("setSaveType", "ID");
+    } else if (this.checkbox_IDPW) {
+      this.check_Type = "IDPW";
+      this.$store.commit("setSaveType", "IDPW");
+    } else {
+      this.check_Type = "";
+      this.$store.commit("setSaveType", "");
+    }
+
     await this.$store
       .dispatch("getUserInfo", {
-        account: { userId: this.username, userPw: this.password },
+        account: {
+          userId: this.username,
+          userPw: this.password,
+        },
+        type: this.check_Type,
       })
       .then((res) => {
         console.log("res", res);
