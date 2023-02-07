@@ -36,8 +36,11 @@
       <v-col
         v-for="(n, index) in cards"
         :key="index"
-        lg="4"
-        :md="(12 / cards).toFixed(0)"
+        lg="6"
+        md="12"
+        sm="12"
+        xs="12"
+        class="d-flex justify-center"
       >
         <RoomInfo
           :roomData="n"
