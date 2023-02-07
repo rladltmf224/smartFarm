@@ -291,7 +291,7 @@ export default class Sidebar extends Vue {
   }
 
   logout(): void {
-    api.webpush.unsubscribe();
+    // api.webpush.unsubscribe();
     this.$store.commit("logout");
     this.$router.push({ path: "login" });
     return;
