@@ -191,22 +191,34 @@
                 <!-- <div v-else>{{ item.after }}</div> -->
               </template>
               <template v-slot:item.humidifier="{ item }">
-                <v-chip :color="getColor(item.humidifier)" dark>
+                <v-chip
+                  v-if="item.humidifier"
+                  :color="getColor(item.humidifier)"
+                  dark
+                >
                   {{ item.humidifier }}
                 </v-chip>
               </template>
               <template v-slot:item.airFan="{ item }">
-                <v-chip :color="getColor(item.airFan)" dark>
+                <v-chip v-if="item.airFan" :color="getColor(item.airFan)" dark>
                   {{ item.airFan }}
                 </v-chip>
               </template>
               <template v-slot:item.ledFirst="{ item }">
-                <v-chip :color="getColor(item.ledFirst)" dark>
+                <v-chip
+                  v-if="item.ledFirst"
+                  :color="getColor(item.ledFirst)"
+                  dark
+                >
                   {{ item.ledFirst }}
                 </v-chip>
               </template>
               <template v-slot:item.ledSecond="{ item }">
-                <v-chip :color="getColor(item.ledSecond)" dark>
+                <v-chip
+                  v-if="item.ledSecond"
+                  :color="getColor(item.ledSecond)"
+                  dark
+                >
                   {{ item.ledSecond }}
                 </v-chip>
               </template>
@@ -255,6 +267,8 @@ export default {
         { text: "환기팬", value: "airFan" },
         { text: "LED1", value: "ledFirst" },
         { text: "LED2", value: "ledSecond" },
+        { text: "수정자", value: "createdId" },
+        { text: "메모", value: "memo" },
       ],
       datas: [],
       startDate: false,
@@ -398,6 +412,21 @@ export default {
                   row["after"] += "<br>";
                 }
               });
+            } else if (row["targetValue"] == "주기설정") {
+              row["before"] =
+                "설정값 : " +
+                row["settingTemperatureBefore"] +
+                "<br>기준날짜 : " +
+                row["standardDateBefore"] +
+                "<br>반복기간 : " +
+                row["repeatPeriodBefore"];
+              row["after"] =
+                "설정값 : " +
+                row["settingTemperatureAfter"] +
+                "<br>기준날짜 : " +
+                row["standardDateAfter"] +
+                "<br>반복기간 : " +
+                row["repeatPeriodAfter"];
             } else {
               row["before"] = row["statusBefore"];
               row["after"] = row["statusAfter"];

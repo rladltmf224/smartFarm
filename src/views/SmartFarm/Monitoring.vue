@@ -48,7 +48,7 @@
       </v-col>
     </v-row>
 
-    <!-- 다이아로그 -->
+    <!-- 조회 다이아로그 -->
     <v-row justify="center">
       <v-dialog v-model="dialog" max-width="1300">
         <v-card>
@@ -236,8 +236,8 @@
         </v-card>
       </v-dialog>
     </v-row>
-    <!-- 다이아로그 -->
-    <v-dialog v-model="control_modal" max-width="1200">
+    <!-- 제어 다이아로그 -->
+    <v-dialog v-model="control_modal" max-width="1300">
       <v-card>
         <v-card-title>
           <span>{{ roomName_control }}</span>
@@ -268,7 +268,7 @@
                   <v-btn
                     color="green"
                     text
-                    @click="clickChangeStatus(item, 'ON')"
+                    @click="openMemoModal('control', item, 'ON')"
                     value="ON"
                     dense
                     :loading="item.loadBtn"
@@ -280,7 +280,7 @@
                     color="red "
                     text
                     value="OFF"
-                    @click="clickChangeStatus(item, 'OFF')"
+                    @click="openMemoModal('control', item, 'OFF')"
                     dense
                     :loading="item.loadBtn"
                   >
@@ -291,13 +291,28 @@
                     color="blue"
                     text
                     value="AUTO"
-                    @click="clickChangeStatus(item, 'AUTO')"
+                    @click="openMemoModal('control', item, 'AUTO')"
                     dense
                     :loading="item.loadBtn"
                   >
                     <p class="pa-0 ma-0">auto</p>
                   </v-btn>
                 </v-btn-toggle>
+              </template>
+              <template v-slot:[`item.repeatPeriod`]="{ item }">
+                <div v-if="item.repeatPeriod != null">
+                  <v-text-field
+                    prefix="일"
+                    type="number"
+                    :max="99"
+                    :min="0"
+                    v-model="item.repeatPeriod"
+                    reverse
+                    readonly
+                    @click="changePeriodValue(item)"
+                  ></v-text-field>
+                </div>
+                <div v-else>주기없음</div>
               </template>
               <!-- 시간설정 -->
               <template v-slot:[`item.setting`]="{ item }">
@@ -370,7 +385,7 @@
                     <v-btn
                       class="ml-1 mr-1"
                       v-if="item.modifiedBtn"
-                      @click="saveChangeValue(item)"
+                      @click="openMemoModal('setting', item, null)"
                       small
                       >저장</v-btn
                     >
@@ -486,7 +501,7 @@
                     <v-btn
                       class="ml-1 mr-1"
                       v-if="item.modifiedBtn"
-                      @click="saveChangeValue(item)"
+                      @click="openMemoModal('setting', item, null)"
                       small
                       >저장</v-btn
                     >
@@ -601,7 +616,7 @@
                     <v-btn
                       class="ml-1 mr-1"
                       v-if="item.modifiedBtn"
-                      @click="saveChangeValue(item)"
+                      @click="openMemoModal('setting', item, null)"
                       small
                       >저장</v-btn
                     >
@@ -761,6 +776,63 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- 메모 입력 -->
+    <v-dialog v-model="memo_modal" persistent max-width="650">
+      <v-card>
+        <v-card-title class="headline">메모 작성</v-card-title>
+        <v-card-text class="align-center">
+          <v-textarea
+            label="메모입력"
+            v-model="memo_text"
+            outlined
+            maxlength="100"
+          ></v-textarea>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="success" @click.native="okModal()">확인</v-btn>
+          <v-btn text color="success" @click.native="memo_modal = false"
+            >취소</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- 주기설정 -->
+    <v-dialog v-model="period_modal" persistent max-width="350">
+      <v-card>
+        <v-card-title class="headline">주기 설정</v-card-title>
+        <v-card-text>
+          <v-row dense>
+            <v-col offset="8" cols="4">
+              <v-text-field
+                label="설정주기"
+                type="number"
+                :min="0"
+                :max="99"
+                v-model.number="period_data.repeatPeriod"
+                reverse
+                prefix="일"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" class="text-right">
+              <span>
+                현재시간이 설정시간전일 경우 금일 실행되고
+                <v-spacer></v-spacer>
+                {{ addData(period_data.repeatPeriod) }}부터
+                실행예정입니다.</span
+              >
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="error" @click="period_modal = false">취소</v-btn>
+          <v-btn color="primary" @click="savePeriodValue">저장</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -793,6 +865,8 @@ export default {
   },
   data() {
     return {
+      period_data: "",
+      period_modal: false,
       airCon_modal: false,
       airCon_mode: "heat",
       airCon_val: 0,
@@ -824,6 +898,13 @@ export default {
           value: "controlStatus",
           sortable: false,
           width: "2%",
+          align: "center",
+        },
+        {
+          text: "주기",
+          value: "repeatPeriod",
+          sortable: false,
+          width: "4%",
           align: "center",
         },
 
@@ -996,7 +1077,12 @@ export default {
       ControlModal_currentVal: "",
       detailData_before: "",
 
-      // 웹소켓
+      // memo
+      memo_modal: false,
+      memo_version: "",
+      memo_text: "",
+      temp_save_item: null,
+      temp_save_status: null,
     };
   },
 
@@ -1122,15 +1208,18 @@ export default {
       this.bala_data = [];
       this.roomName_control = "";
     },
-    clickChangeStatus(item, status) {
+    clickChangeStatus(item, status, memo) {
       console.log("clickChangeStatus", item, status);
-      if (item.controlStatus === status) {
-        return false;
-      }
+
+      // openMemoModal에서 체크함
+      // if (item.controlStatus === status) {
+      //   return false;
+      // }
 
       let req_data = {
         equipmentId: item.equipmentId,
         controlStatus: status,
+        memo: memo,
       };
 
       if (item.equipmentName === "에어컨" && status == "ON") {
@@ -1204,10 +1293,36 @@ export default {
         return (this.detailData_before = Object.assign({}, item.details));
       }
     },
-    saveChangeValue(item) {
+    openMemoModal(mode, item, status) {
+      if (mode == "control") {
+        if (item.controlStatus === status) return;
+      }
+      this.memo_text = "";
+      this.memo_modal = true;
+      this.memo_version = mode;
+      this.temp_save_item = item;
+      this.temp_save_status = status;
+    },
+    okModal() {
+      if (this.memo_version == "control")
+        this.clickChangeStatus(
+          this.temp_save_item,
+          this.temp_save_status,
+          this.memo_text
+        );
+      else if (this.memo_version == "setting")
+        this.saveChangeValue(this.temp_save_item, this.memo_text);
+      else console.log("???");
+      this.memo_modal = false;
+      this.memo_version = "";
+      this.temp_save_item = null;
+      this.temp_save_status = null;
+    },
+    saveChangeValue(item, memo) {
       let req_data = {
         equipmentId: item.equipmentId,
         details: item.details,
+        memo: memo,
       };
 
       let validationYN_date = true;
@@ -1335,6 +1450,7 @@ export default {
         })
         .catch((error) => {
           console.log(error);
+          this.getDeviceList();
         });
     },
     getDeviceList() {
@@ -1690,6 +1806,43 @@ export default {
         console.log("제어항목조회후", this.cards);
       });
     },
+    changePeriodValue(data) {
+      this.period_modal = true;
+      console.log("data", data);
+      this.period_data = Object.assign({}, data);
+    },
+    addData(add) {
+      let date = new Date();
+      date.setDate(date.getDate() + add);
+      return `${date.getFullYear()}년 ${
+        date.getMonth() + 1
+      }월 ${date.getDate()}일`;
+    },
+    savePeriodValue() {
+      this.period_modal = false;
+      let reqData = {
+        equipmentId: this.period_data.equipmentId,
+        repeatPeriod: this.period_data.repeatPeriod, // 입력 안하면 기본값 1로 입력
+      };
+      api.smartfarm.editPeriodSetting(reqData).then((res) => {
+        if (res.status == 200) {
+          console.log("editPeriodSetting", res);
+          this.$swal({
+            title: "주기일자가 변경되었습니다.",
+            icon: "success",
+            position: "top",
+            showCancelButton: false,
+            showConfirmButton: false,
+            toast: true,
+            timer: 1500,
+          });
+          this.getDeviceList();
+        }
+      });
+
+      return;
+    },
+
     // 제어항목조회
   },
 };
