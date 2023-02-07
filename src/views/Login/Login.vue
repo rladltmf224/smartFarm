@@ -71,7 +71,7 @@ export default class Login extends Vue {
       });
     console.log("loginManager", this.$store.state.userId);
     if (this.$store.state.userId !== "") {
-      api.webpush.subscribe();
+      // api.webpush.subscribe();
       this.$router.push({ path: "monitoring" });
       return;
     }
