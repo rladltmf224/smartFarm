@@ -8,4 +8,7 @@ declare global {
       [elem: string]: any;
     }
   }
+  interface Window {
+    Kakao: any;
+  }
 }
