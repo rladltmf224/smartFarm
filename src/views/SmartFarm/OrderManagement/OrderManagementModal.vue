@@ -60,7 +60,7 @@
                             <v-menu v-model="menuLoad" :close-on-content-click="false" :nudge-width="400" offset-x
                                 max-height="600">
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-btn v-bind="attrs" v-on="on" x-small @click="getCustomer()" class="">
+                                    <v-btn v-bind="attrs" v-on="on" small @click="getCustomer()" class="">
                                         불러오기
                                     </v-btn>
 
@@ -92,7 +92,7 @@
                             </v-menu>
                         </v-col>
                     </v-row>
-                    <v-sheet color="#F6F8F9" height="650">
+                    <v-sheet color="#F6F8F9" height="620">
                         <v-row dense class=" d-flex align-center">
                             <v-col class="pa-0">
                                 <h4 class="searchbox-title pt-3 ml-5">수주품목 목록</h4>
@@ -144,13 +144,13 @@
                         <v-row dense v-show="change">
                             <v-col cols="12">
                                 <v-data-table multi-sort class="ml-2 mr-2 overflow-scroll elevation-4" fixed-header
-                                    height="180" :headers="selectedheaders" :items="itemTable" return-object
+                                    height="180" :headers="selectedheaders" :items="itemTable" return-object dense
                                     item-key="id" disable-pagination hide-default-footer dense>
                                     <!-- 수량 -->
                                     <template v-slot:item.quantity="props">
                                         <v-text-field class="pa-0 countFont"
                                             oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');"
-                                            placeholder="* 수량 필수" v-model="props.item.quantity" single-line>
+                                            placeholder="* 수량 필수" v-model="props.item.quantity" single-line dense>
                                             {{ props.item.quantity }}
                                         </v-text-field>
                                     </template>
@@ -158,7 +158,7 @@
                                     <template v-slot:item.supplyUnitPrice="props">
                                         <v-text-field class="pa-0 countFont"
                                             oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');"
-                                            placeholder="*단가" v-model="props.item.supplyUnitPrice" single-line>
+                                            placeholder="*단가" v-model="props.item.supplyUnitPrice" single-line dense>
                                             {{ props.item.supplyUnitPrice }}
                                         </v-text-field>
                                     </template>
@@ -168,7 +168,7 @@
                                             transition="scale-transition" offset-y min-width="auto">
                                             <template v-slot:activator="{ on, attrs }">
                                                 <v-text-field v-model="props.item.expectedDeliveryDate" label="납품예정일"
-                                                    prepend-icon="mdi-calendar" readonly v-bind="attrs"
+                                                    prepend-icon="mdi-calendar" readonly v-bind="attrs" dense
                                                     v-on="on"></v-text-field>
                                             </template>
                                             <v-date-picker no-title
@@ -177,7 +177,7 @@
                                     </template>
                                     <!-- 비고(메모) -->
                                     <template v-slot:item.memo="props">
-                                        <v-text-field class="pa-0 countFont" placeholder="메모" v-model="props.item.memo"
+                                        <v-text-field class="pa-0 countFont" placeholder="메모" v-model="props.item.memo" dense
                                             single-line>
                                             {{ props.item.memo }}
                                         </v-text-field>
@@ -199,13 +199,13 @@
                         <v-row dense v-show="!change">
                             <v-col cols="12">
                                 <v-data-table multi-sort class="ml-2 mr-2 overflow-scroll elevation-4" fixed-header
-                                    height="180" :headers="selectedheaders" :items="itemTable" return-object
+                                    height="180" :headers="selectedheaders" :items="itemTable" return-object dense
                                     item-key="id" disable-pagination hide-default-footer dense v-show="!change">
                                     <!-- 수량 -->
                                     <template v-slot:item.quantity="props">
                                         <v-text-field class="pa-0 countFont"
                                             oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');"
-                                            placeholder="*수량" v-model="props.item.quantity" single-line>
+                                            placeholder="*수량" v-model="props.item.quantity" single-line dense>
                                             {{ props.item.quantity }}
                                         </v-text-field>
                                     </template>
@@ -213,7 +213,7 @@
                                     <template v-slot:item.supplyUnitPrice="props">
                                         <v-text-field class="pa-0 countFont"
                                             oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');"
-                                            placeholder="*단가" v-model="props.item.supplyUnitPrice" single-line>
+                                            placeholder="*단가" v-model="props.item.supplyUnitPrice" single-line dense>
                                             {{ props.item.supplyUnitPrice }}
                                         </v-text-field>
                                     </template>
@@ -223,7 +223,7 @@
                                             transition="scale-transition" offset-y min-width="auto">
                                             <template v-slot:activator="{ on, attrs }">
                                                 <v-text-field v-model="props.item.expectedDeliveryDate" label="납품예정일"
-                                                    prepend-icon="mdi-calendar" readonly v-bind="attrs"
+                                                    prepend-icon="mdi-calendar" readonly v-bind="attrs" dense
                                                     v-on="on"></v-text-field>
                                             </template>
                                             <v-date-picker no-title
@@ -232,7 +232,7 @@
                                     </template>
                                     <!-- 비고(메모) -->
                                     <template v-slot:item.memo="props">
-                                        <v-text-field class="pa-0 countFont" placeholder="메모" v-model="props.item.memo"
+                                        <v-text-field class="pa-0 countFont" placeholder="메모" v-model="props.item.memo" dense
                                             single-line>
                                             {{ props.item.memo }}
                                         </v-text-field>
