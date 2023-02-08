@@ -54,6 +54,13 @@
                     >접속</v-btn
                   >
                 </form>
+                <!-- <a id="kakao-login-btn" :href="loginWithKakao()">
+                  <img
+                    src="https://k.kakaocdn.net/14/dn/btroDszwNrM/I6efHub1SN5KCJqLm1Ovx1/o.jpg"
+                    width="222"
+                    alt="카카오 로그인 버튼"
+                  />
+                </a> -->
               </div>
             </v-card>
           </v-flex>
@@ -134,8 +141,7 @@ export default class Login extends Vue {
       });
     console.log("loginManager", this.$store.state.userId);
     if (this.$store.state.userId !== "") {
-      api.webpush.subscribe();
-
+      // api.webpush.subscribe();
       this.$router.push({ path: "monitoring" });
       return;
     }
@@ -146,5 +152,9 @@ export default class Login extends Vue {
     this.$swal.fire("ERROR", "ID/PW를 확인해주시길 바랍니다", "error");
     return;
   }
+
+  // loginWithKakao(): void {
+  //   api.kakao.loginKakao();
+  // }
 }
 </script>

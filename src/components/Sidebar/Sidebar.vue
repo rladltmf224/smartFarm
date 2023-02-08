@@ -104,6 +104,16 @@
         <v-list-item-title class="text-subtitle-1" v-text="item.title"></v-list-item-title>
       </v-list-item>
     </v-list> -->
+    <!-- <a id="kakao-login-btn" :href="loginWithKakao()">
+      <img
+        src="https://k.kakaocdn.net/14/dn/btroDszwNrM/I6efHub1SN5KCJqLm1Ovx1/o.jpg"
+        width="222"
+        alt="카카오 로그인 버튼"
+      />
+    </a> -->
+    <!-- <v-btn class="ma-2" color="indigo" dark @click="getKakaoUserToken">
+      카카오 사용자 토큰 받기
+    </v-btn> -->
     <template v-slot:append>
       <v-btn class="ma-2" color="indigo" dark @click="userInfoDialog = true">
         <v-icon dark> mdi-account-circle-outline </v-icon>
@@ -291,7 +301,7 @@ export default class Sidebar extends Vue {
   }
 
   logout(): void {
-    api.webpush.unsubscribe();
+    // api.webpush.unsubscribe();
     this.$store.commit("logout");
     this.$router.push({ path: "login" });
     return;
@@ -360,6 +370,15 @@ export default class Sidebar extends Vue {
       if (alarmIcon) alarmIcon.click();
     }
   }
+
+  // loginWithKakao(): void {
+  //   api.kakao.loginKakao();
+  // }
+
+  // getKakaoUserToken(): void {
+  //   let response = api.kakao.getUserToken();
+  //   console.log("KKKKKKKKKKKKKKKKK", response);
+  // }
 }
 </script>
 
