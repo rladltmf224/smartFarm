@@ -11,6 +11,7 @@ module.exports = defineConfig({
     proxy: {
       "/api/": {
         target: "http://14.47.96.237:8081", // 노서버2
+        //target: "http://192.168.0.126:9090", // 노서버2
         //target: "http://192.168.0.38:8080", // 노서버2
 
         changeOrigin: true,
