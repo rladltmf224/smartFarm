@@ -1,7 +1,29 @@
 <template>
   <v-card class="ma-3 pb-2" max-width="670">
     <v-app-bar color="#CFD8DC" dense elevation="0">
-      <v-toolbar-title>{{ roomInfo_prop.roomName }}</v-toolbar-title>
+      <v-toolbar-title
+        class="d-flex flex-row justify-space-between"
+        style="width: 100%"
+      >
+        {{ roomInfo_prop.roomName }}
+        <div>
+          <v-btn color="green" text @click="openDialog(roomInfo_prop)">
+            <!-- 바깥조회버튼눌리면 dialog오픈 ,  -->
+            <v-icon class="mr-1"> mdi-eye </v-icon>
+
+            조회
+          </v-btn>
+          <v-btn
+            text
+            class="pa-0 ma-0"
+            color="primary"
+            @click="goControllPage(roomInfo_prop)"
+          >
+            <v-icon class="mr-1"> mdi-cog-pause </v-icon>
+            <span class="subheading">제어</span>
+          </v-btn>
+        </div>
+      </v-toolbar-title>
     </v-app-bar>
     <!-- <v-card-text>
       <v-row dense class="align-self-center">
@@ -100,7 +122,7 @@
       <div class="d-flex flex-nowrap justify-space-around">
         <!-- <v-col lg="8" md="9" sm="7" xs="12"> -->
         <div>
-          <v-row class="d-flex flex-row flex-wrap">
+          <v-row class="d-flex flex-row flex-wrap" no-gutters>
             <EnvStatusChip
               title="대기 온도"
               :value="roomInfo_prop.atmosphere.temperature + '°C'"
@@ -114,7 +136,7 @@
               :value="roomInfo_prop.atmosphere.co2 + '%'"
             ></EnvStatusChip>
           </v-row>
-          <v-row class="d-flex flex-row flex-wrap">
+          <v-row class="d-flex flex-row flex-wrap" no-gutters>
             <EnvStatusChip
               title="양액 EC"
               :value="roomInfo_prop.fertilizer.ec"
@@ -124,7 +146,7 @@
               :value="roomInfo_prop.fertilizer.ph"
             ></EnvStatusChip>
           </v-row>
-          <v-row class="d-flex flex-row flex-wrap">
+          <v-row class="d-flex flex-row flex-wrap" no-gutters>
             <EnvStatusChip
               title="토양 온도"
               :value="roomInfo_prop.soil.temperature + '°C'"
@@ -142,7 +164,7 @@
               :value="roomInfo_prop.soil.ph"
             ></EnvStatusChip>
           </v-row>
-          <v-row class="d-flex flex-row flex-wrap">
+          <v-row class="d-flex flex-row flex-wrap" no-gutters>
             <EnvStatusChip
               title="광원 광도"
               :value="roomInfo_prop.light.luminosity"
@@ -205,7 +227,7 @@
 
         <!-- <v-col lg="4" md="3" sm="5" xs="12"> -->
 
-        <v-col cols="auto" class="mx-3">
+        <v-col cols="auto" class="mx-3 pa-0" no-gutters>
           <EquipStatusChip
             v-for="(equipData, index) in roomInfo_prop.equipment"
             :key="index"
@@ -214,25 +236,6 @@
           ></EquipStatusChip>
         </v-col>
       </div>
-
-      <v-row class="pr-3 mt-4" justify="end">
-        <v-btn color="green" text @click="openDialog(roomInfo_prop)">
-          <!-- 바깥조회버튼눌리면 dialog오픈 ,  -->
-          <v-icon class="mr-1"> mdi-eye </v-icon>
-
-          조회
-        </v-btn>
-
-        <v-btn
-          text
-          class="pa-0 ma-0"
-          color="primary"
-          @click="goControllPage(roomInfo_prop)"
-        >
-          <v-icon class="mr-1"> mdi-cog-pause </v-icon>
-          <span class="subheading">제어</span></v-btn
-        >
-      </v-row>
     </v-card-text>
   </v-card>
 </template>
@@ -278,18 +281,6 @@ div {
   .off {
     @extend %circle;
     background: red;
-  }
-
-  .row {
-    margin: 0;
-  }
-
-  .row .row {
-    margin: 0;
-  }
-
-  .col {
-    padding: 0;
   }
 }
 </style>
