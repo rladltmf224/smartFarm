@@ -820,9 +820,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="success" @click.native="okModal()">확인</v-btn>
-          <v-btn text color="success" @click.native="memo_modal = false"
-            >취소</v-btn
-          >
+          <v-btn text color="success" @click.native="closeModal()">취소</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -1210,6 +1208,7 @@ export default {
           //   el_sub.loadBtn = false;
           // });
         });
+        this.bala_data_backup = _.cloneDeep(res.data.responseData);
         this.bala_data = res.data.responseData;
         this.roomName_control = data.roomName;
         this.control_modal = true;
@@ -1346,6 +1345,10 @@ export default {
       this.temp_save_item = null;
       this.temp_save_status = null;
     },
+    closeModal() {
+      this.memo_modal = false;
+      this.bala_data = _.cloneDeep(this.bala_data_backup);
+    },
     saveChangeValue(item, memo) {
       let req_data = {
         equipmentId: item.equipmentId,
@@ -1438,10 +1441,12 @@ export default {
           })
           .then((result) => {
             if (result.isConfirmed) {
+              this.bala_data = _.cloneDeep(this.bala_data_backup);
               return (item.modifiedBtn = false);
             }
           });
       } else {
+        this.bala_data = _.cloneDeep(this.bala_data_backup);
         return (item.modifiedBtn = false);
       }
     },
@@ -1491,6 +1496,7 @@ export default {
           element.modifiedBtn = false;
           element.loadBtn = false;
         });
+        this.bala_data_backup = _.cloneDeep(res.data.responseData);
         this.bala_data = res.data.responseData;
       });
       // getEquipmentInfo()
