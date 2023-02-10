@@ -70,11 +70,11 @@
                   <v-col cols="2">
                     <v-autocomplete
                       tabindex="4"
-                      v-model="orderData.departmentchargeName"
+                      v-model="orderData.departmentchargeId"
                       item-text="chargeName"
                       item-value="id"
-                      :items="departmentCrewData"
-                      :disabled="departmentCrewData.length == 0"
+                      :items="departmentCrewList"
+                      :disabled="departmentCrewList.length == 0"
                       label="담당자"
                       required
                       dense
@@ -505,7 +505,12 @@ export default class OperationOrderModal extends Vue {
   })
   editedCustomerData: any;
 
-  @Watch("orderData.department")
+  // @Watch("orderData.departmentchargeId", { deep: true })
+  // onChangeCharge() {
+  //   this.getDepartmentCrewList();
+  // }
+
+  //@Watch("orderData.department")
   onOrderDataChange() {
     if (
       this.orderData.department != "" &&
@@ -513,7 +518,9 @@ export default class OperationOrderModal extends Vue {
     ) {
       this.getDepartmentCrewList();
     } else {
+      this.orderData.departmentchargeId = "";
       this.orderData.departmentchargeName = "";
+      this.departmentCrewList = [];
     }
   }
 
@@ -562,9 +569,6 @@ export default class OperationOrderModal extends Vue {
   }
   get departmentData() {
     return this.departmentList;
-  }
-  get departmentCrewData() {
-    return this.departmentCrewList;
   }
 
   get itemTable() {
@@ -659,7 +663,7 @@ export default class OperationOrderModal extends Vue {
     this.selectEquipData = [];
 
     api.item.getItemList(reqData).then((res) => {
-      console.log("getItemList", res);
+      //console.log("getItemList", res);
       this.itemList = res.data.responseData;
     });
   }
@@ -678,6 +682,8 @@ export default class OperationOrderModal extends Vue {
     let joborder;
     if (this.orderData.department != "") {
       this.keyword = this.orderData.department.departmentId;
+    } else {
+      return (this.departmentCrewList = []);
     }
 
     joborder = {
@@ -711,7 +717,7 @@ export default class OperationOrderModal extends Vue {
     ) {
       this.getDepartmentCrewList();
     } else {
-      this.orderData.departmentchargeName = "";
+      this.departmentCrewList = [];
     }
   }
   checkTempSave() {
@@ -1108,13 +1114,14 @@ export default class OperationOrderModal extends Vue {
   }
   aboutTemp(event: any, item: any) {
     this.itemDetail = [];
-    //console.log("aboutTemp", item);
+    console.log("aboutTemp", item.item);
 
     this.interimStorage = false;
     this.orderData.name = item.item.name;
     this.orderData.accountId = item.item.name;
     this.orderData.department = item.item.departmentId;
     this.orderData.departmentchargeId = item.item.chargeId;
+    this.orderData.departmentchargeName = item.item.chargeName;
     this.orderData.selectItem = item.item.itemId;
     this.orderData.selectProcess = item.item.processId;
     this.orderData.customer = item.item.customer;
