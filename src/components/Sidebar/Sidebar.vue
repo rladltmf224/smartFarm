@@ -238,7 +238,7 @@ export default class Sidebar extends Vue {
       {
         title: "완제품관리",
         active: true,
-        icon: "mdi-package",
+        icon: "mdi-stack-overflow",
         role: "ROLE_operationManagement",
         use: "Y",
         sort: 5,
@@ -335,10 +335,6 @@ export default class Sidebar extends Vue {
 
 
   }
-
-
-
-
 
 
   goHome(): void {
