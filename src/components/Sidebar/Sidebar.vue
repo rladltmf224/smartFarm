@@ -28,7 +28,6 @@
           </v-btn>
           <v-list-item-title>
             {{ userId }}님
-            <!--  userID -->
           </v-list-item-title>
           <v-menu offset-y>
             <template v-slot:activator="{ on, attrs }">
