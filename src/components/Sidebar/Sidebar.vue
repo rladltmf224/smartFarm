@@ -1,33 +1,64 @@
 <template>
-  <v-navigation-drawer
-    app
-    clipped
-    permanent
-    color="#F6F8F9"
-    :mini-variant="mini"
-  >
+  <v-navigation-drawer app clipped permanent color="#F6F8F9" :mini-variant="mini">
     <v-container class="px-0 text-h4 sidebar-main-text home" @click="goHome">
-      <v-icon
-        v-if="!mini"
-        @click.stop="mini = !mini"
-        color="lightgrey"
-        transparent
-      >
-        mdi-arrow-expand-left
-      </v-icon>
-
+      <!--   <v-icon v-if="!mini" @click.stop="mini = !mini" color="lightgrey" transparent>
+        mdi-chevron-left
+      </v-icon> -->
+      <!-- 
       <v-icon v-else @click.stop="mini = !mini" color="lightgrey">
         mdi-arrow-expand-right
-      </v-icon>
+      </v-icon> -->
 
-      <v-menu offset-y>
+
+      <!--     <v-icon v-else @click.stop="mini = !mini" color="lightgrey">mdi-chevron-right</v-icon> -->
+      <v-list height="100" dense>
+        <v-list-item class="px-2  ">
+          <v-btn icon v-if="mini" @click="mini = !mini">
+            <v-icon>mdi-page-last
+            </v-icon>
+          </v-btn>
+          <v-list-item-title></v-list-item-title>
+          <v-btn icon @click.stop="mini = !mini">
+            <v-icon>mdi-page-first</v-icon>
+          </v-btn>
+        </v-list-item>
+        <v-list-item class="px-2">
+          <v-btn icon @click="mini = !mini" @mouseover="openTooltip(item)">
+            <v-icon>mdi-account</v-icon>
+          </v-btn>
+          <v-list-item-title>
+            {{ userId }}님
+            <!--  userID -->
+          </v-list-item-title>
+          <v-menu offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <v-badge overlap :content="alarmList.length" :value="alarmList.length" color="error" dot>
+                <v-btn id="alarmBell" depressed v-bind="attrs" v-on="on" icon>
+                  <v-icon :color="alarmList.length > 0 ? 'error' : 'black'" dense>
+                    mdi-bell
+                  </v-icon>
+                </v-btn>
+              </v-badge>
+            </template>
+            <v-list>
+              <v-list-item v-for="(alarm, index) in alarmList" :key="index" two-line>
+                <v-list-item-content @click="removeAlarm(alarm)" class="alarmItem">
+                  <v-list-item-title>
+                    <v-chip class="mr-3" color="warning"> 주의 </v-chip>{{ alarm.title }}
+                  </v-list-item-title>
+                  <v-list-item-subtitle class="pl-15">{{
+                    alarm.body
+                  }}</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </v-list-item>
+      </v-list>
+
+      <!--   <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
-          <v-badge
-            overlap
-            :content="alarmList.length"
-            :value="alarmList.length"
-            color="error"
-          >
+          <v-badge overlap :content="alarmList.length" :value="alarmList.length" color="error">
             <v-btn id="alarmBell" depressed v-bind="attrs" v-on="on" icon>
               <v-icon :color="alarmList.length > 0 ? 'error' : 'black'" large>
                 mdi-bell
@@ -36,15 +67,10 @@
           </v-badge>
         </template>
         <v-list>
-          <v-list-item
-            v-for="(alarm, index) in alarmList"
-            :key="index"
-            two-line
-          >
+          <v-list-item v-for="(alarm, index) in alarmList" :key="index" two-line>
             <v-list-item-content @click="removeAlarm(alarm)" class="alarmItem">
               <v-list-item-title>
-                <v-chip class="mr-3" color="warning"> 주의 </v-chip
-                >{{ alarm.title }}
+                <v-chip class="mr-3" color="warning"> 주의 </v-chip>{{ alarm.title }}
               </v-list-item-title>
               <v-list-item-subtitle class="pl-15">{{
                 alarm.body
@@ -52,47 +78,53 @@
             </v-list-item-content>
           </v-list-item>
         </v-list>
-      </v-menu>
+      </v-menu> -->
     </v-container>
-
     <v-divider></v-divider>
-
-    <v-list height="560" dense nav rounded>
+    <v-list height="600" style="overflow-y:auto;overflow-x:hidden" dense nav rounded>
       <v-list-item :link="true" :to="to_home" color="primary">
-        <v-list-item-icon>
+        <v-list-item-icon @mouseover="openTooltip(item)">
           <v-icon>mdi-monitor</v-icon>
         </v-list-item-icon>
-
         <v-list-item-title>모니터링</v-list-item-title>
       </v-list-item>
-
       <v-list-group v-for="(item, i) in items" :key="i" mandatory>
         <template v-slot:activator>
           <v-list-item-icon>
-            <v-icon v-text="item.icon"></v-icon>
+            <v-icon v-text="item.icon" @mouseover="openTooltip(item)"></v-icon>
           </v-list-item-icon>
           <v-list-item-content>
-            <v-list-item-title
-              class="text-subtitle-1"
-              v-text="item.title"
-            ></v-list-item-title>
+            <v-list-item-title class="text-subtitle-1" v-text="item.title"></v-list-item-title>
           </v-list-item-content>
-        </template>
 
-        <v-list-item
-          v-for="subItem in item.subItems"
-          :key="subItem.title"
-          :to="subItem.to"
-          dense
-        >
+        </template>
+        <v-list-item v-for="subItem in item.subItems" :key="subItem.title" :to="subItem.to" dense>
           <v-list-item-content>
-            <v-list-item-title
-              v-text="'- ' + subItem.title"
-            ></v-list-item-title>
+            <v-list-item-title v-text="'- ' + subItem.title"></v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list-group>
     </v-list>
+    <v-divider></v-divider>
+    <v-list height="100" dense nav rounded>
+      <v-list-item @click="userInfoDialog = true" @mouseover="openTooltip()">
+        <v-list-item-icon>
+          <v-icon>mdi-account-circle-outline</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title>비밀번호 변경</v-list-item-title>
+      </v-list-item>
+      <v-list-item @click="logout" @mouseover="openTooltip()">
+        <v-list-item-icon>
+          <v-icon>mdi-power</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title>로그아웃</v-list-item-title>
+      </v-list-item>
+    </v-list>
+
+
+
+
+
     <!-- <v-list dense>
       <v-subheader>개발예정</v-subheader>
       <v-divider></v-divider>
@@ -114,25 +146,23 @@
     <!-- <v-btn class="ma-2" color="indigo" dark @click="getKakaoUserToken">
       카카오 사용자 토큰 받기
     </v-btn> -->
-    <template v-slot:append>
+    <!-- <template v-slot:append>
       <v-btn class="ma-2" color="indigo" dark @click="userInfoDialog = true">
         <v-icon dark> mdi-account-circle-outline </v-icon>
       </v-btn>
-      <v-btn class="ma-2" color="indigo" dark>
+     <v-btn class="ma-2" color="indigo" dark>
         <v-icon dark> mdi-cog-outline </v-icon>
       </v-btn>
       <v-btn class="ma-2" color="indigo" dark @click="logout">
         <v-icon dark> mdi-power </v-icon>
       </v-btn>
-    </template>
+    </template> -->
 
     <!--비밀번호 변경 dialog-->
-    <SidebarUserInfo
-      :open="userInfoDialog"
-      @closeModal="close"
-      @save-info="handlerSaveInfo"
-    ></SidebarUserInfo>
+    <SidebarUserInfo :open="userInfoDialog" @closeModal="close" @save-info="handlerSaveInfo"></SidebarUserInfo>
+
   </v-navigation-drawer>
+
 </template>
 
 <script lang="ts">
@@ -156,8 +186,9 @@ import { mapGetters } from "vuex";
 })
 export default class Sidebar extends Vue {
   @Ref() form: HTMLFormElement;
-
+  userId: string = '';
   mini: boolean = false;
+  tooltip: boolean = false;
   userInfoDialog: boolean = false;
   to_home?: string = "monitoring";
   to_notdev?: string = "notdev";
@@ -182,6 +213,11 @@ export default class Sidebar extends Vue {
   userInfo?: object;
 
   mounted() {
+
+    this.getUserId()
+
+
+
     let decodeData: any = jwt_decode(this.$cookies.get("refreshToken"));
 
     decodeData = decodeData.roles.split(",");
@@ -203,7 +239,7 @@ export default class Sidebar extends Vue {
       {
         title: "완제품관리",
         active: true,
-        icon: "mdi-folder",
+        icon: "mdi-package",
         role: "ROLE_operationManagement",
         use: "Y",
         sort: 5,
@@ -217,7 +253,7 @@ export default class Sidebar extends Vue {
       {
         title: "환경관리",
         active: true,
-        icon: "mdi-folder",
+        icon: "mdi-weather-partly-snowy-rainy",
         role: "ROLE_operationManagement",
         use: "Y",
         sort: 5,
@@ -236,7 +272,7 @@ export default class Sidebar extends Vue {
     this.items.push({
       title: "양액",
       active: true,
-      icon: "mdi-folder",
+      icon: "mdi-water-circle",
       role: "ROLE_operationManagement",
       use: "Y",
       sort: 5,
@@ -250,7 +286,7 @@ export default class Sidebar extends Vue {
     this.items.push({
       title: "제어",
       active: true,
-      icon: "mdi-folder",
+      icon: "mdi-air-conditioner",
       role: "ROLE_operationManagement",
       use: "Y",
       sort: 5,
@@ -264,7 +300,7 @@ export default class Sidebar extends Vue {
     this.items.push({
       title: "실험",
       active: true,
-      icon: "mdi-folder",
+      icon: "mdi-test-tube",
       role: "ROLE_operationManagement",
       use: "Y",
       sort: 5,
@@ -282,7 +318,7 @@ export default class Sidebar extends Vue {
     this.items.push({
       title: "수주관리",
       active: true,
-      icon: "mdi-folder",
+      icon: "mdi-order-bool-descending",
       role: "ROLE_operationManagement",
       use: "Y",
       sort: 5,
@@ -293,17 +329,55 @@ export default class Sidebar extends Vue {
         },
       ],
     });
+
+    for (let i = 0; i < this.items.length; i++) { //tooltip을 위한 데이터를 
+      this.items[i].tooltip = false
+    }
+
+
   }
+
+
+
+
+
+
   goHome(): void {
-    this.$router.push("/monitoring").catch(() => {});
+    this.$router.push("/monitoring").catch(() => { });
 
     return;
   }
 
+  // ${this.sectionNum}에 없으면
+  // LS에 있는걸 store에 옮겨넣어요
+  getUserId(): void {
+    if (this.userId == '') {
+      console.log('유저아이디가없음', this.userId)
+      let local: any = localStorage.getItem("userId")
+      this.userId = JSON.parse(local) || "",
+        console.log('유저아이디가없음2222', this.userId)
+    } else if (this.userId != '') {
+      console.log('유저아이디가있음')
+    }
+  }
+
+
+  openTooltip(item: any): void {
+    this.mini = false
+  }
+
+
+
+
+
+
   logout(): void {
     // api.webpush.unsubscribe();
     this.$store.commit("logout");
+
     this.$router.push({ path: "login" });
+    localStorage.removeItem("userId");
+
     return;
   }
   handlerSaveInfo(userInfo: object): void {
@@ -382,4 +456,6 @@ export default class Sidebar extends Vue {
 }
 </script>
 
-<style src="./Sidebar.scss" lang="scss"></style>
+<style src="./Sidebar.scss" lang="scss">
+
+</style>
