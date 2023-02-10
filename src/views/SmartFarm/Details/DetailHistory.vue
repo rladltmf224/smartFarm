@@ -8,21 +8,45 @@
             <v-col cols="11" class="">
               <v-row class="pa-0 ma-0 d-flex">
                 <v-col cols="2" class="pa-0 ma-0">
-                  <v-select :items="search_list1" label="실 선택" v-model="search_type_1" item-text="name" item-value="id"
-                    dense="dense" single-line></v-select>
+                  <v-select
+                    :items="search_list1"
+                    label="실 선택"
+                    v-model="search_type_1"
+                    item-text="name"
+                    item-value="value"
+                    dense="dense"
+                    single-line
+                    return-object
+                  ></v-select>
                 </v-col>
+
                 <!-- <v-col cols="2" class="pa-0 ma-0 pl-4">
-                  <v-select :items="search_list2" label="구역 선택" v-model="search_type_2" item-text="name"
-                    item-value="value" dense="dense" single-line></v-select>
+                  <v-select
+                    :items="search_list2"
+                    label="구역 선택"
+                    v-model="search_type_2"
+                    item-text="name"
+                    item-value="value"
+                    dense="dense"
+                    single-line
+                  ></v-select>
                 </v-col> -->
               </v-row>
               <v-row dense class="">
                 <!-- 탭스 -->
                 <v-col class="pa-0 ma-0">
-                  <v-tabs v-model="tab" align-with-title="align-with-title" background-color="">
+                  <v-tabs
+                    v-model="tab"
+                    align-with-title="align-with-title"
+                    background-color=""
+                  >
                     <v-tabs-slider color="primary"></v-tabs-slider>
 
-                    <v-tab v-for="item in items" :key="item" @click="clickTest(item)">
+                    <v-tab
+                      v-for="item in items"
+                      :key="item"
+                      @click="clickTest(item)"
+                    >
                       {{ item }}
                     </v-tab>
                   </v-tabs>
@@ -36,8 +60,14 @@
           </v-row>
         </v-col>
       </v-row>
-      <TempHumid v-if="this.selectedTabs == '온/습도'" :search_type_1="search_type_1"></TempHumid>
-      <WaterpH v-if="this.selectedTabs == '양액pH/EC'"></WaterpH>
+      <TempHumid
+        v-if="this.search_type_1 != null && this.selectedTabs == '온/습도'"
+        :search_type_1="search_type_1"
+      ></TempHumid>
+      <WaterpH
+        v-if="this.search_type_1 != null && this.selectedTabs == '양액pH/EC'"
+        :search_type_1="search_type_1"
+      ></WaterpH>
       <v-row> </v-row>
     </v-container>
   </div>
@@ -141,9 +171,9 @@ export default {
       // 조회단위 조회단위
       startDate: false,
       endDate: false,
-      search_type_1: 1,
-      search_list1: [
-      ],
+      search_type_1: null,
+      search_list1: [],
+
       editedIndex: -1,
       customer_list: [],
       rules: {
@@ -186,7 +216,10 @@ export default {
     };
   },
   mounted() {
-    this.getRoomLists()
+    api.smartfarm.temphumidRoomList().then((response) => {
+      this.search_list1 = response.data.responseData;
+      this.search_type_1 = this.search_list1[0];
+    });
   },
   watch: {
     options: {
@@ -204,142 +237,135 @@ export default {
     LoadingSpinner,
   },
   methods: {
+    // //온/습도 데이터 가져오는api
+    // getTempHumidData() {
+    //   this.isLoading = true;
+    //   let GetTempHumidParams = {
+    //     room: this.search_type_1, //실
+    //     section: this.search_type_2, //구역 넘버
+    //     startDate: this.s_date + " " + this.startTime, //시작일
+    //     endDate: this.e_date + " " + this.endTime, //종료일
+    //     division: this.user_auth, //조회단위
+    //   };
 
-    // 이슬
-    getRoomLists() {
-      api.smartfarm.getRoomLists().then((res) => {
-        console.log('룸 리스트 조회성공1111', this.search_list1)
-        this.search_list1 = res.data.responseData
-        console.log('룸 리스트 조회성공222', this.search_list1)
+    //   api.smartfarm.temphumid(GetTempHumidParams).then((res) => {
+    //     this.isLoading = false;
 
-      })
-    },
-    //온/습도 데이터 가져오는api
-    getTempHumidData() {
-      this.isLoading = true;
-      let GetTempHumidParams = {
-        room: this.search_type_1, //실
-        section: 1, //구역 넘버
-        startDate: this.s_date + " " + this.startTime, //시작일
-        endDate: this.e_date + " " + this.endTime, //종료일
-        division: this.user_auth, //조회단위
-      };
+    //     this.responseResult = res.data;
+    //     this.newData[0].min_data1 = _.map(this.responseResult, "temperature");
+    //     this.newData[0].min_data2 = _.map(this.responseResult, "humidity");
+    //     this.newData[0].createdDate = _.map(this.responseResult, "createdDate");
+    //     this.newData[0].division = res.data[0].division;
+    //     this.newData[0].sensorName = res.data[0].sensorCode;
 
-      api.smartfarm.temphumid(GetTempHumidParams).then((res) => {
-        this.isLoading = false;
+    //     //for문 탈출하기 with 소영선임님
+    //     let input_start = this.s_date + " " + this.startTime;
+    //     let input_end = this.e_date + " " + this.endTime;
 
-        this.responseResult = res.data;
-        this.newData[0].min_data1 = _.map(this.responseResult, "temperature");
-        this.newData[0].min_data2 = _.map(this.responseResult, "humidity");
-        this.newData[0].createdDate = _.map(this.responseResult, "createdDate");
-        this.newData[0].division = res.data[0].division;
-        this.newData[0].sensorName = res.data[0].sensorCode;
+    //     let start_date = new Date(input_start);
+    //     let end_date = new Date(input_end);
+    //     let o = res.data;
+    //     let source = _.sortBy(o, "createdDate"); //서버에서 받은 데이터를 날짜만 뽑아서  정렬
 
-        //for문 탈출하기 with 소영선임님
-        let input_start = this.s_date + " " + this.startTime;
-        let input_end = this.e_date + " " + this.endTime;
+    //     let result = [];
+    //     let i = 0;
+    //     let date = start_date;
 
-        let start_date = new Date(input_start);
-        let end_date = new Date(input_end);
-        let o = res.data;
-        let source = _.sortBy(o, "createdDate"); //서버에서 받은 데이터를 날짜만 뽑아서  정렬
+    //     while (date <= end_date) {
+    //       let temp = source[i]; //그냥 2022-12-12 14:00 형식
 
-        let result = [];
-        let i = 0;
-        let date = start_date;
+    //       if (temp != undefined) {
+    //         let today = new Date(temp.createdDate); //날짜 표준화형식
+    //         if (date.getTime() == today.getTime()) {
+    //           result.push({
+    //             date: Date(temp["createdDate"]).toString(),
+    //             hour_Humid_Value: temp["humidityAVG"],
+    //             hour_Temp_Value: temp["temperatureAVG"],
+    //             min_Humid_Value: temp["humidity"],
+    //             min_Temp_Value: temp["temperature"],
+    //           });
+    //           i++;
+    //           date.setMinutes(date.getMinutes() + 1);
+    //           continue;
+    //         }
+    //       }
+    //       result.push({
+    //         date: date.toString(),
+    //         hour_Humid_Value: 0,
+    //         hour_Temp_Value: 0,
+    //         min_Humid_Value: 0,
+    //         min_Temp_Value: 0,
+    //       });
+    //       date.setMinutes(date.getMinutes() + 1);
+    //     }
+    //     console.log("최종", result);
+    //     this.DataValues = result;
+    //   });
+    // },
+    // // 온/습도 분단위 테이블데이터 가져오는api
+    // getTableData_TempHumid() {
+    //   this.loading = true;
+    //   const { page, itemsPerPage } = this.options;
 
-        while (date <= end_date) {
-          let temp = source[i]; //그냥 2022-12-12 14:00 형식
+    //   let GetTempHumidParams = {
+    //     room: this.search_type_1, //실
+    //     section: this.search_type_2, //구역 넘버
+    //     startDate: this.s_date + " " + this.startTime, //시작일
+    //     endDate: this.e_date + " " + this.endTime, //종료일
+    //     page: page - 1,
+    //     size: itemsPerPage, //보여주고싶은 행의개수
+    //   };
+    //   api.smartfarm
+    //     .getTableDataTempHumid(GetTempHumidParams)
+    //     .then((res) => {
+    //       console.log(res);
+    //       // 이걸로 테이블만들기
 
-          if (temp != undefined) {
-            let today = new Date(temp.createdDate); //날짜 표준화형식
-            if (date.getTime() == today.getTime()) {
-              result.push({
-                date: Date(temp["createdDate"]).toString(),
-                hour_Humid_Value: temp["humidityAVG"],
-                hour_Temp_Value: temp["temperatureAVG"],
-                min_Humid_Value: temp["humidity"],
-                min_Temp_Value: temp["temperature"],
-              });
-              i++;
-              date.setMinutes(date.getMinutes() + 1);
-              continue;
-            }
-          }
-          result.push({
-            date: date.toString(),
-            hour_Humid_Value: 0,
-            hour_Temp_Value: 0,
-            min_Humid_Value: 0,
-            min_Temp_Value: 0,
-          });
-          date.setMinutes(date.getMinutes() + 1);
-        }
-        console.log("최종", result);
-        this.DataValues = result;
-      });
-    },
-    // 온/습도 분단위 테이블데이터 가져오는api
-    getTableData_TempHumid() {
-      this.loading = true;
-      const { page, itemsPerPage } = this.options;
+    //       this.loading = false; //로딩바
+    //       this.datas = res.data.readTempHumidSensorResponseDtos;
+    //       this.totalData = res.totalCount;
+    //       console.log("테이블데이타테이블데이타테이블데이타", this.datas);
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //     });
+    // },
+    // //양액PH 데이터 가져오는 api
+    // getWaterPHData() {
+    //   this.isLoading = true;
 
-      let GetTempHumidParams = {
-        room: this.search_type_1, //실
-        section: 1, //구역 넘버
-        startDate: this.s_date + " " + this.startTime, //시작일
-        endDate: this.e_date + " " + this.endTime, //종료일
-        page: page - 1,
-        size: itemsPerPage, //보여주고싶은 행의개수
-      };
-      api.smartfarm
-        .getTableDataTempHumid(GetTempHumidParams)
-        .then((res) => {
-          console.log(res);
-          this.loading = false; //로딩바
-          this.datas = res.data.readTempHumidSensorResponseDtos;
-          this.totalData = res.totalCount;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    //양액PH 데이터 가져오는 api
-    getWaterPHData() {
-      this.isLoading = true;
+    //   let GetWaterPHParams = {
+    //     startDate: this.s_date,
+    //     endDate: this.e_date,
+    //   };
 
-      let GetWaterPHParams = {
-        startDate: this.s_date,
-        endDate: this.e_date,
-      };
+    //   api.smartfarm.getWaterPH(GetWaterPHParams).then((res) => {
+    //     this.isLoading = false;
 
-      api.smartfarm.getWaterPH(GetWaterPHParams).then((res) => {
-        this.isLoading = false;
+    //     let AM = _.filter(res.data.responseData, { division: "오전" });
+    //     let PM = _.filter(res.data.responseData, { division: "오후" });
+    //     let inputDate = _.map(res.data.responseData, "inputDate");
+    //     let onlyAMResult = _.map(AM, "ph"); //오전값만있는어레이
+    //     let onlyPMResult = _.map(PM, "ph"); //오전값만있는어레이
+    //     let onlyOneDate = _.uniq(inputDate);
 
-        let AM = _.filter(res.data.responseData, { division: "오전" });
-        let PM = _.filter(res.data.responseData, { division: "오후" });
-        let inputDate = _.map(res.data.responseData, "inputDate");
-        let onlyAMResult = _.map(AM, "ph"); //오전값만있는어레이
-        let onlyPMResult = _.map(PM, "ph"); //오전값만있는어레이
-        let onlyOneDate = _.uniq(inputDate);
+    //     this.newData[1].AM_ph = onlyAMResult;
+    //     this.newData[1].PM_ph = onlyPMResult;
+    //     this.newData[1].inputDate = onlyOneDate;
+    //     console.log("phDataphDataphData", this.newData[1]);
+    //   });
+    // },
 
-        this.newData[1].AM_ph = onlyAMResult;
-        this.newData[1].PM_ph = onlyPMResult;
-        this.newData[1].inputDate = onlyOneDate;
-        console.log("phDataphDataphData", this.newData[1]);
-      });
-    },
-
-    //양액EC 데이터 가져오는 api
-    getWaterECData() {
-      let GetWaterECParams = {
-        startDate: this.s_date,
-        endDate: this.e_date,
-      };
-      api.smartfarm.getWaterEC(GetWaterECParams).then((res) => {
-        console.log(res);
-      });
-    },
+    // //양액EC 데이터 가져오는 api
+    // getWaterECData() {
+    //   let GetWaterECParams = {
+    //     startDate: this.s_date,
+    //     endDate: this.e_date,
+    //   };
+    //   api.smartfarm.getWaterEC(GetWaterECParams).then((res) => {
+    //     console.log(res);
+    //   });
+    // },
     clickTest(item) {
       this.selectedTabs = item;
     },

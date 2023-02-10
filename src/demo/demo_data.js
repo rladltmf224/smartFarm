@@ -3,7 +3,7 @@ let demo_side_data = [
   {
     title: "기초관리",
     active: true,
-    icon: "mdi-folder",
+    icon: "mdi-database-search",
     role: "ROLE_basisManagement",
     use: "Y",
     sort: 1,
@@ -29,6 +29,10 @@ let demo_side_data = [
         to: "storagemng",
       },
       {
+        title: "시설관리",
+        to: "facilitymng",
+      },
+      {
         title: "구매단가(거래처)",
         to: "warehousingprice",
       },
@@ -38,7 +42,7 @@ let demo_side_data = [
   {
     title: "생산관리",
     active: true,
-    icon: "mdi-folder",
+    icon: "mdi-factory",
     role: "ROLE_operationManagement",
     use: "Y",
     sort: 5,
@@ -120,7 +124,7 @@ let demo_side_data = [
   {
     title: "입고관리",
     active: true,
-    icon: "mdi-folder",
+    icon: "mdi-truck-delivery",
     role: "ROLE_warehousingManagement",
     use: "Y",
     sort: 4,
@@ -138,7 +142,7 @@ let demo_side_data = [
   {
     title: "출고관리",
     active: true,
-    icon: "mdi-folder",
+    icon: "mdi-application-export",
     role: "ROLE_releaseManagement",
     use: "Y",
     sort: 9,
@@ -160,7 +164,7 @@ let demo_side_data = [
   {
     title: "재고관리",
     active: true,
-    icon: "mdi-folder",
+    icon: "mdi-stack-overflow",
     role: "ROLE_inventoryManagement",
     use: "Y",
     sort: 10,

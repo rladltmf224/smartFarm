@@ -4,17 +4,20 @@
       <v-card
         v-for="(item, i) in outdoorSensor"
         :key="i"
-        class="d-flex justify-center flex-column align-center mx-1 text-center"
+        class="d-flex justify-center flex-column align-center mx-1 my-1 text-center"
         min-width="100"
       >
-        <v-card-text>
-          <span class="text-h5 font-weight-bold">
+        <v-card-text class="py-2">
+          <span class="text-subtitle-1 font-weight-bold">
             {{ outdoorSensor[i].sensorname }}
           </span>
           <v-spacer></v-spacer>
 
-          <span class="text-h6"
-            >{{ outdoorSensor[i].value }}{{ outdoorSensor[i].unit }}</span
+          <span class="text-h5 font-weight-bold" color="primary">{{
+            outdoorSensor[i].value.replace(" (없음)", "")
+          }}</span>
+          <span class="text-subtitle-2 font-weight-bold"
+            >&nbsp;{{ outdoorSensor[i].unit }}</span
           >
         </v-card-text>
       </v-card>
@@ -30,28 +33,17 @@
       >
         <v-icon dark> mdi-reload </v-icon>
       </v-btn>
-      <v-menu offset-y>
-        <template v-slot:activator="{ on, attrs }">
-          <v-badge overlap content="3">
-            <v-btn depressed v-bind="attrs" v-on="on" icon>
-              <v-icon color="black" large> mdi-bell </v-icon>
-            </v-btn>
-          </v-badge>
-        </template>
-        <v-list>
-          <v-list-item v-for="(item, index) in items" :key="index">
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
     </v-row>
 
     <v-row dense class="d-flex justify-md-center align-stretch">
       <v-col
         v-for="(n, index) in cards"
         :key="index"
-        lg="4"
-        :md="(12 / cards).toFixed(0)"
+        lg="6"
+        md="12"
+        sm="12"
+        xs="12"
+        class="d-flex justify-center"
       >
         <RoomInfo
           :roomData="n"
@@ -62,7 +54,7 @@
       </v-col>
     </v-row>
 
-    <!-- 다이아로그 -->
+    <!-- 조회 다이아로그 -->
     <v-row justify="center">
       <v-dialog v-model="dialog" max-width="1300">
         <v-card>
@@ -250,8 +242,8 @@
         </v-card>
       </v-dialog>
     </v-row>
-    <!-- 다이아로그 -->
-    <v-dialog v-model="control_modal" max-width="1000px">
+    <!-- 제어 다이아로그 -->
+    <v-dialog v-model="control_modal" max-width="1300">
       <v-card>
         <v-card-title>
           <span>{{ roomName_control }}</span>
@@ -264,6 +256,9 @@
               :items="bala_data"
               hide-default-footer
               class="elevation-1"
+              dense
+              fixed-header
+              height="650"
             >
               <template v-slot:[`item.currentStatus`]="{ item }">
                 <div
@@ -279,7 +274,7 @@
                   <v-btn
                     color="green"
                     text
-                    @click="clickChangeStatus(item, 'ON')"
+                    @click="openMemoModal('control', item, 'ON')"
                     value="ON"
                     dense
                     :loading="item.loadBtn"
@@ -291,7 +286,7 @@
                     color="red "
                     text
                     value="OFF"
-                    @click="clickChangeStatus(item, 'OFF')"
+                    @click="openMemoModal('control', item, 'OFF')"
                     dense
                     :loading="item.loadBtn"
                   >
@@ -302,7 +297,7 @@
                     color="blue"
                     text
                     value="AUTO"
-                    @click="clickChangeStatus(item, 'AUTO')"
+                    @click="openMemoModal('control', item, 'AUTO')"
                     dense
                     :loading="item.loadBtn"
                   >
@@ -310,270 +305,358 @@
                   </v-btn>
                 </v-btn-toggle>
               </template>
+              <template v-slot:[`item.repeatPeriod`]="{ item }">
+                <div v-if="item.repeatPeriod != null" style="width: 50px">
+                  <v-text-field
+                    prefix="일"
+                    type="number"
+                    :max="99"
+                    :min="0"
+                    v-model="item.repeatPeriod"
+                    reverse
+                    readonly
+                    @click="changePeriodValue(item)"
+                  ></v-text-field>
+                </div>
+                <div v-else style="width: 50px">-</div>
+              </template>
               <!-- 시간설정 -->
               <template v-slot:[`item.setting`]="{ item }">
                 <!-- LED부분 -->
-                <div class="d-flex" v-if="item.equipmentType == 'LED'">
-                  <form class="d-flex align-center">
-                    <label for="Timeinput">시작 : </label>
-                    <input
-                      @change="changeValue(item)"
-                      id="Timeinput1"
-                      class="py-2"
-                      type="time"
-                      v-model="item.minValue"
-                      :readonly="!item.modifiedBtn"
-                    />
-                    <label for="Timeinput2">종료 : </label>
-                    <input
-                      @change="changeValue(item)"
-                      id="Timeinput2"
-                      class="py-2"
-                      type="time"
-                      v-model="item.maxValue"
-                      :readonly="!item.modifiedBtn"
-                    />
-                  </form>
+                <div
+                  class="d-flex justify-end justify-sm-space-between align-center"
+                  v-if="
+                    item.equipmentType == 'LED' ||
+                    item.equipmentType == 'WDP' ||
+                    item.equipmentType == 'WSP'
+                  "
+                >
+                  <table>
+                    <tr v-if="item.details.length == 0">
+                      <td>
+                        <span> 세팅정보가 없습니다. 추가해주세요 </span>
+                      </td>
+                    </tr>
+                    <tr
+                      v-for="(data, index) in item.details"
+                      :key="index + data.startTime"
+                    >
+                      <td>
+                        <form
+                          class="d-flex justify-end justify-sm-space-between align-center"
+                        >
+                          <input
+                            @change="
+                              changeValue(
+                                data,
+                                item.equipmentName + '_s_' + index
+                              )
+                            "
+                            :ref="item.equipmentName + '_s_' + index"
+                            class="py-1"
+                            type="time"
+                            v-model="data.startTime"
+                            :readonly="!item.modifiedBtn"
+                          />
+                          <input
+                            @change="
+                              changeValue(
+                                data,
+                                item.equipmentName + '_e_' + index
+                              )
+                            "
+                            :ref="item.equipmentName + '_e_' + index"
+                            class="py-1"
+                            type="time"
+                            v-model="data.endTime"
+                            :readonly="!item.modifiedBtn"
+                          />
+                          <v-btn
+                            small
+                            icon
+                            @click="deleteSettingData(item, index)"
+                            v-if="item.modifiedBtn"
+                          >
+                            <v-icon>mdi-minus-box-outline</v-icon>
+                          </v-btn>
+                        </form>
+                      </td>
+                    </tr>
+                  </table>
+                  <div class="d-flex flex-column">
+                    <v-btn
+                      class="ml-1 mr-1"
+                      v-if="!item.modifiedBtn"
+                      @click="editValue(item, 'edit')"
+                      >수정</v-btn
+                    >
+                    <v-btn
+                      class="ml-1 mr-1 my-1"
+                      v-if="item.modifiedBtn"
+                      @click="openMemoModal('setting', item, null)"
+                      small
+                      >저장</v-btn
+                    >
+                    <v-btn
+                      class="ml-1 mr-1 my-1"
+                      v-if="item.modifiedBtn"
+                      @click="editValue(item, 'add')"
+                      small
+                      >추가</v-btn
+                    >
 
-                  <v-btn
-                    class="ml-3 mt-2 mr-3"
-                    v-if="!item.modifiedBtn"
-                    @click="editValue(item)"
-                    >수정</v-btn
-                  >
-                  <v-btn
-                    class="ml-3 mt-2 mr-3"
-                    v-if="item.modifiedBtn"
-                    @click="saveChangeValue(item)"
-                    small
-                    >저장</v-btn
-                  >
-                  <!-- <v-btn
-                    class="ml-3 mt-2 mr-3"
-                    v-if="item.modifiedBtn"
-                    @click="editValue(item)"
-                    small
-                    >추가</v-btn
-                  > -->
-                  <v-btn
-                    class="ml-3 mt-2 mr-3"
-                    v-if="item.modifiedBtn"
-                    @click="cancelChangeValue(item)"
-                    small
-                    >취소</v-btn
-                  >
-                  <p
-                    style="font-size: 2px; color: red"
-                    class="pt-4 px-2"
-                    v-if="item.timeChecker"
-                  >
-                    설정시간을 확인해주세요.
-                  </p>
+                    <v-btn
+                      class="ml-1 mr-1 my-1"
+                      v-if="item.modifiedBtn"
+                      @click="cancelChangeValue(item)"
+                      small
+                      >취소</v-btn
+                    >
+                  </div>
                 </div>
                 <!--가습기부분 -->
                 <div
-                  class="d-flex align-center"
-                  style="width: 300x"
-                  v-if="item.equipmentType == 'HUM'"
-                >
-                  <div>
-                    <v-text-field
-                      dense
-                      v-model="item.minValue"
-                      min="1"
-                      max="100"
-                      type="number"
-                      suffix="%"
-                      @change="changeValue(item)"
-                      width="30px"
-                    ></v-text-field>
-                  </div>
-
-                  <p class="pt-6 px-4">~</p>
-                  <div>
-                    <v-text-field
-                      dense
-                      min="1"
-                      max="100"
-                      type="number"
-                      suffix="%"
-                      v-model="item.maxValue"
-                      width="30px"
-                      @change="changeValue(item)"
-                    ></v-text-field>
-                  </div>
-
-                  <v-btn
-                    class="ml-3 mt-2 mr-3"
-                    v-if="!item.modifiedBtn"
-                    @click="editValue(item)"
-                    >수정</v-btn
-                  >
-
-                  <v-btn
-                    class="ml-3 mt-2 mr-3"
-                    v-if="item.modifiedBtn"
-                    @click="saveChangeValue(item)"
-                    small
-                    >저장</v-btn
-                  >
-                  <v-btn
-                    class="ml-3 mt-2 mr-3"
-                    v-if="item.modifiedBtn"
-                    @click="cancelChangeValue(item)"
-                    small
-                    >취소</v-btn
-                  >
-                </div>
-                <!--환기팬부분 -->
-                <div
-                  class="d-flex align-center"
-                  style="width: 300x"
-                  v-if="item.equipmentType == 'ACF'"
-                >
-                  <div class="" style="width: 108px">
-                    <v-text-field
-                      dense
-                      v-model="item.minValue"
-                      min="1"
-                      max="100"
-                      type="number"
-                      suffix="%"
-                      @change="changeValue(item)"
-                    ></v-text-field>
-                  </div>
-
-                  <p class="pt-6 px-4">~</p>
-                  <div class="" style="width: 108px">
-                    <v-text-field
-                      dense
-                      min="1"
-                      max="100"
-                      type="number"
-                      suffix="%"
-                      v-model="item.maxValue"
-                      @change="changeValue(item)"
-                    ></v-text-field>
-                  </div>
-
-                  <v-btn
-                    class="ml-3 mt-2 mr-3"
-                    v-if="!item.modifiedBtn"
-                    @click="editValue(item)"
-                    >수정</v-btn
-                  >
-
-                  <v-btn
-                    class="ml-3 mt-2 mr-3"
-                    v-if="item.modifiedBtn"
-                    @click="saveChangeValue(item)"
-                    small
-                    >저장</v-btn
-                  >
-                  <v-btn
-                    class="ml-3 mt-2 mr-3"
-                    v-if="item.modifiedBtn"
-                    @click="cancelChangeValue(item)"
-                    small
-                    >취소</v-btn
-                  >
-                </div>
-                <!-- 에어컨부분 -->
-                <div
-                  class="d-flex align-center"
-                  v-if="item.equipmentType == 'ACN'"
-                >
-                  <div class="d-flex align-center">
-                    <v-text-field
-                      dense
-                      v-model="item.minValue"
-                      min="1"
-                      max="100"
-                      type="number"
-                      @change="changeValue(item)"
-                    ></v-text-field
-                    >°C
-                  </div>
-
-                  <span class="ml-3 mr-3"> ~ </span>
-                  <div class="d-flex align-center">
-                    <v-text-field
-                      dense
-                      min="1"
-                      max="100"
-                      type="number"
-                      v-model="item.maxValue"
-                      @change="changeValue(item)"
-                    ></v-text-field
-                    >°C
-                  </div>
-
-                  <v-btn
-                    class="ml-3 mt-2 mr-3"
-                    v-if="!item.modifiedBtn"
-                    @click="editValue(item)"
-                    >수정</v-btn
-                  >
-
-                  <v-btn
-                    class="ml-3 mt-2 mr-3"
-                    v-if="item.modifiedBtn"
-                    @click="saveChangeValue(item)"
-                    small
-                    >저장</v-btn
-                  >
-                  <v-btn
-                    class="ml-3 mt-2 mr-3"
-                    v-if="item.modifiedBtn"
-                    @click="cancelChangeValue(item)"
-                    small
-                    >취소</v-btn
-                  >
-                </div>
-                <!-- 급수/배수 -->
-                <div
-                  class="d-flex"
+                  class="d-flex justify-end justify-sm-space-between align-center"
                   v-if="
-                    item.equipmentType == 'WSP' || item.equipmentType == 'WDP'
+                    item.equipmentType == 'HUM' || item.equipmentType == 'ACF'
                   "
                 >
-                  <form class="d-flex align-center">
-                    <label for="Timeinput">시작 : </label>
-                    <input
-                      @change="changeValue(item)"
-                      id="Timeinput1"
-                      class="py-2"
-                      type="time"
-                      v-model="item.minValue"
-                      :readonly="!item.modifiedBtn"
-                    />
-                    <label for="Timeinput2">종료 : </label>
-                    <input
-                      @change="changeValue(item)"
-                      id="Timeinput2"
-                      class="py-2"
-                      type="time"
-                      v-model="item.maxValue"
-                      :readonly="!item.modifiedBtn"
-                    />
-                  </form>
-                  <div class="d-flex justify-space-around">
+                  <table>
+                    <tr v-if="item.details.length == 0">
+                      <td>
+                        <span> 세팅정보가 없습니다. 추가해주세요 </span>
+                      </td>
+                    </tr>
+                    <tr
+                      v-for="(data, index) in item.details"
+                      :key="index + data.startTime"
+                    >
+                      <td>
+                        <form
+                          class="d-flex justify-end justify-sm-space-between align-center flex-wrap flex-sm-nowrap"
+                        >
+                          <div
+                            class="d-flex justify-end justify-sm-space-between align-center flex-nowrap"
+                          >
+                            <input
+                              @change="
+                                changeValue(
+                                  data,
+                                  item.equipmentName + '_s_' + index
+                                )
+                              "
+                              :ref="item.equipmentName + '_s_' + index"
+                              type="time"
+                              v-model="data.startTime"
+                              :readonly="!item.modifiedBtn"
+                            />
+                            <input
+                              @change="
+                                changeValue(
+                                  data,
+                                  item.equipmentName + '_e_' + index
+                                )
+                              "
+                              :ref="item.equipmentName + '_e_' + index"
+                              type="time"
+                              v-model="data.endTime"
+                              :readonly="!item.modifiedBtn"
+                            />
+                          </div>
+                          <div
+                            class="d-flex justify-end justify-sm-space-between flex-nowrap"
+                          >
+                            <div width="20">
+                              <v-text-field
+                                dense
+                                v-model="data.minValue"
+                                min="1"
+                                max="100"
+                                type="number"
+                                prefix="%"
+                                @change="changeValue(item)"
+                                :readonly="!item.modifiedBtn"
+                                reverse
+                                class="setting_text_width"
+                              >
+                              </v-text-field>
+                            </div>
+
+                            <span class="px-4">~</span>
+                            <v-text-field
+                              dense
+                              min="1"
+                              max="100"
+                              type="number"
+                              prefix="%"
+                              v-model="data.maxValue"
+                              @change="changeValue(item)"
+                              :readonly="!item.modifiedBtn"
+                              reverse
+                              class="setting_text_width"
+                            ></v-text-field>
+                            <v-btn
+                              small
+                              icon
+                              @click="deleteSettingData(item, index)"
+                              v-if="item.modifiedBtn"
+                            >
+                              <v-icon>mdi-minus-box-outline</v-icon>
+                            </v-btn>
+                          </div>
+                        </form>
+                      </td>
+                    </tr>
+                  </table>
+                  <div class="d-flex flex-column">
                     <v-btn
-                      class="ml-3 mt-2 mr-3"
+                      class="ml-1 mr-1"
                       v-if="!item.modifiedBtn"
                       @click="editValue(item)"
                       >수정</v-btn
                     >
 
                     <v-btn
-                      class="ml-3 mt-2 mr-3"
+                      class="ml-1 mr-1 my-1"
                       v-if="item.modifiedBtn"
-                      @click="saveChangeValue(item)"
+                      @click="openMemoModal('setting', item, null)"
                       small
                       >저장</v-btn
                     >
                     <v-btn
-                      class="ml-3 mt-2 mr-3"
+                      class="ml-1 mr-1 my-1"
+                      v-if="item.modifiedBtn"
+                      @click="editValue(item, 'add')"
+                      small
+                      >추가</v-btn
+                    >
+                    <v-btn
+                      class="ml-1 mr-1 my-1"
+                      v-if="item.modifiedBtn"
+                      @click="cancelChangeValue(item)"
+                      small
+                      >취소</v-btn
+                    >
+                  </div>
+                </div>
+
+                <!-- 에어컨부분 -->
+                <div
+                  class="d-flex justify-end justify-sm-space-between align-center"
+                  v-if="item.equipmentType == 'ACN'"
+                >
+                  <table>
+                    <tr v-if="item.details.length == 0">
+                      <td>
+                        <span> 세팅정보가 없습니다. 추가해주세요 </span>
+                      </td>
+                    </tr>
+                    <tr
+                      v-for="(data, index) in item.details"
+                      :key="index + data.startTime"
+                    >
+                      <td>
+                        <form
+                          class="d-flex align-center justify-end justify-sm-space-between flex-wrap flex-sm-nowrap"
+                        >
+                          <div
+                            class="d-flex align-center justify-end justify-sm-space-between flex-nowrap"
+                          >
+                            <input
+                              @change="
+                                changeValue(
+                                  data,
+                                  item.equipmentName + '_s_' + index
+                                )
+                              "
+                              :ref="item.equipmentName + '_s_' + index"
+                              type="time"
+                              v-model="data.startTime"
+                              :readonly="!item.modifiedBtn"
+                            />
+                            <input
+                              @change="
+                                changeValue(
+                                  data,
+                                  item.equipmentName + '_e_' + index
+                                )
+                              "
+                              :ref="item.equipmentName + '_e_' + index"
+                              type="time"
+                              v-model="data.endTime"
+                              :readonly="!item.modifiedBtn"
+                            />
+                          </div>
+                          <div
+                            class="d-flex align-center justify-end justify-sm-space-between flex-nowrap"
+                          >
+                            <div width="20">
+                              <v-text-field
+                                dense
+                                v-model="data.minValue"
+                                min="1"
+                                max="100"
+                                type="number"
+                                prefix="°C"
+                                @change="changeValue(item)"
+                                :readonly="!item.modifiedBtn"
+                                reverse
+                                class="setting_text_width"
+                              >
+                              </v-text-field>
+                            </div>
+
+                            <span class="px-4">~</span>
+                            <v-text-field
+                              dense
+                              min="1"
+                              max="100"
+                              type="number"
+                              prefix="°C"
+                              v-model="data.maxValue"
+                              @change="changeValue(item)"
+                              :readonly="!item.modifiedBtn"
+                              reverse
+                              class="setting_text_width"
+                            ></v-text-field>
+                            <v-btn
+                              small
+                              icon
+                              @click="deleteSettingData(item, index)"
+                              v-if="item.modifiedBtn"
+                            >
+                              <v-icon>mdi-minus-box-outline</v-icon>
+                            </v-btn>
+                          </div>
+                        </form>
+                      </td>
+                    </tr>
+                  </table>
+
+                  <div class="d-flex flex-column">
+                    <v-btn
+                      class="ml-1 mr-1"
+                      v-if="!item.modifiedBtn"
+                      @click="editValue(item)"
+                      >수정</v-btn
+                    >
+
+                    <v-btn
+                      class="ml-1 mr-1 my-1"
+                      v-if="item.modifiedBtn"
+                      @click="openMemoModal('setting', item, null)"
+                      small
+                      >저장</v-btn
+                    >
+                    <v-btn
+                      class="ml-1 mr-1 my-1"
+                      v-if="item.modifiedBtn"
+                      @click="editValue(item, 'add')"
+                      small
+                      >추가</v-btn
+                    >
+                    <v-btn
+                      class="ml-1 mr-1 my-1"
                       v-if="item.modifiedBtn"
                       @click="cancelChangeValue(item)"
                       small
@@ -599,6 +682,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <!-- 알람설정 -->
     <v-dialog v-model="alarm_modal" persistent max-width="650px">
       <v-card>
         <v-card-title>
@@ -698,6 +782,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <!-- 에어컨 설정 -->
     <v-dialog v-model="airCon_modal" persistent max-width="290">
       <v-card>
         <v-card-title class="headline">에어컨 설정정보</v-card-title>
@@ -719,6 +804,61 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- 메모 입력 -->
+    <v-dialog v-model="memo_modal" persistent max-width="650">
+      <v-card>
+        <v-card-title class="headline">메모 작성</v-card-title>
+        <v-card-text class="align-center">
+          <v-textarea
+            label="메모입력"
+            v-model="memo_text"
+            outlined
+            maxlength="100"
+          ></v-textarea>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="success" @click.native="okModal()">확인</v-btn>
+          <v-btn text color="success" @click.native="closeModal()">취소</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- 주기설정 -->
+    <v-dialog v-model="period_modal" persistent max-width="350">
+      <v-card>
+        <v-card-title class="headline">주기 설정</v-card-title>
+        <v-card-text>
+          <v-row dense>
+            <v-col offset="8" cols="4">
+              <v-text-field
+                label="설정주기"
+                type="number"
+                :min="0"
+                :max="99"
+                v-model.number="period_data.repeatPeriod"
+                reverse
+                prefix="일"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" class="text-right">
+              <span>
+                현재시간이 설정시간전일 경우 금일 실행되고
+                <v-spacer></v-spacer>
+                {{ addData(period_data.repeatPeriod) }}부터
+                실행예정입니다.</span
+              >
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="error" @click="period_modal = false">취소</v-btn>
+          <v-btn color="primary" @click="savePeriodValue">저장</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -736,6 +876,8 @@ import TestGraphTemp from "./TestGraphTemp.vue";
 import TestGraphWater from "./TestGraphWater.vue";
 import RoomInfo from "./Monitoring/RoomInfo.vue";
 
+import { mapGetters } from "vuex";
+
 const data = Data;
 let weatherFn;
 
@@ -749,17 +891,19 @@ export default {
   },
   data() {
     return {
+      period_data: "",
+      period_modal: false,
       airCon_modal: false,
       airCon_mode: "heat",
       airCon_val: 0,
       airCon_data: "",
       // 외부센서로딩
       roomName_control: "",
-      items: [
-        { title: "알람이력1" },
-        { title: "알람이력2" },
-        { title: "알람이력3" },
-      ],
+      // items: [
+      //   { title: "알람이력1" },
+      //   { title: "알람이력2" },
+      //   { title: "알람이력3" },
+      // ],
       headers_bala: [
         {
           text: "이름",
@@ -782,9 +926,16 @@ export default {
           width: "2%",
           align: "center",
         },
+        {
+          text: "주기",
+          value: "repeatPeriod",
+          sortable: false,
+          width: "4%",
+          align: "center",
+        },
 
         { text: "상세설정", value: "setting", width: "15%", align: "center" },
-        { text: "알람설정", value: "alarm", width: "4%", align: "center" },
+        { text: "알람설정", value: "alarm", width: "1%", align: "center" },
       ],
 
       loader: null,
@@ -950,8 +1101,14 @@ export default {
         pushYN: false,
       },
       ControlModal_currentVal: "",
+      detailData_before: "",
 
-      // 웹소켓
+      // memo
+      memo_modal: false,
+      memo_version: "",
+      memo_text: "",
+      temp_save_item: null,
+      temp_save_status: null,
     };
   },
 
@@ -1018,6 +1175,23 @@ export default {
   },
 
   methods: {
+    deleteSettingData(item, index) {
+      this.$swal
+        .fire({
+          title: "삭제",
+          text: "해당 세팅데이터를 삭제하시겠습니까?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "삭제",
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            return item.details.splice(index, 1);
+          }
+        });
+    },
     openControlModal(data) {
       let reqData = {
         roomId: data.roomId,
@@ -1028,7 +1202,13 @@ export default {
         res.data.responseData.forEach((element) => {
           element.modifiedBtn = false;
           element.loadBtn = false;
+
+          // element.details.forEach((el_sub) => {
+          //   el_sub.modifiedBtn = false;
+          //   el_sub.loadBtn = false;
+          // });
         });
+        this.bala_data_backup = _.cloneDeep(res.data.responseData);
         this.bala_data = res.data.responseData;
         this.roomName_control = data.roomName;
         this.control_modal = true;
@@ -1055,15 +1235,18 @@ export default {
       this.bala_data = [];
       this.roomName_control = "";
     },
-    clickChangeStatus(item, status) {
+    clickChangeStatus(item, status, memo) {
       console.log("clickChangeStatus", item, status);
-      if (item.controlStatus === status) {
-        return false;
-      }
+
+      // openMemoModal에서 체크함
+      // if (item.controlStatus === status) {
+      //   return false;
+      // }
 
       let req_data = {
         equipmentId: item.equipmentId,
         controlStatus: status,
+        memo: memo,
       };
 
       if (item.equipmentName === "에어컨" && status == "ON") {
@@ -1097,7 +1280,10 @@ export default {
       this.getDeviceList();
     },
     // 가습기 숫자입력 0~100
-    changeValue(item) {
+    changeValue(item, id) {
+      let html = this.$refs[id];
+      console.log("changeValue", html, id);
+
       item.modifiedBtn = true;
       item.modifiedText = false;
       item.timeChecker = false;
@@ -1116,47 +1302,153 @@ export default {
           item.maxValue = editedMaxNum;
         }
       }
-
-      //시간 입력할때 시간막기
-      if (item.equipmentName == "LED" || item.equipmentName == "팬") {
-        if (item.minValue > item.maxValue) {
-          console.log("시간막아야됌");
-          item.timeChecker = true;
-          item.modifiedBtn = false;
-        } else {
-          item.timeChecker = false;
-        }
-      }
     },
     //시간설정 수정할때
-    editValue(item) {
+    editValue(item, type) {
       item.modifiedBtn = true;
+
+      if (type == "add") {
+        return item.details.push({
+          startTime: "00:00",
+          endTime: "00:00",
+          minValue: "ON",
+          maxValue: "ON",
+        });
+      }
+
+      if (type == "edit") {
+        return (this.detailData_before = Object.assign({}, item.details));
+      }
     },
-    saveChangeValue(item) {
+    openMemoModal(mode, item, status) {
+      if (mode == "control") {
+        if (item.controlStatus === status) return;
+      }
+      this.memo_text = "";
+      this.memo_modal = true;
+      this.memo_version = mode;
+      this.temp_save_item = item;
+      this.temp_save_status = status;
+    },
+    okModal() {
+      if (this.memo_version == "control")
+        this.clickChangeStatus(
+          this.temp_save_item,
+          this.temp_save_status,
+          this.memo_text
+        );
+      else if (this.memo_version == "setting")
+        this.saveChangeValue(this.temp_save_item, this.memo_text);
+      else console.log("???");
+      this.memo_modal = false;
+      this.memo_version = "";
+      this.temp_save_item = null;
+      this.temp_save_status = null;
+    },
+    closeModal() {
+      this.memo_modal = false;
+      this.bala_data = _.cloneDeep(this.bala_data_backup);
+    },
+    saveChangeValue(item, memo) {
       let req_data = {
         equipmentId: item.equipmentId,
-        minValue: item.minValue,
-        maxValue: item.maxValue,
-        delayValue: item?.delayValue,
+        details: item.details,
+        memo: memo,
       };
 
-      api.smartfarm
-        .editEquipmentSetting(req_data)
-        .then((res) => {
-          console.log("성공");
-          if (res.status == 200) {
-            this.getDeviceList();
-          } else {
-            this.getDeviceList();
+      let validationYN_date = true;
+      let validationYN_val = true;
+
+      req_data.details.forEach((el) => {
+        if (el.startTime > el.endTime) {
+          validationYN_date = false;
+          return false;
+        }
+
+        if (el.equipmentType == "LED" || el.equipmentType == '"ACF"') {
+          if (el.startTime > el.endTime) {
+            validationYN_val = false;
+            return false;
           }
-        })
-        .catch((error) => {
-          console.log("실패");
-          this.getDeviceList();
+        }
+      });
+
+      if (!validationYN_date) {
+        //날짜확인
+        return this.$swal({
+          title: "날짜를 다시 확인해주세요",
+          icon: "error",
+          position: "top",
+          showCancelButton: false,
+          showConfirmButton: false,
+          toast: true,
+          timer: 1500,
         });
+      }
+
+      if (!validationYN_val) {
+        //값확인.
+        return this.$swal({
+          title: "세팅값을 다시 확인해주세요",
+          icon: "error",
+          position: "top",
+          showCancelButton: false,
+          showConfirmButton: false,
+          toast: true,
+          timer: 1500,
+        });
+      }
+
+      if (validationYN_val && validationYN_date) {
+        api.smartfarm
+          .editEquipmentSetting(req_data)
+          .then((res) => {
+            console.log("성공");
+            if (res.status == 200) {
+              this.getDeviceList();
+            } else {
+              this.getDeviceList();
+            }
+          })
+          .catch((error) => {
+            console.log("실패");
+            this.getDeviceList();
+          });
+      }
     },
     cancelChangeValue(item) {
-      return (item.modifiedBtn = false);
+      console.log(
+        "cancelChangeValue",
+        Object.entries(this.detailData_before).toString() ===
+          Object.entries(item.details).toString()
+      );
+      //Object.entries(this.detailData_before).toString() === Object.entries(item.details).toString();
+
+      let compareVal =
+        Object.entries(this.detailData_before).toString() ===
+        Object.entries(item.details).toString();
+
+      if (!compareVal) {
+        return this.$swal
+          .fire({
+            title: "확인",
+            text: "변경된 데이터가 있습니다. 취소하시겠습니까?",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "취소",
+          })
+          .then((result) => {
+            if (result.isConfirmed) {
+              this.bala_data = _.cloneDeep(this.bala_data_backup);
+              return (item.modifiedBtn = false);
+            }
+          });
+      } else {
+        this.bala_data = _.cloneDeep(this.bala_data_backup);
+        return (item.modifiedBtn = false);
+      }
     },
 
     // 제어상태변경 api입니다
@@ -1191,6 +1483,7 @@ export default {
         })
         .catch((error) => {
           console.log(error);
+          this.getDeviceList();
         });
     },
     getDeviceList() {
@@ -1203,6 +1496,7 @@ export default {
           element.modifiedBtn = false;
           element.loadBtn = false;
         });
+        this.bala_data_backup = _.cloneDeep(res.data.responseData);
         this.bala_data = res.data.responseData;
       });
       // getEquipmentInfo()
@@ -1546,6 +1840,43 @@ export default {
         console.log("제어항목조회후", this.cards);
       });
     },
+    changePeriodValue(data) {
+      this.period_modal = true;
+      console.log("data", data);
+      this.period_data = Object.assign({}, data);
+    },
+    addData(add) {
+      let date = new Date();
+      date.setDate(date.getDate() + add);
+      return `${date.getFullYear()}년 ${
+        date.getMonth() + 1
+      }월 ${date.getDate()}일`;
+    },
+    savePeriodValue() {
+      this.period_modal = false;
+      let reqData = {
+        equipmentId: this.period_data.equipmentId,
+        repeatPeriod: this.period_data.repeatPeriod, // 입력 안하면 기본값 1로 입력
+      };
+      api.smartfarm.editPeriodSetting(reqData).then((res) => {
+        if (res.status == 200) {
+          console.log("editPeriodSetting", res);
+          this.$swal({
+            title: "주기일자가 변경되었습니다.",
+            icon: "success",
+            position: "top",
+            showCancelButton: false,
+            showConfirmButton: false,
+            toast: true,
+            timer: 1500,
+          });
+          this.getDeviceList();
+        }
+      });
+
+      return;
+    },
+
     // 제어항목조회
   },
 };
@@ -1572,5 +1903,9 @@ div {
     @extend %circle;
     background: red;
   }
+}
+
+.setting_text_width {
+  width: 60px;
 }
 </style>

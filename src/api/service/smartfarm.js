@@ -26,6 +26,7 @@ export default {
     AuthAPI.get("/api/temphumid/history", {
       params: params,
     }),
+  temphumidRoomList: () => AuthAPI.get("/api/temphumid/roomlist"),
   co2: (params) =>
     AuthAPI.get("/api/sensor/history/co2", {
       params: params,
@@ -118,9 +119,8 @@ export default {
     AuthAPI.get("/api/equipment/info", {
       params: params,
     }),
-
-  getRoomLists: (params) =>
-    AuthAPI.get("/api/temphumid/roomlist", {
-      params: params,
+  editPeriodSetting: (item) =>
+    AuthAPI.put("/api/equipment/period", JSON.stringify(item), {
+      headers: { "Content-Type": "application/json" },
     }),
 };

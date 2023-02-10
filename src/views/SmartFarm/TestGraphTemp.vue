@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="chart-container">
-      <canvas class="j" ref="barChart" height="400" />
+      <canvas ref="barChart" />
     </div>
   </div>
 </template>
@@ -53,7 +53,7 @@ export default {
           borderColor: "red",
           tension: 0.1,
           backgroundColor: "red",
-          pointRadius: 3,
+          pointRadius: 2,
           borderWidth: 1,
           yAxisID: "y1",
         },
@@ -64,7 +64,7 @@ export default {
           borderColor: "blue",
           tension: 0.1,
           backgroundColor: "blue",
-          pointRadius: 3, //점 크기
+          pointRadius: 2, //점 크기
           borderWidth: 1, //라인굵기
           yAxisID: "y",
         },
@@ -73,9 +73,7 @@ export default {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-
       stacked: false,
-
       events: ["mousemove", "mouseout", "click", "touchstart", "touchmove"],
       interaction: {
         mode: "index",
@@ -180,9 +178,14 @@ export default {
         options: this.options,
       });
 
-      console.log("createChartttttttttttttttttt", this.name);
-      chart.update();
-      console.log("createChartttttttttttttttttt", this.name);
+      chart.canvas.parentNode.style.height = "400px";
+      //chart.canvas.parentNode.style.width = "1200px";
+
+      chart.resize();
+
+      // console.log("createChartttttttttttttttttt", this.name);
+      // chart.update();
+      // console.log("createChartttttttttttttttttt", this.name);
     },
 
     MakeGraph() {
@@ -224,3 +227,8 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+// .chart-container {
+//   width: auto;
+// }
+</style>

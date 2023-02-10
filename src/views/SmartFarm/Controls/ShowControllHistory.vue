@@ -21,7 +21,6 @@
                   </v-col>
                   <v-col cols="2" class="d-flex align-center">
                     <v-select
-                  
                       :items="search_list1"
                       label="제어항목"
                       v-model="search_type_1"
@@ -157,49 +156,72 @@
               multi-sort
             >
               <!-- 버튼을 chip으로 표현 -->
-              <template v-slot:item.valueBefore="{ item }">
+              <template v-slot:item.before="{ item }">
                 <!-- 수정전 버튼만-->
                 <div
                   v-if="
-                    item.valueBefore == 'ON' ||
-                    item.valueBefore == 'OFF' ||
-                    item.valueBefore == 'AUTO' ||
-                    item.valueAfter == 'ON' ||
-                    item.valueAfter == 'AUTO' ||
-                    item.valueAfter == 'OFF'
+                    item.before == 'ON' ||
+                    item.before == 'OFF' ||
+                    item.before == 'AUTO'
                   "
                 >
-                  <v-chip :color="getColor(item.valueBefore)" dark>
-                    {{ item.valueBefore }}
+                  <v-chip :color="getColor(item.before)" dark>
+                    {{ item.before }}
                   </v-chip>
                 </div>
                 <!-- 수정전 숫자만 -->
-                <div v-else>{{ item.valueBefore }}</div>
+                <span v-else v-html="item.before"></span>
+                <!-- <div v-else>{{ item.before }}</div> -->
               </template>
-              <template v-slot:item.valueAfter="{ item }">
+              <template v-slot:item.after="{ item }">
                 <!-- 수정후 버튼만 -->
                 <div
                   v-if="
-                    item.valueBefore == 'ON' ||
-                    item.valueAfter == 'OFF' ||
-                    item.valueAfter == 'AUTO' ||
-                    item.valueAfter == 'ON' ||
-                    item.valueAfter == 'AUTO' ||
-                    item.valueAfter == 'OFF'
+                    item.after == 'ON' ||
+                    item.after == 'AUTO' ||
+                    item.after == 'OFF'
                   "
                 >
-                  <v-chip :color="getColor(item.valueAfter)" dark>
-                    {{ item.valueAfter }}
+                  <v-chip :color="getColor(item.after)" dark>
+                    {{ item.after }}
                   </v-chip>
                 </div>
                 <!-- 수정후 숫자만 -->
-                <div v-else>{{ item.valueAfter }}</div>
+                <span v-else v-html="item.after"></span>
+                <!-- <div v-else>{{ item.after }}</div> -->
               </template>
-              <!-- 제어명칭 -->
-              <template v-slot:item.targetValue="{ item }">
-                {{ item.targetValue }}
+              <template v-slot:item.humidifier="{ item }">
+                <v-chip
+                  v-if="item.humidifier"
+                  :color="getColor(item.humidifier)"
+                  dark
+                >
+                  {{ item.humidifier }}
+                </v-chip>
               </template>
-              <!-- 제어명칭 -->
+              <template v-slot:item.airFan="{ item }">
+                <v-chip v-if="item.airFan" :color="getColor(item.airFan)" dark>
+                  {{ item.airFan }}
+                </v-chip>
+              </template>
+              <template v-slot:item.ledFirst="{ item }">
+                <v-chip
+                  v-if="item.ledFirst"
+                  :color="getColor(item.ledFirst)"
+                  dark
+                >
+                  {{ item.ledFirst }}
+                </v-chip>
+              </template>
+              <template v-slot:item.ledSecond="{ item }">
+                <v-chip
+                  v-if="item.ledSecond"
+                  :color="getColor(item.ledSecond)"
+                  dark
+                >
+                  {{ item.ledSecond }}
+                </v-chip>
+              </template>
             </v-data-table>
             <div class="text-center pt-2">
               <v-pagination v-model="page" :length="pageCount"></v-pagination>
@@ -235,9 +257,18 @@ export default {
         },
         { text: "제어명칭", value: "targetValue" },
 
-        { text: "수정전", value: "valueBefore" },
-        { text: "수정후", value: "valueAfter" },
+        { text: "수정전", value: "before" },
+        { text: "수정후", value: "after" },
         { text: "수정시간", value: "createdDate" },
+        { text: "온도", value: "temperature" },
+        { text: "습도", value: "humidity" },
+        { text: "에어컨", value: "settingTemperature" },
+        { text: "가습기", value: "humidifier" },
+        { text: "환기팬", value: "airFan" },
+        { text: "LED1", value: "ledFirst" },
+        { text: "LED2", value: "ledSecond" },
+        { text: "수정자", value: "createdId" },
+        { text: "메모", value: "memo" },
       ],
       datas: [],
       startDate: false,
@@ -247,9 +278,7 @@ export default {
       e_date: new Date().toISOString().substr(0, 10),
       menu1: false,
       menu2: false,
-      search_list1: [
-    
-      ],
+      search_list1: [],
       search_type_1: [],
       search_list2: [],
       search_type_2: "",
@@ -263,17 +292,14 @@ export default {
     };
   },
   created() {
-    api.smartfarm.getRoomlist().then((res)=>{
-      console.log('getRoomlist',res)
-      this.search_list2=res.data.responseData
-    })
-
- 
+    api.smartfarm.getRoomlist().then((res) => {
+      console.log("getRoomlist", res);
+      this.search_list2 = res.data.responseData;
+    });
   },
   mounted() {
     this.BeforeWeeks();
     this.getHistory();
-  
   },
   watch: {
     options: {
@@ -284,16 +310,16 @@ export default {
     },
   },
   methods: {
+    changeRoomData() {
+      let reqData = {
+        roomId: this.search_type_2,
+      };
 
-    changeRoomData(){
-      let reqData={
-        roomId:this.search_type_2
-      }
-
-      api.smartfarm.getEquipmentlist(reqData).then((res)=>{
-      console.log('getEquipmentlist',res)
-      this.search_list1 =res.data.responseData
-    })
+      api.smartfarm.getEquipmentlist(reqData).then((res) => {
+        console.log("getEquipmentlist", res);
+        this.search_type_1 = [];
+        this.search_list1 = res.data.responseData;
+      });
     },
     // 시작일을 일주일전으로
     BeforeWeeks() {
@@ -318,10 +344,10 @@ export default {
     },
     // 시작일을 일주일전으로
     // 수정전,수정후 버튼색
-    getColor(valueBefore) {
-      if (valueBefore == "ON") return "green";
-      else if (valueBefore == "OFF") return "grey";
-      else if (valueBefore == "AUTO") return "blue";
+    getColor(value) {
+      if (value == "ON") return "green";
+      else if (value == "OFF") return "grey";
+      else if (value == "AUTO") return "blue";
       else return "yellow";
     },
     // 제어상태 히스토리 api
@@ -332,8 +358,8 @@ export default {
       var item = {
         room: this.search_type_2,
         equipmentIds: this.search_type_1,
-        startDate: this.s_date ,
-        endDate: this.e_date ,
+        startDate: this.s_date,
+        endDate: this.e_date,
         page: page,
         size: itemsPerPage, //보여주고싶은 행의개수
         sortBy: sortBy,
@@ -345,6 +371,68 @@ export default {
           console.log("리스폰스리스폰스리스폰스리스폰스", response);
           this.loading = false; //로딩바
           this.datas = response.data.responseData;
+          this.datas.forEach((row) => {
+            row["before"] = "";
+            row["after"] = "";
+
+            if (row["targetValue"] == "설정변경") {
+              row["details"].forEach((detail) => {
+                if (
+                  detail["startTimeBefore"] ||
+                  detail["endTimeBefore"] ||
+                  detail["minValueBefore"] ||
+                  detail["maxValueBefore"]
+                ) {
+                  row["before"] +=
+                    detail["startTimeBefore"] +
+                    "~" +
+                    detail["endTimeBefore"] +
+                    "  " +
+                    detail["minValueBefore"];
+                  if (detail["minValueBefore"] != detail["maxValueBefore"]) {
+                    row["before"] += "~" + detail["maxValueBefore"];
+                  }
+                  row["before"] += "<br>";
+                }
+                if (
+                  detail["startTimeAfter"] ||
+                  detail["endTimeAfter"] ||
+                  detail["minValueAfter"] ||
+                  detail["maxValueAfter"]
+                ) {
+                  row["after"] +=
+                    detail["startTimeAfter"] +
+                    "~" +
+                    detail["endTimeAfter"] +
+                    "  " +
+                    detail["minValueAfter"];
+                  if (detail["minValueAfter"] != detail["maxValueAfter"]) {
+                    row["after"] += "~" + detail["maxValueAfter"];
+                  }
+                  row["after"] += "<br>";
+                }
+              });
+            } else if (row["targetValue"] == "주기설정") {
+              row["before"] =
+                "설정값 : " +
+                row["settingTemperatureBefore"] +
+                "<br>기준날짜 : " +
+                row["standardDateBefore"] +
+                "<br>반복기간 : " +
+                row["repeatPeriodBefore"];
+              row["after"] =
+                "설정값 : " +
+                row["settingTemperatureAfter"] +
+                "<br>기준날짜 : " +
+                row["standardDateAfter"] +
+                "<br>반복기간 : " +
+                row["repeatPeriodAfter"];
+            } else {
+              row["before"] = row["statusBefore"];
+              row["after"] = row["statusAfter"];
+            }
+          });
+          console.log("SSSSSSSSSSS", this.datas);
           this.totalData = response.data.totalCount; //나타낼 행의 개수
         })
         .catch((error) => {

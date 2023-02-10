@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import api from "@/api/service/login";
+import { Alarm } from "./modules/alarm.js";
 
 Vue.use(Vuex);
 
@@ -21,6 +22,7 @@ export default new Vuex.Store({
     // postman : 포스트맨 (서버 연결 끊겼을 때)
     // off : Data.json (인터넷 안될 때)
     mode: "on",
+    save_type: "",
   },
   getters: {
     GET_CURRENT: (state) => state.current,
@@ -50,6 +52,9 @@ export default new Vuex.Store({
       state.userInfo = info;
       state.userId = info["userId"];
     },
+    setSaveType(state, type) {
+      state.save_type = type;
+    },
     setCurrent(state, current) {
       state.current = current;
     },
@@ -59,6 +64,15 @@ export default new Vuex.Store({
       Vue.$cookies.remove("accessToken");
       Vue.$cookies.remove("refreshToken");
       Vue.$cookies.remove("userInfo");
+      if (state.save_type == "ID") {
+        Vue.$cookies.remove("pw");
+      }
+
+      if (state.save_type == "") {
+        Vue.$cookies.remove("pw");
+        Vue.$cookies.remove("id");
+      }
+
       console.log("로그아웃");
     },
   },
@@ -71,7 +85,14 @@ export default new Vuex.Store({
           console.log("getUserInfo", response);
 
           if (response.status == 200) {
-            console.log(response.data.responseData);
+            if (data.type == "ID") {
+              Vue.$cookies.set("id", data.account.userId, "7d"); // 7일
+            }
+
+            if (data.type == "IDPW") {
+              Vue.$cookies.set("id", data.account.userId, "7d"); // 7일
+              Vue.$cookies.set("pw", data.account.userPw, "7d"); // 7일
+            }
             commit("setUserId", response.data.responseData);
             return response;
           } else {
@@ -198,5 +219,7 @@ export default new Vuex.Store({
         });
     },
   },
-  modules: {},
+  modules: {
+    ALARM: Alarm,
+  },
 });
