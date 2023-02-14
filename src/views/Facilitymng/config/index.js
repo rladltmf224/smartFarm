@@ -7,7 +7,7 @@ export default {
     Locationheaders: [
       { text: "구역명", value: "name" },
       { text: "비고", value: "memo" },
-      { text: "사용여부", value: "productionId" },
+      { text: "사용여부", value: "jobOrderId" },
     ],
   },
 };
