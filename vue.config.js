@@ -20,9 +20,11 @@ module.exports = defineConfig({
   //   },
   // },
   outputDir: "./backend/public",
+  runtimeCompiler: true,
 });
 
 //target: "http://192.168.0.84:8080", // 설님 서버
 //target: "http://14.47.96.237:8081", // 테육 서버
 //설님 서버 id:master
 //설님 서버 password:qwer1234!@
+//브랜치 테스트

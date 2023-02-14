@@ -11,203 +11,198 @@
           >
         </v-card-title>
         <v-card-text>
-          <v-form ref="form" lazy-validation>
-            <v-row dense>
-              <v-col cols="3">
-                <v-text-field
-                  label="작업지시서명"
-                  oninput="javascript: if (this.value.length > 50) this.value = this.value.slice(0, 50);"
-                  :rules="ordername_rule"
-                  v-model="orderData.name"
-                  tabindex="1"
-                  required
-                  dense
-                ></v-text-field>
-              </v-col>
-              <v-col cols="1">
-                <v-select
-                  v-model="selectObject"
-                  :items="objectList"
-                  item-value="value"
-                  item-text="name"
-                  label="목적"
-                  dense
-                ></v-select>
-              </v-col>
-            </v-row>
-            <v-row dense>
-              <v-col cols="3">
-                <v-autocomplete
-                  label="거래처"
-                  v-model="orderData.customer"
-                  tabindex="2"
-                  item-value="id"
-                  :items="customerData"
-                  item-text="name"
-                  return-object
-                  required
-                  dense
-                ></v-autocomplete>
-              </v-col>
-
-              <v-col cols="2">
-                <v-autocomplete
-                  label="부서"
-                  v-model="orderData.department"
-                  tabindex="3"
-                  :items="departmentData"
-                  item-text="departmentName"
-                  item-value="departmentId"
-                  @change="selectedDepartment"
-                  return-object
-                  required
-                  dense
-                ></v-autocomplete>
-              </v-col>
-              <v-col cols="2">
-                <v-autocomplete
-                  tabindex="4"
-                  v-model="orderData.departmentchargeName"
-                  item-text="chargeName"
-                  item-value="id"
-                  :items="departmentCrewData"
-                  label="담당자"
-                  return-object
-                  required
-                  dense
-                ></v-autocomplete>
-              </v-col>
-              <v-col cols="3">
-                <v-menu
-                  tabindex="5"
-                  ref="deadline"
-                  v-model="menu_deadline_date"
-                  :close-on-content-click="false"
-                  :return-value.sync="deadline"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="auto"
-                >
-                  <template v-slot:activator="{ on, attrs }">
+          <v-card elevation="4">
+            <v-card-text>
+              <v-form ref="form" lazy-validation>
+                <v-row dense>
+                  <v-col cols="3">
                     <v-text-field
-                      label="마감일"
-                      v-model="orderData.deadline"
-                      prepend-icon="mdi-calendar"
-                      readonly
-                      v-bind="attrs"
-                      v-on="on"
+                      label="작업지시서명"
+                      oninput="javascript: if (this.value.length > 50) this.value = this.value.slice(0, 50);"
+                      :rules="ordername_rule"
+                      v-model="orderData.name"
+                      tabindex="1"
+                      required
                       dense
                     ></v-text-field>
-                  </template>
-                  <v-date-picker
-                    v-model="orderData.deadline"
-                    no-title
-                    scrollable
-                    locale="ko-KR"
-                  >
-                    <v-spacer></v-spacer>
-                    <v-btn
-                      text
-                      color="primary"
-                      @click="menu_deadline_date = false"
-                    >
-                      취소
-                    </v-btn>
-                    <v-btn
-                      text
-                      color="primary"
-                      @click="d_date_search(deadline)"
-                    >
-                      확인
-                    </v-btn>
-                  </v-date-picker>
-                </v-menu>
-              </v-col>
-            </v-row>
-            <v-row dense>
-              <v-col cols="3">
-                <v-autocomplete
-                  v-model="selectItem"
-                  :items="itemList"
-                  item-value="id"
-                  item-text="name"
-                  dense
-                  label="품종"
-                  @change="getProcessList"
-                ></v-autocomplete>
-              </v-col>
-              <v-col cols="3">
-                <v-select
-                  label="공정설정"
-                  :items="processList"
-                  v-model="selectProcess"
-                  item-value="processId"
-                  item-text="process_name"
-                  autocomplete
-                  :disabled="processList.length == 0"
-                  dense
-                ></v-select>
-              </v-col>
-              <v-col cols="2">
-                <v-text-field
-                  type="number"
-                  label="수량"
-                  max="9999999"
-                  min="0"
-                  dense
-                  reverse
-                  :rules="[numberRule]"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="1">
-                <v-btn color="primary" @click="openModal_equipment"
-                  >시설등록</v-btn
-                >
-              </v-col>
-            </v-row>
-            <v-row dense>
-              <div class="d-flex">
-                <!-- <v-chip-group class="d-flex">
-                  <v-chip
-                    v-for="data in selectEquipData_regi"
-                    label
-                    color="light-green accent-2"
-                    :key="data.facilityDetailId"
-                    @click:close="onClose(data)"
-                    close
-                  >
-                    {{ data.name }} ({{ data.memo }})
-                  </v-chip>
-                </v-chip-group> -->
-                <v-chip
-                  v-for="data in selectEquipData_regi"
-                  class="ma-1"
-                  label
-                  color="light-green accent-2"
-                  :key="data.facilityDetailId"
-                  @click:close="onClose(data)"
-                  close
-                >
-                  {{ data.facilityName }} ({{ data.name }})
-                </v-chip>
-              </div>
-            </v-row>
+                  </v-col>
+                  <v-col cols="1">
+                    <v-select
+                      v-model="orderData.selectObject"
+                      :items="objectList"
+                      item-value="value"
+                      item-text="name"
+                      label="목적"
+                      dense
+                    ></v-select>
+                  </v-col>
+                </v-row>
+                <v-row dense>
+                  <v-col cols="3">
+                    <v-autocomplete
+                      label="거래처"
+                      v-model="orderData.customer"
+                      tabindex="2"
+                      item-value="id"
+                      :items="customerData"
+                      item-text="name"
+                      :disabled="customerData.length == 0"
+                      return-object
+                      required
+                      dense
+                    ></v-autocomplete>
+                  </v-col>
 
-            <v-row dense>
-              <v-col>
-                <v-text-field
-                  class="pt-0"
-                  label="비고"
-                  v-model="orderData.memo"
-                  tabindex="6"
-                  dense
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </v-form>
+                  <v-col cols="2">
+                    <v-autocomplete
+                      label="부서"
+                      v-model="orderData.department"
+                      tabindex="3"
+                      :items="departmentData"
+                      item-text="departmentName"
+                      item-value="departmentId"
+                      @change="selectedDepartment"
+                      return-object
+                      required
+                      dense
+                    ></v-autocomplete>
+                  </v-col>
+                  <v-col cols="2">
+                    <v-autocomplete
+                      tabindex="4"
+                      v-model="orderData.departmentchargeId"
+                      item-text="chargeName"
+                      item-value="id"
+                      :items="departmentCrewList"
+                      :disabled="departmentCrewList.length == 0"
+                      label="담당자"
+                      required
+                      dense
+                    ></v-autocomplete>
+                  </v-col>
+                  <v-col cols="3">
+                    <v-menu
+                      tabindex="5"
+                      ref="deadline"
+                      v-model="menu_deadline_date"
+                      :close-on-content-click="false"
+                      :return-value.sync="deadline"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          label="마감일"
+                          v-model="orderData.deadline"
+                          prepend-icon="mdi-calendar"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                          dense
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="orderData.deadline"
+                        no-title
+                        scrollable
+                        locale="ko-KR"
+                      >
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="menu_deadline_date = false"
+                        >
+                          취소
+                        </v-btn>
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="d_date_search(deadline)"
+                        >
+                          확인
+                        </v-btn>
+                      </v-date-picker>
+                    </v-menu>
+                  </v-col>
+                </v-row>
+                <v-row dense>
+                  <v-col cols="3">
+                    <v-autocomplete
+                      v-model="orderData.selectItem"
+                      :items="itemList"
+                      item-value="id"
+                      item-text="name"
+                      dense
+                      label="품종"
+                      @change="getProcessList"
+                    ></v-autocomplete>
+                  </v-col>
+                  <v-col cols="3">
+                    <v-select
+                      label="공정설정"
+                      :items="processList"
+                      v-model="orderData.selectProcess"
+                      item-value="processId"
+                      item-text="process_name"
+                      autocomplete
+                      :disabled="processList.length == 0"
+                      dense
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="2">
+                    <v-text-field
+                      v-model="orderData.itemCount"
+                      type="number"
+                      label="수량"
+                      max="9999999"
+                      step="10"
+                      min="0"
+                      dense
+                      reverse
+                      :rules="[numberRule]"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="1">
+                    <v-btn color="primary" @click="openModal_equipment"
+                      >시설등록</v-btn
+                    >
+                  </v-col>
+                </v-row>
+                <v-row dense>
+                  <div class="d-flex">
+                    <v-chip
+                      v-for="data in orderData.selectEquipData_regi"
+                      class="ma-1"
+                      label
+                      color="light-green accent-2"
+                      :key="data.facilityDetailId"
+                      @click:close="onClose(data)"
+                      close
+                    >
+                      {{ data.facilityName }} ({{ data.name }})
+                    </v-chip>
+                  </div>
+                </v-row>
+
+                <v-row dense>
+                  <v-col>
+                    <v-text-field
+                      class="pt-0"
+                      label="비고"
+                      v-model="orderData.memo"
+                      tabindex="6"
+                      dense
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-form>
+            </v-card-text>
+          </v-card>
         </v-card-text>
         <v-card-actions>
-          <v-col class="text-right">
+          <v-row dense justify="end">
             <v-btn
               :disabled="itemTable.length == 0"
               v-show="change"
@@ -220,15 +215,15 @@
             <v-btn
               v-show="!change"
               :disabled="
-                this.orderData.name == '' &&
-                this.orderData.customer == '' &&
-                this.orderData.departmentName == '' &&
-                this.orderData.item == '' &&
+                this.orderData.name == '' ||
+                this.orderData.customer == '' ||
+                this.orderData.departmentName == '' ||
+                this.orderData.item == '' ||
                 this.orderData.memo == ''
               "
               class="mr-1"
               color="primary"
-              @click="getTemp"
+              @click="complete('temp')"
             >
               임 시 저 장
             </v-btn>
@@ -256,7 +251,7 @@
             >
               닫기
             </v-btn>
-          </v-col>
+          </v-row>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -370,7 +365,7 @@
               </span>
             </v-card-title>
             <v-card-text>
-              <v-item-group multiple :value="selectEquipData">
+              <v-item-group multiple>
                 <v-row class="d-flex justify-space-around">
                   <span v-if="el.details.length == 0"
                     ><p class="text-h6">등록된 시설이 없습니다</p></span
@@ -464,7 +459,18 @@ export default class OperationOrderModal extends Vue {
   templist: any[] = [];
   item: any = "";
   departmentCrewList: any[] = [];
-  orderData: any = [];
+  orderData: any = {
+    name: "",
+    selectObject: "",
+    customer: "",
+    department: "",
+    departmentchargeName: "",
+    deadline: "",
+    selectItem: "",
+    selectProcess: "",
+    selectEquipData_regi: [],
+    memo: "",
+  };
   itemName: any = "";
   selectedData: any;
   selectItem: any = 0;
@@ -499,7 +505,12 @@ export default class OperationOrderModal extends Vue {
   })
   editedCustomerData: any;
 
-  @Watch("orderData.department")
+  // @Watch("orderData.departmentchargeId", { deep: true })
+  // onChangeCharge() {
+  //   this.getDepartmentCrewList();
+  // }
+
+  //@Watch("orderData.department")
   onOrderDataChange() {
     if (
       this.orderData.department != "" &&
@@ -507,7 +518,9 @@ export default class OperationOrderModal extends Vue {
     ) {
       this.getDepartmentCrewList();
     } else {
+      this.orderData.departmentchargeId = "";
       this.orderData.departmentchargeName = "";
+      this.departmentCrewList = [];
     }
   }
 
@@ -556,9 +569,6 @@ export default class OperationOrderModal extends Vue {
   }
   get departmentData() {
     return this.departmentList;
-  }
-  get departmentCrewData() {
-    return this.departmentCrewList;
   }
 
   get itemTable() {
@@ -618,7 +628,7 @@ export default class OperationOrderModal extends Vue {
 
   saveEquipmentInfo() {
     this.equipment_modal = false;
-    this.selectEquipData_regi = _.cloneDeep(this.selectEquipData);
+    this.orderData.selectEquipData_regi = _.cloneDeep(this.selectEquipData);
   }
   closeModal_equipment() {
     this.equipment_modal = false;
@@ -650,9 +660,10 @@ export default class OperationOrderModal extends Vue {
       sortBy: [],
       sortDesc: [false],
     };
+    this.selectEquipData = [];
 
     api.item.getItemList(reqData).then((res) => {
-      console.log("getItemList", res);
+      //console.log("getItemList", res);
       this.itemList = res.data.responseData;
     });
   }
@@ -671,6 +682,8 @@ export default class OperationOrderModal extends Vue {
     let joborder;
     if (this.orderData.department != "") {
       this.keyword = this.orderData.department.departmentId;
+    } else {
+      return (this.departmentCrewList = []);
     }
 
     joborder = {
@@ -704,7 +717,7 @@ export default class OperationOrderModal extends Vue {
     ) {
       this.getDepartmentCrewList();
     } else {
-      this.orderData.departmentchargeName = "";
+      this.departmentCrewList = [];
     }
   }
   checkTempSave() {
@@ -767,17 +780,82 @@ export default class OperationOrderModal extends Vue {
       }
     }
   }
-  complete() {
+  complete(type?: string) {
     this.selectedData = [];
 
-    if (
-      this.orderData.name == "" ||
-      this.orderData.customer == "" ||
-      this.orderData.department == "" ||
-      this.orderData.departmentchargeName == "" ||
-      this.orderData.deadline == "" ||
-      this.itemTable.length == 0
-    ) {
+    let joborder = {
+      name: this.orderData.name,
+      accountId: this.orderData.departmentchargeId,
+      customerId: this.orderData.customer.id,
+      itemId: this.orderData.selectItem,
+      processId: this.orderData.selectProcess,
+      orderInfoDetailId: 1,
+      totalCount: this.orderData.itemCount,
+      type: this.orderData.selectObject,
+      deadline: this.orderData.deadline,
+      memo: this.orderData.memo,
+    };
+    // validation check -> use _.map
+    if (type == "temp") {
+      return this.getTemp(joborder);
+    }
+
+    let validation_check: boolean = false;
+    console.log("joborder");
+
+    for (const [key, value] of Object.entries(joborder)) {
+      if (key == "memo") {
+        continue;
+      }
+      console.log(`${key}: ${value}`);
+
+      if (value === "" || value === undefined || value === 0) {
+        validation_check = true;
+        break;
+      }
+      //
+    }
+
+    if (!validation_check) {
+      api.operation
+        .getOperationOrderPage(joborder)
+        .then((response) => {
+          if (response.status == 200) {
+            this.$swal({
+              title: "등록되었습니다.",
+              icon: "success",
+              position: "top",
+              showCancelButton: false,
+              showConfirmButton: false,
+              toast: true,
+              timer: 1500,
+            });
+            this.orderData = {
+              name: "",
+              customer: "",
+              department: "",
+              departmentchargeName: "",
+              deadline: "",
+              memo: "",
+              details: [],
+            };
+            this.openModal = false;
+          } else {
+            this.$swal({
+              title: "등록이 실패되었습니다.",
+              icon: "error",
+              position: "top",
+              showCancelButton: false,
+              showConfirmButton: false,
+              toast: true,
+              timer: 1500,
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
       this.$swal({
         title: "입력칸의 공백을 확인해주세요",
         icon: "error",
@@ -787,79 +865,6 @@ export default class OperationOrderModal extends Vue {
         toast: true,
         timer: 1500,
       });
-    } else {
-      let check = true;
-
-      for (var i = 0; i < this.itemTable.length; i++) {
-        if (this.itemTable[i].count == null) {
-          check = false;
-          this.$swal({
-            title: "입력된 수량이 없는 품목은 등록되지않습니다.",
-            icon: "error",
-            position: "top",
-            showCancelButton: false,
-            showConfirmButton: false,
-            toast: true,
-            timer: 1500,
-          });
-        } else {
-          this.selectedData.push({
-            itemId: this.itemTable[i].id,
-            itemName: this.itemTable[i].name,
-            count: this.itemTable[i].count,
-          });
-        }
-      }
-      if (check) {
-        let joborder;
-
-        joborder = {
-          name: this.orderData.name,
-          accountId: this.orderData.departmentchargeName,
-          customerId: this.orderData.customer.id,
-          deadline: this.orderData.deadline,
-          memo: this.orderData.memo,
-          details: this.selectedData,
-        };
-        api.operation
-          .getOperationOrderPage(joborder)
-          .then((response) => {
-            if (response.status == 200) {
-              this.$swal({
-                title: "등록되었습니다.",
-                icon: "success",
-                position: "top",
-                showCancelButton: false,
-                showConfirmButton: false,
-                toast: true,
-                timer: 1500,
-              });
-              this.orderData = {
-                name: "",
-                customer: "",
-                department: "",
-                departmentchargeName: "",
-                deadline: "",
-                memo: "",
-                details: [],
-              };
-              this.openModal = false;
-            } else {
-              this.$swal({
-                title: "등록이 실패되었습니다.",
-                icon: "error",
-                position: "top",
-                showCancelButton: false,
-                showConfirmButton: false,
-                toast: true,
-                timer: 1500,
-              });
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
     }
   }
   changeOn() {
@@ -869,7 +874,7 @@ export default class OperationOrderModal extends Vue {
       this.orderData.name == "" ||
       this.orderData.customer == "" ||
       this.orderData.department == "" ||
-      this.orderData.departmentchargeName == "" ||
+      this.orderData.departmentchargeId == "" ||
       this.orderData.deadline == "" ||
       this.itemTable.length == 0
     ) {
@@ -958,42 +963,7 @@ export default class OperationOrderModal extends Vue {
       }
     }
   }
-  getTemp() {
-    this.selectedData = [];
-    let joborderTemp;
-
-    joborderTemp = {
-      accountId: null,
-      name: this.orderData.name,
-      customerId: null,
-      deadline: this.orderData.deadline,
-      memo: this.orderData.memo,
-      details: this.selectedData,
-    };
-
-    if (this.itemTable != null) {
-      for (var i = 0; i < this.itemTable.length; i++) {
-        this.selectedData.push({
-          itemId: this.itemTable[i].id,
-          count: this.itemTable[i].count,
-        });
-      }
-    }
-
-    if (this.orderData.departmentchargeName == null) {
-      joborderTemp["accountId"] = null;
-    } else if (this.orderData.departmentchargeName != "") {
-      joborderTemp["accountId"] = this.orderData.departmentchargeName.id;
-    }
-
-    if (this.orderData.customer == null) {
-      joborderTemp["customerId"] = null;
-    } else if (
-      this.orderData.customer != "" ||
-      this.orderData.customer != null
-    ) {
-      joborderTemp["customerId"] = this.orderData.customer.id;
-    }
+  getTemp(joborderTemp: any) {
     api.operation
       .getOrderTempPage(joborderTemp)
       .then((response) => {
@@ -1144,29 +1114,22 @@ export default class OperationOrderModal extends Vue {
   }
   aboutTemp(event: any, item: any) {
     this.itemDetail = [];
+    console.log("aboutTemp", item.item);
 
     this.interimStorage = false;
-    this.orderData.name = item.name;
-    //customer 변수 확인 필요
-    // if (this.customer != null) {
-    //   this.orderData.customer = item.customer.id;
-    // }
-    this.orderData.department = {
-      departmentId: item.departmentId,
-      departmentName: item.departmentName,
-    };
-    this.orderData.departmentchargeName = item.chargeName;
-    this.orderData.deadline = item.deadline;
-    this.orderData.memo = item.memo;
-
-    for (var i = 0; i < item.details.length; i++) {
-      this.itemDetail[i] = {
-        count: item.details[i].count,
-        id: item.details[i].itemId,
-        name: item.details[i].itemName,
-        version: item.details[i].itemVersion,
-      };
-    }
+    this.orderData.name = item.item.name;
+    this.orderData.accountId = item.item.name;
+    this.orderData.department = item.item.departmentId;
+    this.orderData.departmentchargeId = item.item.chargeId;
+    this.orderData.departmentchargeName = item.item.chargeName;
+    this.orderData.selectItem = item.item.itemId;
+    this.orderData.selectProcess = item.item.processId;
+    this.orderData.customer = item.item.customer;
+    this.orderData.selectObject = item.item.type;
+    this.orderData.itemCount = item.item.totalCount;
+    this.orderData.deadline = item.item.deadline;
+    this.orderData.memo = item.item.memo;
+    this.getDepartmentCrewList();
   }
 
   getActiveCount(data: any) {
@@ -1198,15 +1161,18 @@ export default class OperationOrderModal extends Vue {
       })
       .then((result) => {
         if (result.isConfirmed) {
-          this.selectEquipData_regi = _.reject(this.selectEquipData_regi, {
-            facilityDetailId: data.facilityDetailId,
-          });
+          this.orderData.selectEquipData_regi = _.reject(
+            this.orderData.selectEquipData_regi,
+            {
+              facilityDetailId: data.facilityDetailId,
+            }
+          );
         }
       });
   }
   getProcessList() {
     let reqData = {
-      itemId: this.selectItem,
+      itemId: this.orderData.selectItem,
     };
     api.process.getProcessListbyItem(reqData).then((res) => {
       console.log("getProcessListbyItem", res.data.responseData);
