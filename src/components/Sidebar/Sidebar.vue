@@ -24,19 +24,25 @@
         <template v-slot:activator="{ on, attrs }">
           <v-badge
             overlap
-            :content="alarmList.length"
-            :value="alarmList.length"
+            :content="alarmOn ? alarmList.length : 0"
+            :value="alarmOn ? alarmList.length : 0"
             color="error"
           >
             <v-btn id="alarmBell" depressed v-bind="attrs" v-on="on" icon>
-              <v-icon :color="alarmList.length > 0 ? 'error' : 'black'" large>
+              <v-icon
+                v-if="alarmOn"
+                :color="alarmList.length > 0 ? 'error' : 'black'"
+                large
+              >
                 mdi-bell
               </v-icon>
+              <v-icon v-if="!alarmOn" color="grey" large> mdi-bell-off </v-icon>
             </v-btn>
           </v-badge>
         </template>
         <v-list>
           <v-list-item
+            v-if="alarmOn"
             v-for="(alarm, index) in alarmList"
             :key="index"
             two-line
@@ -49,6 +55,13 @@
               <v-list-item-subtitle class="pl-15">{{
                 alarm.body
               }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-content @click="alarmToggle()" class="alarmItem">
+              <v-list-item-title class="d-flex justify-center">
+                {{ alarmOn ? "알람 끄기" : "알람 켜기" }}
+              </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -158,6 +171,7 @@ export default class Sidebar extends Vue {
   @Ref() form: HTMLFormElement;
 
   mini: boolean = false;
+  alarmOn: boolean = true;
   userInfoDialog: boolean = false;
   to_home?: string = "monitoring";
   to_notdev?: string = "notdev";
@@ -360,6 +374,15 @@ export default class Sidebar extends Vue {
   // 알람 삭제
   removeAlarm(alarm: Object): void {
     this.$store.commit("ALARM/removeAlarm", alarm);
+  }
+
+  alarmToggle() {
+    this.alarmOn = !this.alarmOn;
+    if (this.alarmOn) {
+      console.log("알람을 받습니다");
+    } else {
+      console.log("알람을 받지 않습니다");
+    }
   }
 
   @Watch("alarmList.length", { deep: true })
