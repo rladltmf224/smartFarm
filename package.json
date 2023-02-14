@@ -19,6 +19,7 @@
     "dayjs": "^1.11.7",
     "easy-circular-progress": "^1.0.4",
     "firebase": "^9.16.0",
+    "firebase-tools": "^11.22.0",
     "i": "^0.3.7",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.21",

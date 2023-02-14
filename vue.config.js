@@ -7,18 +7,20 @@ module.exports = defineConfig({
   // },
   transpileDependencies: ["vuetify"],
   lintOnSave: false,
+  // devServer: {
+  //   proxy: {
+  //     "/api/": {
+  //       // target: "http://14.47.96.237:8081", // 메인
+  //       // target: "http://192.168.0.231:8080", // 메인
+  //       target: "http://192.168.0.84:8080", // 박설 연구원
+  //       // target: "http://192.168.0.38:8080", // 노현종 선임
+  //       // target: "http://192.168.0.126:9090", // 정호윤 연구원
+  //       changeOrigin: true,
+  //     },
+  //   },
+  // },
+  outputDir: "./backend/public",
   runtimeCompiler: true,
-  devServer: {
-    proxy: {
-      "/api/": {
-        target: "http://14.47.96.237:8081", // 노서버2
-        //target: "http://192.168.0.126:9090", // 노서버2
-        //target: "http://192.168.0.38:8080", // 노서버2
-        //target: "http://192.168.0.126:9090", // 호윤님 서버
-        changeOrigin: true,
-      },
-    },
-  },
 });
 
 //target: "http://192.168.0.84:8080", // 설님 서버
