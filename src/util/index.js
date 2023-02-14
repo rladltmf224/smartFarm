@@ -114,6 +114,18 @@ const obj = {
       });
     }
   },
+  isEmpty(val) {
+    if (
+      val === "" ||
+      val === null ||
+      val === undefined ||
+      (val !== null && typeof val === "object" && !Object.keys(val).length)
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  },
 };
 
 export default obj;
