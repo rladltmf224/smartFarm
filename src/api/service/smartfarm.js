@@ -123,4 +123,8 @@ export default {
     AuthAPI.put("/api/equipment/period", JSON.stringify(item), {
       headers: { "Content-Type": "application/json" },
     }),
+  getlatestControl: (params) =>
+    AuthAPI.get("/api/equipment/history/recent", {
+      params: params,
+    }),
 };

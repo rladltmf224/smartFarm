@@ -250,6 +250,7 @@
           <v-spacer></v-spacer>
         </v-card-title>
         <v-card-text>
+          <p v-html="latestRecord"></p>
           <v-col align-self="center">
             <v-data-table
               :headers="headers_bala"
@@ -904,6 +905,7 @@ export default {
       //   { title: "알람이력2" },
       //   { title: "알람이력3" },
       // ],
+      latestRecord: "",
       headers_bala: [
         {
           text: "이름",
@@ -1192,11 +1194,77 @@ export default {
           }
         });
     },
+    updateControlHistory(reqData) {
+      api.smartfarm.getlatestControl(reqData).then((res) => {
+        let record = res.data.responseData;
+        this.latestRecord =
+          "최신 제어 이력 : " +
+          record["createdDate"] +
+          " [" +
+          record["targetValue"] +
+          "] " +
+          record["equipmentName"];
+        if (
+          record["targetValue"] == "자동제어" ||
+          record["targetValue"] == "수동제어"
+        ) {
+          this.latestRecord +=
+            " " + record["statusBefore"] + " → " + record["statusAfter"];
+        }
+
+        this.latestRecord += " by " + record["createdId"];
+        if (record["memo"]) this.latestRecord += " (" + record["memo"] + ")";
+        if (record["targetValue"] == "설정변경") {
+          let beforeRecord = "";
+          let afterRecord = "";
+          record["details"].forEach((detail) => {
+            if (
+              detail["startTimeBefore"] ||
+              detail["endTimeBefore"] ||
+              detail["minValueBefore"] ||
+              detail["maxValueBefore"]
+            ) {
+              if (beforeRecord == "") beforeRecord += "<br>[Before] ";
+              else beforeRecord += " / ";
+              beforeRecord +=
+                detail["startTimeBefore"] +
+                "~" +
+                detail["endTimeBefore"] +
+                "  " +
+                detail["minValueBefore"];
+              if (detail["minValueBefore"] != detail["maxValueBefore"]) {
+                beforeRecord += "~" + detail["maxValueBefore"];
+              }
+            }
+            if (
+              detail["startTimeAfter"] ||
+              detail["endTimeAfter"] ||
+              detail["minValueAfter"] ||
+              detail["maxValueAfter"]
+            ) {
+              if (afterRecord == "") afterRecord += "<br>[After] ";
+              else afterRecord += " / ";
+              afterRecord +=
+                detail["startTimeAfter"] +
+                "~" +
+                detail["endTimeAfter"] +
+                "  " +
+                detail["minValueAfter"];
+              if (detail["minValueAfter"] != detail["maxValueAfter"]) {
+                afterRecord += "~" + detail["maxValueAfter"];
+              }
+            }
+          });
+          this.latestRecord += beforeRecord + afterRecord;
+        }
+      });
+    },
     openControlModal(data) {
       let reqData = {
         roomId: data.roomId,
       };
       this.ControlModal_currentVal = reqData.roomId;
+      this.updateControlHistory(reqData);
       api.smartfarm.getRoomContoller(reqData).then((res) => {
         console.log("getRoomContoller", res.data.responseData);
         res.data.responseData.forEach((element) => {
@@ -1490,6 +1558,7 @@ export default {
       let reqData = {
         roomId: this.ControlModal_currentVal,
       };
+      this.updateControlHistory(reqData);
       api.smartfarm.getRoomContoller(reqData).then((res) => {
         console.log("getRoomContoller", res.data.responseData);
         res.data.responseData.forEach((element) => {
