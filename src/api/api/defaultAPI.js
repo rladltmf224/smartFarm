@@ -4,7 +4,7 @@ import axios from "axios";
 function createInstance() {
   console.log("create defaultAPI Instance");
   const instance = axios.create({
-    //baseURL: process.env.VUE_APP_API_URL,
+    baseURL: process.env.VUE_APP_API_URL,
     // baseUrl: {
     //   dev: '/api/',
     //   pro: '/api/'
@@ -15,6 +15,8 @@ function createInstance() {
 }
 
 const instance = createInstance();
+
+console.log("default 인스턴스 생성", instance.defaults.baseURL);
 
 // 각 메소드별 함수를 생성해 주세요.
 export default {
