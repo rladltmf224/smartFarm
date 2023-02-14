@@ -1195,7 +1195,7 @@ export default {
         });
     },
     updateControlHistory(reqData) {
-      api.smartfarm.getlatestControll(reqData).then((res) => {
+      api.smartfarm.getlatestControl(reqData).then((res) => {
         let record = res.data.responseData;
         this.latestRecord =
           "최신 제어 이력 : " +
