@@ -139,7 +139,6 @@ import LoadingSpinner from "../Loading/LodingSpinner.vue"; // 로딩스피너
 
 export default class ShowTestForm extends Vue {
   deletePageNum: number = 0;
-
   graphData: any = [];
   graph_dialog: boolean = false;
   growthReportId: any = '';
