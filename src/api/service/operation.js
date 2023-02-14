@@ -27,6 +27,10 @@ export default {
   getOrderTempPage: (params) =>
     AuthAPI.post("/api/operation/joborder/temp", JSON.stringify(params)),
   getOrderTempListPage: () => AuthAPI.get("/api/operation/joborder/temp"),
+  getJobOrerDetail: (params) =>
+    AuthAPI.get("/api/operation/joborder/detail", {
+      params: params,
+    }),
   deletetempList: (params) =>
     AuthAPI.delete("/api/operation/joborder/temp", {
       params: {
