@@ -21,7 +21,7 @@ import production from "./service/production";
 import facility from "./service/facility";
 import process from "./service/process";
 import schedule from "./service/schedule";
-import webpush from "./alarm/firebase";
+// import webpush from "./alarm/firebase";
 // import kakao from ".alarm/kakao"
 
 export {
@@ -47,7 +47,7 @@ export {
   production,
   facility,
   process,
-  webpush,
+  // webpush,
   schedule,
   // kakao,
 };
