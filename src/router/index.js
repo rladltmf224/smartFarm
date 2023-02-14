@@ -182,16 +182,15 @@ const routes = [
           import("@/views/SmartFarm/OrderManagement/OrderManagement"),
       },
       {
-        path: "operationmng",
-        name: "operationmng",
-        component: () => import("@/views/operationMng/OperationMng"),
-        props: true,
-      },
-      {
         path: "notdev",
         alias: ["barcodemng", "processmng", "qualitymng", "equipment"],
         name: "NotDev ",
         component: () => import("@/components/page/NotDev/NotDev"),
+      },
+      {
+        path: "schedule",
+        name: "Schedule ",
+        component: () => import("@/views/Schedule/Schedule"),
       },
     ],
   },

@@ -131,7 +131,6 @@ export default {
   async post(...options) {
     try {
       const res = await instance.post(...options);
-      console.log("res", res);
       return res;
     } catch (e) {
       return e.response;

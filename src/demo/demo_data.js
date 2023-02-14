@@ -9,6 +9,10 @@ let demo_side_data = [
     sort: 1,
     subItems: [
       {
+        title: "일정관리",
+        to: "schedule",
+      },
+      {
         title: "유저관리",
         to: "membermng",
       },
@@ -47,10 +51,6 @@ let demo_side_data = [
     use: "Y",
     sort: 5,
     subItems: [
-      {
-        title: "생산관리",
-        to: "operationMng",
-      },
       {
         title: "작업지시서 등록",
         to: "operationOrder",
