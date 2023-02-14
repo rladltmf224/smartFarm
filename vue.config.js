@@ -7,13 +7,14 @@ module.exports = defineConfig({
   // },
   transpileDependencies: ["vuetify"],
   lintOnSave: false,
+  runtimeCompiler: true,
   devServer: {
     proxy: {
       "/api/": {
-        //target: "http://14.47.96.237:8081", // 노서버2
-        target: "http://192.168.0.126:9090", // 노서버2
+        target: "http://14.47.96.237:8081", // 노서버2
+        //target: "http://192.168.0.126:9090", // 노서버2
         //target: "http://192.168.0.38:8080", // 노서버2
-
+        //target: "http://192.168.0.126:9090", // 호윤님 서버
         changeOrigin: true,
       },
     },
