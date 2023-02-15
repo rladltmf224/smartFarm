@@ -47,7 +47,6 @@
                       :items="customerData"
                       item-text="name"
                       :disabled="customerData.length == 0"
-                      return-object
                       required
                       dense
                     ></v-autocomplete>
@@ -62,7 +61,6 @@
                       item-text="departmentName"
                       item-value="departmentId"
                       @change="selectedDepartment"
-                      return-object
                       required
                       dense
                     ></v-autocomplete>
@@ -243,12 +241,7 @@
             >
               등 록
             </v-btn>
-            <v-btn
-              class="closeBtn"
-              color="primary"
-              text
-              @click="openModal = false"
-            >
+            <v-btn class="closeBtn" color="primary" text @click="closeModal">
               닫기
             </v-btn>
           </v-row>
@@ -422,6 +415,7 @@ import * as api from "@/api";
 import cfg from "./config";
 import _ from "lodash";
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
+
 @Component
 export default class OperationOrderModal extends Vue {
   footer_option: {
@@ -445,7 +439,6 @@ export default class OperationOrderModal extends Vue {
   customerId: number | "" = "";
   customerList: any[] = [];
   departmentList: any[] = [];
-  keyword: string = "";
   deadline: string = "";
   menu_deadline_date: boolean = false;
   memo: string = "";
@@ -479,9 +472,8 @@ export default class OperationOrderModal extends Vue {
   selectEquipData: any[] = [];
   selectEquipData_regi: any[] = [];
   objectList: any[] = [
-    { name: "납품", value: "납품" },
-    { name: "실험", value: "실험" },
-    { name: "기타", value: "기타" },
+    { name: "납품", value: "ORDER" },
+    { name: "실험", value: "TEST" },
   ];
   selectObject: any = 0;
   processList: any[] = [];
@@ -512,10 +504,7 @@ export default class OperationOrderModal extends Vue {
 
   //@Watch("orderData.department")
   onOrderDataChange() {
-    if (
-      this.orderData.department != "" &&
-      this.orderData.department.departmentName != "전체"
-    ) {
+    if (this.orderData.department != 0) {
       this.getDepartmentCrewList();
     } else {
       this.orderData.departmentchargeId = "";
@@ -526,18 +515,22 @@ export default class OperationOrderModal extends Vue {
 
   @Watch("editedCustomerData")
   onEditedCustomerDataChange() {
-    this.itemDetail = [];
-    this.orderData = this.editedCustomerData;
-    var resultDetails: any = _.get(this.editedCustomerData, "details");
-    const newArray = resultDetails.map((item: any) => {
-      return {
-        id: item.itemId,
-        name: item.itemName,
-        version: item.itemVersion,
-        count: item.count,
-      };
-    });
-    this.itemDetail = newArray;
+    // this.itemDetail = [];
+    // this.orderData = this.editedCustomerData;
+    // var resultDetails: any = _.get(this.editedCustomerData, "details");
+    // const newArray = resultDetails.map((item: any) => {
+    //   return {
+    //     id: item.itemId,
+    //     name: item.itemName,
+    //     version: item.itemVersion,
+    //     count: item.count,
+    //   };
+    // });
+    // this.itemDetail = newArray;
+    console.log("editedCustomerData", this.editedCustomerData);
+    if (this.open) {
+      this.getDetailData(this.editedCustomerData.id);
+    }
   }
 
   @Watch("item")
@@ -580,6 +573,31 @@ export default class OperationOrderModal extends Vue {
     this.getDepartmentList();
     this.itemDetail = [];
     this.search = "";
+  }
+
+  getDetailData(id: any) {
+    let reqData = {
+      jobOrderId: id,
+    };
+    console.log("asdasd", reqData);
+    api.operation
+      .getJobOrerDetail(reqData)
+      .then((res) => {
+        console.log("getJobOrerDetail", res);
+        this.orderData.name = res.data.responseData.jobOrderName;
+        this.orderData.customer = res.data.responseData.customerId;
+        this.orderData.department = res.data.responseData.accountId;
+        this.orderData.departmentchargeId = res.data.responseData.accountId;
+        this.orderData.selectItem = res.data.responseData.itemId;
+        this.orderData.selectProcess = res.data.responseData.processId;
+        this.orderData.itemCount = res.data.responseData.totalCount;
+        this.orderData.type = res.data.responseData.type;
+        this.orderData.deadline = res.data.responseData.deadline;
+        this.orderData.memo = res.data.responseData.memo;
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
   }
 
   toggleEquip(btnData: any) {
@@ -645,7 +663,7 @@ export default class OperationOrderModal extends Vue {
     api.operation
       .getBasicDataPage()
       .then((response) => {
-        this.customerList = [{ name: "전체", code: "", id: "" }];
+        this.customerList = [{ name: "선택", code: "", id: "" }];
         this.customerList.push(...response.data.responseData.basicCustomers);
       })
       .catch((error) => {
@@ -671,7 +689,7 @@ export default class OperationOrderModal extends Vue {
     api.operation
       .getDepartmentDataPage()
       .then((response) => {
-        this.departmentList = [{ departmentName: "전체", departmentId: "" }];
+        this.departmentList = [{ departmentName: "선택", departmentId: 0 }];
         this.departmentList.push(...response.data.responseData);
       })
       .catch((error) => {
@@ -679,18 +697,12 @@ export default class OperationOrderModal extends Vue {
       });
   }
   getDepartmentCrewList() {
-    let joborder;
-    if (this.orderData.department != "") {
-      this.keyword = this.orderData.department.departmentId;
-    } else {
-      return (this.departmentCrewList = []);
-    }
+    if (this.orderData.department != 0) {
+      let joborder = {
+        departmentId: this.orderData.department,
+      };
 
-    joborder = {
-      departmentId: this.keyword,
-    };
-    if (this.keyword != null) {
-      api.operation
+      return api.operation
         .getDepartmentCrewDataPage(joborder)
         .then((response) => {
           this.departmentCrewList = response.data.responseData;
@@ -698,6 +710,8 @@ export default class OperationOrderModal extends Vue {
         .catch((error) => {
           console.log(error);
         });
+    } else {
+      return (this.departmentCrewList = []);
     }
   }
   getTempList() {
@@ -710,11 +724,10 @@ export default class OperationOrderModal extends Vue {
         console.log(error);
       });
   }
-  selectedDepartment() {
-    if (
-      this.orderData.department != "" &&
-      this.orderData.department.departmentName != "전체"
-    ) {
+  selectedDepartment(data: any) {
+    this.orderData.departmentchargeId = "";
+    if (this.orderData.department != 0) {
+      console.log("selectedDepartment", data);
       this.getDepartmentCrewList();
     } else {
       this.departmentCrewList = [];
@@ -729,64 +742,13 @@ export default class OperationOrderModal extends Vue {
       this.orderData.memo == ""
     );
   }
-  plus() {
-    if (this.selectedProduct.length == 0) {
-      this.$swal({
-        title: "품목이 선택되지 않았습니다.",
-        icon: "warning",
-        position: "top",
-        showCancelButton: false,
-        showConfirmButton: false,
-        toast: true,
-        timer: 1500,
-      });
-    } else {
-      if (this.selectedProduct.length != 0) {
-        let totalID: any = _.map(this.itemDetail, "id");
-
-        for (var i = 0; i < this.selectedProduct.length; i++) {
-          let plusItem: any = this.selectedProduct[i];
-          if (totalID.includes(plusItem.id)) continue;
-          //plusItem["id"] = plusItem["id"];
-          plusItem["count"] = null;
-          this.itemDetail.push(plusItem);
-        }
-
-        this.selectedProduct = [];
-      }
-    }
-  }
-  minus() {
-    if (this.orderData.details.length == 0) {
-      this.$swal({
-        title: "취소시킬 원자재가 선택되지 않았습니다.",
-        icon: "warning",
-        position: "top",
-        showCancelButton: false,
-        showConfirmButton: false,
-        toast: true,
-        timer: 1500,
-      });
-    } else {
-      if (this.orderData.details.length != 0) {
-        let removeID: any = [];
-        for (var i = 0; i < this.orderData.details.length; i++) {
-          removeID.push(this.orderData.details[i].id);
-        }
-        this.itemDetail = _.reject(this.itemDetail, function (o) {
-          return removeID.includes(o.id);
-        });
-        this.orderData.details = [];
-      }
-    }
-  }
   complete(type?: string) {
     this.selectedData = [];
 
     let joborder = {
       name: this.orderData.name,
       accountId: this.orderData.departmentchargeId,
-      customerId: this.orderData.customer.id,
+      customerId: this.orderData.customer,
       itemId: this.orderData.selectItem,
       processId: this.orderData.selectProcess,
       orderInfoDetailId: 1,
@@ -1169,6 +1131,19 @@ export default class OperationOrderModal extends Vue {
           );
         }
       });
+  }
+  closeModal() {
+    this.openModal = false;
+    this.orderData.name = "";
+    this.orderData.departmentchargeId = "";
+    this.orderData.customer = "";
+    this.orderData.selectItem = "";
+    this.orderData.selectProcess = "";
+
+    this.orderData.itemCount = "";
+    this.orderData.selectObject = "";
+    this.orderData.deadline = "";
+    this.orderData.memo = "";
   }
   getProcessList() {
     let reqData = {

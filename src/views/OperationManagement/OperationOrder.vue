@@ -232,13 +232,13 @@
               </v-btn>
             </template>
 
-            <template v-slot:item.deadline="{ item }">
+            <template v-slot:[`item.deadline`]="{ item }">
               {{ item.deadline }}
             </template>
 
-            <template v-slot:item.edit="{ item }">
+            <template v-slot:[`item.edit`]="{ item }">
               <v-icon
-                v-show="item.status == '대기'"
+                v-show="item.status == '대기' || item.status == '생산전'"
                 small
                 class="mr-1"
                 @click="changeData(item)"
@@ -246,7 +246,7 @@
                 mdi-pencil
               </v-icon>
               <v-icon
-                v-show="item.status == '대기'"
+                v-show="item.status == '대기' || item.status == '생산전'"
                 small
                 @click="deleteData(item)"
               >
@@ -254,9 +254,9 @@
               </v-icon>
             </template>
 
-            <template v-slot:item.changeOrder="{ item }">
+            <template v-slot:[`item.changeOrder`]="{ item }">
               <v-btn
-                v-show="item.status == '대기'"
+                v-show="item.status == '대기' || item.status == '생산전'"
                 text
                 small
                 fluid
@@ -791,7 +791,7 @@ export default class OperationOrder extends Vue {
       id: item.id,
     };
 
-    if (item.status == "대기") {
+    if (item.status == "생산전") {
       this.$swal
         .fire({
           title: "삭제",

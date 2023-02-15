@@ -8,8 +8,7 @@
                 수주 수정
             </v-card-title>
             <v-card-text>
-                <v-container id="dialogBox" max-width="1400px " fluid>
-                    <v-row dense class="d-flex align-center">
+                <v-row dense class="d-flex align-center">
                         <v-col cols="2" class="pa-0 pl-2 mr-2">
                             <v-menu tabindex="5" ref="menu_orderDate" v-model="menu_orderDate"
                                 :close-on-content-click="false" :return-value.sync="menu_orderDate"
@@ -257,7 +256,6 @@
                             <v-text-field class="" label="요청사항" v-model="order.memo" tabindex="6"></v-text-field>
                         </v-col>
                     </v-row>
-                </v-container>
             </v-card-text>
             <v-card-actions>
                 <v-row dense>
