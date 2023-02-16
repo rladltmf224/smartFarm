@@ -8,7 +8,8 @@
                 수주 수정
             </v-card-title>
             <v-card-text>
-                <v-row dense class="d-flex align-center">
+                <v-container id="dialogBox" max-width="1400px " fluid>
+                    <v-row dense class="d-flex align-center">
                         <v-col cols="2" class="pa-0 pl-2 mr-2">
                             <v-menu tabindex="5" ref="menu_orderDate" v-model="menu_orderDate"
                                 :close-on-content-click="false" :return-value.sync="menu_orderDate"
@@ -33,29 +34,29 @@
                                 tabindex="6"></v-text-field>
                         </v-col>
                         <!-- <v-col cols="2" class="pa-0 pl-2 mr-2">
-                            <v-menu tabindex="5" ref="menu_deliveryDate" v-model="menu_deliveryDate"
-                                :close-on-content-click="false" :return-value.sync="menu_deliveryDate"
-                                transition="scale-transition" offset-y min-width="auto">
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-text-field label="납품예정일" v-model="order.deliveryDate" prepend-icon="mdi-calendar"
-                                        readonly v-bind="attrs" dense v-on="on"></v-text-field>
-                                </template>
-                                <v-date-picker v-model="order.deliveryDate" no-title scrollable locale="ko-KR">
-                                    <v-spacer></v-spacer>
-                                    <v-btn text color="primary" @click="menu_deliveryDate = false">
-                                        취소
-                                    </v-btn>
-                                    <v-btn text color="primary" @click="d_date_search_delivery(order.deliveryDate)">
-                                        확인
-                                    </v-btn>
-                                </v-date-picker>
-                            </v-menu>
-                        </v-col> -->
+                                                                                                                                                                                                                                                                                                                <v-menu tabindex="5" ref="menu_deliveryDate" v-model="menu_deliveryDate"
+                                                                                                                                                                                                                                                                                                                    :close-on-content-click="false" :return-value.sync="menu_deliveryDate"
+                                                                                                                                                                                                                                                                                                                    transition="scale-transition" offset-y min-width="auto">
+                                                                                                                                                                                                                                                                                                                    <template v-slot:activator="{ on, attrs }">
+                                                                                                                                                                                                                                                                                                                        <v-text-field label="납품예정일" v-model="order.deliveryDate" prepend-icon="mdi-calendar"
+                                                                                                                                                                                                                                                                                                                            readonly v-bind="attrs" dense v-on="on"></v-text-field>
+                                                                                                                                                                                                                                                                                                                    </template>
+                                                                                                                                                                                                                                                                                                                    <v-date-picker v-model="order.deliveryDate" no-title scrollable locale="ko-KR">
+                                                                                                                                                                                                                                                                                                                        <v-spacer></v-spacer>
+                                                                                                                                                                                                                                                                                                                        <v-btn text color="primary" @click="menu_deliveryDate = false">
+                                                                                                                                                                                                                                                                                                                            취소
+                                                                                                                                                                                                                                                                                                                        </v-btn>
+                                                                                                                                                                                                                                                                                                                        <v-btn text color="primary" @click="d_date_search_delivery(order.deliveryDate)">
+                                                                                                                                                                                                                                                                                                                            확인
+                                                                                                                                                                                                                                                                                                                        </v-btn>
+                                                                                                                                                                                                                                                                                                                    </v-date-picker>
+                                                                                                                                                                                                                                                                                                                </v-menu>
+                                                                                                                                                                                                                                                                                                            </v-col> -->
 
                         <v-col cols="1" class="pa-0 pl-2 mr-2">
                             <v-autocomplete dense label="부서" v-model="departmentchargeName" tabindex="3"
-                                :items="departmentList" @change="test()" item-text="departmentName"
-                                item-value="departmentId" return-object required></v-autocomplete>
+                                :items="departmentList" item-text="departmentName" item-value="departmentId" return-object
+                                required></v-autocomplete>
                         </v-col>
                         <v-col cols="1" class="pa-0 pl-2 mr-2">
                             <v-autocomplete dense label="담당자" v-model="order.accountId" tabindex="3"
@@ -140,8 +141,7 @@
                                         <template v-slot:item.supplyUnitPrice="props">
                                             <v-text-field class="pa-0 countFont"
                                                 oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');"
-                                                placeholder="*단가" v-model="props.item.supplyUnitPrice" single-line
-                                                dense>
+                                                placeholder="*단가" v-model="props.item.supplyUnitPrice" single-line dense>
                                                 {{ props.item.supplyUnitPrice }}
                                             </v-text-field>
                                         </template>
@@ -158,20 +158,20 @@
                                             </v-menu>
                                         </template>
                                         <template v-slot:item.memo="props">
-                                            <v-text-field class="pa-0 countFont" placeholder="메모"
-                                                v-model="props.item.memo" dense single-line>
+                                            <v-text-field class="pa-0 countFont" placeholder="메모" v-model="props.item.memo"
+                                                dense single-line>
                                                 {{ props.item.memo }}
                                             </v-text-field>
                                         </template>
                                         <template v-slot:item.facilityDetailId="props">
                                             <v-autocomplete dense v-model="departmentchargeName" tabindex="3"
-                                                :items="departmentList" item-text="departmentName"
-                                                item-value="departmentId" return-object required></v-autocomplete>
+                                                :items="departmentList" item-text="departmentName" item-value="departmentId"
+                                                return-object required></v-autocomplete>
                                         </template>
                                         <template v-slot:item.processId="props">
                                             <v-autocomplete dense v-model="departmentchargeName" tabindex="3"
-                                                :items="departmentList" item-text="departmentName"
-                                                item-value="departmentId" return-object required></v-autocomplete>
+                                                :items="departmentList" item-text="departmentName" item-value="departmentId"
+                                                return-object required></v-autocomplete>
                                         </template>
 
 
@@ -198,10 +198,10 @@
                                 <v-col cols="3">
                                     <h4 class="pl-2 mb-1">수주품목 목록</h4>
                                     <v-data-table multi-sort class="ml-2 mr-2 overflow-scroll elevation-4" show-select
-                                        fixed-header v-model="selectedProduct" height="400"
-                                        :headers="register_itemheaders" :search="searchItem" :items="itemData"
-                                        return-object item-key="itemId" dense :items-per-page="50"
-                                        :footer-props="footer_option" disable-pagination hide-default-footer>
+                                        fixed-header v-model="selectedProduct" height="400" :headers="register_itemheaders"
+                                        :search="searchItem" :items="itemData" return-object item-key="itemId" dense
+                                        :items-per-page="50" :footer-props="footer_option" disable-pagination
+                                        hide-default-footer>
                                         <template v-slot:no-data>
                                             <h5>거래처 조회를 먼저 해주세요.</h5>
                                         </template>
@@ -227,8 +227,7 @@
                                         <template v-slot:item.supplyUnitPrice="props">
                                             <v-text-field class="pa-0 countFont"
                                                 oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');"
-                                                placeholder="*단가" v-model="props.item.supplyUnitPrice" single-line
-                                                dense>
+                                                placeholder="*단가" v-model="props.item.supplyUnitPrice" single-line dense>
                                                 {{ props.item.supplyUnitPrice }}
                                             </v-text-field>
                                         </template>
@@ -245,8 +244,8 @@
                                             </v-menu>
                                         </template>
                                         <template v-slot:item.memo="props">
-                                            <v-text-field class="pa-0 countFont" placeholder="메모"
-                                                v-model="props.item.memo" dense single-line>
+                                            <v-text-field class="pa-0 countFont" placeholder="메모" v-model="props.item.memo"
+                                                dense single-line>
                                                 {{ props.item.memo }}
                                             </v-text-field>
                                         </template>
@@ -266,25 +265,21 @@
                         </v-row>
                         <v-row>
                             <v-col cols="12" class="d-flex justify-center">
-                                <v-col cols="12
-                                ">
-                                    <v-text-field class="" label="요청사항" v-model="order.memo"
-                                        tabindex="6"></v-text-field>
+                                <v-col
+                                    cols="12
+                                                                                                                                                                                                                                                                                                                    ">
+                                    <v-text-field class="" label="요청사항" v-model="order.memo" tabindex="6"></v-text-field>
                                 </v-col>
                             </v-col>
                         </v-row>
                     </v-sheet>
                     <!--                     
-                    <v-row dense class="d-flex align-center  justify-center">
-                        <v-col cols="12">
-                            <v-text-field class="" label="요청사항" v-model="order.memo" tabindex="6"></v-text-field>
-                        </v-col>
-<<<<<<< HEAD
-                    </v-row>
-=======
-                    </v-row> -->
+                                                                                                                                                                                                                                                                                                        <v-row dense class="d-flex align-center  justify-center">
+                                                                                                                                                                                                                                                                                                            <v-col cols="12">
+                                                                                                                                                                                                                                                                                                                <v-text-field class="" label="요청사항" v-model="order.memo" tabindex="6"></v-text-field>
+                                                                                                                                                                                                                                                                                                            </v-col>
+                                                                                                                                                                                                                                                                                                        </v-row> -->
                 </v-container>
->>>>>>> origin/yiseul
             </v-card-text>
             <v-card-actions>
                 <v-row dense>
@@ -305,10 +300,116 @@
 
 
 
-    </v-dialog>
-
+</v-dialog>
 </template>
 <script lang="ts">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import * as api from "@/api";
 import cfg from "./config/index";
 import _, { functionsIn } from "lodash";
@@ -358,7 +459,7 @@ export default class OrderManagementModal extends Vue {
 
     order: any =
         {
-            accountId: 0,//담당자아이디
+            accountId: {},
             orderDate: "2023-01-13",  //수주일자
             orderNum: '', //수주번호
             deliveryDate: '', //납품예정일
@@ -367,14 +468,7 @@ export default class OrderManagementModal extends Vue {
             details: [] //수주품목의 디테일
         }
 
-    Order: any = {
-        orderDate: "2023-01-13", //수주일자 
-        customerId: 0, //거래처 고유아이디 
-        orderNum: '', //수주번호
-        accountId: 0,  //작업지시서 자동 생성을 위한 데이터 (담당자)
-        memo: "수주 특이사항 없음", //요청사항
-        details: []//수주품목의 디테일
-    }
+
     customerName: '' //거래처 이름    
     itemData: any[] = []; //수주정보 상세조회 resData
     menu_orderDate: boolean = false; //수주일자 datepicker
@@ -473,7 +567,6 @@ export default class OrderManagementModal extends Vue {
     }
 
     selectedDepartment() {
-        this.order.accountId = ''
 
         let item: any = {
             departmentId: this.departmentchargeName.departmentId
@@ -483,8 +576,6 @@ export default class OrderManagementModal extends Vue {
 
 
     get openModal() {
-        this.order.accountId = ''
-        this.order.departmentAccountsLists = []
         this.getDepartMentLists()
         if (this.change) {
             api.order.getItems().then((res) => {
@@ -551,6 +642,7 @@ export default class OrderManagementModal extends Vue {
         deliveryDate.save(v);
     }
     plus() {
+        console.log('아이템디테일', this.itemDetail)
         if (this.selectedProduct.length == 0) {
             this.$swal({
                 title: "품목이 선택되지 않았습니다.",
@@ -579,7 +671,7 @@ export default class OrderManagementModal extends Vue {
                 let anys: any[] = this.itemDetail
                 origin.forEach(function (el) {
                     anys.forEach(function (el2) {
-                        if (el == el2) {
+                        if (el.itemId == el2.itemId) {
                             dupYN = true
                         }
                     })
@@ -641,45 +733,20 @@ export default class OrderManagementModal extends Vue {
                 }
             })
     }
-    validCheck_register() { //수주 정보 유효성 검사 
-        let validYN: boolean = false //수주품목 유효성 검사
+    validCheck_register() {
+        let validYN: boolean = false
         for (let i = 0; i < this.order.details.length; i++) {
             let temp = this.order.details[i]
             let order = this.order
-            if (temp.expectedDeliveryDate == null || temp.quantity == null || temp.supplyUnitPrice == null || order.customerId == '' || order.deliveryDate == '' || order.details == null) {
+            if (temp.expectedDeliveryDate == null || temp.quantity == null || temp.supplyUnitPrice == null || order.customerId == '' || order.deliveryDate == '' || order.details == null || order.accountId == '') {
                 validYN = true
             }
         }
-        if (!validYN) {
-            let body = this.order
-            console.log(body)
-            api.order.saveOrderInfo(body).then((res: any) => {
-                if (res.status == 200) {
-                    this.openModal = false
-                    this.$swal({
-                        title: "등록되었습니다.",
-                        icon: "success",
-                        position: "top",
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                        toast: true,
-                        timer: 1500,
-                    });
-                } else {
-                    this.$swal({
-                        title: "등록이 실패되었습니다.",
-                        icon: "error",
-                        position: "top",
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                        toast: true,
-                        timer: 1500,
-                    });
-                }
-            })
+        if (validYN) {
+            this.register()
         } else {
             this.$swal({
-                title: "유효성 검사 실패",
+                title: "입력 정보를 확인해주세요.",
                 icon: "error",
                 position: "top",
                 showCancelButton: false,
@@ -689,6 +756,40 @@ export default class OrderManagementModal extends Vue {
             });
         }
 
+    }
+    register() {
+        let item = {
+            accountId: this.order.accountId.id,
+            customerId: this.order.customerId,
+            details: this.order.details,
+            memo: this.order.memo,
+            orderDate: this.order.orderDate
+        }
+        console.log(item)
+        api.order.saveOrderInfo(item).then((res) => {
+            if (res.status == 200) {
+                this.$swal({
+                    title: "등록되었습니다.",
+                    icon: "success",
+                    position: "top",
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    toast: true,
+                    timer: 1500,
+                });
+                this.openModal = false
+            } else {
+                this.$swal({
+                    title: "등록이 실패되었습니다.",
+                    icon: "error",
+                    position: "top",
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    toast: true,
+                    timer: 1500,
+                });
+            }
+        })
     }
     edit() {  //수주 정보 수정
         this.order.details = this.itemDetail
@@ -846,6 +947,4 @@ export default class OrderManagementModal extends Vue {
     }
 }
 </script>
-<style src="./OrderManagement.scss" lang="scss">
-
-</style>
+<style src="./OrderManagement.scss" lang="scss"></style>
