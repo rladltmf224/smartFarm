@@ -111,7 +111,7 @@
                                 </v-row>
                             </v-col>
                             <v-col class="text-right align-self-center" cols="2">
-                                <v-btn color="primary" x-large @click="getCustomer">
+                                <v-btn color="primary" x-large @click="getAccounts()">
                                     조회
                                 </v-btn>
                             </v-col>
@@ -130,13 +130,10 @@
                                     mdi-book-account </v-icon>수주 등록</v-btn>
                         </v-col>
                     </v-row>
-
                     <v-data-table height="640" :headers="headers" :items="customer_list" item-key="barcode"
-                        class="elevation-4" :search="search" multi-sort fixed-header dense
-                        :options.sync="customerOption.options" :server-items-length="customerOption.totalCount"
-                        :loading="loading" :items-per-page="customerOption.itemsPerPage"
-                        :page.sync="customerOption.page" @page-count="customerOption.pageCount = $event"
-                        hide-default-footer>
+                        class="elevation-4" :search="search" multi-sort fixed-header dense :options.sync="options"
+                        :server-items-length="totalCount" :loading="loading" :items-per-page="itemsPerPage"
+                        :page.sync="page" @page-count="pageCount = $event" hide-default-footer>
                         <template v-slot:item.edit="{ item }">
                             <v-icon small class="mr-2" @click="editItem(item, (customerDialog_type = false))">
                                 mdi-pencil
@@ -155,7 +152,7 @@
                             </v-btn>
                         </template>
                     </v-data-table>
-                    <v-pagination v-model="customerOption.page" :length="customerOption.pageCount"></v-pagination>
+                    <v-pagination v-model="page" :length="pageCount"></v-pagination>
                 </v-col>
             </v-row>
         </v-container>
@@ -211,6 +208,12 @@ export default class Customer extends Vue {
         delivery_startDate: "",
         delivery_endDate: "",
     };
+    totalCount: number = 0;
+    pageCount: number = 0;
+    itemsPerPage: number = 10;
+    page: number = 1;
+    size: number = 5;
+    options: any = {};
     order_startDate: boolean = false;
     order_endDate: boolean = false;
     delivery_startDate: boolean = false;
@@ -264,9 +267,9 @@ export default class Customer extends Vue {
         return val || this.closeModal_customer();
     }
 
-    @Watch("customerOption.options", { deep: true })
+    @Watch("options", { deep: true })
     onOptionChange() {
-        this.getCustomer();
+        this.getAccounts();
     }
 
     get headers() { //data-table의 header를 가져온다.
@@ -396,7 +399,7 @@ export default class Customer extends Vue {
             customerName: this.search_condition.customerName,//거래처명
             orderInfoCode: this.search_condition.orderInfoCode, // 수주 코드
             orderDate: "", // 수주 일자
-            page: 1, // 페이징 기능
+            page: this.page, // 페이징 기능
             size: 20, // 페이징 기능
             sortBy: [], // 정렬 기능
             sortDesc: [false] // 정렬 기능
@@ -404,6 +407,27 @@ export default class Customer extends Vue {
         api.order.getOrderInfo(item).then((res: any) => {
             this.loading = false
             this.customer_list = res.data.responseData
+            console.log('수주 정보 조회 성공', res)
+        })
+    }
+    getAccounts() { // 
+        const { page, itemsPerPage, sortBy, sortDesc } = this.options;
+        this.loading = true;
+        let item = {
+            code: this.search_condition.orderInfoCode,
+            startDate: this.search_condition.order_startDate,
+            endDate: this.search_condition.order_endDate,
+            memo: this.search_condition.memo,
+            customer_name: this.search_condition.customerName,
+            page: this.page,
+            size: this.size,
+            sortBy: sortBy,
+            sortDesc: sortDesc
+        }
+        api.order.getAccounts(item).then((res: any) => {
+            this.loading = false
+            this.customer_list = res.data.responseData
+            this.totalCount = res.data.totalCount
             console.log('수주 정보 조회 성공', res)
         })
     }
