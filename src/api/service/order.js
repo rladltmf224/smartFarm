@@ -56,4 +56,25 @@ export default {
     AuthAPI.delete("/api/orderinfo", {
       params: params,
     }),
+
+  getAccounts: (
+    params //수주 검색 (동적쿼리 & 페이징 추가)
+  ) =>
+    AuthAPI.post("/api/orderinfo/search/querydsl", JSON.stringify(params), {
+      headers: { "Content-Type": "application/json" },
+    }),
+
+  getDepartments: (
+    params //수주 등록을 위한 부서 조회
+  ) =>
+    AuthAPI.get("/api/orderinfo/department", JSON.stringify(params), {
+      headers: { "Content-Type": "application/json" },
+    }),
+
+  getDepartmentsAccount: (
+    params //수주 등록을 위한 부서에 따른 사용자 조회
+  ) =>
+    AuthAPI.get("/api/orderinfo/account", {
+      params: params,
+    }),
 };
