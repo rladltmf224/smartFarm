@@ -77,4 +77,11 @@ export default {
     AuthAPI.get("/api/orderinfo/account", {
       params: params,
     }),
+
+  getOrderInfoItem: (
+    params //수주 아이템 조회 (개선)
+  ) =>
+    AuthAPI.post("/api/orderinfo/item", JSON.stringify(params), {
+      headers: { "Content-Type": "application/json" },
+    }),
 };

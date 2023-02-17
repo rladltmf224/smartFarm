@@ -9,22 +9,20 @@
               <v-col cols="10">
                 <v-row>
                   <v-col cols="2">
-                    <v-select :items="search_list1" label="선택" v-model="search_type_1" item-text="name"
-                      item-value="value" dense></v-select>
+                    <v-select :items="search_list1" label="선택" v-model="search_type_1" item-text="name" item-value="value"
+                      dense></v-select>
                   </v-col>
 
                   <v-col cols="2">
-                    <v-text-field label="검색어1" v-model="search_text_1" @keydown.enter="getCustomer"
-                      dense></v-text-field>
+                    <v-text-field label="검색어1" v-model="search_text_1" @keydown.enter="getCustomer" dense></v-text-field>
                   </v-col>
                   <v-col cols="2">
-                    <v-select :items="search_list2" label="선택" v-model="search_type_2" item-text="name"
-                      item-value="value" dense></v-select>
+                    <v-select :items="search_list2" label="선택" v-model="search_type_2" item-text="name" item-value="value"
+                      dense></v-select>
                   </v-col>
 
                   <v-col cols="2">
-                    <v-text-field label="검색어2" v-model="search_text_2" @keydown.enter="getCustomer"
-                      dense></v-text-field>
+                    <v-text-field label="검색어2" v-model="search_text_2" @keydown.enter="getCustomer" dense></v-text-field>
                   </v-col>
                   <v-col cols="2">
                     <v-select :items="customer_type" label="거래처 유형" v-model="search_condition.type" item-text="name"
@@ -61,8 +59,8 @@
                       :return-value.sync="search_condition.endDate" transition="scale-transition" offset-y
                       min-width="auto">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-text-field v-model="search_condition.endDate" label="종료일" prepend-icon="mdi-calendar"
-                          readonly v-bind="attrs" v-on="on" dense></v-text-field>
+                        <v-text-field v-model="search_condition.endDate" label="종료일" prepend-icon="mdi-calendar" readonly
+                          v-bind="attrs" v-on="on" dense></v-text-field>
                       </template>
                       <v-date-picker v-model="search_condition.endDate" no-title scrollable locale="ko-KR"
                         :min="search_condition.startDate">
@@ -97,8 +95,8 @@
               <v-btn small color="primary" @click="(customerDialog = true), (customerDialog_type = true)"><v-icon left>
                   mdi-book-account </v-icon>거래처 추가</v-btn>
               <!-- <v-btn class="ml-4" small color="primary"
-                ><v-icon left> mdi-microsoft-excel </v-icon>엑셀다운</v-btn
-              > -->
+                    ><v-icon left> mdi-microsoft-excel </v-icon>엑셀다운</v-btn
+                  > -->
             </v-col>
           </v-row>
 
@@ -361,6 +359,4 @@ export default class Customer extends Vue {
 }
 </script>
 
-<style src="./CustomerMng.scss" lang="scss">
-
-</style>
+<style src="./CustomerMng.scss" lang="scss"></style>
