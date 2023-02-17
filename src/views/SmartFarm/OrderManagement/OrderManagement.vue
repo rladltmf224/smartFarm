@@ -78,7 +78,7 @@
             </v-row>
             <v-row no-gutters>
                 <v-col class="ma-2" md="12">
-                    <v-row class="mb-2">
+                    <v-row class="mb-1 ">
                         <v-col md="2">
                             <h4 class="searchbox-title">수주 목록</h4>
                         </v-col>
@@ -87,7 +87,7 @@
                                 등록</v-btn>
                         </v-col>
                     </v-row>
-                    <v-data-table height="640" :headers="headers" :items="customer_list" item-key="barcode"
+                    <v-data-table height="690" :headers="headers" :items="customer_list" item-key="barcode"
                         class="elevation-4" :search="search" multi-sort fixed-header dense :options.sync="options"
                         :server-items-length="totalCount" :loading="loading" :items-per-page="itemsPerPage"
                         :page.sync="page" @page-count="pageCount = $event" hide-default-footer>
@@ -107,7 +107,12 @@
                             </v-btn>
                         </template>
                     </v-data-table>
-                    <v-pagination v-model="page" :length="pageCount"></v-pagination>
+                    <v-row class="py-3">
+                        <v-col>
+                            <v-pagination v-model="page" :length="pageCount"></v-pagination>
+                        </v-col>
+                    </v-row>
+
                 </v-col>
             </v-row>
         </v-container>

@@ -34,24 +34,24 @@
                                 tabindex="6"></v-text-field>
                         </v-col>
                         <!-- <v-col cols="2" class="pa-0 pl-2 mr-2">
-                                                                                                                                                                                                                                                                                                                <v-menu tabindex="5" ref="menu_deliveryDate" v-model="menu_deliveryDate"
-                                                                                                                                                                                                                                                                                                                    :close-on-content-click="false" :return-value.sync="menu_deliveryDate"
-                                                                                                                                                                                                                                                                                                                    transition="scale-transition" offset-y min-width="auto">
-                                                                                                                                                                                                                                                                                                                    <template v-slot:activator="{ on, attrs }">
-                                                                                                                                                                                                                                                                                                                        <v-text-field label="납품예정일" v-model="order.deliveryDate" prepend-icon="mdi-calendar"
-                                                                                                                                                                                                                                                                                                                            readonly v-bind="attrs" dense v-on="on"></v-text-field>
-                                                                                                                                                                                                                                                                                                                    </template>
-                                                                                                                                                                                                                                                                                                                    <v-date-picker v-model="order.deliveryDate" no-title scrollable locale="ko-KR">
-                                                                                                                                                                                                                                                                                                                        <v-spacer></v-spacer>
-                                                                                                                                                                                                                                                                                                                        <v-btn text color="primary" @click="menu_deliveryDate = false">
-                                                                                                                                                                                                                                                                                                                            취소
-                                                                                                                                                                                                                                                                                                                        </v-btn>
-                                                                                                                                                                                                                                                                                                                        <v-btn text color="primary" @click="d_date_search_delivery(order.deliveryDate)">
-                                                                                                                                                                                                                                                                                                                            확인
-                                                                                                                                                                                                                                                                                                                        </v-btn>
-                                                                                                                                                                                                                                                                                                                    </v-date-picker>
-                                                                                                                                                                                                                                                                                                                </v-menu>
-                                                                                                                                                                                                                                                                                                            </v-col> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <v-menu tabindex="5" ref="menu_deliveryDate" v-model="menu_deliveryDate"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                :close-on-content-click="false" :return-value.sync="menu_deliveryDate"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                transition="scale-transition" offset-y min-width="auto">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <template v-slot:activator="{ on, attrs }">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <v-text-field label="납품예정일" v-model="order.deliveryDate" prepend-icon="mdi-calendar"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        readonly v-bind="attrs" dense v-on="on"></v-text-field>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </template>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <v-date-picker v-model="order.deliveryDate" no-title scrollable locale="ko-KR">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <v-spacer></v-spacer>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <v-btn text color="primary" @click="menu_deliveryDate = false">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        취소
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </v-btn>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <v-btn text color="primary" @click="d_date_search_delivery(order.deliveryDate)">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        확인
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </v-btn>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </v-date-picker>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </v-menu>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </v-col> -->
 
                         <v-col cols="1" class="pa-0 pl-2 mr-2">
                             <v-autocomplete dense label="부서" v-model="departmentchargeName" tabindex="3"
@@ -67,7 +67,7 @@
                             <v-text-field class="" label="거래처" v-model="customerName" dense tabindex="6"></v-text-field>
                         </v-col>
                         <v-col cols="2" class="pa-0 pl-2 ">
-                            <v-menu v-model="menuLoad" :close-on-content-click="false" :nudge-width="400" offset-x
+                            <v-menu v-model="menuLoad" :close-on-content-click="false" :nudge-width="300" offset-x
                                 max-height="600">
                                 <template v-slot:activator="{ on, attrs }">
                                     <v-btn class="mb-1" v-bind="attrs" v-on="on" small @click="getCustomer()">
@@ -110,14 +110,18 @@
                         <v-row v-if="!change" class="ma-0 d-flex ">
                             <v-col cols="12" class="d-flex " align-self="center">
                                 <v-col cols="3">
-                                    <h4 class="pl-2 mb-1">수주품목 목록</h4>
-                                    <v-data-table multi-sort :search="searchItem" disable-pagination hide-default-footer
-                                        class="ml-2 mr-2 overflow-scroll elevation-4" show-select fixed-header
-                                        v-model="selectedProduct" height="400" :headers="register_itemheaders"
+                                    <h4 class="pl-2 mb-1">수주 품목 목록</h4>
+                                    <v-data-table multi-sort disable-pagination hide-default-footer
+                                        class="ml-2 mr-2  overflow-scroll elevation-4" show-select fixed-header
+                                        v-model="selectedProduct" height="355" :headers="register_itemheaders"
                                         :items="itemData" return-object item-key="itemId" dense :items-per-page="50"
-                                        :footer-props="footer_option" v-show="!change">
+                                        v-show="!change">
+                                        <template v-slot:top>
+                                            <v-text-field v-model="searchItem" label="품목명으로 검색" class="mx-4 pt-2" dense
+                                                @input="searchedItem()" append-icon="mdi-magnify"></v-text-field>
+                                        </template>
                                         <template v-slot:no-data>
-                                            <h5>거래처 조회를 먼저 해주세요.</h5>
+                                            <h5>품목이 없습니다.</h5>
                                         </template>
                                     </v-data-table>
                                 </v-col>
@@ -265,20 +269,12 @@
                         </v-row>
                         <v-row>
                             <v-col cols="12" class="d-flex justify-center">
-                                <v-col
-                                    cols="12
-                                                                                                                                                                                                                                                                                                                    ">
+                                <v-col cols="12">
                                     <v-text-field class="" label="요청사항" v-model="order.memo" tabindex="6"></v-text-field>
                                 </v-col>
                             </v-col>
                         </v-row>
                     </v-sheet>
-                    <!--                     
-                                                                                                                                                                                                                                                                                                        <v-row dense class="d-flex align-center  justify-center">
-                                                                                                                                                                                                                                                                                                            <v-col cols="12">
-                                                                                                                                                                                                                                                                                                                <v-text-field class="" label="요청사항" v-model="order.memo" tabindex="6"></v-text-field>
-                                                                                                                                                                                                                                                                                                            </v-col>
-                                                                                                                                                                                                                                                                                                        </v-row> -->
                 </v-container>
             </v-card-text>
             <v-card-actions>
@@ -300,7 +296,7 @@
 
 
 
-</v-dialog>
+    </v-dialog>
 </template>
 <script lang="ts">
 
@@ -422,15 +418,7 @@ import { strict } from "node:assert";
 
 @Component
 export default class OrderManagementModal extends Vue {
-    footer_option: {
-        disableItemsPerPage: boolean;
-        itemsPerPageAllText: string;
-        itemsPerPageOptions: number[];
-    } = {
-            disableItemsPerPage: false,
-            itemsPerPageAllText: "ALL",
-            itemsPerPageOptions: [10, 20, 50, -1],
-        };
+
     departmentList: { //부서 리스트
         departmentId: number,
         departmentName: string;
@@ -663,6 +651,8 @@ export default class OrderManagementModal extends Vue {
                     plusItem["expectedDeliveryDate"] = null;
                     plusItem["supplyUnitPrice"] = null;
                     plusItem["memo"] = null;
+                    plusItem["name"] = plusItem.itemName
+
                     this.itemDetail.push(plusItem);
                 }
             } else {
@@ -928,11 +918,37 @@ export default class OrderManagementModal extends Vue {
             this.itemData = res.data.responseData
         })
     }
+
+
     cloneItem(item: any) { //거래처 명 클릭 시 
         this.order.customerId = item.customerId
         this.customerName = item.customerName
-        this.getItems()
+
+        console.log(item.customerId)
+
+        let param = {
+            customerId: item.customerId,
+            itemName: ''
+        }
+        api.order.getOrderInfoItem(param).then((res) => {
+            console.log('수주 아이템 조회(개선) api 연결 성공', res)
+            this.itemData = res.data.responseData
+        })
     }
+
+    searchedItem() {
+        console.log('품목명으로 검색', this.searchItem)
+        let param = {
+            customerId: this.order.customerId,
+            itemName: this.searchItem
+        }
+        api.order.getOrderInfoItem(param).then((res) => {
+            console.log('수주 아이템 조회(개선) api 연결 성공', res)
+            this.itemData = res.data.responseData
+        })
+
+    }
+
     closeMenuLoadCard(event: any, item: any) { //그냥 닫기 클릭 시 
         this.menuLoad = false
     }
