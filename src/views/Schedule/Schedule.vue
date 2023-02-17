@@ -4,19 +4,14 @@
       <v-col cols="10">
         <h4 class="searchbox-title">
           일정 타임라인
-          <!-- <v-btn x-small color="success">
+          <v-btn x-small color="success" @click="resetZoom">
             <v-icon small>mdi mdi-reload</v-icon>
-          </v-btn> -->
+          </v-btn>
         </h4>
       </v-col>
     </v-row>
     <div class="graphBox">
-      <Bar
-        class="ma-2"
-        ref="barChart"
-        :chart-data="chart.data"
-        :chart-options="chart.options"
-      />
+      <canvas class="ma-2" ref="barChart" />
     </div>
     <v-sheet class="ma-5" color="#F6F8F9" max-width="auto" height="500">
       <div class="totalBox">
@@ -238,16 +233,16 @@
                         ></span
                       ><v-spacer></v-spacer>
                     </v-list-item-subtitle>
-                    <v-list-item-subtitle class="mb-3">
+                    <v-list-item-subtitle class="mb-3 outBox">
                       <v-icon right large dense class="mr-10">
                         mdi-palette
                       </v-icon>
-                      {{
+                      <strong>{{
                         this.detailEvent == ""
                           ? "색상표 없음"
                           : detailEvent[0].backgroundColor
-                      }}
-                      <div :style="swatchdetailStyle"></div>
+                      }}</strong>
+                      <div class="innerBox" :style="swatchdetailStyle"></div>
                     </v-list-item-subtitle>
                   </v-list-item-content>
                 </v-list-item>
@@ -299,13 +294,6 @@
                       item-text="customerName"
                       item-value="customerId"
                     ></v-autocomplete>
-
-                    <!-- <v-text-field
-                dense
-                class="highlightFont"
-                placeholder="* 회사명"
-                v-model="scheduleData.company"
-              /> -->
                   </v-col>
                   <v-col cols="4" class="p-2">
                     <v-text-field
@@ -453,7 +441,6 @@
 </template>
 
 <script lang="ts">
-import { Bar } from "vue-chartjs/legacy";
 import {
   Chart as ChartJS,
   Title,
@@ -463,6 +450,7 @@ import {
   CategoryScale,
   TimeScale,
   LinearScale,
+  registerables,
 } from "chart.js";
 
 import zoomPlugin from "chartjs-plugin-zoom";
@@ -483,13 +471,14 @@ ChartJS.register(
   TimeScale,
   LinearScale,
   annotationPlugin,
-  zoomPlugin
+  zoomPlugin,
+  ...registerables
 );
-
+var chart: any;
 @Component({
   components: {
     Calendar,
-    Bar,
+    //Bar,
   },
 })
 export default class Schedule extends Vue {
@@ -497,10 +486,10 @@ export default class Schedule extends Vue {
     calendar: HTMLFormElement;
     startDate: HTMLFormElement;
     updateDate: HTMLFormElement;
-    barChart: HTMLFormElement;
+    barChart: HTMLCanvasElement;
   };
-
-  chart: any = {
+  chart: string = "";
+  chartData: any = {
     data: {
       labels: [],
       datasets: [
@@ -532,12 +521,8 @@ export default class Schedule extends Vue {
             displayFormats: {
               //month: "YYYY-MM",
               //day: "yyyy-MM-dd",
+              //quarter: "YYYY-MM-DD",
             },
-            //displayFormats: {
-            //  quarter: "YYYY-MM-DD",
-            //},
-            //parser: "yyyy-MM-dd",
-            //tooltipFormat: "yyyy-MM-dd",
           },
 
           ticks: {
@@ -548,7 +533,6 @@ export default class Schedule extends Vue {
             //minRotation: 85,
             //maxRotation: 90,
             callback: function (context: any) {
-              //console.log(dayjs(context).format("YYYY-MM-DD"));
               return dayjs(context).format("YYYY-MM-DD");
             },
           },
@@ -577,38 +561,38 @@ export default class Schedule extends Vue {
             },
           ],
         },
-        /*
+
         zoom: {
           zoom: {
             wheel: {
-              enabled: true,
-              sensitivity: 3,
-              speed: 10, // would be a percentage,
+              enabled: false,
+              //sensitivity: 3,
+              //speed: 10,
             },
             pinch: {
               enabled: true,
             },
-            mode: "xy",
+            mode: "x",
             // rangeMin: {
             //   x: 0, // Min value of the duration option
             // },
             // rangeMax: {
             //   x: 100, // Max value of the duration option
             // },
-            onZoomComplete: function (x: any) {
-              console.log(`I'm zooming!!!`, x);
-            },
+            // onZoomComplete: function (x: any) {
+            //   console.log(`I'm zooming!!!`, x);
+            // },
           },
           pan: {
             enabled: true,
-            mode: "xy",
+            mode: "x",
           },
           limits: {
             x: { min: 0, max: 2e3, minRange: 10000000 },
             y: { min: 0, max: 100, minRange: 10 },
           },
         },
-        */
+
         legend: {
           display: false, // 라벨 숨기기
           labels: {
@@ -797,26 +781,17 @@ export default class Schedule extends Vue {
   }
 
   mounted() {
-    //this.$refs.calendar.addEventListeners();
-    //this.calendarInstance.createEvents(this.events);
     this.setDateRangeText();
     this.getCustomer();
     this.getSchedule("");
     this.getTotalSchedule();
   }
-  //전체 거래List
-  getCustomer() {
-    api.schedule.getCustomerInfo().then((response) => {
-      this.customerList = response.data.responseData;
-
-      console.group("getCustomer");
-      console.log("getCustomer", this.customerList);
-      console.groupEnd();
-    });
+  resetZoom() {
+    chart.resetZoom();
   }
 
   //전체 타임라인List
-  getTotalSchedule() {
+  async getTotalSchedule() {
     let yArea: any = [];
     let xArea: any = [];
     let color: any = [];
@@ -846,23 +821,48 @@ export default class Schedule extends Vue {
           : prev;
       });
 
-      this.chart.data["labels"] = yArea;
-      this.chart.data["datasets"][0].data = xArea;
-      this.chart.data["datasets"][0].backgroundColor = color;
-      this.chart.options.scales.x.max = dayjs(`${maxDate}`)
+      this.chartData.data["labels"] = yArea;
+      this.chartData.data["datasets"][0].data = xArea;
+      this.chartData.data["datasets"][0].backgroundColor = color;
+      this.chartData.options.scales.x.max = dayjs(`${maxDate}`)
         .add(1, "M")
         .format("YYYY-MM-DD");
-      this.chart.options.scales.x.min = dayjs(`${minDate}`)
+      this.chartData.options.scales.x.min = dayjs(`${minDate}`)
         .subtract(1, "M")
         .format("YYYY-MM-DD");
 
-      //this.chart.options.annotation.annotations[0].label.value = today;
-      //console.log(dayjs("2023-02-02").format("YYYY-MM-DD"));
-      console.log(this.chart);
-      console.log(dayjs(`${minDate}`).subtract(1, "M").format("YYYY-MM-DD"));
-      console.log(dayjs(`${maxDate}`).add(1, "M").format("YYYY-MM-DD"));
-      console.group("getTotalSchedule");
-      console.log("getTotalSchedule", this.timelineList);
+      //createGraph 함수
+      return new Promise((resolve) => {
+        if (chart !== undefined) {
+          chart.destroy();
+        }
+
+        chart = new ChartJS(this.$refs.barChart, {
+          type: "bar",
+          data: this.chartData.data,
+          options: this.chartData.options,
+        });
+
+        chart.canvas.parentNode.style.height = "400px";
+        //chart.canvas.parentNode.style.width = "900px";
+        chart.resize();
+        console.group("createChart");
+        console.log("createChart", chart);
+        console.groupEnd();
+        resolve(chart);
+      });
+    });
+    console.group("getTotalSchedule");
+    console.log("getTotalSchedule", this.timelineList);
+    console.groupEnd();
+  }
+  //전체 거래List
+  getCustomer() {
+    api.schedule.getCustomerInfo().then((response) => {
+      this.customerList = response.data.responseData;
+
+      console.group("getCustomer");
+      console.log("getCustomer", this.customerList);
       console.groupEnd();
     });
   }
@@ -900,10 +900,6 @@ export default class Schedule extends Vue {
     });
   }
 
-  // resetZoom() {
-  //   const chart = this.$refs.barChart as any;
-  //   chart.chartInstance.resetZoom();
-  // }
   //일정표에 표시되는 년월
   setDateRangeText() {
     const date = this.calendarInstance.getDate();
@@ -1066,6 +1062,7 @@ export default class Schedule extends Vue {
         this.dialog = false;
         this.getSchedule("");
         this.getTotalSchedule();
+        this.getTotalSchedule();
       })
       .catch((error) => {
         console.log(error);
@@ -1152,6 +1149,7 @@ export default class Schedule extends Vue {
           //일정 데이터 불러오기
           this.detailMenu = false;
           this.getSchedule("");
+          this.getTotalSchedule();
         })
         .catch((error) => {
           console.log(error);
@@ -1213,6 +1211,8 @@ export default class Schedule extends Vue {
                     timer: 1500,
                   });
                 }
+                this.getSchedule("");
+                this.getTotalSchedule();
               })
               .catch((error) => {
                 console.log(error);
