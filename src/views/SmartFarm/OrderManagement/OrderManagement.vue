@@ -87,7 +87,7 @@
                                 등록</v-btn>
                         </v-col>
                     </v-row>
-                    <v-data-table height="690" :headers="headers" :items="customer_list" item-key="barcode"
+                    <v-data-table height="661" :headers="headers" :items="customer_list" item-key="barcode"
                         class="elevation-4" :search="search" multi-sort fixed-header dense :options.sync="options"
                         :server-items-length="totalCount" :loading="loading" :items-per-page="itemsPerPage"
                         :page.sync="page" @page-count="pageCount = $event" hide-default-footer>
@@ -170,8 +170,9 @@ export default class Customer extends Vue {
     };
     totalCount: number = 0;
     pageCount: number = 0;
+    itemsPerPage: number = 17;
     page: number = 1;
-    size: number = 10;
+    size: number = 20;
     options: any = {};
     order_startDate: boolean = false;
     order_endDate: boolean = false;
