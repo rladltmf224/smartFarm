@@ -390,7 +390,7 @@ export default class Customer extends Vue {
             this.loading = false;
             this.customer_list = res.data.responseData;
             this.totalCount = res.data.totalCount;
-            console.log("수주 정보 조회 성공", res);
+            console.log("수주 정보 조회 성공", res.data.responseData);
         });
     }
     closeModal_customer() {
