@@ -48,6 +48,12 @@
   top: 2px;
   left: 200px;
 }
+.innerTextBox {
+  position: absolute;
+  top: 5px;
+  left: 83px;
+  font-size: 11px;
+}
 // #B1D8FFFF
 .toastui-calendar-timegrid-scroll-area {
   display: none;
@@ -59,6 +65,9 @@
   display: flex;
   justify-content: center;
   margin-top: 0;
+}
+.menuBox {
+  width: 350px;
 }
 .highlightFont input::placeholder {
   color: red !important;

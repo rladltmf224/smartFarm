@@ -115,12 +115,12 @@
 
           <!--일정 상세보기-->
           <v-menu
+            offset-y
             transition="slide-y-transition"
             v-model="detailMenu"
             :close-on-content-click="false"
-            :nudge-width="200"
           >
-            <v-card>
+            <v-card class="menuBox">
               <v-list>
                 <v-list-item>
                   <v-list-item-content>
@@ -132,7 +132,7 @@
                           }}</strong></v-list-item-title
                         ></v-col
                       >
-                      <v-col cols="3" class="pt-0">
+                      <v-col cols="6" class="pt-0">
                         <v-list-item-subtitle v-show="!update">{{
                           this.detailEvent == ""
                             ? "일정없음"
@@ -212,26 +212,33 @@
                         }}</strong></span
                       >
                     </v-list-item-subtitle>
-                    <v-list-item-subtitle class="mb-3">
+                    <v-list-item-subtitle class="mb-5 outBox">
                       <v-icon right large dense class="mr-10">
                         mdi-account
                       </v-icon>
-                      <span
-                        ><strong
-                          >등록자
-                          {{
-                            this.detailEvent == ""
-                              ? "등록자없음"
-                              : `${detailEvent[0].createdId} : ${detailEvent[0].createdDate}`
-                          }}
-                          / 수정자
-                          {{
-                            this.detailEvent == ""
-                              ? "수정자없음"
-                              : `${detailEvent[0].modifiedId} : ${detailEvent[0].modifiedDate}`
-                          }}</strong
-                        ></span
-                      ><v-spacer></v-spacer>
+                      <div class="innerTextBox">
+                        <span
+                          ><strong
+                            >등록자 :
+                            {{
+                              this.detailEvent == ""
+                                ? "등록자없음"
+                                : `${detailEvent[0].createdId} : ${detailEvent[0].createdDate}`
+                            }}
+                          </strong> </span
+                        ><br />
+                        <span>
+                          <strong
+                            >수정자 :
+                            {{
+                              this.detailEvent == ""
+                                ? "수정자없음"
+                                : `${detailEvent[0].modifiedId} : ${detailEvent[0].modifiedDate}`
+                            }}</strong
+                          >
+                        </span>
+                      </div>
+                      <v-spacer></v-spacer>
                     </v-list-item-subtitle>
                     <v-list-item-subtitle class="mb-3 outBox">
                       <v-icon right large dense class="mr-10">
@@ -346,17 +353,89 @@
                     />
                   </v-col>
                 </v-row>
-                <!--그 외 일정 추가 
-              <v-row v-show="selected">
-              <v-col cols="4" class="pa-0">
-                <v-text-field dense filled rounded hide-details> </v-text-field>
-              </v-col>
-              <v-col cols="4" class="pt-0"> </v-col>
-            </v-row>-->
+                <!-- 그 외 일정 추가 -->
+                <v-row justify="center" class="ma-0">
+                  <v-checkbox
+                    @click="addCalendar"
+                    v-model="selected"
+                    label="그 외 일정추가"
+                    class="float-center"
+                  ></v-checkbox>
+                </v-row>
+                <v-row
+                  v-show="selected"
+                  v-for="(item, index) in secondTitleList"
+                  :key="index"
+                  class="dateBox"
+                >
+                  <v-col cols="4" class="pa-0">
+                    <v-text-field
+                      v-model="item.title"
+                      dense
+                      filled
+                      rounded
+                      hide-details
+                      :style="[item.date != '' ? colorGroup : null]"
+                    >
+                    </v-text-field>
+                  </v-col>
+                  <v-col cols="4" class="pt-0">
+                    <v-menu
+                      :key="item.date"
+                      dense
+                      ref="secondStartDate"
+                      :close-on-content-click="false"
+                      :return-value.sync="item.date"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          dense
+                          v-model="item.date"
+                          class="highlightFont"
+                          label="일정"
+                          prepend-icon="mdi-calendar"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="item.date"
+                        no-title
+                        scrollable
+                        locale="ko-KR"
+                      >
+                        <v-spacer></v-spacer>
+                        <v-btn text color="primary" @click="menu = false">
+                          취소
+                        </v-btn>
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="ss_date_search(item.date)"
+                        >
+                          확인
+                        </v-btn>
+                      </v-date-picker>
+                    </v-menu>
+                  </v-col>
+                  <v-col cols="2" class="pt-0">
+                    <v-btn
+                      icon
+                      color="success"
+                      @click="add"
+                      v-show="item.title != '' && item.date != ''"
+                      ><v-icon small>mdi-plus </v-icon></v-btn
+                    ></v-col
+                  >
+                </v-row>
                 <v-row
                   v-show="!selected"
-                  v-model="typeList"
-                  v-for="n in typeList"
+                  v-model="titleList"
+                  v-for="n in titleList"
                   class="dateBox"
                   :key="n.title"
                 >
@@ -419,13 +498,6 @@
                     </v-menu>
                   </v-col>
                 </v-row>
-                <v-row justify="center" class="ma-0">
-                  <!--<v-checkbox
-                v-model="selected"
-                label="그 외 일정추가"
-                class="float-center"
-              ></v-checkbox>-->
-                </v-row>
               </v-card-text>
               <v-card-actions>
                 <v-spacer />
@@ -455,6 +527,7 @@ import {
 
 import zoomPlugin from "chartjs-plugin-zoom";
 import annotationPlugin from "chartjs-plugin-annotation";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import "chartjs-adapter-date-fns";
 import dayjs from "dayjs";
 import { Component, Watch, Vue } from "vue-property-decorator";
@@ -472,7 +545,8 @@ ChartJS.register(
   LinearScale,
   annotationPlugin,
   zoomPlugin,
-  ...registerables
+  ...registerables,
+  ChartDataLabels
 );
 var chart: any;
 @Component({
@@ -485,6 +559,7 @@ export default class Schedule extends Vue {
   $refs!: {
     calendar: HTMLFormElement;
     startDate: HTMLFormElement;
+    secondStartDate: HTMLFormElement;
     updateDate: HTMLFormElement;
     barChart: HTMLCanvasElement;
   };
@@ -506,10 +581,11 @@ export default class Schedule extends Vue {
       ],
     },
     options: {
-      maxBarThickness: 15,
+      //maxBarThickness: 50,
       indexAxis: "y",
       scales: {
         x: {
+          //barThickness: 5,
           min: "",
           max: "",
           autoSkip: true,
@@ -599,8 +675,14 @@ export default class Schedule extends Vue {
             padding: 3, // 범례간의 간격
           },
         },
+
         datalabels: {
           display: false,
+          color: "black",
+          font: {
+            weight: "bold",
+            size: "7",
+          },
         },
         tooltip: {
           backgroundColor: "#FAFAFA",
@@ -631,8 +713,9 @@ export default class Schedule extends Vue {
   filterList: any[] = []; //[response] 전체 거래처 데이터(filter용)
   customerList: any[] = []; //[response] 전체 거래처 데이터
   events: any[] = []; //[response] 전체 일정 데이터
-  timelineList: any[] = [];
-  typeList: any = [
+  timelineList: any[] = []; //[response] 전체 타임라인 데이터
+  secondTitleList: any = [{ title: "", date: "" }]; //그 외 일정 v-model
+  titleList: any = [
     {
       title: "파종",
       date: "",
@@ -690,6 +773,7 @@ export default class Schedule extends Vue {
   updateDate: string = ""; //[수정] 달력 v-model
   update: boolean = false; //dialog 저장 or 수정
   startDate: string = ""; //[등록] 달력 v-model
+  secondStartDate: string = ""; //[등록] 달력 v-model
   dialog: any = ""; //일정 추가 Dialog
   detailMenu: boolean = false; //상세보기 menu v-model
   detailEvent: any[] = []; //상세보기 일정
@@ -749,7 +833,7 @@ export default class Schedule extends Vue {
       backgroundColor: this.backgroundColor,
       cursor: "pointer",
       height: "30px",
-      width: "120px",
+      width: "70px",
       borderRadius: colorMenu ? "50%" : "4px",
       transition: "border-radius 200ms ease-in-out",
     };
@@ -767,10 +851,22 @@ export default class Schedule extends Vue {
     this.setDateRangeText();
   }
 
+  @Watch("secondTitleList")
+  addSecondTitle() {
+    console.log("secondTitleList", this.secondTitleList);
+    return this.secondTitleList;
+  }
+
   s_date_search(v: any) {
     console.log(v);
     this.startDate = v;
     let startEL: any = this.$refs.startDate;
+    startEL.save(v);
+  }
+  ss_date_search(v: any) {
+    console.log(v);
+    this.secondStartDate = v;
+    let startEL: any = this.$refs.secondStartDate;
     startEL.save(v);
   }
   u_date_search(v: any) {
@@ -984,6 +1080,16 @@ export default class Schedule extends Vue {
     this.calendarInstance.move(offset);
     this.setDateRangeText();
   }
+  //그 외 일정 추가
+  addCalendar() {
+    //console.log("addCalendar");
+    this.titleList = [...this.resettypeData];
+    console.log(this.titleList, this.resettypeData);
+    // this.secondTitleList.push({ title: "", date: "" });
+  }
+  add() {
+    this.secondTitleList.push({ title: "", date: "" });
+  }
   //일정 등록 이벤트
   saveInfo() {
     this.update = false;
@@ -1002,8 +1108,8 @@ export default class Schedule extends Vue {
     }
 
     /* 모든일정 등록 옵션
-    for (var i = 0; i < this.typeList.length; i++) {
-      if (this.typeList[i].date == "") {
+    for (var i = 0; i < this.titleList.length; i++) {
+      if (this.titleList[i].date == "") {
         check = false;
         return this.$swal({
           title: "등록되지 않은 일정이 존재합니다.",
@@ -1017,22 +1123,40 @@ export default class Schedule extends Vue {
       }
     }
     */
-
-    this.typeList.forEach((value: any) => {
-      if (value.date != "") {
-        schedule.push({
-          customerId: this.scheduleData.customer.customerId,
-          title: `${this.scheduleData.customer.customerName}-${value.title}`,
-          type: this.scheduleData.type,
-          backgroundColor: this.scheduleData.backgroundColor,
-          start: value.date,
-          end: value.date,
-          category: "allday",
-          isAllDay: "true",
-          memo: this.scheduleData.memo,
-        });
-      }
-    });
+    /*selected  true : 그 외일정 추가 경우 , false : 고정일정 추가 경우*/
+    if (this.selected == false) {
+      this.titleList.forEach((value: any) => {
+        if (value.date != "") {
+          schedule.push({
+            customerId: this.scheduleData.customer.customerId,
+            title: `${this.scheduleData.customer.customerName}-${value.title}`,
+            type: this.scheduleData.type,
+            backgroundColor: this.scheduleData.backgroundColor,
+            start: value.date,
+            end: value.date,
+            category: "allday",
+            isAllDay: "true",
+            memo: this.scheduleData.memo,
+          });
+        }
+      });
+    } else {
+      this.secondTitleList.forEach((value: any) => {
+        if (value.title != "" && value.date != "") {
+          schedule.push({
+            customerId: this.scheduleData.customer.customerId,
+            title: `${this.scheduleData.customer.customerName}-${value.title}`,
+            type: this.scheduleData.type,
+            backgroundColor: this.scheduleData.backgroundColor,
+            start: value.date,
+            end: value.date,
+            category: "allday",
+            isAllDay: "true",
+            memo: this.scheduleData.memo,
+          });
+        }
+      });
+    }
 
     api.schedule
       .saveScheduleInfo(schedule)
@@ -1075,7 +1199,7 @@ export default class Schedule extends Vue {
     this.scheduleData.type = "";
     this.scheduleData.memo = "";
     this.scheduleData.backgroundColor = "#4caf50";
-    this.typeList = this.resettypeData;
+    this.titleList = [...this.resettypeData];
   }
   //Modal 닫기
   closeModal() {
@@ -1085,7 +1209,7 @@ export default class Schedule extends Vue {
     this.scheduleData.type = "";
     this.scheduleData.memo = "";
     this.scheduleData.backgroundColor = "#4caf50";
-    this.typeList = this.resettypeData;
+    this.titleList = [...this.resettypeData];
   }
   updateStatus() {
     this.update = true;
