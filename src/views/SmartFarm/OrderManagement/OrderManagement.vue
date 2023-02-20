@@ -26,22 +26,24 @@
                                                     prepend-icon="mdi-calendar" readonly v-bind="attrs" v-on="on"
                                                     dense></v-text-field>
                                             </template>
-                                            <v-date-picker v-model="search_condition.order_startDate" no-title
-                                                scrollable locale="ko-KR" :max="search_condition.order_endDate">
+                                            <v-date-picker v-model="search_condition.order_startDate" no-title scrollable
+                                                locale="ko-KR" :max="search_condition.order_endDate">
                                                 <v-spacer></v-spacer>
                                                 <v-btn text color="primary" @click="order_startDate = false">
                                                     취소
                                                 </v-btn>
-                                                <v-btn text color="primary"
-                                                    @click="s_date_search_order(search_condition.order_startDate)">
+                                                <v-btn text color="primary" @click="
+                                                    s_date_search_order(
+                                                        search_condition.order_startDate
+                                                    )
+                                                ">
                                                     확인
                                                 </v-btn>
                                             </v-date-picker>
                                         </v-menu>
                                     </v-col>
                                     <v-col md="2">
-                                        <v-menu ref="order_endDate" v-model="order_endDate"
-                                            :close-on-content-click="false"
+                                        <v-menu ref="order_endDate" v-model="order_endDate" :close-on-content-click="false"
                                             :return-value.sync="search_condition.order_endDate"
                                             transition="scale-transition" offset-y min-width="auto">
                                             <template v-slot:activator="{ on, attrs }">
@@ -55,54 +57,9 @@
                                                 <v-btn text color="primary" @click="order_endDate = false">
                                                     취소
                                                 </v-btn>
-                                                <v-btn text color="primary"
-                                                    @click="e_date_search_order(search_condition.order_endDate)">
-                                                    확인
-                                                </v-btn>
-                                            </v-date-picker>
-                                        </v-menu>
-                                    </v-col>
-                                    <v-col cols="2">
-                                        <v-menu ref="delivery_startDate" v-model="delivery_startDate"
-                                            :close-on-content-click="false"
-                                            :return-value.sync="search_condition.delivery_startDate"
-                                            transition="scale-transition" offset-y min-width="auto">
-                                            <template v-slot:activator="{ on, attrs }">
-                                                <v-text-field v-model="search_condition.delivery_startDate"
-                                                    label="납품시작일" prepend-icon="mdi-calendar" readonly v-bind="attrs"
-                                                    v-on="on" dense></v-text-field>
-                                            </template>
-                                            <v-date-picker v-model="search_condition.delivery_startDate" no-title
-                                                scrollable locale="ko-KR" :max="search_condition.delivery_endDate">
-                                                <v-spacer></v-spacer>
-                                                <v-btn text color="primary" @click="delivery_startDate = false">
-                                                    취소
-                                                </v-btn>
-                                                <v-btn text color="primary"
-                                                    @click="s_date_search_delivery(search_condition.delivery_startDate)">
-                                                    확인
-                                                </v-btn>
-                                            </v-date-picker>
-                                        </v-menu>
-                                    </v-col>
-                                    <v-col md="2">
-                                        <v-menu ref="delivery_endDate" v-model="delivery_endDate"
-                                            :close-on-content-click="false"
-                                            :return-value.sync="search_condition.delivery_endDate"
-                                            transition="scale-transition" offset-y min-width="auto">
-                                            <template v-slot:activator="{ on, attrs }">
-                                                <v-text-field v-model="search_condition.delivery_endDate" label="수주종료일"
-                                                    prepend-icon="mdi-calendar" readonly v-bind="attrs" v-on="on"
-                                                    dense></v-text-field>
-                                            </template>
-                                            <v-date-picker v-model="search_condition.delivery_endDate" no-title
-                                                scrollable locale="ko-KR" :min="search_condition.delivery_startDate">
-                                                <v-spacer></v-spacer>
-                                                <v-btn text color="primary" @click="delivery_endDate = false">
-                                                    취소
-                                                </v-btn>
-                                                <v-btn text color="primary"
-                                                    @click="e_date_search_delivery(search_condition.delivery_endDate)">
+                                                <v-btn text color="primary" @click="
+                                                    e_date_search_order(search_condition.order_endDate)
+                                                ">
                                                     확인
                                                 </v-btn>
                                             </v-date-picker>
@@ -111,7 +68,7 @@
                                 </v-row>
                             </v-col>
                             <v-col class="text-right align-self-center" cols="2">
-                                <v-btn color="primary" x-large @click="getCustomer">
+                                <v-btn color="primary" x-large @click="getOrderAccounts()">
                                     조회
                                 </v-btn>
                             </v-col>
@@ -121,22 +78,19 @@
             </v-row>
             <v-row no-gutters>
                 <v-col class="ma-2" md="12">
-                    <v-row class="mb-2">
+                    <v-row class="mb-1 ">
                         <v-col md="2">
                             <h4 class="searchbox-title">수주 목록</h4>
                         </v-col>
                         <v-col class="text-right" offset-md="7" md="3">
-                            <v-btn small color="primary" @click="add()"><v-icon left>
-                                    mdi-book-account </v-icon>수주 등록</v-btn>
+                            <v-btn small color="primary" @click="add()"><v-icon left> mdi-book-account </v-icon>수주
+                                등록</v-btn>
                         </v-col>
                     </v-row>
-
-                    <v-data-table height="640" :headers="headers" :items="customer_list" item-key="barcode"
-                        class="elevation-4" :search="search" multi-sort fixed-header dense
-                        :options.sync="customerOption.options" :server-items-length="customerOption.totalCount"
-                        :loading="loading" :items-per-page="customerOption.itemsPerPage"
-                        :page.sync="customerOption.page" @page-count="customerOption.pageCount = $event"
-                        hide-default-footer>
+                    <v-data-table height="690" :headers="headers" :items="customer_list" item-key="barcode"
+                        class="elevation-4" :search="search" multi-sort fixed-header dense :options.sync="options"
+                        :server-items-length="totalCount" :loading="loading" :items-per-page="itemsPerPage"
+                        :page.sync="page" @page-count="pageCount = $event" hide-default-footer>
                         <template v-slot:item.edit="{ item }">
                             <v-icon small class="mr-2" @click="editItem(item, (customerDialog_type = false))">
                                 mdi-pencil
@@ -149,13 +103,16 @@
                         </template>
                         <template v-slot:item.delete="{ item }">
                             <v-btn icon @click="deleteItem(item)">
-                                <v-icon small class="mr-2">
-                                    mdi-trash-can-outline
-                                </v-icon>
+                                <v-icon small class="mr-2"> mdi-trash-can-outline </v-icon>
                             </v-btn>
                         </template>
                     </v-data-table>
-                    <v-pagination v-model="customerOption.page" :length="customerOption.pageCount"></v-pagination>
+                    <v-row class="py-3">
+                        <v-col>
+                            <v-pagination v-model="page" :length="pageCount"></v-pagination>
+                        </v-col>
+                    </v-row>
+
                 </v-col>
             </v-row>
         </v-container>
@@ -204,20 +161,24 @@ export default class Customer extends Vue {
     };
     // 2023-01-12
     search_condition: any = {
-        customerName: '',
-        orderInfoCode: '',
+        customerName: "",
+        orderInfoCode: "",
         order_startDate: "",
         order_endDate: "",
         delivery_startDate: "",
         delivery_endDate: "",
     };
+    totalCount: number = 0;
+    pageCount: number = 0;
+    page: number = 1;
+    size: number = 10;
+    options: any = {};
     order_startDate: boolean = false;
     order_endDate: boolean = false;
     delivery_startDate: boolean = false;
     delivery_endDate: boolean = false;
     orderInfo: [] = []; // 수주정보상세조회 orderInfo
     orderInfoId: number = 0; // 수주정보상세조회 orderInfoId
-
 
     // 2023-01-12
     change: boolean = false;
@@ -264,12 +225,13 @@ export default class Customer extends Vue {
         return val || this.closeModal_customer();
     }
 
-    @Watch("customerOption.options", { deep: true })
+    @Watch("options", { deep: true })
     onOptionChange() {
-        this.getCustomer();
+        this.getOrderAccounts();
     }
 
-    get headers() { //data-table의 header를 가져온다.
+    get headers() {
+        //data-table의 header를 가져온다.
         return cfg.header.orderList;
     }
     get formTitle() {
@@ -309,13 +271,14 @@ export default class Customer extends Vue {
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
                 confirmButtonText: "삭제",
-            }).then((result) => {
+            })
+            .then((result) => {
                 if (result.isConfirmed) {
                     let id = {
-                        orderInfoId: item.orderInfoId
-                    }
+                        orderInfoId: item.orderInfoId,
+                    };
                     api.order.deleteOrderInfo(id).then((res) => {
-                        console.log('수주 정보 삭제 성공')
+                        console.log("수주 정보 삭제 성공");
                         this.$swal({
                             title: "삭제되었습니다.",
                             icon: "info",
@@ -325,10 +288,10 @@ export default class Customer extends Vue {
                             toast: true,
                             timer: 1500,
                         });
-                        this.getCustomer()
-                    })
+                        this.getOrderAccounts();
+                    });
                 }
-            })
+            });
     }
     alertResult(isSuccess: boolean) {
         if (isSuccess) {
@@ -354,10 +317,10 @@ export default class Customer extends Vue {
         }
     }
     closeModal() {
-        this.orderInfoId = 0
+        this.orderInfoId = 0;
         this.orderDialog = false;
         this.editedCustomer = Object.assign({}, this.customer);
-        this.getCustomer();
+        this.getOrderAccounts();
     }
     s_date_search_order(v: any) {
         this.search_condition.order_startDate = v;
@@ -372,7 +335,6 @@ export default class Customer extends Vue {
         let startDate: any = this.$refs.delivery_startDate;
         startDate.save(v);
     }
-
 
     e_date_search_order(v: any) {
         this.search_condition.order_endDate = v;
@@ -390,22 +352,45 @@ export default class Customer extends Vue {
     selectCustomer(data: object) {
         console.log("selectCustomer", data);
     }
-    getCustomer() {  // 수주 정보 조회 
-        this.loading = true
+    /*  getCustomer() {
+         // 수주 정보 조회
+         this.loading = true;
+         let item = {
+             customerName: this.search_condition.customerName, //거래처명
+             orderInfoCode: this.search_condition.orderInfoCode, // 수주 코드
+             orderDate: "", // 수주 일자
+             page: this.page, // 페이징 기능
+             size: this.size, // 페이징 기능
+             sortBy: [], // 정렬 기능
+             sortDesc: [false], // 정렬 기능
+         };
+         api.order.getOrderInfo(item).then((res: any) => {
+             this.loading = false;
+             this.customer_list = res.data.responseData;
+             console.log("수주 정보 조회 성공", res);
+         });
+     } */
+    getOrderAccounts() {
+        console.log('getAccounts')
+        const { page, itemsPerPage, sortBy, sortDesc } = this.options;
+        this.loading = true;
         let item = {
-            customerName: this.search_condition.customerName,//거래처명
-            orderInfoCode: this.search_condition.orderInfoCode, // 수주 코드
-            orderDate: "", // 수주 일자
-            page: 1, // 페이징 기능
-            size: 20, // 페이징 기능
-            sortBy: [], // 정렬 기능
-            sortDesc: [false] // 정렬 기능
-        }
-        api.order.getOrderInfo(item).then((res: any) => {
-            this.loading = false
-            this.customer_list = res.data.responseData
-            console.log('수주 정보 조회 성공', res)
-        })
+            code: this.search_condition.orderInfoCode,
+            startDate: this.search_condition.order_startDate,
+            endDate: this.search_condition.order_endDate,
+            memo: this.search_condition.memo,
+            customer_name: this.search_condition.customerName,
+            page: page,
+            size: itemsPerPage,
+            sortBy: sortBy,
+            sortDesc: sortDesc,
+        };
+        api.order.getAccounts(item).then((res: any) => {
+            this.loading = false;
+            this.customer_list = res.data.responseData;
+            this.totalCount = res.data.totalCount;
+            console.log("수주 정보 조회 성공", res);
+        });
     }
     closeModal_customer() {
         this.edit_customer = false;
@@ -423,9 +408,9 @@ export default class Customer extends Vue {
     editItem(item: any, edit_type: boolean) {
         this.orderDialog = true;
         // this.editedIndex = this.customer_list.indexOf(JSON.stringify(item));
-        this.change = true
-        this.orderInfoId = item.orderInfoId
-        this.orderInfo = item
+        this.change = true;
+        this.orderInfoId = item.orderInfoId;
+        this.orderInfo = item;
         //this.editedCustomer = Object.assign({}, item);
         // this.customerDialog_type = edit_type;
         // this.edit_customer = true;
@@ -433,7 +418,7 @@ export default class Customer extends Vue {
 
     add() {
         this.orderDialog = true;
-        this.change = false
+        this.change = false;
         // this.editedOrder = {
         //     name: "",
         //     customer: "",
@@ -444,11 +429,7 @@ export default class Customer extends Vue {
         //     details: [],
         // };
     }
-
-
 }
 </script>
 
-<style src="./OrderManagement.scss" lang="scss">
-
-</style>
+<style src="./OrderManagement.scss" lang="scss"></style>

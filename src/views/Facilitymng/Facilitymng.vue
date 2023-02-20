@@ -154,7 +154,7 @@
                 <template v-slot:item.memo="props">
                   <v-edit-dialog
                     :return-value.sync="props.item.memo"
-                    v-show="props.item.productionId != null"
+                    v-show="props.item.jobOrderId != null"
                   >
                     {{ props.item.memo }}
                     <template v-slot:input>
@@ -193,16 +193,16 @@
                   </v-text-field>
                 </template>-->
 
-                <template v-slot:item.productionId="{ item }">
+                <template v-slot:item.jobOrderId="{ item }">
                   <v-btn
                     class="center mt-1 mb-1 childBtn"
                     small
-                    :color="getColor(item.productionId)"
+                    :color="getColor(item.jobOrderId)"
                     dark
                     style="width: 100px"
                     depressed
                   >
-                    {{ item.productionId == null ? "사용가능" : "사용중" }}
+                    {{ item.jobOrderId == null ? "사용가능" : "사용중" }}
                   </v-btn>
                 </template>
 
@@ -548,7 +548,7 @@ export default class Facilitymng extends Vue {
       memo: "",
       code: this.tempIdx--,
       facilityDetailId: null,
-      productionId: null,
+      jobOrderId: null,
     });
   }
 
@@ -726,9 +726,9 @@ export default class Facilitymng extends Vue {
     }
   }
 
-  getColor(productionId: number) {
-    if (productionId == null) return "success";
-    else if (productionId != null) return "primary";
+  getColor(jobOrderId: number) {
+    if (jobOrderId == null) return "success";
+    else if (jobOrderId != null) return "primary";
     else return "black";
   }
 }

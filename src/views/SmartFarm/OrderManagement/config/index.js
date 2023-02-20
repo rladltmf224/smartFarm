@@ -58,12 +58,12 @@ export default {
       { text: "단가", value: "supplyUnitPrice", align: " d-none" },
     ],
     selectedheaders: [
-      { text: "품목명", value: "itemName" },
-      { text: "수량", value: "quantity", width: "10%" },
+      { text: "품목명", value: "itemName", width: "10%" },
+      { text: "수량", value: "quantity", width: "5%" },
       { text: "단가", value: "supplyUnitPrice", width: "10%" },
-      { text: "납품예정일", value: "expectedDeliveryDate", width: "20%" },
-      { text: "비고", value: "memo", width: "30%" },
-      { text: "삭제", value: "delete", width: "10%" },
+      { text: "납품예정일", value: "expectedDeliveryDate", width: "10%" },
+      { text: "비고", value: "memo", width: "15%" },
+      { text: "삭제", value: "delete", width: "3%" },
     ],
     tempheader: [
       { text: "작업지시서명", value: "name" },

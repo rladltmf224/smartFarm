@@ -1,6 +1,10 @@
 import AuthAPI from "../api/AuthAPI";
 
 export default {
+  getTotalScheduleInfo: () =>
+    AuthAPI.get("/api/workschedule/totalDate", {
+      headers: { "Content-Type": "application/json" },
+    }),
   getCustomerInfo: () =>
     AuthAPI.get("/api/workschedule/customer", {
       headers: { "Content-Type": "application/json" },
