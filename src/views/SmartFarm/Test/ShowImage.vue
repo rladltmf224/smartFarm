@@ -21,7 +21,7 @@
         <v-col>
           <v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options"
             :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" hide-default-footer
-            v-model="selected" show-select item-key="testName" class="elevation-1" @page-count="pageCount = $event"
+            v-model="selected" show-select item-key="growthReportId" class="elevation-1" @page-count="pageCount = $event"
             dense multi-sort>
           </v-data-table>
           <div class="text-center pt-2">
@@ -113,6 +113,11 @@ export default class ShowImage extends Vue {
       text: "실험명(최대 5개 선택)",
       value: "testName",
     },
+    {
+      text: "실험명(최대 5개 선택)",
+      value: "growthReportId",
+      align: " d-none",
+    },
   ];
   datas: any = [];
 
@@ -186,6 +191,7 @@ export default class ShowImage extends Vue {
       .then((res) => {
         this.loading = false;
         this.datas = res.data.responseData;
+        console.log('디스데이타스', this.datas)
         this.items = res.data.responseData;
         this.totalData = res.data.totalCount;
       })
