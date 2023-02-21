@@ -165,8 +165,12 @@
                     item.before == 'AUTO'
                   "
                 >
-                  <v-chip :color="getColor(item.before)" dark>
-                    {{ item.before }}
+                  <v-chip
+                    :color="getColor(item.before)"
+                    dark
+                    class="d-flex justify-center"
+                  >
+                    {{ item.settingTemperatureBefore || item.before }}
                   </v-chip>
                 </div>
                 <!-- 수정전 숫자만 -->
@@ -182,8 +186,12 @@
                     item.after == 'OFF'
                   "
                 >
-                  <v-chip :color="getColor(item.after)" dark>
-                    {{ item.after }}
+                  <v-chip
+                    :color="getColor(item.after)"
+                    dark
+                    class="d-flex justify-center"
+                  >
+                    {{ item.settingTemperatureAfter || item.after }}
                   </v-chip>
                 </div>
                 <!-- 수정후 숫자만 -->
@@ -195,12 +203,18 @@
                   v-if="item.humidifier"
                   :color="getColor(item.humidifier)"
                   dark
+                  class="d-flex justify-center"
                 >
                   {{ item.humidifier }}
                 </v-chip>
               </template>
               <template v-slot:item.airFan="{ item }">
-                <v-chip v-if="item.airFan" :color="getColor(item.airFan)" dark>
+                <v-chip
+                  v-if="item.airFan"
+                  :color="getColor(item.airFan)"
+                  dark
+                  class="d-flex justify-center"
+                >
                   {{ item.airFan }}
                 </v-chip>
               </template>
@@ -209,6 +223,7 @@
                   v-if="item.ledFirst"
                   :color="getColor(item.ledFirst)"
                   dark
+                  class="d-flex justify-center"
                 >
                   {{ item.ledFirst }}
                 </v-chip>
@@ -218,6 +233,7 @@
                   v-if="item.ledSecond"
                   :color="getColor(item.ledSecond)"
                   dark
+                  class="d-flex justify-center"
                 >
                   {{ item.ledSecond }}
                 </v-chip>
@@ -268,7 +284,7 @@ export default {
         { text: "LED1", value: "ledFirst" },
         { text: "LED2", value: "ledSecond" },
         { text: "수정자", value: "createdId" },
-        { text: "메모", value: "memo" },
+        { text: "메모", value: "memo", width: "200px" },
       ],
       datas: [],
       startDate: false,
@@ -455,3 +471,10 @@ export default {
   computed: {},
 };
 </script>
+
+<style scoped>
+.v-chip {
+  height: 27px;
+  width: 50px;
+}
+</style>
