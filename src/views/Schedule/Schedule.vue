@@ -575,29 +575,35 @@ export default class Schedule extends Vue {
           borderWidth: 1,
           pointBackgroundColor: "white",
           barPercentage: 1,
-          borderRadius: 5,
+          // borderRadius: 5,
           data: [],
         },
       ],
     },
     options: {
-      //maxBarThickness: 50,
+      // maxBarThickness: 20, //Bar 두께
       indexAxis: "y",
       scales: {
         x: {
           //barThickness: 5,
           min: "",
           max: "",
-          autoSkip: true,
-          maxTicksLimit: 20,
+          autoSkip: false,
+          maxTicksLimit: 1,
+          borderRadius: 20,
           type: "time",
+          grid: {
+            display: true,
+          },
           time: {
-            unit: "month",
+            parser: "yyyy-MM-dd",
+            unit: "day",
             unitStepSize: 1,
+            //displayFormats: { day: "dd-MMM" },
             displayFormats: {
-              //month: "YYYY-MM",
-              //day: "yyyy-MM-dd",
-              //quarter: "YYYY-MM-DD",
+              month: "yyyy-MM",
+              day: "yyyy-MM-dd",
+              quarter: "YYYY-MM-DD",
             },
           },
 
@@ -605,12 +611,19 @@ export default class Schedule extends Vue {
             autoSkip: true,
             source: "auto",
             beginAtZero: true, //0부터 시작하는지.
-            //maxTicksLimit: 20,
+            maxTicksLimit: 10,
             //minRotation: 85,
             //maxRotation: 90,
-            callback: function (context: any) {
-              return dayjs(context).format("YYYY-MM-DD");
-            },
+            // callback: function (context: any) {
+            //   console.log(context);
+            //   return context;
+            // },
+          },
+        },
+        y: {
+          display: false,
+          grid: {
+            display: false,
           },
         },
       },
@@ -640,32 +653,18 @@ export default class Schedule extends Vue {
 
         zoom: {
           zoom: {
-            wheel: {
-              enabled: false,
-              //sensitivity: 3,
-              //speed: 10,
-            },
             pinch: {
               enabled: true,
             },
+            wheel: {
+              enabled: true,
+              speed: 0.1,
+            },
+
             mode: "x",
-            // rangeMin: {
-            //   x: 0, // Min value of the duration option
-            // },
-            // rangeMax: {
-            //   x: 100, // Max value of the duration option
-            // },
-            // onZoomComplete: function (x: any) {
-            //   console.log(`I'm zooming!!!`, x);
-            // },
           },
           pan: {
             enabled: true,
-            mode: "x",
-          },
-          limits: {
-            x: { min: 0, max: 2e3, minRange: 10000000 },
-            y: { min: 0, max: 100, minRange: 10 },
           },
         },
 
@@ -677,11 +676,15 @@ export default class Schedule extends Vue {
         },
 
         datalabels: {
-          display: false,
+          display: true,
           color: "black",
           font: {
             weight: "bold",
-            size: "7",
+            size: "12",
+          },
+
+          formatter: (value: any, context: any) => {
+            return `${this.chartData.data["labels"][context.dataIndex]}`;
           },
         },
         tooltip: {
