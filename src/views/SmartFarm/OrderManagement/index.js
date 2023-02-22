@@ -12,12 +12,12 @@ export default {
       { text: "수정", value: "edit" },
     ],
     orderList: [
-      { text: "수주일자", value: "orderDate" },
-      { text: "수주번호", value: "orderInfoCode" },
-      { text: "거래처", value: "customerName" },
-      { text: "요청사항", value: "memo" },
-      { text: "수정 및 상세보기", value: "edit" },
-      { text: "삭제", value: "delete" },
+      { text: "수주일자", value: "orderDate", width: "10%" },
+      { text: "수주번호", value: "orderInfoCode", width: "15%" },
+      { text: "거래처", value: "customerName", width: "15%" },
+      { text: "요청사항 (클릭해서 수정하기) ", value: "memo", width: "30%" },
+      { text: "상세수정", value: "edit", width: "5%" },
+      { text: "삭제", value: "delete", width: "3%" },
     ],
   },
   data: {
