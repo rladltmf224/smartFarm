@@ -87,24 +87,51 @@
                                 등록</v-btn>
                         </v-col>
                     </v-row>
-                    <v-data-table height="661" :headers="headers" :items="customer_list" item-key="barcode"
+                    <v-data-table height="669" :headers="headers" :items="customer_list" item-key="barcode"
                         class="elevation-4" :search="search" multi-sort fixed-header dense :options.sync="options"
                         :server-items-length="totalCount" :loading="loading" :items-per-page="itemsPerPage"
                         :page.sync="page" @page-count="pageCount = $event" hide-default-footer>
                         <template v-slot:item.edit="{ item }">
-                            <v-icon small class="mr-2" @click="editItem(item, (customerDialog_type = false))">
-                                mdi-pencil
-                            </v-icon>
+                            <div class="d-flex justify-center">
+                                <v-icon small class="mr-2" @click="editItem(item, (customerDialog_type = false))">
+                                    mdi-pencil
+                                </v-icon>
+                            </div>
                         </template>
-                        <template v-slot:item.detail="{ item }">
-                            <v-btn icon>
-                                <v-icon small>mdi-magnify</v-icon>
-                            </v-btn>
+                        <!-- 수주일자 슬롯 -->
+                        <template v-slot:item.orderDate="props">
+                            <v-menu :nudge-right="40" transition="scale-transition" offset-y min-width="auto">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field v-model="props.item.orderDate" readonly v-bind="attrs" dense
+                                        v-on="on"></v-text-field>
+                                </template>
+                                <v-date-picker @change="editTableOrderInfo(props.item)" no-title locale="ko-KR"
+                                    v-model="props.item.orderDate"></v-date-picker>
+                            </v-menu>
+                        </template>
+                        <template v-slot:item.memo="props">
+                            <!--   <v-text-field v-model="props.item.memo" dense @blur="editTableOrderInfo(props.item)">
+                            </v-text-field> -->
+                            <v-edit-dialog :return-value.sync="props.item.memo" large persistent
+                                @save="editTableOrderInfo(props.item)" save-text=" 저장" cancel-text=" 취소" @cancel="cancel"
+                                @open="open" @close="close" :closeOnEscape='closeOnEscape'>
+                                <div>{{ props.item.memo }}</div>
+                                <template v-slot:input>
+                                    <v-text-field v-model="props.item.memo" :rules="[max25chars]" label="메모" single-line
+                                        counter autofocus></v-text-field>
+                                </template>
+                            </v-edit-dialog>
+
+
+
+
                         </template>
                         <template v-slot:item.delete="{ item }">
-                            <v-btn icon @click="deleteItem(item)">
-                                <v-icon small class="mr-2"> mdi-trash-can-outline </v-icon>
-                            </v-btn>
+                            <div class="d-flex justify-center">
+                                <v-btn icon @click="deleteItem(item)">
+                                    <v-icon small class="mr-2"> mdi-trash-can-outline </v-icon>
+                                </v-btn>
+                            </div>
                         </template>
                     </v-data-table>
                     <v-row class="py-3">
@@ -159,6 +186,8 @@ export default class Customer extends Vue {
         memo: "", //메모
         details: [], //추가한 품목 목록
     };
+    menu_orderDate: boolean = false; //수주일자 datepicker
+
     // 2023-01-12
     search_condition: any = {
         customerName: "",
@@ -170,7 +199,7 @@ export default class Customer extends Vue {
     };
     totalCount: number = 0;
     pageCount: number = 0;
-    itemsPerPage: number = 17;
+    itemsPerPage: number = 13;
     page: number = 1;
     size: number = 20;
     options: any = {};
@@ -220,6 +249,7 @@ export default class Customer extends Vue {
     search_list4: object[] = [];
     editedIndex: number = -1;
     customer_list: [] = [];
+
 
     @Watch("edit_customer")
     onEditCustomerChange(val: object) {
@@ -294,6 +324,46 @@ export default class Customer extends Vue {
                 }
             });
     }
+    editTableOrderInfo(item: any) { //수주 즉시 수정 
+        console.log('수주 즉시', item)
+
+
+        let param: any = {
+            orderInfoId: item.orderInfoId,
+            orderDate: item.orderDate,
+            memo: item.memo,
+        }
+
+
+        api.order.editOrderInfo(param).then((res) => {
+            if (res.status == 200) {
+                console.log('수주 즉시 수정 성공', res)
+                this.$swal({
+                    title: "수정되었습니다.",
+                    icon: "success",
+                    position: "top",
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    toast: true,
+                    timer: 1500,
+                });
+            } else {
+                this.$swal.fire("실패", "등록에 실패하였습니다.", "error");
+            }
+
+
+
+
+        })
+
+
+
+
+
+    }
+
+
+
     alertResult(isSuccess: boolean) {
         if (isSuccess) {
             this.$swal({
@@ -322,6 +392,12 @@ export default class Customer extends Vue {
         this.orderDialog = false;
         this.editedCustomer = Object.assign({}, this.customer);
         this.getOrderAccounts();
+    }
+    date(v: any) { //수주일자
+        //this.order.orderDate = v;
+        this.menu_orderDate = false;
+        let orderDate: any = this.$refs.menu_orderDate;
+        orderDate.save(v);
     }
     s_date_search_order(v: any) {
         this.search_condition.order_startDate = v;
@@ -391,8 +467,13 @@ export default class Customer extends Vue {
             this.customer_list = res.data.responseData;
             this.totalCount = res.data.totalCount;
             console.log("수주 정보 조회 성공", res.data.responseData);
+            let item: any = res.data.responseData
         });
     }
+
+
+
+
     closeModal_customer() {
         this.edit_customer = false;
         this.$nextTick(() => {
