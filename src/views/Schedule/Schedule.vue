@@ -1,466 +1,395 @@
 <template>
-  <v-sheet class="ma-5" color="white" max-width="auto" height="870">
-    <v-row class="d-flex">
-      <v-col cols="10">
-        <h4 class="searchbox-title">
-          일정 타임라인
-          <v-btn x-small color="success" @click="resetZoom">
-            <v-icon small>mdi mdi-reload</v-icon>
-          </v-btn>
-        </h4>
-      </v-col>
-    </v-row>
-    <div class="graphBox">
-      <canvas class="ma-2" ref="barChart" />
-    </div>
-    <v-sheet class="ma-5" color="#F6F8F9" max-width="auto" height="500">
-      <div class="totalBox">
-        <div class="filterBox">
-          <v-btn-toggle
-            v-model="toggle"
-            color="success"
-            class="filterBtnBox"
-            divided
-            variant="outlined"
-          >
-            <v-btn
-              small
-              color="success"
-              text
-              dark
-              class="mb-2 addBtn"
-              @click="openModal"
-            >
-              <v-icon color="success">mdi-plus</v-icon>일정 추가
-            </v-btn>
+  <v-card elevation="0" class="ma-2">
+    <v-tabs
+      v-model="tab"
+      align-with-title="align-with-title"
+      background-color=""
+    >
+      <v-tabs-slider color="primary"></v-tabs-slider>
 
-            <v-btn
-              small
-              v-for="(item, i) in this.filterList"
-              :key="i"
-              :value="item"
-              @click="getSchedule(item.customerId)"
-              active-color="success"
+      <v-tab v-for="item in tabList" :key="item" @click="clickTab(item)">
+        {{ item }}
+      </v-tab>
+    </v-tabs>
+
+    <v-tabs-items v-model="tab"></v-tabs-items>
+
+    <div v-if="this.selectedTabs == '타임라인'">
+      <v-row class="d-flex justify-end">
+        <v-col cols="2" class="pa-0 mr-5">
+          <v-select
+            rounded
+            dense
+            color="success"
+            v-model="selectedTimelineView"
+            class="view-select"
+            :items="timelineViewOptions"
+            item-text="title"
+            item-value="value"
+            hide-details
+          ></v-select>
+        </v-col>
+
+        <v-btn small color="success" class="mr-5" @click="resetZoom">
+          <v-icon small>mdi mdi-reload</v-icon> 새로고침
+        </v-btn>
+      </v-row>
+      <v-spacer></v-spacer>
+      <div class="graphBox">
+        <canvas ref="barChart" />
+      </div>
+    </div>
+
+    <div class="totalBox" v-if="this.selectedTabs == '달력'">
+      <div class="filterBox">
+        <v-btn-toggle
+          v-model="toggle"
+          color="success"
+          class="filterBtnBox"
+          divided
+          variant="outlined"
+        >
+          <v-btn
+            small
+            color="success"
+            text
+            dark
+            class="mb-2 addBtn"
+            @click="openModal"
+          >
+            <v-icon color="success">mdi-plus</v-icon>일정 추가
+          </v-btn>
+
+          <v-btn
+            small
+            v-for="(item, i) in this.filterList"
+            :key="i"
+            :value="item"
+            @click="getSchedule(item.customerId)"
+            active-color="success"
+            rounded
+            class="mb-2"
+            >{{ item.customerName }}
+          </v-btn>
+        </v-btn-toggle>
+      </div>
+      <div class="calendarBox">
+        <v-row class="mt-2">
+          <v-col cols="4" justify="left">
+            <span class="text-h4">{{ dateRangeText }}</span>
+          </v-col>
+          <v-col cols="3" justify="right">
+            <v-select
               rounded
-              class="mb-2"
-              >{{ item.customerName }}
-            </v-btn>
-          </v-btn-toggle>
-        </div>
-        <div class="calendarBox">
-          <v-row class="mt-2">
-            <v-col cols="4" justify="left">
-              <span class="text-h4">{{ dateRangeText }}</span>
-            </v-col>
-            <v-col cols="3" justify="right">
-              <v-select
-                rounded
+              dense
+              color="success"
+              v-model="selectedView"
+              class="view-select"
+              :items="viewOptions"
+              item-text="title"
+              item-value="value"
+              hide-details
+            ></v-select>
+          </v-col>
+          <v-col cols="4" justify="right">
+            <v-btn
+              class="ml-1 changeBtn"
+              rounded
+              text
+              color="success"
+              @click="onClickTodayButton"
+              >Today</v-btn
+            >
+            <v-btn
+              class="ml-1 changeBtn"
+              rounded
+              text
+              color="success"
+              @click="onClickMoveButton(-1)"
+              >Prev</v-btn
+            >
+            <v-btn
+              class="ml-1 changeBtn"
+              rounded
+              text
+              color="success"
+              @click="onClickMoveButton(1)"
+              >Next</v-btn
+            >
+          </v-col>
+        </v-row>
+
+        <Calendar
+          :usageStatistics="false"
+          ref="calendar"
+          class="calendarBox"
+          :view="view"
+          :use-detail-popup="false"
+          :use-form-popup="false"
+          :week="week"
+          :month="month"
+          :events="events"
+          isReadOnly
+          @beforeUpdateEvent="onBeforeUpdateEvent"
+          @clickEvent="onClickSchedule"
+          @clickDayName="onClickDayName"
+          @clickTimezonesCollapseBtn="onClickTimezonesCollapseBtn"
+          :template="{
+            allday: getTemplateForAllday,
+          }"
+        />
+      </div>
+    </div>
+    <!-- 일정 추가 Dialog -->
+    <v-dialog v-model="dialog" width="600px">
+      <v-card>
+        <v-card-title class="mx-2">일정추가</v-card-title>
+        <v-card-text>
+          <v-row class="mx-2">
+            <v-col cols="4" fluid>
+              <v-autocomplete
                 dense
-                color="success"
-                v-model="selectedView"
-                class="view-select"
-                :items="viewOptions"
-                item-text="title"
-                item-value="value"
-                hide-details
-              ></v-select>
+                class="highlightFont"
+                label="회사명"
+                v-model="scheduleData.customer"
+                return-object
+                :items="customerList"
+                item-text="customerName"
+                item-value="customerId"
+              ></v-autocomplete>
             </v-col>
-            <v-col cols="4" justify="right">
-              <v-btn
-                class="ml-1 changeBtn"
-                rounded
-                text
-                color="success"
-                @click="onClickTodayButton"
-                >Today</v-btn
+            <v-col cols="4" class="p-2">
+              <v-text-field
+                dense
+                class="highlightFont"
+                placeholder="* 작물명"
+                v-model="scheduleData.type"
+              />
+            </v-col>
+            <v-spacer></v-spacer>
+            <v-col cols="4" class="p-2">
+              <v-text-field
+                dense
+                v-model="scheduleData.backgroundColor"
+                v-mask="mask"
+                hide-details
+                class="ma-0 pa-0 colorBox"
+                solo
               >
-              <v-btn
-                class="ml-1 changeBtn"
-                rounded
-                text
-                color="success"
-                @click="onClickMoveButton(-1)"
-                >Prev</v-btn
-              >
-              <v-btn
-                class="ml-1 changeBtn"
-                rounded
-                text
-                color="success"
-                @click="onClickMoveButton(1)"
-                >Next</v-btn
-              >
+                <template v-slot:append>
+                  <v-menu
+                    v-model="menu"
+                    top
+                    nudge-bottom="105"
+                    nudge-left="16"
+                    :close-on-content-click="false"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <div :style="swatchStyle" v-on="on" />
+                    </template>
+                    <v-card>
+                      <v-card-text class="pa-0">
+                        <v-color-picker
+                          v-model="scheduleData.backgroundColor"
+                          flat
+                        />
+                      </v-card-text>
+                    </v-card>
+                  </v-menu>
+                </template>
+              </v-text-field>
             </v-col>
           </v-row>
-
-          <Calendar
-            :usageStatistics="false"
-            ref="calendar"
-            class="calendarBox"
-            :view="view"
-            :use-detail-popup="false"
-            :use-form-popup="false"
-            :week="week"
-            :month="month"
-            :events="events"
-            isReadOnly
-            @beforeUpdateEvent="onBeforeUpdateEvent"
-            @clickEvent="onClickSchedule"
-            @clickDayName="onClickDayName"
-            @clickTimezonesCollapseBtn="onClickTimezonesCollapseBtn"
-            :template="{
-              allday: getTemplateForAllday,
-            }"
-          />
-
-          <!--일정 상세보기-->
-          <v-menu
-            offset-y
-            transition="slide-y-transition"
-            v-model="detailMenu"
-            :close-on-content-click="false"
+          <v-row class="mx-2">
+            <v-col cols="12" class="pt-0 pb-0">
+              <v-text-field
+                dense
+                placeholder="비고"
+                v-model="scheduleData.memo"
+              />
+            </v-col>
+          </v-row>
+          <!-- 그 외 일정 추가 -->
+          <v-row justify="center" class="ma-0">
+            <v-checkbox
+              @click="addCalendar"
+              v-model="selected"
+              label="그 외 일정추가"
+              class="float-center"
+            ></v-checkbox>
+          </v-row>
+          <v-row
+            v-show="selected"
+            v-for="(item, index) in secondTitleList"
+            :key="index"
+            class="dateBox"
           >
-            <v-card class="menuBox">
-              <v-list>
-                <v-list-item>
-                  <v-list-item-content>
-                    <v-row class="pt-2">
-                      <v-col cols="9" class="pt-0">
-                        <v-list-item-title
-                          ><strong>{{
-                            this.detailEvent == "" ? "없음" : title
-                          }}</strong></v-list-item-title
-                        ></v-col
-                      >
-                      <v-col cols="6" class="pt-0">
-                        <v-list-item-subtitle v-show="!update">{{
-                          this.detailEvent == ""
-                            ? "일정없음"
-                            : detailEvent[0].start
-                        }}</v-list-item-subtitle>
-                        <v-list-item-subtitle v-show="update"
-                          ><v-menu
-                            dense
-                            ref="updateDate"
-                            v-model="menu_update_date"
-                            :close-on-content-click="false"
-                            :return-value.sync="updateDate"
-                            transition="scale-transition"
-                            offset-y
-                            min-width="auto"
-                          >
-                            <template v-slot:activator="{ on, attrs }">
-                              <v-text-field
-                                dense
-                                v-model="updateDate"
-                                prepend-icon="mdi-calendar"
-                                readonly
-                                v-bind="attrs"
-                                v-on="on"
-                              ></v-text-field>
-                            </template>
-                            <v-date-picker
-                              v-model="updateDate"
-                              no-title
-                              scrollable
-                              locale="ko-KR"
-                            >
-                              <v-spacer></v-spacer>
-                              <v-btn text color="primary" @click="menu = false">
-                                취소
-                              </v-btn>
-                              <v-btn
-                                text
-                                color="primary"
-                                @click="u_date_search(updateDate)"
-                              >
-                                확인
-                              </v-btn>
-                            </v-date-picker>
-                          </v-menu>
-                        </v-list-item-subtitle></v-col
-                      ></v-row
-                    >
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-              <v-divider></v-divider>
-              <v-list>
-                <v-list-item>
-                  <v-list-item-content>
-                    <v-list-item-subtitle class="mb-3">
-                      <v-icon right large dense class="mr-10">
-                        mdi mdi-sprout</v-icon
-                      >
-                      <span
-                        ><strong>{{
-                          this.detailEvent == ""
-                            ? "타입없음"
-                            : detailEvent[0].type
-                        }}</strong></span
-                      >
-                    </v-list-item-subtitle>
-                    <v-list-item-subtitle class="mb-3">
-                      <v-icon right large dense class="mr-10">
-                        mdi-note-edit-outline
-                      </v-icon>
-                      <span
-                        ><strong>{{
-                          this.detailEvent == ""
-                            ? "메모없음"
-                            : detailEvent[0].memo
-                        }}</strong></span
-                      >
-                    </v-list-item-subtitle>
-                    <v-list-item-subtitle class="mb-5 outBox">
-                      <v-icon right large dense class="mr-10">
-                        mdi-account
-                      </v-icon>
-                      <div class="innerTextBox">
-                        <span
-                          ><strong
-                            >등록자 :
-                            {{
-                              this.detailEvent == ""
-                                ? "등록자없음"
-                                : `${detailEvent[0].createdId} : ${detailEvent[0].createdDate}`
-                            }}
-                          </strong> </span
-                        ><br />
-                        <span>
-                          <strong
-                            >수정자 :
-                            {{
-                              this.detailEvent == ""
-                                ? "수정자없음"
-                                : `${detailEvent[0].modifiedId} : ${detailEvent[0].modifiedDate}`
-                            }}</strong
-                          >
-                        </span>
-                      </div>
-                      <v-spacer></v-spacer>
-                    </v-list-item-subtitle>
-                    <v-list-item-subtitle class="mb-3 outBox">
-                      <v-icon right large dense class="mr-10">
-                        mdi-palette
-                      </v-icon>
-                      <strong>{{
-                        this.detailEvent == ""
-                          ? "색상표 없음"
-                          : detailEvent[0].backgroundColor
-                      }}</strong>
-                      <div class="innerBox" :style="swatchdetailStyle"></div>
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-              <v-divider class="t-3"></v-divider>
-
-              <v-card-actions>
-                <v-row justify="center" class="ma-0"
-                  ><v-btn
-                    v-show="!update"
-                    text
-                    @click="updateStatus"
-                    class="ma-1"
-                  >
-                    <v-icon color="success" right class="mr-1">
-                      mdi-pencil
-                    </v-icon>
-                    수정
-                  </v-btn>
-                  <v-btn v-show="update" text @click="updateInfo" class="ma-1">
-                    <v-icon color="success" right class="mr-1">
-                      mdi-content-save-edit
-                    </v-icon>
-                    저장
-                  </v-btn>
-                  <v-divider vertical class="ma-1"></v-divider>
-                  <v-btn text class="ma-1" @click="deleteInfo">
-                    <v-icon right dark class="mr-1"> mdi-delete </v-icon>삭제
-                  </v-btn></v-row
+            <v-col cols="4" class="pa-0">
+              <v-text-field
+                v-model="item.title"
+                dense
+                filled
+                rounded
+                hide-details
+                :style="[item.date != '' ? colorGroup : null]"
+              >
+              </v-text-field>
+            </v-col>
+            <v-col cols="4" class="pt-0">
+              <v-menu
+                :key="item.date"
+                dense
+                ref="secondStartDate"
+                :close-on-content-click="false"
+                :return-value.sync="item.date"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    dense
+                    v-model="item.date"
+                    class="highlightFont"
+                    label="일정"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="item.date"
+                  no-title
+                  scrollable
+                  locale="ko-KR"
                 >
-              </v-card-actions>
-            </v-card>
-          </v-menu>
-
-          <!--일정 추가 Dialog-->
-          <v-dialog v-model="dialog" width="600px">
-            <v-card>
-              <v-card-title class="mx-2">일정추가</v-card-title>
-              <v-card-text>
-                <v-row class="mx-2">
-                  <v-col cols="4" fluid>
-                    <v-autocomplete
-                      dense
-                      class="highlightFont"
-                      label="회사명"
-                      v-model="scheduleData.customer"
-                      return-object
-                      :items="customerList"
-                      item-text="customerName"
-                      item-value="customerId"
-                    ></v-autocomplete>
-                  </v-col>
-                  <v-col cols="4" class="p-2">
-                    <v-text-field
-                      dense
-                      class="highlightFont"
-                      placeholder="* 작물명"
-                      v-model="scheduleData.type"
-                    />
-                  </v-col>
                   <v-spacer></v-spacer>
-                  <v-col cols="4" class="p-2">
-                    <v-text-field
-                      dense
-                      v-model="scheduleData.backgroundColor"
-                      v-mask="mask"
-                      hide-details
-                      class="ma-0 pa-0 colorBox"
-                      solo
-                    >
-                      <template v-slot:append>
-                        <v-menu
-                          v-model="menu"
-                          top
-                          nudge-bottom="105"
-                          nudge-left="16"
-                          :close-on-content-click="false"
-                        >
-                          <template v-slot:activator="{ on }">
-                            <div :style="swatchStyle" v-on="on" />
-                          </template>
-                          <v-card>
-                            <v-card-text class="pa-0">
-                              <v-color-picker
-                                v-model="scheduleData.backgroundColor"
-                                flat
-                              />
-                            </v-card-text>
-                          </v-card>
-                        </v-menu>
-                      </template>
-                    </v-text-field>
-                  </v-col>
-                </v-row>
-                <v-row class="mx-2">
-                  <v-col cols="12" class="pt-0 pb-0">
-                    <v-text-field
-                      dense
-                      placeholder="비고"
-                      v-model="scheduleData.memo"
-                    />
-                  </v-col>
-                </v-row>
-                <!-- 그 외 일정 추가 -->
-                <v-row justify="center" class="ma-0">
-                  <v-checkbox
-                    @click="addCalendar"
-                    v-model="selected"
-                    label="그 외 일정추가"
-                    class="float-center"
-                  ></v-checkbox>
-                </v-row>
-                <v-row
-                  v-show="selected"
-                  v-for="(item, index) in secondTitleList"
-                  :key="index"
-                  class="dateBox"
-                >
-                  <v-col cols="4" class="pa-0">
-                    <v-text-field
-                      v-model="item.title"
-                      dense
-                      filled
-                      rounded
-                      hide-details
-                      :style="[item.date != '' ? colorGroup : null]"
-                    >
-                    </v-text-field>
-                  </v-col>
-                  <v-col cols="4" class="pt-0">
-                    <v-menu
-                      :key="item.date"
-                      dense
-                      ref="secondStartDate"
-                      :close-on-content-click="false"
-                      :return-value.sync="item.date"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          dense
-                          v-model="item.date"
-                          class="highlightFont"
-                          label="일정"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="item.date"
-                        no-title
-                        scrollable
-                        locale="ko-KR"
-                      >
-                        <v-spacer></v-spacer>
-                        <v-btn text color="primary" @click="menu = false">
-                          취소
-                        </v-btn>
-                        <v-btn
-                          text
-                          color="primary"
-                          @click="ss_date_search(item.date)"
-                        >
-                          확인
-                        </v-btn>
-                      </v-date-picker>
-                    </v-menu>
-                  </v-col>
-                  <v-col cols="2" class="pt-0">
-                    <v-btn
-                      icon
-                      color="success"
-                      @click="add"
-                      v-show="item.title != '' && item.date != ''"
-                      ><v-icon small>mdi-plus </v-icon></v-btn
-                    ></v-col
+                  <v-btn text color="primary" @click="menu = false">
+                    취소
+                  </v-btn>
+                  <v-btn
+                    text
+                    color="primary"
+                    @click="ss_date_search(item.date)"
                   >
-                </v-row>
-                <v-row
-                  v-show="!selected"
-                  v-model="titleList"
-                  v-for="n in titleList"
-                  class="dateBox"
-                  :key="n.title"
+                    확인
+                  </v-btn>
+                </v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col cols="2" class="pt-0">
+              <v-btn
+                icon
+                color="success"
+                @click="add"
+                v-show="item.title != '' && item.date != ''"
+                ><v-icon small>mdi-plus </v-icon></v-btn
+              ></v-col
+            >
+          </v-row>
+          <v-row
+            v-show="!selected"
+            v-model="titleList"
+            v-for="n in titleList"
+            class="dateBox"
+            :key="n.title"
+          >
+            <v-col cols="4" class="pa-0">
+              //:class="{ active: n.date != '' }" //:style="{ backgroundColor:
+              scheduleData.backgroundColor }"
+              <v-text-field
+                :value="n.title"
+                :readonly="n.title != ''"
+                dense
+                filled
+                rounded
+                hide-details
+                :style="[n.date != '' ? colorGroup : null]"
+              >
+                {{ n.title }}</v-text-field
+              >
+            </v-col>
+            <v-col cols="4" class="pt-0">
+              <v-menu
+                :key="n.date"
+                dense
+                ref="startDate"
+                :close-on-content-click="false"
+                :return-value.sync="n.date"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    dense
+                    v-model="n.date"
+                    class="highlightFont"
+                    label="일정"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="n.date"
+                  no-title
+                  scrollable
+                  locale="ko-KR"
                 >
-                  <v-col cols="4" class="pa-0">
-                    <!-- :class="{ active: n.date != '' }"
-              :style="{ backgroundColor: scheduleData.backgroundColor }" -->
-                    <v-text-field
-                      :value="n.title"
-                      :readonly="n.title != ''"
+                  <v-spacer></v-spacer>
+                  <v-btn text color="primary" @click="menu = false">
+                    취소
+                  </v-btn>
+                  <v-btn text color="primary" @click="s_date_search(n.date)">
+                    확인
+                  </v-btn>
+                </v-date-picker>
+              </v-menu>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="success" @click="saveInfo">저장</v-btn>
+          <v-btn text color="success" @click="closeModal">닫기</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- 일정 상세보기 -->
+    <v-menu
+      :position-x="x"
+      :position-y="y"
+      absolute
+      v-model="detailMenu"
+      :close-on-content-click="false"
+    >
+      <v-card class="menuBox">
+        <v-list>
+          <v-list-item>
+            <v-list-item-content>
+              <v-row class="pt-2">
+                <v-col cols="9" class="pt-0">
+                  <v-list-item-title
+                    ><strong>{{
+                      this.detailEvent == "" ? "없음" : title
+                    }}</strong></v-list-item-title
+                  ></v-col
+                >
+                <v-col cols="6" class="pt-0">
+                  <v-list-item-subtitle v-show="!update">{{
+                    this.detailEvent == "" ? "일정없음" : detailEvent[0].start
+                  }}</v-list-item-subtitle>
+                  <v-list-item-subtitle v-show="update"
+                    ><v-menu
                       dense
-                      filled
-                      rounded
-                      hide-details
-                      :style="[n.date != '' ? colorGroup : null]"
-                    >
-                      {{ n.title }}</v-text-field
-                    >
-                  </v-col>
-                  <v-col cols="4" class="pt-0">
-                    <v-menu
-                      :key="n.date"
-                      dense
-                      ref="startDate"
+                      ref="updateDate"
+                      v-model="menu_update_date"
                       :close-on-content-click="false"
-                      :return-value.sync="n.date"
+                      :return-value.sync="updateDate"
                       transition="scale-transition"
                       offset-y
                       min-width="auto"
@@ -468,9 +397,7 @@
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
                           dense
-                          v-model="n.date"
-                          class="highlightFont"
-                          label="일정"
+                          v-model="updateDate"
                           prepend-icon="mdi-calendar"
                           readonly
                           v-bind="attrs"
@@ -478,7 +405,7 @@
                         ></v-text-field>
                       </template>
                       <v-date-picker
-                        v-model="n.date"
+                        v-model="updateDate"
                         no-title
                         scrollable
                         locale="ko-KR"
@@ -490,26 +417,101 @@
                         <v-btn
                           text
                           color="primary"
-                          @click="s_date_search(n.date)"
+                          @click="u_date_search(updateDate)"
                         >
                           확인
                         </v-btn>
                       </v-date-picker>
                     </v-menu>
-                  </v-col>
-                </v-row>
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer />
-                <v-btn color="success" @click="saveInfo">저장</v-btn>
-                <v-btn text color="success" @click="closeModal">닫기</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </div>
-      </div>
-    </v-sheet>
-  </v-sheet>
+                  </v-list-item-subtitle></v-col
+                ></v-row
+              >
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+        <v-divider></v-divider>
+        <v-list>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-subtitle class="mb-3">
+                <v-icon right large dense class="mr-10"> mdi mdi-sprout</v-icon>
+                <span
+                  ><strong>{{
+                    this.detailEvent == "" ? "타입없음" : detailEvent[0].type
+                  }}</strong></span
+                >
+              </v-list-item-subtitle>
+              <v-list-item-subtitle class="mb-3">
+                <v-icon right large dense class="mr-10">
+                  mdi-note-edit-outline
+                </v-icon>
+                <span
+                  ><strong>{{
+                    this.detailEvent == "" ? "메모없음" : detailEvent[0].memo
+                  }}</strong></span
+                >
+              </v-list-item-subtitle>
+              <v-list-item-subtitle class="mb-5 outBox">
+                <v-icon right large dense class="mr-10"> mdi-account </v-icon>
+                <div class="innerTextBox">
+                  <span
+                    ><strong
+                      >등록자 :
+                      {{
+                        this.detailEvent == ""
+                          ? "등록자없음"
+                          : `${detailEvent[0].createdId} : ${detailEvent[0].createdDate}`
+                      }}
+                    </strong> </span
+                  ><br />
+                  <span>
+                    <strong
+                      >수정자 :
+                      {{
+                        this.detailEvent == ""
+                          ? "수정자없음"
+                          : `${detailEvent[0].modifiedId} : ${detailEvent[0].modifiedDate}`
+                      }}</strong
+                    >
+                  </span>
+                </div>
+                <v-spacer></v-spacer>
+              </v-list-item-subtitle>
+              <v-list-item-subtitle class="mb-3 outBox">
+                <v-icon right large dense class="mr-10"> mdi-palette </v-icon>
+                <strong>{{
+                  this.detailEvent == ""
+                    ? "색상표 없음"
+                    : detailEvent[0].backgroundColor
+                }}</strong>
+                <div class="innerBox" :style="swatchdetailStyle"></div>
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+        <v-divider class="t-3"></v-divider>
+
+        <v-card-actions>
+          <v-row justify="center" class="ma-0"
+            ><v-btn v-show="!update" text @click="updateStatus" class="ma-1">
+              <v-icon color="success" right class="mr-1"> mdi-pencil </v-icon>
+              수정
+            </v-btn>
+            <v-btn v-show="update" text @click="updateInfo" class="ma-1">
+              <v-icon color="success" right class="mr-1">
+                mdi-content-save-edit
+              </v-icon>
+              저장
+            </v-btn>
+            <v-divider vertical class="ma-1"></v-divider>
+            <v-btn text class="ma-1" @click="deleteInfo">
+              <v-icon right dark class="mr-1"> mdi-delete </v-icon>삭제
+            </v-btn></v-row
+          >
+        </v-card-actions>
+      </v-card>
+    </v-menu>
+  </v-card>
 </template>
 
 <script lang="ts">
@@ -563,6 +565,9 @@ export default class Schedule extends Vue {
     updateDate: HTMLFormElement;
     barChart: HTMLCanvasElement;
   };
+  selectedTabs: string = "달력";
+  tab: any = null;
+  tabList: any = ["달력", "타임라인"];
   chart: string = "";
   chartData: any = {
     data: {
@@ -575,30 +580,31 @@ export default class Schedule extends Vue {
           borderWidth: 1,
           pointBackgroundColor: "white",
           barPercentage: 1,
+          //pointBorderWidth: 20,
           // borderRadius: 5,
           data: [],
         },
       ],
     },
     options: {
-      // maxBarThickness: 20, //Bar 두께
+      maxBarThickness: 25, //Bar 두께
       indexAxis: "y",
       scales: {
         x: {
-          //barThickness: 5,
           min: "",
           max: "",
           autoSkip: false,
-          maxTicksLimit: 1,
-          borderRadius: 20,
+          //unitStepSize: 4,
+          borderWidth: 1,
           type: "time",
           grid: {
             display: true,
           },
+
           time: {
             parser: "yyyy-MM-dd",
             unit: "day",
-            unitStepSize: 1,
+            //unitStepSize: 1,
             //displayFormats: { day: "dd-MMM" },
             displayFormats: {
               month: "yyyy-MM",
@@ -606,18 +612,21 @@ export default class Schedule extends Vue {
               quarter: "YYYY-MM-DD",
             },
           },
-
           ticks: {
-            autoSkip: true,
-            source: "auto",
+            source: "ticks",
+            autoSkip: false,
+            //stepSize: 1,
             beginAtZero: true, //0부터 시작하는지.
+            offset: false,
             maxTicksLimit: 10,
+            //layout: {
+            // padding: {
+            //    left: 100,
+            //  },
+            //},
+
             //minRotation: 85,
             //maxRotation: 90,
-            // callback: function (context: any) {
-            //   console.log(context);
-            //   return context;
-            // },
           },
         },
         y: {
@@ -633,7 +642,6 @@ export default class Schedule extends Vue {
         annotation: {
           annotations: [
             {
-              drawTime: "afterDatasetsDraw",
               type: "line",
               mode: "vertical",
               xMin: new Date().toISOString().substr(0, 10),
@@ -645,7 +653,7 @@ export default class Schedule extends Vue {
                 borderColor: "#ff7b7b",
                 content: "TODAY",
                 enabled: true,
-                position: "center",
+                position: "top",
               },
             },
           ],
@@ -657,10 +665,9 @@ export default class Schedule extends Vue {
               enabled: true,
             },
             wheel: {
-              enabled: true,
+              enabled: false,
               speed: 0.1,
             },
-
             mode: "x",
           },
           pan: {
@@ -705,14 +712,21 @@ export default class Schedule extends Vue {
           },
         },
       },
-
       responsive: true, //container에 맞게 조정되는 옵션
       maintainAspectRatio: false, //그래프의 비율 유지
-      animation: {
-        duration: 2000,
-      },
     },
   };
+  selectedTimelineView: string = "month";
+  timelineViewOptions: any = [
+    {
+      title: "Day",
+      value: "day",
+    },
+    {
+      title: "Monthly",
+      value: "month",
+    },
+  ];
   filterList: any[] = []; //[response] 전체 거래처 데이터(filter용)
   customerList: any[] = []; //[response] 전체 거래처 데이터
   events: any[] = []; //[response] 전체 일정 데이터
@@ -771,6 +785,9 @@ export default class Schedule extends Vue {
     backgroundColor: "#4caf50",
     memo: "",
   };
+  x: number = 0;
+  y: number = 0;
+  calendarText: string = ""; //toast v-model개념
   selected: boolean = false; //그 외 일정추가
   menu_update_date: boolean = false; //수정일 캘린더
   updateDate: string = ""; //[수정] 달력 v-model
@@ -816,6 +833,8 @@ export default class Schedule extends Vue {
   };
 
   get calendarInstance() {
+    //'GetInstance'는 호출 값을 한 번만 제공합니다.
+    // 두 번 이상 호출하면 'null'을 호출하기 때문에 오류가 발생합니다.
     return this.$refs.calendar.getInstance();
   }
 
@@ -854,6 +873,20 @@ export default class Schedule extends Vue {
     this.setDateRangeText();
   }
 
+  @Watch("selectedTimelineView")
+  changeTimelineOptions() {
+    if (this.selectedTimelineView == "month") {
+      this.chartData.options.scales.x.time.unit = "month";
+      chart.resetZoom();
+      chart.resize();
+    } else {
+      this.chartData.options.scales.x.time.unit = "day";
+      chart.resetZoom();
+      this.plus();
+      chart.resize();
+    }
+  }
+
   @Watch("secondTitleList")
   addSecondTitle() {
     console.log("secondTitleList", this.secondTitleList);
@@ -883,10 +916,53 @@ export default class Schedule extends Vue {
     this.setDateRangeText();
     this.getCustomer();
     this.getSchedule("");
-    this.getTotalSchedule();
   }
+  //타임라인 일단위로 보여지는 함수
+  plus() {
+    for (var i = 0; i < 4; i++) {
+      chart.zoom(1.5);
+    }
+  }
+  minus() {
+    for (var i = 0; i < 4; i++) {
+      chart.zoom(0.9);
+    }
+  }
+  totalMonth() {
+    console.log(this.chartData.options.scales.x.time.unit);
+    this.chartData.options.scales.x.time.unit = "month";
+    //console.log(chart.scales.x._unit);
+
+    new Promise((resolve) => {
+      if (chart !== undefined) {
+        chart.destroy();
+      }
+
+      chart = new ChartJS(this.$refs.barChart, {
+        type: "bar",
+        data: this.chartData.data,
+        options: this.chartData.options,
+      });
+
+      chart.canvas.parentNode.style.height = "700px";
+      chart.canvas.parentNode.style.width = "1000px";
+      chart.resize();
+      console.group("createChart");
+      console.log("createChart", chart);
+      console.groupEnd();
+      resolve(chart);
+    });
+  }
+
   resetZoom() {
-    chart.resetZoom();
+    if (this.selectedTimelineView == "month") {
+      chart.resetZoom();
+    } else {
+      chart.resetZoom();
+      this.plus();
+    }
+
+    //this.plus();
   }
 
   //전체 타임라인List
@@ -899,6 +975,7 @@ export default class Schedule extends Vue {
     let all: any = [];
 
     api.schedule.getTotalScheduleInfo().then((response) => {
+      this.selectedTimelineView = "day";
       this.timelineList = response.data.responseData;
 
       response.data.responseData.forEach((value: any) => {
@@ -942,9 +1019,10 @@ export default class Schedule extends Vue {
           options: this.chartData.options,
         });
 
-        chart.canvas.parentNode.style.height = "400px";
-        //chart.canvas.parentNode.style.width = "900px";
+        chart.canvas.parentNode.style.height = "700px";
+        chart.canvas.parentNode.style.width = "2000px";
         chart.resize();
+        this.plus();
         console.group("createChart");
         console.log("createChart", chart);
         console.groupEnd();
@@ -1054,6 +1132,10 @@ export default class Schedule extends Vue {
 
   //update 일정
   onClickSchedule(event: any) {
+    //상세일정 일정옆에 띄우기
+    this.x = event.nativeEvent.pageX;
+    this.y = event.nativeEvent.pageY;
+
     this.detailEvent = [];
     this.detailMenu = true;
     this.update = false;
@@ -1346,6 +1428,15 @@ export default class Schedule extends Vue {
               });
           }
         });
+    }
+  }
+  clickTab(item: any) {
+    this.selectedTabs = item;
+
+    if (this.selectedTabs == "달력") {
+      this.getSchedule("");
+    } else {
+      this.getTotalSchedule();
     }
   }
 }
