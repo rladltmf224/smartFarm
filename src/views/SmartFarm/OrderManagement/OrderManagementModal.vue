@@ -76,7 +76,6 @@
                             </v-menu>
                         </v-col>
                     </v-row>
-
                     <v-sheet color="#F6F8F9" height="600">
                         <v-row v-if="!change" class="ma-0 d-flex ">
                             <v-col cols="12" class="d-flex " align-self="center">
@@ -144,8 +143,6 @@
                                                 v-model="props.item.jobOrderName" dense single-line>
                                             </v-text-field>
                                         </template>
-
-
                                         <template v-slot:item.delete="props">
                                             <v-btn icon @click="minus(props.item)">
                                                 <v-icon small class="mr-2">
@@ -274,7 +271,6 @@ import { it } from "node:test";
 import { strict } from "node:assert";
 @Component
 export default class OrderManagementModal extends Vue {
-
     name: string = "";
     menuLoad: boolean = false; //거래처명으로 검색 모달 
     datas_simple: any[] = [];
@@ -288,7 +284,6 @@ export default class OrderManagementModal extends Vue {
             value: "customerId", align: ' d-none'
         }
     ];
-
     order: any =
         {
             orderDate: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
@@ -341,7 +336,6 @@ export default class OrderManagementModal extends Vue {
                 this.itemDetail = res.data.responseData
             } else {
             }
-
         })
     }
     @Watch("orderInfo") //부모에서 받은 orderInfo
@@ -366,9 +360,6 @@ export default class OrderManagementModal extends Vue {
             } else {
                 this.swalFail()
             }
-
-
-
         })
         api.order.getCustomerNameList().then((res) => {
             if (res.status == 200) {
@@ -451,10 +442,6 @@ export default class OrderManagementModal extends Vue {
             toast: true,
             timer: 1500,
         });
-    }
-    mounted() {
-        this.itemDetail = [];
-        this.search = "";
     }
     d_date_search_order(v: any) { //수주일자
         this.order.orderDate = v;
@@ -740,8 +727,6 @@ export default class OrderManagementModal extends Vue {
                 timer: 1500,
             });
         }
-
-
     }
     getData() {  //거래처 상세조회 불러오기 api
         console.log('거래처 상세조회 api 연결하겠습니다.')
@@ -763,8 +748,6 @@ export default class OrderManagementModal extends Vue {
 
         console.log('브랜치테스트용 ')
     }
-
-
     cloneItem(item: any) { //거래처 명 클릭 시 
         console.log('cloneItemcloneItemcloneItemcloneItemcloneItem')
         this.order.customerId = item.customerId
