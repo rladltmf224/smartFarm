@@ -295,9 +295,9 @@
             class="dateBox"
             :key="n.title"
           >
+            <!--:class="{ active: n.date != '' }" //:style="{ backgroundColor:
+              scheduleData.backgroundColor }"-->
             <v-col cols="4" class="pa-0">
-              //:class="{ active: n.date != '' }" //:style="{ backgroundColor:
-              scheduleData.backgroundColor }"
               <v-text-field
                 :value="n.title"
                 :readonly="n.title != ''"
