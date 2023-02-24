@@ -574,20 +574,25 @@ export default class Schedule extends Vue {
       labels: [],
       datasets: [
         {
+          type: "bar",
           axis: "y",
           label: "",
           backgroundColor: [],
           borderWidth: 1,
-          pointBackgroundColor: "white",
-          barPercentage: 1,
-          //pointBorderWidth: 20,
-          // borderRadius: 5,
+          borderSkipped: false,
+          borderRadius: 20,
           data: [],
+        },
+        {
+          type: "bubble",
+          label: "",
+          data: [],
+          backgroundColor: "[]",
         },
       ],
     },
     options: {
-      maxBarThickness: 25, //Bar 두께
+      maxBarThickness: 30, //Bar 두께
       indexAxis: "y",
       scales: {
         x: {
@@ -595,7 +600,7 @@ export default class Schedule extends Vue {
           max: "",
           autoSkip: false,
           //unitStepSize: 4,
-          borderWidth: 1,
+          //borderWidth: 1,
           type: "time",
           grid: {
             display: true,
@@ -607,6 +612,7 @@ export default class Schedule extends Vue {
             //unitStepSize: 1,
             //displayFormats: { day: "dd-MMM" },
             displayFormats: {
+              year: "yyyy",
               month: "yyyy-MM",
               day: "yyyy-MM-dd",
               quarter: "YYYY-MM-DD",
@@ -665,7 +671,7 @@ export default class Schedule extends Vue {
               enabled: true,
             },
             wheel: {
-              enabled: false,
+              enabled: true,
               speed: 0.1,
             },
             mode: "x",
@@ -673,6 +679,7 @@ export default class Schedule extends Vue {
           pan: {
             enabled: true,
           },
+          limits: {},
         },
 
         legend: {
@@ -690,8 +697,8 @@ export default class Schedule extends Vue {
             size: "12",
           },
 
-          formatter: (value: any, context: any) => {
-            return `${this.chartData.data["labels"][context.dataIndex]}`;
+          formatter: (value: any) => {
+            return value.y;
           },
         },
         tooltip: {
@@ -707,7 +714,12 @@ export default class Schedule extends Vue {
           boxWidth: 15,
           callbacks: {
             label: function (tooltipItem: any) {
-              return (tooltipItem.formattedValue = `${tooltipItem.raw[0]} ~ ${tooltipItem.raw[1]}`);
+              console.log(tooltipItem.raw["x"].length);
+              if (tooltipItem.raw["x"].length == 2) {
+                return (tooltipItem.formattedValue = `${tooltipItem.raw["x"][0]} ~ ${tooltipItem.raw["x"][1]}`);
+              } else {
+                return (tooltipItem.formattedValue = `${tooltipItem.raw["x"]}`);
+              }
             },
           },
         },
@@ -928,32 +940,6 @@ export default class Schedule extends Vue {
       chart.zoom(0.9);
     }
   }
-  totalMonth() {
-    console.log(this.chartData.options.scales.x.time.unit);
-    this.chartData.options.scales.x.time.unit = "month";
-    //console.log(chart.scales.x._unit);
-
-    new Promise((resolve) => {
-      if (chart !== undefined) {
-        chart.destroy();
-      }
-
-      chart = new ChartJS(this.$refs.barChart, {
-        type: "bar",
-        data: this.chartData.data,
-        options: this.chartData.options,
-      });
-
-      chart.canvas.parentNode.style.height = "700px";
-      chart.canvas.parentNode.style.width = "1000px";
-      chart.resize();
-      console.group("createChart");
-      console.log("createChart", chart);
-      console.groupEnd();
-      resolve(chart);
-    });
-  }
-
   resetZoom() {
     if (this.selectedTimelineView == "month") {
       chart.resetZoom();
@@ -961,14 +947,15 @@ export default class Schedule extends Vue {
       chart.resetZoom();
       this.plus();
     }
-
-    //this.plus();
   }
 
   //전체 타임라인List
   async getTotalSchedule() {
     let yArea: any = [];
     let xArea: any = [];
+    let oneDayColor: any = [];
+    let oneDayData: any = [];
+    //let oneDayXarea: any = [];
     let color: any = [];
     let minDate: String = ""; //가장 이른 일정
     let maxDate: String = ""; //가장 늦은 일정
@@ -978,11 +965,24 @@ export default class Schedule extends Vue {
       this.selectedTimelineView = "day";
       this.timelineList = response.data.responseData;
 
+      //bubble -하루단위 일정, bar -하루이상 일정
       response.data.responseData.forEach((value: any) => {
         yArea.push(value.customerName);
-        xArea.push([value.start, value.end]);
-        color.push(value.backgroundColor);
         all.push(value.start, value.end);
+        if (value.start == value.end) {
+          oneDayData.push({
+            x: value.start,
+            y: value.customerName,
+            r: 20,
+          });
+          oneDayColor.push(value.backgroundColor);
+        } else {
+          xArea.push({
+            x: [value.start, value.end],
+            y: value.customerName,
+          });
+          color.push(value.backgroundColor);
+        }
       });
 
       minDate = all.reduce((prev: any, curr: any) => {
@@ -1000,6 +1000,8 @@ export default class Schedule extends Vue {
       this.chartData.data["labels"] = yArea;
       this.chartData.data["datasets"][0].data = xArea;
       this.chartData.data["datasets"][0].backgroundColor = color;
+      this.chartData.data["datasets"][1].data = oneDayData;
+      this.chartData.data["datasets"][1].backgroundColor = oneDayColor;
       this.chartData.options.scales.x.max = dayjs(`${maxDate}`)
         .add(1, "M")
         .format("YYYY-MM-DD");
