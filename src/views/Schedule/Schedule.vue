@@ -1090,20 +1090,21 @@ export default class Schedule extends Vue {
 
     switch (this.selectedView) {
       case "month":
-        this.dateRangeText = `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
+        this.dateRangeText = `${date.getFullYear()}년${date.getMonth() + 1}월`;
+
         return;
       case "day":
-        this.dateRangeText = `${date.getFullYear()}.${
+        this.dateRangeText = `${date.getFullYear()}년${
           date.getMonth() + 1
-        }.${date.getDate()}`;
-        return;
+        }월${date.getDate()}일`;
 
+        return;
       default:
-        this.dateRangeText = `${startYear}.${
+        this.dateRangeText = `${startYear}년${
           start.getMonth() + 1
-        }.${start.getDate()} - ${startYear !== endYear ? `${endYear}.` : ""}${
-          end.getMonth() + 1
-        }.${end.getDate()}`;
+        }월${start.getDate()}일 - ${
+          startYear !== endYear ? `${endYear}.` : ""
+        }${end.getMonth() + 1}월${end.getDate()}일`;
     }
   }
   //일정 title 커스텀
