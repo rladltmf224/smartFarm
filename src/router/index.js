@@ -187,6 +187,11 @@ const routes = [
         name: "NotDev ",
         component: () => import("@/components/page/NotDev/NotDev"),
       },
+      {
+        path: "schedule",
+        name: "Schedule ",
+        component: () => import("@/views/Schedule/Schedule"),
+      },
     ],
   },
 ];

@@ -12,8 +12,8 @@
                 <v-menu v-model="menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
                     offset-y min-width="auto">
                     <template v-slot:activator="{ on, attrs }">
-                        <v-text-field v-model="startDate" label="시작일" prepend-icon="mdi-calendar" readonly
-                            v-bind="attrs" v-on="on"></v-text-field>
+                        <v-text-field v-model="startDate" label="시작일" prepend-icon="mdi-calendar" readonly v-bind="attrs"
+                            v-on="on"></v-text-field>
                     </template>
                     <v-date-picker v-model="startDate" @change="putDate(), menu = false" no-title></v-date-picker>
                 </v-menu>
@@ -29,8 +29,8 @@
             <v-data-table :headers="datas_header" hide-default-footer :items="table.carousel_data" class="elevation-1">
                 <!-- ㅁㄴㅇㅁㄴㅇ -->
                 <template #item="{ item, index }">
-                    <tr :class="index === selectedRow ? 'custom-highlight-row' : ''"
-                        v-for="(item_sub, index) in item.datas" :key="item_sub.name">
+                    <tr :class="index === selectedRow ? 'custom-highlight-row' : ''" v-for="(item_sub, index) in item.datas"
+                        :key="item_sub.name">
                         <!-- 처리구명  -->
                         <td v-if="index == 0" :rowspan="item.datas.length">
                             <input type="text" disabled name="text" size="20" style="width:100%; border: 0"
@@ -89,9 +89,6 @@
 
 
 
-
-
-
         <!-- 사진 조회 및 등록 -->
         <v-dialog v-model="dialog" persistent max-width="1000" max-height="1000">
             <v-card style="overflow:auto" tile>
@@ -112,13 +109,13 @@
                         <v-col cols="12" class="d-flex justify-center align-center">
                             <v-col cols="4">
                                 <v-select class="px-2" v-model="selectTreatMent" :items="imageDatas"
-                                    item-text="treatmentName" item-value="abbr" label="처치구 선택" persistent-hint
-                                    return-object single-line>
+                                    item-text="treatmentName" item-value="abbr" label="처치구 선택" persistent-hint return-object
+                                    single-line>
                                 </v-select>
                             </v-col>
                             <v-col cols="6">
-                                <input class="px-2" type="file" multiple @change="onInputImage()" ref="serveyImage"
-                                    alt="" accept=".jpg, .jpeg, .png"></input>
+                                <input class="px-2" type="file" multiple @change="onInputImage()" ref="serveyImage" alt=""
+                                    accept=".jpg, .jpeg, .png"></input>
                             </v-col>
                             <v-col cols="2" class="d-flex justify-center">
                                 <v-btn small @click="sendImage()">업로드</v-btn>

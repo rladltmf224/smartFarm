@@ -105,7 +105,7 @@ function setInterceptors(instance) {
 function createInstance() {
   console.log("create AuthAPI Instance");
   const instance = axios.create({
-    //baseURL: process.env.VUE_APP_API_URL,
+    baseURL: process.env.VUE_APP_API_URL,
     // baseUrl: {
     //   dev: '/api/',
     //   pro: '/api/'
@@ -116,6 +116,8 @@ function createInstance() {
 }
 
 const instance = createInstance();
+
+console.log("AuthAPI 인스턴스 생성", instance.defaults.baseURL);
 
 // 각 메소드별 함수를 생성해 주세요.
 export default {

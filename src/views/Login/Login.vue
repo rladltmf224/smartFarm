@@ -11,48 +11,23 @@
                 <form>
                   <v-row dense>
                     <v-col cols="12">
-                      <v-text-field
-                        label="사번"
-                        prepend-inner-icon="mdi-account"
-                        v-model="username"
-                      >
+                      <v-text-field label="사번" prepend-inner-icon="mdi-account" v-model="username">
                       </v-text-field>
                     </v-col>
                     <v-col cols="12">
-                      <v-text-field
-                        prepend-inner-icon="mdi-lock"
-                        type="password"
-                        label="비밀번호"
-                        v-model="password"
-                      ></v-text-field>
+                      <v-text-field prepend-inner-icon="mdi-lock" type="password" label="비밀번호"
+                        v-model="password"></v-text-field>
                     </v-col>
                     <v-col cols="6">
-                      <v-checkbox
-                        v-model="checkbox_ID"
-                        label="ID 저장"
-                        dense
-                      ></v-checkbox>
+                      <v-checkbox v-model="checkbox_ID" label="ID 저장" dense></v-checkbox>
                     </v-col>
                     <v-col cols="6">
-                      <v-checkbox
-                        v-model="checkbox_IDPW"
-                        label="ID/PW 저장"
-                        dense
-                      ></v-checkbox>
+                      <v-checkbox v-model="checkbox_IDPW" label="ID/PW 저장" dense></v-checkbox>
                     </v-col>
                   </v-row>
 
-                  <v-btn
-                    type="button"
-                    color="blue lighten-1 text-capitalize"
-                    depressed
-                    large
-                    block
-                    dark
-                    class="mb-3"
-                    @click="loginManager"
-                    >접속</v-btn
-                  >
+                  <v-btn type="button" color="blue lighten-1 text-capitalize" depressed large block dark class="mb-3"
+                    @click="loginManager">접속</v-btn>
                 </form>
                 <!-- <a id="kakao-login-btn" :href="loginWithKakao()">
                   <img
@@ -92,6 +67,8 @@ export default class Login extends Vue {
 
   password?: string = "" || this.$cookies.get("pw");
 
+  pushToken: string | null = "";
+
   created() {
     this.$store.commit("setCurrent", "nothing");
 
@@ -127,12 +104,23 @@ export default class Login extends Vue {
       this.check_Type = "";
       this.$store.commit("setSaveType", "");
     }
-
+    // this.pushToken = await api.webpush.subscribe();
     await this.$store
       .dispatch("getUserInfo", {
         account: {
           userId: this.username,
           userPw: this.password,
+          // pushToken: {
+          //   token: this.pushToken,
+          //   device:
+          //     /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          //       navigator.userAgent
+          //     )
+          //       ? 0
+          //       : 1,
+          //   userAgent:
+          //     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.78",
+          // },
         },
         type: this.check_Type,
       })
@@ -141,8 +129,9 @@ export default class Login extends Vue {
       });
     console.log("loginManager", this.$store.state.userId);
     if (this.$store.state.userId !== "") {
-      // api.webpush.subscribe();
       this.$router.push({ path: "monitoring" });
+      let userId = this.$store.state.userId
+      localStorage.setItem("userId", JSON.stringify(userId));
       return;
     }
     // this.$router.push({ path: "monitoring" });

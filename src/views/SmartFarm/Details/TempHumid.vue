@@ -382,8 +382,6 @@ export default {
         },
         { text: "온도", value: "temperature" },
         { text: "센서명", value: "sensorCode" },
-        { text: "실 이름", value: "room", align: " d-none" },
-        { text: "구역 숫자", value: "sectionNumber", align: " d-none" },
         { text: "습도", value: "humidity" },
       ],
 
@@ -534,14 +532,14 @@ export default {
       ],
     };
   },
-  // watch: {
-  //   options: {
-  //     handler() {
-  //       this.getTempHumidData();
-  //     },
-  //     deep: true,
-  //   },
-  // },
+  watch: {
+    options: {
+      handler() {
+        this.getDataforTable();
+      },
+      deep: true,
+    },
+  },
   mounted() {
     this.getDataforTable();
   },
@@ -763,8 +761,8 @@ export default {
         .then((res) => {
           // 이걸로 테이블만들기
           this.loading = false; //로딩바
-          this.datas_header[1].value = "temperature";
-          this.datas_header[5].value = "humidity";
+          // this.datas_header[1].value = "temperature";
+          // this.datas_header[5].value = "humidity";
           this.datas = res.data.responseData;
           this.totalData = res.data.totalCount;
         })
@@ -794,8 +792,8 @@ export default {
         .getTableDataTempHumidHour(GetTempHumidParams)
         .then((res) => {
           this.loading = false; //로딩바
-          this.datas_header[1].value = "temperatureAVG";
-          this.datas_header[5].value = "humidityAVG";
+          //this.datas_header[1].value = "temperatureAVG";
+          //this.datas_header[5].value = "humidityAVG";
           this.datas = res.data.responseData;
           this.totalData = res.data.totalCount;
         });

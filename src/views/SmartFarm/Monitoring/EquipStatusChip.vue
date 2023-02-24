@@ -2,7 +2,7 @@
   <!-- <v-row dense> -->
   <div class="d-flex flex-row flex-nowrap">
     <div
-      class="mx1"
+      class="mx-1"
       :class="{
         on: equipData.currentStatus === 'ON',
         off: equipData.currentStatus === 'OFF',
@@ -65,12 +65,12 @@ div {
 
   .on {
     @extend %circle;
-    background: greenyellow;
+    background: #4baf50;
   }
 
   .off {
     @extend %circle;
-    background: red;
+    background: #ff5252;
   }
 }
 </style>

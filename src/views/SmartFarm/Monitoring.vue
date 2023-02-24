@@ -250,6 +250,7 @@
           <v-spacer></v-spacer>
         </v-card-title>
         <v-card-text>
+          <p v-html="latestRecord"></p>
           <v-col align-self="center">
             <v-data-table
               :headers="headers_bala"
@@ -306,7 +307,7 @@
                 </v-btn-toggle>
               </template>
               <template v-slot:[`item.repeatPeriod`]="{ item }">
-                <div v-if="item.repeatPeriod != null">
+                <div v-if="item.repeatPeriod != null" style="width: 50px">
                   <v-text-field
                     prefix="일"
                     type="number"
@@ -318,13 +319,13 @@
                     @click="changePeriodValue(item)"
                   ></v-text-field>
                 </div>
-                <div v-else>주기없음</div>
+                <div v-else style="width: 50px">-</div>
               </template>
               <!-- 시간설정 -->
               <template v-slot:[`item.setting`]="{ item }">
                 <!-- LED부분 -->
                 <div
-                  class="d-flex align-center"
+                  class="d-flex justify-end justify-sm-space-between align-center"
                   v-if="
                     item.equipmentType == 'LED' ||
                     item.equipmentType == 'WDP' ||
@@ -342,7 +343,9 @@
                       :key="index + data.startTime"
                     >
                       <td>
-                        <form class="d-flex align-center">
+                        <form
+                          class="d-flex justify-end justify-sm-space-between align-center"
+                        >
                           <input
                             @change="
                               changeValue(
@@ -381,7 +384,7 @@
                       </td>
                     </tr>
                   </table>
-                  <div>
+                  <div class="d-flex flex-column">
                     <v-btn
                       class="ml-1 mr-1"
                       v-if="!item.modifiedBtn"
@@ -389,14 +392,14 @@
                       >수정</v-btn
                     >
                     <v-btn
-                      class="ml-1 mr-1"
+                      class="ml-1 mr-1 my-1"
                       v-if="item.modifiedBtn"
                       @click="openMemoModal('setting', item, null)"
                       small
                       >저장</v-btn
                     >
                     <v-btn
-                      class="ml-1 mr-1"
+                      class="ml-1 mr-1 my-1"
                       v-if="item.modifiedBtn"
                       @click="editValue(item, 'add')"
                       small
@@ -404,7 +407,7 @@
                     >
 
                     <v-btn
-                      class="ml-1 mr-1"
+                      class="ml-1 mr-1 my-1"
                       v-if="item.modifiedBtn"
                       @click="cancelChangeValue(item)"
                       small
@@ -414,7 +417,7 @@
                 </div>
                 <!--가습기부분 -->
                 <div
-                  class="d-flex align-center"
+                  class="d-flex justify-end justify-sm-space-between align-center"
                   v-if="
                     item.equipmentType == 'HUM' || item.equipmentType == 'ACF'
                   "
@@ -430,73 +433,83 @@
                       :key="index + data.startTime"
                     >
                       <td>
-                        <form class="d-flex align-center">
-                          <input
-                            @change="
-                              changeValue(
-                                data,
-                                item.equipmentName + '_s_' + index
-                              )
-                            "
-                            :ref="item.equipmentName + '_s_' + index"
-                            type="time"
-                            v-model="data.startTime"
-                            :readonly="!item.modifiedBtn"
-                          />
-                          <input
-                            @change="
-                              changeValue(
-                                data,
-                                item.equipmentName + '_e_' + index
-                              )
-                            "
-                            :ref="item.equipmentName + '_e_' + index"
-                            type="time"
-                            v-model="data.endTime"
-                            :readonly="!item.modifiedBtn"
-                          />
-                          <div width="20">
+                        <form
+                          class="d-flex justify-end justify-sm-space-between align-center flex-wrap flex-sm-nowrap"
+                        >
+                          <div
+                            class="d-flex justify-end justify-sm-space-between align-center flex-nowrap"
+                          >
+                            <input
+                              @change="
+                                changeValue(
+                                  data,
+                                  item.equipmentName + '_s_' + index
+                                )
+                              "
+                              :ref="item.equipmentName + '_s_' + index"
+                              type="time"
+                              v-model="data.startTime"
+                              :readonly="!item.modifiedBtn"
+                            />
+                            <input
+                              @change="
+                                changeValue(
+                                  data,
+                                  item.equipmentName + '_e_' + index
+                                )
+                              "
+                              :ref="item.equipmentName + '_e_' + index"
+                              type="time"
+                              v-model="data.endTime"
+                              :readonly="!item.modifiedBtn"
+                            />
+                          </div>
+                          <div
+                            class="d-flex justify-end justify-sm-space-between flex-nowrap"
+                          >
+                            <div width="20">
+                              <v-text-field
+                                dense
+                                v-model="data.minValue"
+                                min="1"
+                                max="100"
+                                type="number"
+                                prefix="%"
+                                @change="changeValue(item)"
+                                :readonly="!item.modifiedBtn"
+                                reverse
+                                class="setting_text_width"
+                              >
+                              </v-text-field>
+                            </div>
+
+                            <span class="px-4">~</span>
                             <v-text-field
                               dense
-                              v-model="data.minValue"
                               min="1"
                               max="100"
                               type="number"
                               prefix="%"
+                              v-model="data.maxValue"
                               @change="changeValue(item)"
                               :readonly="!item.modifiedBtn"
                               reverse
                               class="setting_text_width"
+                            ></v-text-field>
+                            <v-btn
+                              small
+                              icon
+                              @click="deleteSettingData(item, index)"
+                              v-if="item.modifiedBtn"
                             >
-                            </v-text-field>
+                              <v-icon>mdi-minus-box-outline</v-icon>
+                            </v-btn>
                           </div>
-
-                          <span class="px-4">~</span>
-                          <v-text-field
-                            dense
-                            min="1"
-                            max="100"
-                            type="number"
-                            prefix="%"
-                            v-model="data.maxValue"
-                            @change="changeValue(item)"
-                            :readonly="!item.modifiedBtn"
-                            reverse
-                            class="setting_text_width"
-                          ></v-text-field>
-                          <v-btn
-                            small
-                            icon
-                            @click="deleteSettingData(item, index)"
-                            v-if="item.modifiedBtn"
-                          >
-                            <v-icon>mdi-minus-box-outline</v-icon>
-                          </v-btn>
                         </form>
                       </td>
                     </tr>
                   </table>
-                  <div>
+                  <div class="d-flex flex-column">
                     <v-btn
                       class="ml-1 mr-1"
                       v-if="!item.modifiedBtn"
@@ -505,21 +518,21 @@
                     >
 
                     <v-btn
-                      class="ml-1 mr-1"
+                      class="ml-1 mr-1 my-1"
                       v-if="item.modifiedBtn"
                       @click="openMemoModal('setting', item, null)"
                       small
                       >저장</v-btn
                     >
                     <v-btn
-                      class="ml-1 mr-1"
+                      class="ml-1 mr-1 my-1"
                       v-if="item.modifiedBtn"
                       @click="editValue(item, 'add')"
                       small
                       >추가</v-btn
                     >
                     <v-btn
-                      class="ml-1 mr-1"
+                      class="ml-1 mr-1 my-1"
                       v-if="item.modifiedBtn"
                       @click="cancelChangeValue(item)"
                       small
@@ -530,7 +543,7 @@
 
                 <!-- 에어컨부분 -->
                 <div
-                  class="d-flex align-center"
+                  class="d-flex justify-end justify-sm-space-between align-center"
                   v-if="item.equipmentType == 'ACN'"
                 >
                   <table>
@@ -544,74 +557,84 @@
                       :key="index + data.startTime"
                     >
                       <td>
-                        <form class="d-flex align-center">
-                          <input
-                            @change="
-                              changeValue(
-                                data,
-                                item.equipmentName + '_s_' + index
-                              )
-                            "
-                            :ref="item.equipmentName + '_s_' + index"
-                            type="time"
-                            v-model="data.startTime"
-                            :readonly="!item.modifiedBtn"
-                          />
-                          <input
-                            @change="
-                              changeValue(
-                                data,
-                                item.equipmentName + '_e_' + index
-                              )
-                            "
-                            :ref="item.equipmentName + '_e_' + index"
-                            type="time"
-                            v-model="data.endTime"
-                            :readonly="!item.modifiedBtn"
-                          />
-                          <div width="20">
+                        <form
+                          class="d-flex align-center justify-end justify-sm-space-between flex-wrap flex-sm-nowrap"
+                        >
+                          <div
+                            class="d-flex align-center justify-end justify-sm-space-between flex-nowrap"
+                          >
+                            <input
+                              @change="
+                                changeValue(
+                                  data,
+                                  item.equipmentName + '_s_' + index
+                                )
+                              "
+                              :ref="item.equipmentName + '_s_' + index"
+                              type="time"
+                              v-model="data.startTime"
+                              :readonly="!item.modifiedBtn"
+                            />
+                            <input
+                              @change="
+                                changeValue(
+                                  data,
+                                  item.equipmentName + '_e_' + index
+                                )
+                              "
+                              :ref="item.equipmentName + '_e_' + index"
+                              type="time"
+                              v-model="data.endTime"
+                              :readonly="!item.modifiedBtn"
+                            />
+                          </div>
+                          <div
+                            class="d-flex align-center justify-end justify-sm-space-between flex-nowrap"
+                          >
+                            <div width="20">
+                              <v-text-field
+                                dense
+                                v-model="data.minValue"
+                                min="1"
+                                max="100"
+                                type="number"
+                                prefix="°C"
+                                @change="changeValue(item)"
+                                :readonly="!item.modifiedBtn"
+                                reverse
+                                class="setting_text_width"
+                              >
+                              </v-text-field>
+                            </div>
+
+                            <span class="px-4">~</span>
                             <v-text-field
                               dense
-                              v-model="data.minValue"
                               min="1"
                               max="100"
                               type="number"
                               prefix="°C"
+                              v-model="data.maxValue"
                               @change="changeValue(item)"
                               :readonly="!item.modifiedBtn"
                               reverse
                               class="setting_text_width"
+                            ></v-text-field>
+                            <v-btn
+                              small
+                              icon
+                              @click="deleteSettingData(item, index)"
+                              v-if="item.modifiedBtn"
                             >
-                            </v-text-field>
+                              <v-icon>mdi-minus-box-outline</v-icon>
+                            </v-btn>
                           </div>
-
-                          <span class="px-4">~</span>
-                          <v-text-field
-                            dense
-                            min="1"
-                            max="100"
-                            type="number"
-                            prefix="°C"
-                            v-model="data.maxValue"
-                            @change="changeValue(item)"
-                            :readonly="!item.modifiedBtn"
-                            reverse
-                            class="setting_text_width"
-                          ></v-text-field>
-                          <v-btn
-                            small
-                            icon
-                            @click="deleteSettingData(item, index)"
-                            v-if="item.modifiedBtn"
-                          >
-                            <v-icon>mdi-minus-box-outline</v-icon>
-                          </v-btn>
                         </form>
                       </td>
                     </tr>
                   </table>
 
-                  <div>
+                  <div class="d-flex flex-column">
                     <v-btn
                       class="ml-1 mr-1"
                       v-if="!item.modifiedBtn"
@@ -620,21 +643,21 @@
                     >
 
                     <v-btn
-                      class="ml-1 mr-1"
+                      class="ml-1 mr-1 my-1"
                       v-if="item.modifiedBtn"
                       @click="openMemoModal('setting', item, null)"
                       small
                       >저장</v-btn
                     >
                     <v-btn
-                      class="ml-1 mr-1"
+                      class="ml-1 mr-1 my-1"
                       v-if="item.modifiedBtn"
                       @click="editValue(item, 'add')"
                       small
                       >추가</v-btn
                     >
                     <v-btn
-                      class="ml-1 mr-1"
+                      class="ml-1 mr-1 my-1"
                       v-if="item.modifiedBtn"
                       @click="cancelChangeValue(item)"
                       small
@@ -798,9 +821,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="success" @click.native="okModal()">확인</v-btn>
-          <v-btn text color="success" @click.native="memo_modal = false"
-            >취소</v-btn
-          >
+          <v-btn text color="success" @click.native="closeModal()">취소</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -884,6 +905,7 @@ export default {
       //   { title: "알람이력2" },
       //   { title: "알람이력3" },
       // ],
+      latestRecord: "",
       headers_bala: [
         {
           text: "이름",
@@ -1172,11 +1194,77 @@ export default {
           }
         });
     },
+    updateControlHistory(reqData) {
+      api.smartfarm.getlatestControl(reqData).then((res) => {
+        let record = res.data.responseData;
+        this.latestRecord =
+          "최신 제어 이력 : " +
+          record["createdDate"] +
+          " [" +
+          record["targetValue"] +
+          "] " +
+          record["equipmentName"];
+        if (
+          record["targetValue"] == "자동제어" ||
+          record["targetValue"] == "수동제어"
+        ) {
+          this.latestRecord +=
+            " " + record["statusBefore"] + " → " + record["statusAfter"];
+        }
+
+        this.latestRecord += " by " + record["createdId"];
+        if (record["memo"]) this.latestRecord += " (" + record["memo"] + ")";
+        if (record["targetValue"] == "설정변경") {
+          let beforeRecord = "";
+          let afterRecord = "";
+          record["details"].forEach((detail) => {
+            if (
+              detail["startTimeBefore"] ||
+              detail["endTimeBefore"] ||
+              detail["minValueBefore"] ||
+              detail["maxValueBefore"]
+            ) {
+              if (beforeRecord == "") beforeRecord += "<br>[Before] ";
+              else beforeRecord += " / ";
+              beforeRecord +=
+                detail["startTimeBefore"] +
+                "~" +
+                detail["endTimeBefore"] +
+                "  " +
+                detail["minValueBefore"];
+              if (detail["minValueBefore"] != detail["maxValueBefore"]) {
+                beforeRecord += "~" + detail["maxValueBefore"];
+              }
+            }
+            if (
+              detail["startTimeAfter"] ||
+              detail["endTimeAfter"] ||
+              detail["minValueAfter"] ||
+              detail["maxValueAfter"]
+            ) {
+              if (afterRecord == "") afterRecord += "<br>[After] ";
+              else afterRecord += " / ";
+              afterRecord +=
+                detail["startTimeAfter"] +
+                "~" +
+                detail["endTimeAfter"] +
+                "  " +
+                detail["minValueAfter"];
+              if (detail["minValueAfter"] != detail["maxValueAfter"]) {
+                afterRecord += "~" + detail["maxValueAfter"];
+              }
+            }
+          });
+          this.latestRecord += beforeRecord + afterRecord;
+        }
+      });
+    },
     openControlModal(data) {
       let reqData = {
         roomId: data.roomId,
       };
       this.ControlModal_currentVal = reqData.roomId;
+      this.updateControlHistory(reqData);
       api.smartfarm.getRoomContoller(reqData).then((res) => {
         console.log("getRoomContoller", res.data.responseData);
         res.data.responseData.forEach((element) => {
@@ -1188,6 +1276,7 @@ export default {
           //   el_sub.loadBtn = false;
           // });
         });
+        this.bala_data_backup = _.cloneDeep(res.data.responseData);
         this.bala_data = res.data.responseData;
         this.roomName_control = data.roomName;
         this.control_modal = true;
@@ -1324,6 +1413,10 @@ export default {
       this.temp_save_item = null;
       this.temp_save_status = null;
     },
+    closeModal() {
+      this.memo_modal = false;
+      this.bala_data = _.cloneDeep(this.bala_data_backup);
+    },
     saveChangeValue(item, memo) {
       let req_data = {
         equipmentId: item.equipmentId,
@@ -1416,10 +1509,12 @@ export default {
           })
           .then((result) => {
             if (result.isConfirmed) {
+              this.bala_data = _.cloneDeep(this.bala_data_backup);
               return (item.modifiedBtn = false);
             }
           });
       } else {
+        this.bala_data = _.cloneDeep(this.bala_data_backup);
         return (item.modifiedBtn = false);
       }
     },
@@ -1463,12 +1558,14 @@ export default {
       let reqData = {
         roomId: this.ControlModal_currentVal,
       };
+      this.updateControlHistory(reqData);
       api.smartfarm.getRoomContoller(reqData).then((res) => {
         console.log("getRoomContoller", res.data.responseData);
         res.data.responseData.forEach((element) => {
           element.modifiedBtn = false;
           element.loadBtn = false;
         });
+        this.bala_data_backup = _.cloneDeep(res.data.responseData);
         this.bala_data = res.data.responseData;
       });
       // getEquipmentInfo()
