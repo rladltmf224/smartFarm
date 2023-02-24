@@ -191,9 +191,9 @@
               <h4 class="searchbox-title">작업지시서 목록</h4>
             </v-col>
             <v-col class="text-right" offset-md="3" md="7">
-              <v-btn small class="mr-1" color="primary" @click="totalDelete">
+              <!-- <v-btn small class="mr-1" color="primary" @click="totalDelete">
                 선 택 삭 제
-              </v-btn>
+              </v-btn> -->
               <v-btn small class="mr-1" color="primary" @click="add">
                 작업지시서 등록
               </v-btn>
@@ -207,7 +207,6 @@
             v-model="toatalselected"
             :headers="headers"
             :items="totalTable"
-            show-select
             @click:row="dataDetail"
             dense
             :options.sync="orderListCfg.options"
@@ -268,7 +267,7 @@
                 시 작
               </v-btn>
               <v-btn
-                v-show="item.status == '작업 진행중'"
+                v-show="item.status == '생산중'"
                 small
                 fluid
                 text
@@ -850,8 +849,8 @@ export default class OperationOrder extends Vue {
     }
   }
   getStatusColor(status: string) {
-    if (status == "대기") return "orange";
-    else if (status == "작업 진행중") return "blue darken-1";
+    if (status == "생산전") return "orange";
+    else if (status == "생산중") return "blue darken-1";
     else if (status == "생산 완료") return "green";
     else return "black";
   }

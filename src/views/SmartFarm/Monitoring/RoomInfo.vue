@@ -280,16 +280,16 @@ div {
     background: red;
   }
 
-  .row {
-    margin: 0;
-  }
+  // .row {
+  //   margin: 0;
+  // }
 
-  .row .row {
-    margin: 0;
-  }
+  // .row .row {
+  //   margin: 0;
+  // }
 
-  .col {
-    padding: 0;
-  }
+  // .col {
+  //   padding: 0;
+  // }
 }
 </style>

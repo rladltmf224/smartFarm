@@ -21,8 +21,8 @@ import production from "./service/production";
 import facility from "./service/facility";
 import process from "./service/process";
 
-import webpush from "./alarm/firebase";
-// import kakao from ".alarm/kakao"
+//import webpush from "./alarm/firebase";
+//import kakao from ".alarm/kakao"
 
 export {
   bom,
@@ -47,6 +47,6 @@ export {
   production,
   facility,
   process,
-  webpush,
+  // webpush,
   // kakao,
 };

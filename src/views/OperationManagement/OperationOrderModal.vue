@@ -143,7 +143,7 @@
                       :items="processList"
                       v-model="orderData.selectProcess"
                       item-value="processId"
-                      item-text="process_name"
+                      item-text="processName"
                       autocomplete
                       :disabled="processList.length == 0"
                       dense
@@ -179,7 +179,9 @@
                       @click:close="onClose(data)"
                       close
                     >
-                      {{ data.facilityName }} ({{ data.name }})
+                      {{ data.facilityName }} ({{
+                        data.facilityDetailName || data.name
+                      }})
                     </v-chip>
                   </div>
                 </v-row>
@@ -202,11 +204,10 @@
         <v-card-actions>
           <v-row dense justify="end">
             <v-btn
-              :disabled="itemTable.length == 0"
               v-show="change"
               class="mr-4"
               color="primary"
-              @click="changeOn"
+              @click="complete"
             >
               수 정
             </v-btn>
@@ -497,13 +498,8 @@ export default class OperationOrderModal extends Vue {
   })
   editedCustomerData: any;
 
-  // @Watch("orderData.departmentchargeId", { deep: true })
-  // onChangeCharge() {
-  //   this.getDepartmentCrewList();
-  // }
-
-  //@Watch("orderData.department")
-  onOrderDataChange() {
+  @Watch("orderData.department")
+  onDepartmentDataChange() {
     if (this.orderData.department != 0) {
       this.getDepartmentCrewList();
     } else {
@@ -513,23 +509,23 @@ export default class OperationOrderModal extends Vue {
     }
   }
 
+  @Watch("orderData.selectItem")
+  onItemDataChange() {
+    if (this.orderData.selectItem != 0) {
+      this.getProcessList();
+    } else {
+      this.orderData.selectProcess = "";
+      this.processList = [];
+    }
+  }
+
   @Watch("editedCustomerData")
   onEditedCustomerDataChange() {
-    // this.itemDetail = [];
-    // this.orderData = this.editedCustomerData;
-    // var resultDetails: any = _.get(this.editedCustomerData, "details");
-    // const newArray = resultDetails.map((item: any) => {
-    //   return {
-    //     id: item.itemId,
-    //     name: item.itemName,
-    //     version: item.itemVersion,
-    //     count: item.count,
-    //   };
-    // });
-    // this.itemDetail = newArray;
     console.log("editedCustomerData", this.editedCustomerData);
     if (this.open) {
-      this.getDetailData(this.editedCustomerData.id);
+      if (this.change) {
+        this.getDetailData(this.editedCustomerData.id);
+      }
     }
   }
 
@@ -579,21 +575,51 @@ export default class OperationOrderModal extends Vue {
     let reqData = {
       jobOrderId: id,
     };
+    this.orderData.id = id;
     console.log("asdasd", reqData);
     api.operation
       .getJobOrerDetail(reqData)
       .then((res) => {
         console.log("getJobOrerDetail", res);
-        this.orderData.name = res.data.responseData.jobOrderName;
-        this.orderData.customer = res.data.responseData.customerId;
-        this.orderData.department = res.data.responseData.accountId;
-        this.orderData.departmentchargeId = res.data.responseData.accountId;
-        this.orderData.selectItem = res.data.responseData.itemId;
-        this.orderData.selectProcess = res.data.responseData.processId;
-        this.orderData.itemCount = res.data.responseData.totalCount;
-        this.orderData.type = res.data.responseData.type;
-        this.orderData.deadline = res.data.responseData.deadline;
-        this.orderData.memo = res.data.responseData.memo;
+
+        if (res.data.isSuccess) {
+          this.orderData.name = res.data.responseData.jobOrderName;
+          this.orderData.customer = res.data.responseData.customerId;
+          this.orderData.department = res.data.responseData.departmentId;
+          this.orderData.departmentchargeId = res.data.responseData.accountId;
+          this.orderData.selectItem = res.data.responseData.itemId;
+          this.orderData.selectProcess = res.data.responseData.processId;
+          this.orderData.itemCount = res.data.responseData.totalCount;
+          this.orderData.selectObject = res.data.responseData.type;
+          this.orderData.deadline = res.data.responseData.deadline;
+          this.orderData.memo = res.data.responseData.memo;
+          this.orderData.selectEquipData_regi = _.cloneDeep(
+            res.data.responseData.facilityDetails.forEach((element: any) => {
+              element.use = element.jobOrderId !== null ? true : false;
+              element.active = true;
+            })
+          );
+
+          console.log(
+            "selectEquipData_regi",
+            res.data.responseData.facilityDetails
+          );
+
+          this.orderData.selectEquipData_regi = [
+            ...res.data.responseData.facilityDetails,
+          ];
+        } else {
+          this.closeModal();
+          this.$swal({
+            title: "정보를 가져오지 못했습니다. 다시 시도해주시기 바랍니다.",
+            icon: "error",
+            position: "top",
+            showCancelButton: false,
+            showConfirmButton: false,
+            toast: true,
+            timer: 1500,
+          });
+        }
       })
       .catch((err) => {
         console.log("err", err);
@@ -626,7 +652,7 @@ export default class OperationOrderModal extends Vue {
         element.details.forEach((element_sub: any) => {
           element_sub.facilityName = element.facilityName;
 
-          element_sub.use = element_sub.productionId !== null ? true : false;
+          element_sub.use = element_sub.jobOrderId !== null ? true : false;
           if (
             _.filter(this.selectEquipData_regi, {
               facilityDetailId: element_sub.facilityDetailId,
@@ -675,6 +701,7 @@ export default class OperationOrderModal extends Vue {
     let reqData = {
       page: 1,
       size: 9999,
+      type: "완제품",
       sortBy: [],
       sortDesc: [false],
     };
@@ -745,7 +772,7 @@ export default class OperationOrderModal extends Vue {
   complete(type?: string) {
     this.selectedData = [];
 
-    let joborder = {
+    let joborder: any = {
       name: this.orderData.name,
       accountId: this.orderData.departmentchargeId,
       customerId: this.orderData.customer,
@@ -757,6 +784,12 @@ export default class OperationOrderModal extends Vue {
       deadline: this.orderData.deadline,
       memo: this.orderData.memo,
     };
+    joborder.facilityDetailIds = _.map(
+      this.orderData.selectEquipData_regi,
+      (el) => {
+        return el.facilityDetailId;
+      }
+    );
     // validation check -> use _.map
     if (type == "temp") {
       return this.getTemp(joborder);
@@ -778,7 +811,59 @@ export default class OperationOrderModal extends Vue {
       //
     }
 
-    if (!validation_check) {
+    if (validation_check) {
+      return this.$swal({
+        title: "입력칸의 공백을 확인해주세요",
+        icon: "error",
+        position: "top",
+        showCancelButton: false,
+        showConfirmButton: false,
+        toast: true,
+        timer: 1500,
+      });
+    }
+
+    if (this.change) {
+      joborder.id = this.orderData.id;
+      api.operation
+        .getOperationOrderChangePage(joborder)
+        .then((response) => {
+          if (response.status == 200) {
+            this.$swal({
+              title: "수정되었습니다.",
+              icon: "success",
+              position: "top",
+              showCancelButton: false,
+              showConfirmButton: false,
+              toast: true,
+              timer: 1500,
+            });
+          } else {
+            this.$swal({
+              title: "수정이 실패되었습니다.",
+              icon: "error",
+              position: "top",
+              showCancelButton: false,
+              showConfirmButton: false,
+              toast: true,
+              timer: 1500,
+            });
+          }
+          this.orderData = {
+            name: "",
+            customer: "",
+            department: "",
+            departmentchargeName: "",
+            deadline: "",
+            memo: "",
+            details: [],
+          };
+          this.openModal = false;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
       api.operation
         .getOperationOrderPage(joborder)
         .then((response) => {
@@ -817,114 +902,9 @@ export default class OperationOrderModal extends Vue {
         .catch((error) => {
           console.log(error);
         });
-    } else {
-      this.$swal({
-        title: "입력칸의 공백을 확인해주세요",
-        icon: "error",
-        position: "top",
-        showCancelButton: false,
-        showConfirmButton: false,
-        toast: true,
-        timer: 1500,
-      });
     }
   }
-  changeOn() {
-    this.selectedData = [];
 
-    if (
-      this.orderData.name == "" ||
-      this.orderData.customer == "" ||
-      this.orderData.department == "" ||
-      this.orderData.departmentchargeId == "" ||
-      this.orderData.deadline == "" ||
-      this.itemTable.length == 0
-    ) {
-      this.$swal({
-        title: "입력칸의 공백을 확인해주세요",
-        icon: "error",
-        position: "top",
-        showCancelButton: false,
-        showConfirmButton: false,
-        toast: true,
-        timer: 1500,
-      });
-    } else {
-      let check = true;
-
-      for (var i = 0; i < this.itemTable.length; i++) {
-        if (this.itemTable[i].count == null) {
-          check = false;
-          this.$swal({
-            title: "입력된 수량이 없는 품목은 등록되지않습니다.",
-            icon: "error",
-            position: "top",
-            showCancelButton: false,
-            showConfirmButton: false,
-            toast: true,
-            timer: 1500,
-          });
-        } else {
-          this.selectedData.push({
-            itemId: this.itemTable[i].id,
-            itemName: this.itemTable[i].name,
-            count: this.itemTable[i].count,
-          });
-        }
-      }
-
-      if (check) {
-        let joborder;
-
-        joborder = {
-          name: this.orderData.name,
-          accountId: this.departmentCrewList[0].id,
-          id: this.orderData.id,
-          deadline: this.orderData.deadline,
-          memo: this.orderData.memo,
-          details: this.selectedData,
-        };
-        api.operation
-          .getOperationOrderChangePage(joborder)
-          .then((response) => {
-            if (response.status == 200) {
-              this.$swal({
-                title: "수정되었습니다.",
-                icon: "success",
-                position: "top",
-                showCancelButton: false,
-                showConfirmButton: false,
-                toast: true,
-                timer: 1500,
-              });
-            } else {
-              this.$swal({
-                title: "수정이 실패되었습니다.",
-                icon: "error",
-                position: "top",
-                showCancelButton: false,
-                showConfirmButton: false,
-                toast: true,
-                timer: 1500,
-              });
-            }
-            this.orderData = {
-              name: "",
-              customer: "",
-              department: "",
-              departmentchargeName: "",
-              deadline: "",
-              memo: "",
-              details: [],
-            };
-            this.openModal = false;
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
-    }
-  }
   getTemp(joborderTemp: any) {
     api.operation
       .getOrderTempPage(joborderTemp)
@@ -1091,6 +1071,8 @@ export default class OperationOrderModal extends Vue {
     this.orderData.itemCount = item.item.totalCount;
     this.orderData.deadline = item.item.deadline;
     this.orderData.memo = item.item.memo;
+    this.orderData.selectEquipData_regi = item.item.facilityDetails;
+
     this.getDepartmentCrewList();
   }
 
@@ -1114,12 +1096,12 @@ export default class OperationOrderModal extends Vue {
     this.$swal
       .fire({
         title: "삭제",
-        text: "해당 시설을 취소 하시겠습니까?",
+        text: "해당 시설을 삭제 하시겠습니까?",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "취소",
+        confirmButtonText: "삭제",
       })
       .then((result) => {
         if (result.isConfirmed) {
@@ -1137,18 +1119,21 @@ export default class OperationOrderModal extends Vue {
     this.orderData.name = "";
     this.orderData.departmentchargeId = "";
     this.orderData.customer = "";
-    this.orderData.selectItem = "";
-    this.orderData.selectProcess = "";
+    this.orderData.selectItem = 0;
+    this.orderData.selectProcess = 0;
+    this.orderData.department = 0;
 
     this.orderData.itemCount = "";
     this.orderData.selectObject = "";
     this.orderData.deadline = "";
     this.orderData.memo = "";
+    this.orderData.selectEquipData_regi = [];
   }
   getProcessList() {
     let reqData = {
       itemId: this.orderData.selectItem,
     };
+
     api.process.getProcessListbyItem(reqData).then((res) => {
       console.log("getProcessListbyItem", res.data.responseData);
 

@@ -4,13 +4,14 @@
       <v-row no-gutters>
         <v-col class="ma-2" md="12">
           <h4 class="searchbox-title">조회 조건</h4>
-          <v-sheet class="pa-3" color="#F6F8F9" height="90" elevation="2">
-            <v-row>
+          <v-sheet class="pa-3" color="#F6F8F9" height="70" elevation="2">
+            <v-row dense>
               <v-col cols="2">
                 <v-text-field
                   label="코드 or 이름"
                   v-model="search_condition.item"
                   @keydown.enter="getCustomer"
+                  dense
                 ></v-text-field>
               </v-col>
               <v-col cols="2">
@@ -20,6 +21,7 @@
                   :items="items_type_list"
                   item-text="name"
                   @change="getCustomer"
+                  dense
                 ></v-select>
               </v-col>
               <v-col cols="2">
@@ -27,6 +29,7 @@
                   label="규격 or 단위"
                   v-model="search_condition.option"
                   @keydown.enter="getCustomer"
+                  dense
                 ></v-text-field>
               </v-col>
               <v-col cols="2">
@@ -34,13 +37,12 @@
                   label="버전"
                   v-model="search_condition.version"
                   @keydown.enter="getCustomer"
+                  dense
                 ></v-text-field>
               </v-col>
 
-              <v-col class="pt-5 text-right" offset="2" cols="2">
-                <v-btn color="primary" x-large @click="getCustomer">
-                  조회
-                </v-btn>
+              <v-col class="pt-3 text-right" offset="2" cols="2">
+                <v-btn color="primary" @click="getCustomer"> 조회 </v-btn>
               </v-col>
             </v-row>
           </v-sheet>
@@ -48,7 +50,7 @@
       </v-row>
       <v-row no-gutters>
         <v-col class="ma-2" md="12">
-          <v-row class="mb-2">
+          <v-row dense class="mb-2">
             <v-col md="2">
               <h4 class="searchbox-title">품목 목록</h4>
             </v-col>
@@ -58,9 +60,8 @@
               >
             </v-col>
           </v-row>
-
           <v-data-table
-            height="630"
+            height="690"
             :headers="headers"
             :items="customer_list"
             class="elevation-4"
@@ -76,7 +77,7 @@
             @page-count="itemListCfg.pageCount = $event"
             hide-default-footer
           >
-            <template v-slot:item.edit="{ item }">
+            <template v-slot:[`item.edit`]="{ item }">
               <v-icon
                 small
                 class="mr-2"
@@ -85,6 +86,15 @@
                 mdi-pencil
               </v-icon>
               <v-icon small @click="deleteItem_pop(item)"> mdi-delete </v-icon>
+            </template>
+            <template v-slot:[`item.process`]="{ item }">
+              <v-btn
+                v-show="item.type == '완제품'"
+                color="primary"
+                small
+                @click="openProcessModal(item)"
+                >공정관리</v-btn
+              >
             </template>
           </v-data-table>
           <v-pagination
@@ -106,6 +116,127 @@
       @save-data="handlerSaveData"
     >
     </ItemModal>
+    <!-- 공정관리 모달 -->
+    <v-dialog
+      v-model="processDialog"
+      persistent
+      max-width="1500px"
+      transition="dialog-transition"
+    >
+      <v-card>
+        <v-card-title primary-title>
+          <span>공정관리</span>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="openProcessAddModal">공정추가</v-btn>
+        </v-card-title>
+        <v-card-text>
+          <v-row>
+            <v-col cols="5">
+              <v-data-table
+                :headers="headers_process"
+                :items="processList"
+                height="500"
+                hide-default-footer
+                class="elevation-1"
+                item-key="processId"
+                fixed-header
+                single-select
+                v-model="selectedProcess"
+                @click:row="getProcessDetail"
+              >
+                <template v-slot:[`item.delete`]="{ item }">
+                  <v-icon small @click="deleteProcess(item)">
+                    mdi-delete
+                  </v-icon>
+                  <v-btn icon color="primary" @click="downProcessExcel(item)">
+                    <v-icon small>mdi-tray-arrow-down</v-icon>
+                  </v-btn>
+                </template>
+              </v-data-table>
+            </v-col>
+            <v-col cols="7">
+              <v-data-table
+                :headers="headers_processDetail"
+                :items="processDetailList"
+                :items-per-page="processDetailList.length"
+                fixed-header
+                height="500"
+                :loading="processDetail_loading"
+                loading-text="서버에 요청중...."
+                no-data-text="데이터가 없습니다."
+                hide-default-footer
+                class="elevation-1"
+              >
+              </v-data-table>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="closeProcessModal">닫기</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog
+      v-model="ProcessAddDialog"
+      persistent
+      max-width="450px"
+      transition="dialog-transition"
+    >
+      <v-card>
+        <v-card-title>
+          <span>공정추가</span>
+        </v-card-title>
+        <v-card-text>
+          <v-row dense>
+            <v-col cols="2">
+              <v-list-item-content>공정명</v-list-item-content>
+            </v-col>
+            <v-col cols="5">
+              <v-text-field
+                dense
+                clearable
+                v-model="processData.name"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row dense>
+            <v-col cols="2">
+              <v-list-item-content>버전</v-list-item-content>
+            </v-col>
+            <v-col cols="2">
+              <v-text-field
+                dense
+                type="number"
+                step="0.1"
+                min="1.0"
+                v-model="processData.verson"
+                reverse
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row dense>
+            <v-col cols="2">
+              <v-list-item-content>EXCEL</v-list-item-content>
+            </v-col>
+            <v-col cols="8">
+              <v-file-input
+                ref="uploadProcess"
+                dense
+                accept="xlsx/*"
+                label="공정파일"
+                v-model="processData.file"
+              ></v-file-input>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="saveProcess">저장</v-btn>
+          <v-btn color="primary" @click="cloaseProcessAddModal">닫기</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -132,6 +263,8 @@ import { Vue, Component, Watch } from "vue-property-decorator";
 export default class Item extends Vue {
   itemDialog: boolean = false;
   itemDialog_type: boolean = false;
+  processDialog: boolean = false;
+  ProcessAddDialog: boolean = false;
   edit_customer: boolean = false;
   items_storage: [] = [];
   items_location: [] = [];
@@ -141,6 +274,9 @@ export default class Item extends Vue {
   items_type_list: object[] = [];
   items_type: object[] = [];
   customer: object = {};
+  processList: object[] = [];
+  processDetailList: object[] = [];
+  processDetail_loading: boolean = false;
   editedCustomer: any = {
     id: 1,
     code: "",
@@ -150,6 +286,11 @@ export default class Item extends Vue {
     storageId: "",
     storageLocationId: "",
   };
+  processData: any = {
+    name: "",
+    verson: 0,
+    file: "",
+  };
   editedIndex: number = -1;
   customer_list: object[] = [];
   search_condition: any = {
@@ -158,9 +299,18 @@ export default class Item extends Vue {
     option: "",
     version: "",
   };
+  selectItemID: number = 0;
+  selectedProcess: object = {};
 
   get headers() {
     return cfg.header.itemList;
+  }
+
+  get headers_process() {
+    return cfg.header.processList;
+  }
+  get headers_processDetail() {
+    return cfg.header.processDetailList;
   }
 
   created() {
@@ -262,8 +412,53 @@ export default class Item extends Vue {
         this.itemListCfg.loading = false;
       });
   }
+  downProcessExcel(item: any) {
+    console.log("downProcessExcel", item);
+    let reqData = {
+      processId: item.processId,
+    };
+    let date = new Date();
+    api.process.getProcessExcelDown(reqData).then((response) => {
+      console.log("getProcessExcelDown", response.headers);
 
-  deleteItem(item: any) {}
+      const url = window.URL.createObjectURL(
+        new Blob([response.data], { type: response.headers["content-type"] })
+      );
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute(
+        "download",
+        `${item.processName}_${item.processVersion}_${date.getFullYear()}${(
+          date.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}.xlsx`
+      );
+      document.body.appendChild(link);
+      link.click();
+    });
+  }
+
+  deleteItem(item: any) {
+    console.log("item", item);
+  }
+
+  openProcessModal(item: any) {
+    this.processDialog = true;
+    this.selectItemID = item.id;
+    this.getProcessList();
+  }
+
+  closeProcessModal() {
+    this.processDialog = false;
+    this.processList = [];
+    this.processDetailList = [];
+    this.selectedProcess = {};
+  }
+
+  openProcessAddModal() {
+    this.ProcessAddDialog = true;
+  }
 
   openModal() {
     this.itemDialog = true;
@@ -344,6 +539,7 @@ export default class Item extends Vue {
             .catch((error) => {
               console.log(error);
             });
+
           this.deleteItem(deleteItem);
         }
       });
@@ -362,6 +558,134 @@ export default class Item extends Vue {
       })
       .catch((error) => {
         console.log(error);
+      });
+  }
+
+  getProcessList() {
+    let reqData: any = {
+      itemId: this.selectItemID,
+    };
+
+    api.process
+      .getProcessListbyItem(reqData)
+      .then((res) => {
+        console.log("getProcessListbyItem", res);
+        this.processList = res.data.responseData;
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  }
+
+  getProcessDetail(item: any, row: any) {
+    row.select(true);
+    let reqData = {
+      processId: item.processId,
+    };
+    this.processDetail_loading = true;
+
+    api.process
+      .getProcessDetail(reqData)
+      .then((res) => {
+        console.log("getProcessDetail", res);
+        this.processDetailList = res.data.responseData;
+        this.processDetail_loading = false;
+      })
+      .catch((err) => {
+        console.log("err", err);
+        this.processDetail_loading = false;
+      });
+  }
+
+  saveProcess() {
+    let reqData = {
+      CreateProcessDto: {
+        processName: this.processData.name,
+        processVersion: this.processData.verson,
+        itemId: this.selectItemID,
+      },
+      ExcelFile: this.processData.file,
+    };
+
+    const formData = new FormData();
+    formData.append("ExcelFile", this.processData.file);
+    formData.append(
+      "CreateProcessDto",
+      new Blob([JSON.stringify(reqData.CreateProcessDto)], {
+        type: "application/json",
+      })
+    );
+
+    console.log("reqData", formData);
+
+    api.process.postProcess(formData).then((res) => {
+      console.log("postProcess", res);
+      if (res.status == 200) {
+        this.$swal({
+          title: "공정이 등록되었습니다.",
+          icon: "success",
+          position: "top",
+          showCancelButton: false,
+          showConfirmButton: false,
+          toast: true,
+          timer: 1500,
+        });
+      } else {
+        this.$swal.fire("실패", "관리자에게 문의바랍니다.", "error");
+      }
+
+      this.cloaseProcessAddModal();
+    });
+  }
+
+  cloaseProcessAddModal() {
+    this.processData.name = "";
+    (this.processData.verson = 1.0), (this.processData.file = "");
+    this.ProcessAddDialog = false;
+    this.processDetailList = [];
+    this.getProcessList();
+  }
+
+  deleteProcess(item: any) {
+    let reqData = {
+      processId: item.processId,
+    };
+    this.$swal
+      .fire({
+        title: "삭제",
+        text: "해당 데이터를 삭제 하시겠습니까?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "삭제",
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          api.process
+            .deleteProcess(reqData)
+            .then((response) => {
+              if (response.status == 200) {
+                this.processDetailList = [];
+                this.getProcessList();
+                this.$swal({
+                  title: "삭제되었습니다.",
+                  icon: "success",
+                  position: "top",
+                  showCancelButton: false,
+                  showConfirmButton: false,
+                  toast: true,
+                  timer: 1500,
+                });
+                console.log("deleteProcess", response);
+              } else {
+                this.$swal.fire("실패", "관리자에게 문의바랍니다.", "error");
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
       });
   }
 }
