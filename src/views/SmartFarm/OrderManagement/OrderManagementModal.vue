@@ -33,18 +33,7 @@
                             <v-text-field class="" label="수주번호" disabled v-model="order.orderNum"
                                 tabindex="6"></v-text-field>
                         </v-col>
-                        <v-col cols="1" class="pa-0 pl-2 mr-2">
-                            <v-autocomplete dense label="부서" v-model="departmentchargeName" tabindex="3"
-                                :items="departmentList" item-text="departmentName" item-value="departmentId" return-object
-                                required></v-autocomplete>
-                        </v-col>
-                        <v-col cols="1" class="pa-0 pl-2 mr-2">
-                            <v-autocomplete dense label="담당자" v-model="order.accountId" tabindex="3"
-                                :items="departmentAccountsLists" return-object item-text="chargeName" item-value="id"
-                                required> <template v-slot:no-data>
-                                    <div class="px-4">부서를 선택해주세요.</div>
-                                </template></v-autocomplete>
-                        </v-col>
+
                         <v-col cols="2" class="pa-0 pl-2 mr-2">
                             <v-text-field class="" label="거래처" v-model="customerName" dense tabindex="6"></v-text-field>
                         </v-col>
@@ -87,7 +76,6 @@
                             </v-menu>
                         </v-col>
                     </v-row>
-
                     <v-sheet color="#F6F8F9" height="600">
                         <v-row v-if="!change" class="ma-0 d-flex ">
                             <v-col cols="12" class="d-flex " align-self="center">
@@ -132,10 +120,6 @@
                                                 {{ props.item.supplyUnitPrice }}
                                             </v-text-field>
                                         </template>
-
-
-
-
                                         <template v-slot:item.expectedDeliveryDate="props">
                                             <v-menu :nudge-right="40" transition="scale-transition" offset-y
                                                 min-width="auto">
@@ -148,31 +132,16 @@
                                                     v-model="props.item.expectedDeliveryDate"></v-date-picker>
                                             </v-menu>
                                         </template>
-
-
-
-
-
                                         <template v-slot:item.memo="props">
                                             <v-text-field class="pa-0 countFont" placeholder="메모" v-model="props.item.memo"
                                                 dense single-line>
                                                 {{ props.item.memo }}
                                             </v-text-field>
                                         </template>
-                                        <template v-slot:item.workname="props">
+                                        <template v-slot:item.jobOrderName="props">
                                             <v-text-field class="pa-0 countFont" placeholder="작업지시명"
-                                                v-model="props.item.name" dense single-line>
+                                                v-model="props.item.jobOrderName" dense single-line>
                                             </v-text-field>
-                                        </template>
-                                        <template v-slot:item.facilityDetailId="props">
-                                            <v-autocomplete dense v-model="departmentchargeName" tabindex="3"
-                                                :items="departmentList" item-text="departmentName" item-value="departmentId"
-                                                return-object required></v-autocomplete>
-                                        </template>
-                                        <template v-slot:item.processId="props">
-                                            <v-autocomplete dense v-model="departmentchargeName" tabindex="3"
-                                                :items="departmentList" item-text="departmentName" item-value="departmentId"
-                                                return-object required></v-autocomplete>
                                         </template>
                                         <template v-slot:item.delete="props">
                                             <v-btn icon @click="minus(props.item)">
@@ -188,6 +157,7 @@
                                 </v-col>
                             </v-col>
                         </v-row>
+                        <!-- 수정일때 -->
                         <v-row v-if="change" class="ma-0 d-flex ">
                             <v-col cols="12" class="d-flex " align-self="center">
                                 <v-col cols="3">
@@ -218,6 +188,12 @@
                                                 {{ props.item.quantity }}
                                             </v-text-field>
                                         </template>
+                                        <template v-slot:item.memo="props">
+                                            <v-text-field class="pa-0 countFont" placeholder="메모" v-model="props.item.memo"
+                                                dense single-line>
+                                                {{ props.item.memo }}
+                                            </v-text-field>
+                                        </template>
                                         <template v-slot:item.supplyUnitPrice="props">
                                             <v-text-field class="pa-0 countFont"
                                                 oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');"
@@ -237,12 +213,7 @@
                                                     v-model="props.item.expectedDeliveryDate"></v-date-picker>
                                             </v-menu>
                                         </template>
-                                        <template v-slot:item.memo="props">
-                                            <v-text-field class="pa-0 countFont" placeholder="메모" v-model="props.item.memo"
-                                                dense single-line>
-                                                {{ props.item.memo }}
-                                            </v-text-field>
-                                        </template>
+
                                         <template v-slot:item.delete="props">
                                             <v-btn icon @click="minus(props.item)">
                                                 <v-icon small class="mr-2">
@@ -300,12 +271,6 @@ import { it } from "node:test";
 import { strict } from "node:assert";
 @Component
 export default class OrderManagementModal extends Vue {
-    departmentList: { //부서 리스트
-        departmentId: number,
-        departmentName: string;
-        departmentRolesId: number
-    }
-    departmentAccountsLists: any = [] //담당자 리스트
     name: string = "";
     menuLoad: boolean = false; //거래처명으로 검색 모달 
     datas_simple: any[] = [];
@@ -319,14 +284,8 @@ export default class OrderManagementModal extends Vue {
             value: "customerId", align: ' d-none'
         }
     ];
-    departmentchargeName: any = {
-        departmentId: '',
-        departmentName: '선택',
-        departmentRolesId: ''
-    }
     order: any =
         {
-            accountId: {},
             orderDate: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
             orderNum: '', //수주번호
             deliveryDate: '', //납품예정일
@@ -357,8 +316,6 @@ export default class OrderManagementModal extends Vue {
             return {
                 name: "", //작업지시서명
                 customer: "", //거래처ID
-                department: "", //부서
-                departmentchargeName: "", //담당자
                 deadline: "", //마감일
                 memo: "", //메모
                 //details: [], //추가한 품목 목록
@@ -367,29 +324,18 @@ export default class OrderManagementModal extends Vue {
     })
     editedCustomerData: any;
 
-
-
-
-
-
-    @Watch('departmentchargeName')
-    getDepartsList() {
-        this.selectedDepartment()
-    }
-
-
-
-
     @Watch("orderInfoId") //orderInfoId로 수주 정보 상세 조회 api 연결함.
-
     getOrderInfoId() {
-        this.order.orderNum = this.orderInfoId //수주번호를 바인딩
-        let id = {
-            orderInfoId: this.orderInfoId
+        this.order.orderNum = this.orderInfo.orderInfoCode //수주번호를 바인딩
+        let param = {
+            orderInfoId: this.orderInfo.orderInfoId
         }
-        api.order.getOrderInfoDetail(id).then((res) => {
-            console.log('품목조회 api 연결 성공', res)
-            this.itemDetail = res.data.responseData
+        api.order.getOrderInfoDetail(param).then((res) => {
+            if (res.status = 200) {
+                console.log('수주 정보 상세 조회 api 성공', res)
+                this.itemDetail = res.data.responseData
+            } else {
+            }
         })
     }
     @Watch("orderInfo") //부모에서 받은 orderInfo
@@ -402,65 +348,53 @@ export default class OrderManagementModal extends Vue {
             this.order.memo = this.orderInfo.memo
         }
     }
-
-
-
     @Watch('customerId')
     getCustomerInfo() {
-        api.order.getItems().then((res) => {
-            console.log('품목조회 api 연결 성공', res)
-            this.itemData = res.data.responseData
-        })
-        api.order.getCustomerNameList().then((res) => {
-            console.log('거래처 조회 성공', res)
-            this.datas_simple = res.data.responseData
-        })
-    }
-
-    getDepartMentList() {
-        api.order.getDepartments().then((res) => {
-            console.log('수주 등록을 위한 부서조회 api 연결성공', res)
-            let resArr = res.data.responseData
-            let defaultArr: any =
-            {
-                departmentId: '', departmentName: '선택', departmentRolesId: ''
-            }
-            resArr.unshift(defaultArr)
-            this.departmentList = resArr
-        })
-    }
-
-    getDepartMentAccountLists(item: any) {
-        api.order.getDepartmentsAccount(item).then((res) => {
-            console.log('담당자 리스트조회성공', res.data.responseData)
-            this.departmentAccountsLists = res.data.responseData
-        })
-    }
-
-    selectedDepartment() {
-
-        let item: any = {
-            departmentId: this.departmentchargeName.departmentId
+        let id = {
+            orderInfoId: this.orderInfoId
         }
-        this.getDepartMentAccountLists(item)
-    }
-
-
-    get openModal() {
-        this.getDepartMentList()
-        if (this.change) { //수정일때
-            api.order.getItems().then((res) => {
+        api.order.getOrderInfoItem().then((res) => {
+            if (res.status == 200) {
                 console.log('품목조회 api 연결 성공', res)
                 this.itemData = res.data.responseData
-            })
-            api.order.getCustomerNameList().then((res) => {
+            } else {
+                this.swalFail()
+            }
+        })
+        api.order.getCustomerNameList().then((res) => {
+            if (res.status == 200) {
                 console.log('거래처 조회 성공', res)
                 this.datas_simple = res.data.responseData
+            } else {
+                this.swalFail()
+            }
+        })
+    }
+
+    get openModal() {
+        if (this.change) { //수정일때
+            let param = {
+                customerId: this.order.customerId,
+                itemName: this.searchItem
+            }
+            api.order.getOrderInfoItem(param).then((res) => {
+                if (res.status == 200) {
+                    this.itemData = res.data.responseData
+                } else {
+                    this.swalFail()
+                }
+            })
+            api.order.getCustomerNameList().then((res) => {
+                if (res.status == 200) {
+                    console.log('거래처 조회 성공', res)
+                    this.datas_simple = res.data.responseData
+                } else {
+                    this.swalFail()
+                }
             })
         } else {
             console.log('등록일때입니다', this.itemDetail)
             this.itemDetail = []
-            this.departmentchargeName = ''
             this.customerName = ''
         }
         return this.open;
@@ -498,11 +432,16 @@ export default class OrderManagementModal extends Vue {
     get itemTable() {
         return this.itemDetail
     }
-
-
-    mounted() {
-        this.itemDetail = [];
-        this.search = "";
+    swalFail() {
+        this.$swal({
+            title: "조회에 실패하였습니다.",
+            icon: "error",
+            position: "top",
+            showCancelButton: false,
+            showConfirmButton: false,
+            toast: true,
+            timer: 1500,
+        });
     }
     d_date_search_order(v: any) { //수주일자
         this.order.orderDate = v;
@@ -517,7 +456,6 @@ export default class OrderManagementModal extends Vue {
         deliveryDate.save(v);
     }
     plus() {
-        console.log('아이템디테일', this.itemDetail)
         if (this.selectedProduct.length == 0) {
             this.$swal({
                 title: "품목이 선택되지 않았습니다.",
@@ -538,9 +476,7 @@ export default class OrderManagementModal extends Vue {
                     plusItem["expectedDeliveryDate"] = null;
                     plusItem["supplyUnitPrice"] = null;
                     plusItem["memo"] = null;
-                    plusItem["name"] = null;
                     plusItem["itemName"] = plusItem.itemName
-
                     this.itemDetail.push(plusItem);
                 }
             } else {
@@ -606,8 +542,6 @@ export default class OrderManagementModal extends Vue {
                         delete this.order.details[i].itemName
                     }
                     this.validCheck_register()
-
-
                 }
             })
     }
@@ -617,7 +551,7 @@ export default class OrderManagementModal extends Vue {
             let temp = this.order.details[i]
             let order = this.order
             console.log(temp, order)
-            if (temp.expectedDeliveryDate == null || temp.quantity == null || temp.supplyUnitPrice == null || temp.name == null || order.customerId == '' || order.details == null) {
+            if (temp.expectedDeliveryDate == null || temp.quantity == null || temp.supplyUnitPrice == null || order.customerId == '' || order.details == null) {
                 validYN = true
             }
 
@@ -639,12 +573,6 @@ export default class OrderManagementModal extends Vue {
              } */
         }
 
-
-
-
-
-
-
         if (!validYN) {
             this.register()
         } else {
@@ -658,11 +586,9 @@ export default class OrderManagementModal extends Vue {
                 timer: 1500,
             });
         }
-
     }
     register() {
         let item = {
-            accountId: this.order.accountId.id,
             customerId: this.order.customerId,
             details: this.order.details,
             memo: this.order.memo,
@@ -801,11 +727,6 @@ export default class OrderManagementModal extends Vue {
                 timer: 1500,
             });
         }
-
-
-
-
-
     }
     getData() {  //거래처 상세조회 불러오기 api
         console.log('거래처 상세조회 api 연결하겠습니다.')
@@ -820,24 +741,23 @@ export default class OrderManagementModal extends Vue {
     }
     getItems() {
         console.log('품목조회  api 연결하겠습니다.')
-        api.order.getItems().then((res) => {
+        api.order.getOrderInfoItem().then((res) => {
             console.log('품목조회 api 연결 성공', res)
             this.itemData = res.data.responseData
         })
 
         console.log('브랜치테스트용 ')
     }
-
-
     cloneItem(item: any) { //거래처 명 클릭 시 
+        console.log('cloneItemcloneItemcloneItemcloneItemcloneItem')
         this.order.customerId = item.customerId
         this.customerName = item.customerName
 
         console.log(item.customerId)
 
         let param = {
-            customerId: item.customerId,
-            itemName: ''
+            customerId: this.order.customerId,
+            itemName: this.searchItem
         }
         api.order.getOrderInfoItem(param).then((res) => {
             console.log('수주 아이템 조회(개선) api 연결 성공', res)

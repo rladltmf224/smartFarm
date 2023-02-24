@@ -58,7 +58,6 @@ export default {
       { text: "단가", value: "supplyUnitPrice", align: " d-none" },
     ],
     selectedheaders: [
-      { text: "작업지시명", value: "workname", width: "10%" },
       { text: "품목명", value: "itemName", width: "10%" },
       { text: "수량", value: "quantity", width: "5%" },
       { text: "단가", value: "supplyUnitPrice", width: "10%" },
