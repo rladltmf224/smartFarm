@@ -1263,7 +1263,7 @@ export default {
       let reqData = {
         facilityId: data.facilityId,
       };
-      this.ControlModal_currentVal = reqData.roomId;
+      this.ControlModal_currentVal = reqData.facilityId;
       this.updateControlHistory(reqData);
       api.smartfarm.getRoomContoller(reqData).then((res) => {
         console.log("getRoomContoller", res.data.responseData);
@@ -1556,7 +1556,7 @@ export default {
     },
     getDeviceList() {
       let reqData = {
-        roomId: this.ControlModal_currentVal,
+        facilityId: this.ControlModal_currentVal,
       };
       this.updateControlHistory(reqData);
       api.smartfarm.getRoomContoller(reqData).then((res) => {
