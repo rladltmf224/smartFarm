@@ -15,7 +15,10 @@
     <v-tabs-items v-model="tab"></v-tabs-items>
 
     <div v-if="this.selectedTabs == '타임라인'">
-      <v-row class="d-flex justify-end">
+      <v-row class="mt-1 ml-5">
+        <v-col cols="9">
+          <span class="text-h10 todayFont">현재날짜 : {{ today }}</span>
+        </v-col>
         <v-col cols="2" class="pa-0 mr-5">
           <v-select
             rounded
@@ -38,6 +41,14 @@
       <div class="graphBox">
         <canvas ref="barChart" />
       </div>
+      <v-data-table
+        class="mt-4"
+        dense
+        height="350"
+        :items="timelineTable"
+        :headers="timelineHeader"
+      >
+      </v-data-table>
     </div>
 
     <div class="totalBox" v-if="this.selectedTabs == '달력'">
@@ -564,6 +575,7 @@ export default class Schedule extends Vue {
     updateDate: HTMLFormElement;
     barChart: HTMLCanvasElement;
   };
+  today: string = ""; //현재날짜
   selectedTabs: string = "달력";
   tab: any = null;
   tabList: any = ["달력", "타임라인"];
@@ -721,16 +733,27 @@ export default class Schedule extends Vue {
       maintainAspectRatio: false, //그래프의 비율 유지
     },
   };
-  selectedTimelineView: string = "day";
+  selectedTimelineView: string = "month";
   timelineViewOptions: any = [
-    {
-      title: "Day",
-      value: "day",
-    },
     {
       title: "Monthly",
       value: "month",
     },
+    {
+      title: "Day",
+      value: "day",
+    },
+  ];
+  timelineTableList: any[] = [];
+  timelineHeader: any = [
+    { text: "일정명", value: "title" },
+    { text: "타입", value: "type" },
+    { text: "일정", value: "start" },
+    { text: "생성자", value: "createdId" },
+    { text: "생성일", value: "createdDate" },
+    { text: "수정자", value: "modifiedId" },
+    { text: "수정일", value: "modifiedDate" },
+    { text: "비고", value: "memo" },
   ];
   filterList: any[] = []; //[response] 전체 거래처 데이터(filter용)
   customerList: any[] = []; //[response] 전체 거래처 데이터
@@ -872,6 +895,10 @@ export default class Schedule extends Vue {
     };
   }
 
+  get timelineTable() {
+    return this.timelineTableList;
+  }
+
   @Watch("selectedView")
   changeOptions(newView: any) {
     this.calendarInstance.changeView(newView);
@@ -880,13 +907,13 @@ export default class Schedule extends Vue {
 
   @Watch("selectedTimelineView")
   changeTimelineOptions() {
-    if (this.selectedTimelineView == "day") {
-      this.chartData.options.scales.xAxis.time.unit = "day";
-      this.getdayDate();
-      chart.resize();
-    } else {
+    if (this.selectedTimelineView == "month") {
       this.chartData.options.scales.xAxis.time.unit = "month";
       this.getmonthDate();
+      chart.resize();
+    } else {
+      this.chartData.options.scales.xAxis.time.unit = "day";
+      this.getdayDate();
       chart.resize();
     }
   }
@@ -968,8 +995,14 @@ export default class Schedule extends Vue {
     let color: any = [];
     let all: any = [];
 
+    this.today = new Date()
+      .toISOString()
+      .substr(0, 10)
+      .replace("-", "년")
+      .replace("-", "월")
+      .concat("일");
     api.schedule.getTotalScheduleInfo().then((response) => {
-      this.selectedTimelineView = "day";
+      this.selectedTimelineView = "month";
       this.timelineList = response.data.responseData;
 
       //bubble -하루단위 일정, bar -하루이상 일정
@@ -1011,7 +1044,7 @@ export default class Schedule extends Vue {
       this.chartData.data["datasets"][0].backgroundColor = color;
       this.chartData.data["datasets"][1].data = oneDayData;
       this.chartData.data["datasets"][1].backgroundColor = oneDayColor;
-      this.getdayDate();
+      this.getmonthDate();
 
       //createGraph 함수
       return new Promise((resolve) => {
@@ -1025,7 +1058,7 @@ export default class Schedule extends Vue {
           options: this.chartData.options,
         });
 
-        chart.canvas.parentNode.style.height = "700px";
+        chart.canvas.parentNode.style.height = "400px";
         chart.resize();
 
         console.group("createChart");
@@ -1065,7 +1098,7 @@ export default class Schedule extends Vue {
       });
 
       this.events = response.data.responseData;
-
+      this.timelineTableList = response.data.responseData;
       this.events.forEach((value: any) => {
         tempFilter.add(value.customerId);
         this.customerList.forEach((item: any) => {
