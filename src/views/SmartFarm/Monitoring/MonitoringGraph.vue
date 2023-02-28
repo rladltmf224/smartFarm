@@ -370,7 +370,7 @@ export default {
       //파라미터에 같이보낼 현재시간 14:00형식으로 구하기
 
       let filter = {
-        room: this.room,
+        facilityId: this.room,
         section: this.sectionNum,
         startDate: this.s_date,
         endDate: this.e_date,

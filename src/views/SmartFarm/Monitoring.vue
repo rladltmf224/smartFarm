@@ -1261,7 +1261,7 @@ export default {
     },
     openControlModal(data) {
       let reqData = {
-        roomId: data.roomId,
+        roomId: data.facilityId,
       };
       this.ControlModal_currentVal = reqData.roomId;
       this.updateControlHistory(reqData);
@@ -1759,8 +1759,8 @@ export default {
     async openDialog(data) {
       console.log("openDialog", data);
       this.dialog = true;
-      this.section = data.roomName;
-      this.roomID = data.roomId;
+      this.section = data.facilityName;
+      this.roomID = data.facilityId;
       await this.selectedDate();
     },
     closeDialog() {
@@ -1794,7 +1794,7 @@ export default {
     },
     getGraphTempData() {
       let filter = {
-        roomId: this.roomID,
+        facilityId: this.roomID,
         startDate: this.s_date,
         endDate: this.e_date,
         division: this.temphumid_TimeUnit,
@@ -1837,7 +1837,7 @@ export default {
     },
     getCurrntTempHumidData() {
       let item = {
-        roomId: this.roomID,
+        facilityId: this.roomID,
       };
 
       return new Promise((resolve, reject) => {
