@@ -801,7 +801,7 @@ export default {
     //현재온습도
     getNowValue() {
       let item = {
-        roomId: this.search_type_1.id,
+        facilityId: this.search_type_1.id,
         section: this.search_type_2,
       };
 

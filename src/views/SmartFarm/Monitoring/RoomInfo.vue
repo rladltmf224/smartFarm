@@ -5,7 +5,7 @@
         class="d-flex flex-row justify-space-between"
         style="width: 100%"
       >
-        {{ roomInfo_prop.roomName }}
+        {{ roomInfo_prop.facilityName }}
         <div>
           <v-btn color="green" text @click="openDialog(roomInfo_prop)">
             <!-- 바깥조회버튼눌리면 dialog오픈 ,  -->
@@ -206,6 +206,4 @@ export default {
 };
 </script>
 
-
 <style lang="scss"></style>
-

@@ -105,7 +105,7 @@ function setInterceptors(instance) {
 function createInstance() {
   console.log("create AuthAPI Instance");
   const instance = axios.create({
-    baseURL: process.env.VUE_APP_API_URL,
+    // baseURL: process.env.VUE_APP_API_URL,
     // baseUrl: {
     //   dev: '/api/',
     //   pro: '/api/'
