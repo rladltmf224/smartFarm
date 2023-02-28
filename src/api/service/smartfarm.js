@@ -42,7 +42,7 @@ export default {
   getEquipmentInfo: () => AuthAPI.get("/api/equipment/info"),
   getEquipmentlist: (item) =>
     AuthAPI.get("/api/equipment/equipment", { params: item }),
-  getRoomlist: () => AuthAPI.get("/api/equipment/room"),
+  getRoomlist: () => AuthAPI.get("/api/equipment/facility"),
   editEquipmentCtrl: (item) => {
     return AuthAPI.put("/api/equipment/control", JSON.stringify(item), {
       headers: { "Content-Type": "application/json" },
