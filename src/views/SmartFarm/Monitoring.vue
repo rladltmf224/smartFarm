@@ -1261,7 +1261,7 @@ export default {
     },
     openControlModal(data) {
       let reqData = {
-        roomId: data.facilityId,
+        facilityId: data.facilityId,
       };
       this.ControlModal_currentVal = reqData.roomId;
       this.updateControlHistory(reqData);

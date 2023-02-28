@@ -328,7 +328,7 @@ export default {
   methods: {
     changeRoomData() {
       let reqData = {
-        roomId: this.search_type_2,
+        facilityId: this.search_type_2,
       };
 
       api.smartfarm.getEquipmentlist(reqData).then((res) => {

@@ -745,7 +745,7 @@ export default {
       const { page, itemsPerPage, sortBy, sortDesc } = this.options;
       let GetTempHumidParams = {
         room: this.search_type_1.name,
-        roomId: this.search_type_1.id, //실
+        facilityId: this.search_type_1.id, //실
         section: this.search_type_2, //구역 넘버
 
         startDate: this.s_date + " " + this.startTime, //시작일
@@ -778,7 +778,7 @@ export default {
 
       let GetTempHumidParams = {
         room: this.search_type_1.name,
-        roomId: this.search_type_1.id, //실
+        facilityId: this.search_type_1.id, //실
         section: this.search_type_2, //구역 넘버
         startDate: this.s_date + " " + this.startTime, //시작일
         endDate: this.e_date + " " + this.endTime, //종료일
