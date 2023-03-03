@@ -13,8 +13,8 @@
                       :items="search_list2"
                       label="구역항목"
                       v-model="search_type_2"
-                      item-text="roomName"
-                      item-value="roomId"
+                      item-text="facilityName"
+                      item-value="facilityId"
                       @change="changeRoomData()"
                       dense
                     ></v-select>
@@ -475,6 +475,6 @@ export default {
 <style scoped>
 .v-chip {
   height: 27px;
-  width: 50px;
+  width: 60px;
 }
 </style>
