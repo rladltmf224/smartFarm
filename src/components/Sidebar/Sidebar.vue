@@ -173,6 +173,12 @@
     </v-list>
     <v-divider></v-divider>
     <v-list height="100" dense nav rounded>
+      <v-list-item @click="mySettingDialog = true" @mouseover="openTooltip()">
+        <v-list-item-icon>
+          <v-icon>mdi-account-circle-outline</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title>회원정보 변경</v-list-item-title>
+      </v-list-item>
       <v-list-item @click="userInfoDialog = true" @mouseover="openTooltip()">
         <v-list-item-icon>
           <v-icon>mdi-account-circle-outline</v-icon>
@@ -187,45 +193,18 @@
       </v-list-item>
     </v-list>
 
-    <!-- <v-list dense>
-      <v-subheader>개발예정</v-subheader>
-      <v-divider></v-divider>
-      <v-list-item v-for="(item, i) in items_dev" :key="i" :to="item.to" color="primary" mandatory>
-        <v-list-item-icon>
-          <v-icon v-text="item.icon"></v-icon>
-        </v-list-item-icon>
-
-        <v-list-item-title class="text-subtitle-1" v-text="item.title"></v-list-item-title>
-      </v-list-item>
-    </v-list> -->
-    <!-- <a id="kakao-login-btn" :href="loginWithKakao()">
-      <img
-        src="https://k.kakaocdn.net/14/dn/btroDszwNrM/I6efHub1SN5KCJqLm1Ovx1/o.jpg"
-        width="222"
-        alt="카카오 로그인 버튼"
-      />
-    </a> -->
-    <!-- <v-btn class="ma-2" color="indigo" dark @click="getKakaoUserToken">
-      카카오 사용자 토큰 받기
-    </v-btn> -->
-    <!-- <template v-slot:append>
-      <v-btn class="ma-2" color="indigo" dark @click="userInfoDialog = true">
-        <v-icon dark> mdi-account-circle-outline </v-icon>
-      </v-btn>
-     <v-btn class="ma-2" color="indigo" dark>
-        <v-icon dark> mdi-cog-outline </v-icon>
-      </v-btn>
-      <v-btn class="ma-2" color="indigo" dark @click="logout">
-        <v-icon dark> mdi-power </v-icon>
-      </v-btn>
-    </template> -->
-
     <!--비밀번호 변경 dialog-->
     <SidebarUserInfo
       :open="userInfoDialog"
       @closeModal="close"
       @save-info="handlerSaveInfo"
     ></SidebarUserInfo>
+
+    <SidebarMySetting
+      :open="mySettingDialog"
+      @closeModal="mySettingDialog = false"
+      @save-info="handlerSaveInfo"
+    ></SidebarMySetting>
   </v-navigation-drawer>
 </template>
 
@@ -236,11 +215,13 @@ import jwt_decode from "jwt-decode";
 import * as api from "@/api/index.js";
 import { Component, Vue, Ref, Watch } from "vue-property-decorator";
 import SidebarUserInfo from "./SidebarUserInfo.vue";
+import SidebarMySetting from "./SidebarMySetting.vue";
 import { mapGetters } from "vuex";
 
 @Component({
   components: {
     SidebarUserInfo,
+    SidebarMySetting,
   },
   computed: {
     ...mapGetters({
@@ -255,6 +236,7 @@ export default class Sidebar extends Vue {
   alarmOn: boolean = true;
   tooltip: boolean = false;
   userInfoDialog: boolean = false;
+  mySettingDialog: boolean = false;
   to_home?: string = "monitoring";
   to_notdev?: string = "notdev";
   items?: any[] = [];
@@ -503,15 +485,6 @@ export default class Sidebar extends Vue {
       if (alarmIcon) alarmIcon.click();
     }
   }
-
-  // loginWithKakao(): void {
-  //   api.kakao.loginKakao();
-  // }
-
-  // getKakaoUserToken(): void {
-  //   let response = api.kakao.getUserToken();
-  //   console.log("KKKKKKKKKKKKKKKKK", response);
-  // }
 }
 </script>
 
