@@ -5,7 +5,7 @@ export default {
   createDepartmentItem: (params) =>
     AuthAPI.post("/api/department", JSON.stringify(params)),
   createUserItem: (params) =>
-    AuthAPI.put("/api/account", JSON.stringify(params)),
+    AuthAPI.post("/api/account", JSON.stringify(params)),
   updateDepartmentItem: (params) =>
     AuthAPI.delete("/api/department", JSON.stringify(params)),
   updateUserItem: (params) =>
