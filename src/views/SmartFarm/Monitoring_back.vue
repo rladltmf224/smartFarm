@@ -17,8 +17,8 @@
           </h4>
           <h5>{{ outdoorSensor[i].value }}{{ outdoorSensor[i].unit }}</h5>
         </v-card>
-        <v-btn :loading="loading5" :disabled="loading5" color="#CFD8DC" class="ma-2 white--text" fab x-small
-          elevation="0" @click="(loader = 'loading5'), getOutDoor()">
+        <v-btn :loading="loading5" :disabled="loading5" color="#CFD8DC" class="ma-2 white--text" fab x-small elevation="0"
+          @click="(loader = 'loading5'), getOutDoor()">
           <v-icon dark> mdi-reload </v-icon>
         </v-btn>
       </v-col>
@@ -139,8 +139,7 @@
                           <v-text-field v-model="e_date" label="종료일" prepend-icon="mdi-calendar" readonly v-bind="attrs"
                             v-on="on"></v-text-field>
                         </template>
-                        <v-date-picker v-model="e_date" @input="menu2 = false" :min="s_date"
-                          :max="date"></v-date-picker>
+                        <v-date-picker v-model="e_date" @input="menu2 = false" :min="s_date" :max="date"></v-date-picker>
                       </v-menu>
                     </v-col>
 
