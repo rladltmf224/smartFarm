@@ -4,6 +4,7 @@
       <v-card v-for="(item, i) in outdoorSensor" :key="i"
         class="d-flex justify-center flex-column align-center mx-1 my-1 text-center" min-width="100">
         <v-card-text class="py-2">
+          <v-icon v-text="item.icon" @mouseover="openTooltip(item)" color="green"> </v-icon>
           <span class="text-subtitle-1 font-weight-bold">
             {{ outdoorSensor[i].sensorname }}
           </span>
@@ -15,8 +16,8 @@
           <span class="text-subtitle-2 font-weight-bold">&nbsp;{{ outdoorSensor[i].unit }}</span>
         </v-card-text>
       </v-card>
-      <v-btn :loading="loading5" :disabled="loading5" color="#CFD8DC" class="ma-2 white--text" fab x-small elevation="0"
-        @click="(loader = 'loading5'), getOutDoor()">
+      <v-btn :loading="loading5" :disabled="loading5" class="ma-2 white--text btn-gradient btn-glow" fab x-small
+        elevation="0" @click="(loader = 'loading5'), getOutDoor()">
         <v-icon dark> mdi-reload </v-icon>
       </v-btn>
     </v-row>
@@ -680,32 +681,32 @@ export default {
         {
           sensorname: "일사량",
           value: "-",
-          unit: "kWh/m2",
+          unit: "kWh/m2", icon: "mdi-white-balance-sunny",
         },
         {
           sensorname: "강수량",
           value: "-",
-          unit: "",
+          unit: "", icon: "mdi-weather-pouring",
         },
         {
           sensorname: "풍속(남북)",
           value: "-",
-          unit: "m/s",
+          unit: "m/s", icon: "mdi-weather-windy",
         },
         {
           sensorname: "풍향/풍속",
           value: "-",
-          unit: "",
+          unit: "", icon: "mdi-weather-windy",
         },
         {
           sensorname: "온도",
           value: "-",
-          unit: "°C",
+          unit: "°C", icon: "mdi-thermometer-low",
         },
         {
           sensorname: "습도",
           value: "-",
-          unit: "%",
+          unit: "%", icon: "mdi-water",
         },
 
         //외부센서 측정값
@@ -1585,6 +1586,12 @@ export default {
 <style lang="scss" scoped>
 ::v-deep .v-text-field__details {
   display: none;
+}
+
+.btn-gradient {
+  background-image: linear-gradient(to right, rgb(153, 218, 1), rgb(49, 182, 56));
+  border: 0;
+  color: rgba(var(--text-color));
 }
 
 div {

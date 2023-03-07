@@ -1,11 +1,5 @@
 <template>
-  <v-navigation-drawer
-    app
-    clipped
-    permanent
-    color="#F6F8F9"
-    :mini-variant="mini"
-  >
+  <v-navigation-drawer app clipped permanent color="#F1F8E9" :mini-variant="mini">
     <v-container class="px-0 text-h4 sidebar-main-text home" @click="goHome">
       <!--   <v-icon v-if="!mini" @click.stop="mini = !mini" color="lightgrey" transparent>
         mdi-chevron-left
@@ -26,25 +20,34 @@
             <v-icon>mdi-page-first</v-icon>
           </v-btn>
         </v-list-item>
-        <v-list-item class="px-2">
-          <v-btn icon @click="mini = !mini" @mouseover="openTooltip(item)">
-            <v-icon>mdi-account</v-icon>
+        <v-list-item class="px-2 ">
+          <v-list-item-avatar>
+            <v-img src="https://randomuser.me/api/portraits/men/85.jpg" />
+          </v-list-item-avatar>
+          <v-list-item-title class=" ListItemClass d-flex justify-center flex-column">
+            <h3 class="my-1">
+              {{ userId }}님
+            </h3>
+            <span>
+              등급:관리자
+            </span>
+          </v-list-item-title>
+
+          <!-- 
+          <v-btn icon v-if="mini" @click="mini = !mini">
+            <v-icon>mdi-cog </v-icon>
           </v-btn>
-          <v-list-item-title> {{ userId }}님 </v-list-item-title>
+          <v-list-item-title></v-list-item-title>
+          <v-btn icon @click.stop="mini = !mini">
+            <v-icon>mdi-cog</v-icon>
+          </v-btn> -->
+
           <v-menu offset-y>
             <template v-slot:activator="{ on, attrs }">
-              <v-badge
-                overlap
-                :content="alarmOn ? alarmList.length : 0"
-                :value="alarmOn ? alarmList.length : 0"
-                color="error"
-              >
+              <v-badge overlap :content="alarmOn ? alarmList.length : 0" :value="alarmOn ? alarmList.length : 0"
+                color="error">
                 <v-btn id="alarmBell" depressed v-bind="attrs" v-on="on" icon>
-                  <v-icon
-                    v-if="alarmOn"
-                    :color="alarmList.length > 0 ? 'error' : 'black'"
-                    large
-                  >
+                  <v-icon v-if="alarmOn" :color="alarmList.length > 0 ? 'error' : 'black'" large>
                     mdi-bell
                   </v-icon>
                   <v-icon v-if="!alarmOn" color="grey" large>
@@ -54,19 +57,10 @@
               </v-badge>
             </template>
             <v-list>
-              <v-list-item
-                v-if="alarmOn"
-                v-for="(alarm, index) in alarmList"
-                :key="index"
-                two-line
-              >
-                <v-list-item-content
-                  @click="removeAlarm(alarm)"
-                  class="alarmItem"
-                >
+              <v-list-item v-if="alarmOn" v-for="(alarm, index) in alarmList" :key="index" two-line>
+                <v-list-item-content @click="removeAlarm(alarm)" class="alarmItem">
                   <v-list-item-title>
-                    <v-chip class="mr-3" color="warning"> 주의 </v-chip
-                    >{{ alarm.title }}
+                    <v-chip class="mr-3" color="warning"> 주의 </v-chip>{{ alarm.title }}
                   </v-list-item-title>
                   <v-list-item-subtitle class="pl-15">{{
                     alarm.body
@@ -82,6 +76,42 @@
               </v-list-item>
             </v-list>
           </v-menu>
+
+
+          <!--      <v-menu offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <v-badge overlap :content="alarmOn ? alarmList.length : 0" :value="alarmOn ? alarmList.length : 0"
+                color="error">
+                <v-btn id="alarmBell" depressed v-bind="attrs" v-on="on" icon>
+                  <v-icon v-if="alarmOn" :color="alarmList.length > 0 ? 'error' : 'black'" large>
+                    mdi-bell
+                  </v-icon>
+                  <v-icon v-if="!alarmOn" color="grey" large>
+                    mdi-bell-off
+                  </v-icon>
+                </v-btn>
+              </v-badge>
+            </template>
+            <v-list>
+              <v-list-item v-if="alarmOn" v-for="(alarm, index) in alarmList" :key="index" two-line>
+                <v-list-item-content @click="removeAlarm(alarm)" class="alarmItem">
+                  <v-list-item-title>
+                    <v-chip class="mr-3" color="warning"> 주의 </v-chip>{{ alarm.title }}
+                  </v-list-item-title>
+                  <v-list-item-subtitle class="pl-15">{{
+                    alarm.body
+                  }}</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-content @click="alarmToggle()" class="alarmItem">
+                  <v-list-item-title class="d-flex justify-center">
+                    {{ alarmOn ? "알람 끄기" : "알람 켜기" }}
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-menu> -->
         </v-list-item>
       </v-list>
 
@@ -132,13 +162,33 @@
       </v-menu> -->
     </v-container>
     <v-divider></v-divider>
-    <v-list
-      height="600"
-      style="overflow-y: auto; overflow-x: hidden"
-      dense
-      nav
-      rounded
-    >
+    <!--  <v-list height="676" style="overflow-y: auto;overflow-x: hidden" dense nav rounded @mouseover="openTooltip()">
+      <v-list-item :link="true" :to="to_home" color="primary">
+        <v-list-item-icon @mouseover="openTooltip(item)">
+          <v-icon>mdi-monitor</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title>모니터링</v-list-item-title>
+      </v-list-item>
+      <v-list-group v-for="(item, i) in items" :key="i" mandatory>
+        <template v-slot:activator class="d-flex">
+          <v-list-item-icon id="result">
+            <v-btn elevation="3" v-ripple="{ class: 'primary--text' }" color="white">
+              <v-icon v-text="item.icon" small color="green" @mouseover="openTooltip(item)"></v-icon>
+            </v-btn>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title class="text-subtitle-1" v-text="item.title"></v-list-item-title>
+          </v-list-item-content>
+        </template>
+        <v-list-item v-for="subItem in item.subItems" :key="subItem.title" :to="subItem.to" dense>
+          <v-list-item-content>
+            <v-list-item-title v-text="'•  ' + subItem.title"></v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list-group>
+    </v-list> -->
+
+    <v-list height="700" style="overflow-y: auto; overflow-x: hidden; display:contents" dense nav rounded>
       <v-list-item :link="true" :to="to_home" color="primary">
         <v-list-item-icon @mouseover="openTooltip(item)">
           <v-icon>mdi-monitor</v-icon>
@@ -148,31 +198,35 @@
       <v-list-group v-for="(item, i) in items" :key="i" mandatory>
         <template v-slot:activator>
           <v-list-item-icon>
-            <v-icon v-text="item.icon" @mouseover="openTooltip(item)"></v-icon>
+            <!--    <v-btn color="white" fab x-small elevation="1">
+              <v-icon v-text="item.icon" small @mouseover="openTooltip(item)"></v-icon>
+            </v-btn>
+ -->
+            <v-col id="result" class="pa-0 ma-0 d-flex align-center">
+              <v-btn v-ripple="{ class: 'primary--text' }" elevation="3" color="white">
+                <v-icon v-text="item.icon" small @mouseover="openTooltip(item)" color="green"> </v-icon>
+              </v-btn>
+            </v-col>
+
+
+
           </v-list-item-icon>
           <v-list-item-content>
-            <v-list-item-title
-              class="text-subtitle-1"
-              v-text="item.title"
-            ></v-list-item-title>
+            <v-list-item-title class="text-subtitle-1" v-text="item.title"></v-list-item-title>
           </v-list-item-content>
         </template>
-        <v-list-item
-          v-for="subItem in item.subItems"
-          :key="subItem.title"
-          :to="subItem.to"
-          dense
-        >
+        <v-list-item v-for="subItem in item.subItems" :key="subItem.title" :to="subItem.to" dense>
           <v-list-item-content>
-            <v-list-item-title
-              v-text="'- ' + subItem.title"
-            ></v-list-item-title>
+            <v-list-item-title v-text="'•  ' + subItem.title"></v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list-group>
     </v-list>
-    <v-divider></v-divider>
-    <v-list height="100" dense nav rounded>
+
+
+
+
+    <v-list dense nav rounded>
       <v-list-item @click="mySettingDialog = true" @mouseover="openTooltip()">
         <v-list-item-icon>
           <v-icon>mdi-account-circle-outline</v-icon>
@@ -185,26 +239,29 @@
         </v-list-item-icon>
         <v-list-item-title>비밀번호 변경</v-list-item-title>
       </v-list-item>
-      <v-list-item @click="logout" @mouseover="openTooltip()">
-        <v-list-item-icon>
+      <!-- <v-list-item @click="logout" @mouseover="openTooltip()">
+        <v-btn block class="btn-gradient" dark v-if="!mini">
           <v-icon>mdi-power</v-icon>
-        </v-list-item-icon>
-        <v-list-item-title>로그아웃</v-list-item-title>
-      </v-list-item>
+          <span style="color:white">로그아웃</span>
+        </v-btn>
+      </v-list-item> -->
+
     </v-list>
+    <template v-slot:append v-if="!mini" @click="logout">
+      <div class="pa-2">
+        <v-btn block class="btn-gradient" dark>
+          로그아웃
+        </v-btn>
+      </div>
+    </template>
+
+
 
     <!--비밀번호 변경 dialog-->
-    <SidebarUserInfo
-      :open="userInfoDialog"
-      @closeModal="close"
-      @save-info="handlerSaveInfo"
-    ></SidebarUserInfo>
+    <SidebarUserInfo :open="userInfoDialog" @closeModal="close" @save-info="handlerSaveInfo"></SidebarUserInfo>
 
-    <SidebarMySetting
-      :open="mySettingDialog"
-      @closeModal="mySettingDialog = false"
-      @save-info="handlerSaveInfo"
-    ></SidebarMySetting>
+    <SidebarMySetting :open="mySettingDialog" @closeModal="mySettingDialog = false" @save-info="handlerSaveInfo">
+    </SidebarMySetting>
   </v-navigation-drawer>
 </template>
 
@@ -381,7 +438,7 @@ export default class Sidebar extends Vue {
   }
 
   goHome(): void {
-    this.$router.push("/monitoring").catch(() => {});
+    this.$router.push("/monitoring").catch(() => { });
 
     return;
   }
@@ -489,3 +546,16 @@ export default class Sidebar extends Vue {
 </script>
 
 <style src="./Sidebar.scss" lang="scss"></style>
+<style lang="css">
+.btn-gradient {
+  background-image: linear-gradient(to right, rgb(153, 218, 1), rgb(49, 182, 56));
+  border: 0;
+  color: rgba(var(--text-color));
+}
+
+#result .v-btn {
+  min-width: 36px;
+  width: 36px;
+  border-radius: 11px;
+}
+</style>

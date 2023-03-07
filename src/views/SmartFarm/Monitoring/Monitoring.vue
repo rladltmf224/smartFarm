@@ -6,13 +6,7 @@
         <h4 class="searchbox-title" style="white-space: nowrap">구역 선택</h4>
       </v-col>
       <v-col cols="2" class="ma-0 pa-0">
-        <v-select
-          :items="selectSection"
-          dense
-          solo
-          @change="onChange()"
-          v-model="selectedSection"
-        ></v-select>
+        <v-select :items="selectSection" dense solo @change="onChange()" v-model="selectedSection"></v-select>
       </v-col>
       <v-col cols="3" class="d-flex justify-end ma-0 pa-0 pr-4">
         <h6 class="searchbox-title" @click="getData()">
@@ -22,12 +16,8 @@
         </h6>
       </v-col>
       <v-col cols="6" class="ma-0 pa-0 d-flex">
-        <div
-          v-for="(item, i) in outdoorSensor"
-          :key="i"
-          class="d-flex justify-center flex-column align-center mx-1"
-          style="width: 16%; border: 1px solid grey; border-radius: 4px"
-        >
+        <div v-for="(item, i) in outdoorSensor" :key="i" class="d-flex justify-center flex-column align-center mx-1"
+          style="width: 16%; border: 1px solid grey; border-radius: 4px">
           <h4 class="searchbox-title">
             {{ outdoorSensor[i].sensorname }}
           </h4>
@@ -51,18 +41,12 @@
           <div class="d-flex justify-center" style="width: 140px">
             <div class="d-flex flex-column">
               <div class="d-flex">
-                <h5
-                  class="pr-5 d-flex justify-lg-space-between"
-                  style="width: 70px"
-                >
+                <h5 class="pr-5 d-flex justify-lg-space-between" style="width: 70px">
                   온 도
                 </h5>
               </div>
               <div class="d-flex">
-                <h5
-                  class="pr-5 d-flex justify-lg-space-between"
-                  style="width: 70px"
-                >
+                <h5 class="pr-5 d-flex justify-lg-space-between" style="width: 70px">
                   습 도
                 </h5>
                 <h5>70%</h5>
@@ -78,19 +62,13 @@
           <div class="d-flex justify-center" style="width: 140px">
             <div class="d-flex flex-column">
               <div class="d-flex">
-                <h5
-                  class="pr-5 d-flex justify-lg-space-between"
-                  style="width: 70px"
-                >
+                <h5 class="pr-5 d-flex justify-lg-space-between" style="width: 70px">
                   L E D
                 </h5>
                 <h5>40°C</h5>
               </div>
               <div class="d-flex">
-                <h5
-                  class="pr-5 d-flex justify-lg-space-between"
-                  style="width: 70px"
-                >
+                <h5 class="pr-5 d-flex justify-lg-space-between" style="width: 70px">
                   팬
                 </h5>
                 <h5>70%</h5>
@@ -108,11 +86,8 @@
         <v-card-actions>
           <v-list-item class="grow">
             <v-list-item-avatar color="grey darken-3">
-              <v-img
-                class="elevation-6"
-                alt=""
-                src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
-              ></v-img>
+              <v-img class="elevation-6" alt=""
+                src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"></v-img>
             </v-list-item-avatar>
 
             <v-list-item-content>
@@ -122,12 +97,10 @@
             <v-row align="center" justify="end">
               <v-btn text class="pa-0 ma-0">
                 <v-icon class="mr-1"> mdi-eye </v-icon>
-                <span class="subheading mr-2">조회</span></v-btn
-              >
+                <span class="subheading mr-2">조회</span></v-btn>
               <v-btn text class="pa-0 ma-0">
                 <v-icon class="mr-1"> mdi-cog-pause </v-icon>
-                <span class="subheading">제어</span></v-btn
-              >
+                <span class="subheading">제어</span></v-btn>
             </v-row>
           </v-list-item>
         </v-card-actions>
@@ -144,19 +117,13 @@
           <v-col cols="12" class="mt-4 mb-0 d-flex justify-center pa-4">
             <div class="d-flex px-6 flex-column">
               <div class="d-flex">
-                <h5
-                  class="pr-5 d-flex justify-lg-space-between"
-                  style="width: 70px"
-                >
+                <h5 class="pr-5 d-flex justify-lg-space-between" style="width: 70px">
                   온 도
                 </h5>
                 <h5>{{ item.Temperature }}{{ item.temp_unit }}</h5>
               </div>
               <div class="d-flex">
-                <h5
-                  class="pr-5 d-flex justify-lg-space-between"
-                  style="width: 70px"
-                >
+                <h5 class="pr-5 d-flex justify-lg-space-between" style="width: 70px">
                   습 도
                 </h5>
                 <h5>{{ item.Humidity }}{{ item.humidity_unit }}</h5>
@@ -167,28 +134,19 @@
             <div class="d-flex px-4 justify-center">
               <div class="d-flex flex-column">
                 <div class="d-flex">
-                  <h5
-                    class="pr-5 d-flex justify-lg-space-between"
-                    style="width: 70px"
-                  >
+                  <h5 class="pr-5 d-flex justify-lg-space-between" style="width: 70px">
                     L E D
                   </h5>
                   <h5>{{ item.LED }}</h5>
                 </div>
                 <div class="d-flex">
-                  <h5
-                    class="pr-5 d-flex justify-lg-space-between"
-                    style="width: 70px"
-                  >
+                  <h5 class="pr-5 d-flex justify-lg-space-between" style="width: 70px">
                     팬
                   </h5>
                   <h5>{{ item.fan }}</h5>
                 </div>
                 <div class="d-flex">
-                  <h5
-                    class="d-flex justify-lg-space-between"
-                    style="width: 70px"
-                  >
+                  <h5 class="d-flex justify-lg-space-between" style="width: 70px">
                     가 습 기
                   </h5>
                   <h5>{{ item.humidifier }}</h5>
@@ -209,19 +167,12 @@
               조회
             </v-btn>
 
-            <v-btn
-              text
-              class="pa-0 ma-0"
-              color="primary"
-              @click="goControllPage()"
-            >
+            <v-btn text class="pa-0 ma-0" color="primary" @click="goControllPage()">
               <v-icon class="mr-1"> mdi-cog-pause </v-icon>
-              <span class="subheading">제어</span></v-btn
-            >
+              <span class="subheading">제어</span></v-btn>
           </v-row>
         </v-row>
-      </v-card></v-row
-    ><v-row>
+      </v-card></v-row><v-row>
       <div>
         <textarea v-model="message" />
         <v-btn @click="sendRequestBody()">전송</v-btn>
@@ -230,12 +181,7 @@
 
     <!-- 다이아로그 -->
     <v-row justify="center">
-      <v-dialog
-        v-model="dialog"
-        fullscreen
-        hide-overlay
-        transition="dialog-bottom-transition"
-      >
+      <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
         <v-card>
           <v-toolbar dense color="#CFD8DC" elevation="0">
             <v-btn icon @click="dialog = false">
@@ -249,10 +195,7 @@
             <h4 class="px-1">{{ this.sectionNum }}번구역</h4>
             <v-spacer></v-spacer>
           </v-toolbar>
-          <MonitoringGraph
-            :sectionNum="this.sectionNum"
-            :section="this.section"
-          ></MonitoringGraph>
+          <MonitoringGraph :sectionNum="this.sectionNum" :section="this.section"></MonitoringGraph>
         </v-card>
       </v-dialog>
     </v-row>
@@ -395,32 +338,32 @@ export default {
         {
           sensorname: "일사량",
           value: this.solarRadiation,
-          unit: "kWh/m2",
+          unit: "kWh/m2", icon: "mdi-white-balance-sunny",
         },
         {
           sensorname: "강수량",
           value: this.rainfall,
-          unit: "mm",
+          unit: "mm", icon: "mdi-weather-pouring",
         },
         {
           sensorname: "풍향",
           value: this.windDirection,
-          unit: "m/s",
+          unit: "m/s", icon: "mdi-weather-windy",
         },
         {
           sensorname: "풍속",
           value: this.windSpeed,
-          unit: "m/s",
+          unit: "m/s", icon: "mdi-thermometer-low",
         },
         {
           sensorname: "온도",
           value: this.outdoorTemperature,
-          unit: "°C",
+          unit: "°C", icon: "mdi-thermometer-low",
         },
         {
           sensorname: "습도",
           value: this.outdoorHumidity,
-          unit: "%",
+          unit: "%", icon: "mdi-water",
         },
 
         //외부센서 측정값
