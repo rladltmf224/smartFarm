@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="openModal" @keydown.esc="openModal = false" persistent max-width="1600px">
+    <v-dialog v-model="openModal" persistent max-width="1600px">
         <v-card class=" mx-auto " tile>
             <v-card-title class="text-h5" v-show="!change">
                 수주 등록
@@ -160,7 +160,7 @@
                         <!-- 수정일때 -->
                         <v-row v-if="change" class="ma-0 d-flex ">
                             <v-col cols="12" class="d-flex " align-self="center">
-                                <v-col cols="3">
+                                <v-col cols="2">
                                     <h4 class="pl-2 mb-1">수주품목 목록</h4>
                                     <v-data-table multi-sort class="ml-2 mr-2 overflow-scroll elevation-4" show-select
                                         fixed-header v-model="selectedProduct" height="400" :headers="register_itemheaders"
