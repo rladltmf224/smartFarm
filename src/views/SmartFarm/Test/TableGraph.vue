@@ -1,24 +1,17 @@
 <template>
-    <div class=" pt-12 ">
-   <div  class=" d-flex justify-center " style="position: relative;    height: 300px; width: 500px">
-     <canvas class="" ref="barChart" />
+  <div class=" pt-12 ">
+    <div class=" d-flex justify-center " style="position: relative;    height: 300px; width: 500px">
+      <canvas class="" ref="barChart" />
     </div>
-<div class="d-flex justify-center mt-4">
-    <h4 class="searchbox-title" v-if="this.graphData.dataName == 'avgInternodeLength'"   >절간장</h4>
-    <h4 class="searchbox-title" v-if="this.graphData.dataName == 'avgLeafHeight'"   >초장</h4>
-    <h4 class="searchbox-title" v-if="this.graphData.dataName == 'avgLeafLength'"   >엽장</h4>
-    <h4 class="searchbox-title" v-if="this.graphData.dataName == 'avgLeafStage'"   >엽수</h4>
-    <h4 class="searchbox-title" v-if="this.graphData.dataName == 'avgLeafWidth'"   >엽폭</h4>
-    <h4 class="searchbox-title" v-if="this.graphData.dataName == 'avgStemThickness'"   >경경</h4>
-</div>
-</div>
-  
-
-
-
-
-
- 
+    <div class="d-flex justify-center mt-4">
+      <h4 class="searchbox-title" v-if="this.graphData.dataName == 'avgInternodeLength'">절간장</h4>
+      <h4 class="searchbox-title" v-if="this.graphData.dataName == 'avgLeafHeight'">초장</h4>
+      <h4 class="searchbox-title" v-if="this.graphData.dataName == 'avgLeafLength'">엽장</h4>
+      <h4 class="searchbox-title" v-if="this.graphData.dataName == 'avgLeafStage'">엽수</h4>
+      <h4 class="searchbox-title" v-if="this.graphData.dataName == 'avgLeafWidth'">엽폭</h4>
+      <h4 class="searchbox-title" v-if="this.graphData.dataName == 'avgStemThickness'">경경</h4>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -31,18 +24,18 @@ Chart.register(zoomPlugin);
 Chart.register(annotationPlugin);
 
 export default {
-    props: {
+  props: {
     graphData: {
       type: [Array, Object],
       default: null,
     }
   },
-  data:() => ({
-  
-   
+  data: () => ({
+
+
     type: 'line',
     data: {
-      labels: ['2022','2023'],
+      labels: ['2022', '2023'],
       datasets: [
         {
           label: '1,1,1,1',
@@ -84,8 +77,8 @@ export default {
       scales: {
         y1: {
           // beginAtZero: true,
-        //   min: 0,
-        //   max: 10,
+          //   min: 0,
+          //   max: 10,
           type: 'linear',
           display: true,
           position: 'left',
@@ -104,7 +97,7 @@ export default {
         //   max: 10,
         //   title: {
         //     display: true,
-           
+
         //   },
         //   grid: {
         //     drawOnChartArea: false, // only want the grid lines for one axis to show up
@@ -121,7 +114,7 @@ export default {
       plugins: {
         tooltip: {
           // Tooltip will only receive click events
-         // events: ['mousemove'],
+          // events: ['mousemove'],
         },
         title: {
           display: true,
@@ -168,20 +161,20 @@ export default {
 
 
   }),
-  async mounted(){
+  async mounted() {
 
 
-    console.log('부모에서받은 데이타',this.graphData)
+    console.log('부모에서받은 데이타', this.graphData)
     this.resetDatas()
     this.makeDate()
     this.makeDatas()
-   this.$nextTick(function () {
-          this.createChart();
-        });
+    this.$nextTick(function () {
+      this.createChart();
+    });
 
   },
-  methods:{
-   createChart() {
+  methods: {
+    createChart() {
       if (chart !== undefined) {
         chart.destroy();
       }
@@ -192,62 +185,68 @@ export default {
       });
       chart.update();
     },
-    resetDatas(){
-        this.data={
-            labels:[],
-            datasets:[]
-        }
+    resetDatas() {
+      this.data = {
+        labels: [],
+        datasets: []
+      }
     },
-    makeDatas(){
-         let colors =[    'red','green','blue','yellow','purple','grey', 'pink','Aqua', 'Olive', 'Cadetblue',
-         'Darkslategray', 'Lightsalmon','Mediumseagreen', 'Midnightblue','Tomato', ]
-        let datasetsChild=[]
-         for(let nameLeng = 0; nameLeng < this.graphData.treatmentData.length; nameLeng ++){
+    makeDatas() {
+      let colors = ['red', 'green', 'blue', 'yellow', 'purple', 'grey', 'pink', 'Aqua', 'Olive', 'Cadetblue',
+        'Darkslategray', 'Lightsalmon', 'Mediumseagreen', 'Midnightblue', 'Tomato',]
+      let datasetsChild = []
+      for (let nameLeng = 0; nameLeng < this.graphData.treatmentData.length; nameLeng++) {
 
-            datasetsChild.push({
-                label:this.graphData.treatmentData[nameLeng].name,
-                data:this.graphData.treatmentData[nameLeng].data,
-                fill: false,
-                borderColor:colors[nameLeng],
-                tension: 0.1,
-                backgroundColor: colors[nameLeng],
-                pointRadius: 3,
-                borderWidth: 1,
-                yAxisID: 'y1',
-            })
-        }
-
-      
-               
+        datasetsChild.push({
+          label: this.graphData.treatmentData[nameLeng].name,
+          data: this.graphData.treatmentData[nameLeng].data,
+          fill: false,
+          borderColor: colors[nameLeng],
+          tension: 0.1,
+          backgroundColor: colors[nameLeng],
+          pointRadius: 3,
+          borderWidth: 1,
+          yAxisID: 'y1',
+        })
+      }
 
 
-        console.log('datasetsChild',datasetsChild)
-        this.data.datasets=datasetsChild
 
 
-    },
-    makeLabels(){
 
-        let nameArr = [] 
-        for(let nameLeng = 0; nameLeng < this.graphData.treatmentData.length; nameLeng ++){
+      console.log('datasetsChild', datasetsChild)
+      this.data.datasets = datasetsChild
 
-            nameArr.push(  this.graphData.treatmentData[nameLeng].name        )
-
-        }
-
-        console.log('nameArrnameArrnameArr',nameArr)
-        this.data.labels=nameArr 
 
     },
-   
-    makeDate(){
-        console.log('this.data.labels',this.data.labels)
-        console.log('this.graphData.date',this.graphData.date)
+    makeLabels() {
 
-        this.data.labels = this.graphData.date
-                console.log('this.data.labels',this.data.labels)
+      let nameArr = []
+      for (let nameLeng = 0; nameLeng < this.graphData.treatmentData.length; nameLeng++) {
+
+        nameArr.push(this.graphData.treatmentData[nameLeng].name)
+
+      }
+
+      console.log('nameArrnameArrnameArr', nameArr)
+      this.data.labels = nameArr
+
+    },
+
+    makeDate() {
+      console.log('this.data.labels', this.data.labels)
+      console.log('this.graphData.date', this.graphData.date)
+
+      this.data.labels = this.graphData.date
+      console.log('this.data.labels', this.data.labels)
 
     }
   }
 }
 </script>
+
+<style lang="css">
+.test {
+  color: rgba(0, 255, 255, 0.226);
+}
+</style>

@@ -13,6 +13,7 @@
                                         <v-text-field label="수주번호" v-model="search_condition.orderInfoCode"
                                             dense></v-text-field>
                                     </v-col>
+
                                     <v-col cols="2">
                                         <v-text-field label="거래처명" v-model="search_condition.customerName"
                                             dense></v-text-field>
