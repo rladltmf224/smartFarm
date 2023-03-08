@@ -2,31 +2,22 @@
   <div class="monitor-page">
     <v-container fluid>
       <v-row>
-        <v-col offset-md="4" md="4"
-          ><p class="text-center text-h4 monitor-title font-weight-bold">
-            생산 모니터링 시스템
-          </p></v-col
-        >
-        <v-col class="text-right" offset-md="3" md="1"
-          ><v-btn color="normal">초기화</v-btn></v-col
-        >
+        <v-col offset-md="4" md="4"></v-col>
+        <p class="text-center text-h4 monitor-title font-weight-bold">
+          생산 모니터링 시스템
+        </p>
+        </v-col>
+        <v-col class="text-right" offset-md="3" md="1"><v-btn color="normal">초기화</v-btn></v-col>
       </v-row>
       <v-row>
         <v-col md="4">
           <v-row class="text-center">
             <v-col offset-md="3" md="2" :align-self="center">
-              <v-sheet
-                class="text-center pa-4 lighten-2"
-                color="#0F3460"
-                height="85px"
-                width="200px"
-              >
+              <v-sheet class="text-center pa-4 lighten-2" color="#0F3460" height="85px" width="200px">
                 <p class="ma-0 text-subtitle-1 text-center watch-title">
                   {{ nowDate }}
                 </p>
-                <p
-                  class="ma-0 text-h5 text-center watch-title font-weight-bold"
-                >
+                <p class="ma-0 text-h5 text-center watch-title font-weight-bold">
                   {{ nowTime }}
                 </p>
               </v-sheet>
@@ -35,13 +26,7 @@
           <v-row class="text-center">
             <v-col md="6" :align-self="center">
               <p>전체 도달률</p>
-              <Progress
-                :transitionDuration="1000"
-                :radius="60"
-                :strokeWidth="20"
-                strokeColor="#FF0000"
-                value="0"
-              >
+              <Progress :transitionDuration="1000" :radius="60" :strokeWidth="20" strokeColor="#FF0000" value="0">
                 <template v-slot:footer>
                   <p>목표 수 : 0</p>
                   <p>달성 수 : 10</p>
@@ -50,13 +35,7 @@
             </v-col>
             <v-col md="6" :align-self="center">
               <p>전체 불량률</p>
-              <Progress
-                :transitionDuration="1000"
-                :radius="60"
-                :strokeWidth="20"
-                strokeColor="#FF0000"
-                value="60"
-              >
+              <Progress :transitionDuration="1000" :radius="60" :strokeWidth="20" strokeColor="#FF0000" value="60">
                 <template v-slot:footer>
                   <p>목표 수 : 10</p>
                   <p>달성 수 : 15</p>
@@ -310,7 +289,7 @@ export default {
     },
     styles: {
       type: Object,
-      default: () => {},
+      default: () => { },
     },
     plugins: {
       type: Array,

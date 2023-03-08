@@ -135,6 +135,16 @@
                       required
                     ></v-text-field>
                   </v-col>
+                  <v-col cols="4">
+                    <v-text-field
+                      name="name"
+                      label="전화번호"
+                      v-model="phone_number"
+                      :rules="phone_nb_rule"
+                      :disabled="inputType == '' || status != 'U'"
+                      required
+                    ></v-text-field>
+                  </v-col>
                 </v-row>
               </v-form>
             </div>
@@ -242,6 +252,7 @@ export default class Member extends Vue {
   dept_val: string = "";
   dept_name: string = "";
   user_name: string = "";
+  phone_number: string = "";
   files: {} = cfg.data.filesData;
   inputType: string = "";
   selectNode: any = "";
@@ -265,6 +276,14 @@ export default class Member extends Vue {
     (v: string) =>
       !/[~!@#$%^&*()_+|<>?:{}]/.test(v) ||
       "이름에는 특수문자를 사용할 수 없습니다.",
+  ];
+  phone_nb_rule: any[] = [
+    (v: string) => !!v || "전화번호는 필수 입력사항입니다.",
+    (v: string) =>
+      !(v && v.length >= 12) || "전화번호는 12자 이상 입력할 수 없습니다.",
+    (v: string) =>
+      !/[ㄱ-ㅎ가-힣a-zA-Z]/.test(v) ||
+      "전화번호에는 숫자 외 입력할 수 없습니다.",
   ];
 
   get headers_table() {
@@ -298,6 +317,9 @@ export default class Member extends Vue {
         this.user_ID = selectedNode.userId;
         this.dept_val = selectedNode.dept_id;
         this.user_name = selectedNode.name;
+        this.phone_number = selectedNode.phoneNumber
+          ? selectedNode.phoneNumber
+          : "";
         this.rolesData.forEach((element: any) => {
           element.permission = selectedNode.accountRoles[element.id];
         });
@@ -329,6 +351,9 @@ export default class Member extends Vue {
         this.user_ID = selectedNode.userId;
         this.dept_val = selectedNode.dept_id;
         this.user_name = selectedNode.name;
+        this.phone_number = selectedNode.phoneNumber
+          ? selectedNode.phoneNumber
+          : "";
         this.rolesData.forEach((element: any) => {
           element.permission = selectedNode.accountRoles[element.id];
         });
@@ -368,6 +393,7 @@ export default class Member extends Vue {
               accountRoles: item.accountRoles,
               dept_id: detp_Id,
               id: item.id,
+              phoneNumber: item.phoneNumber,
             };
           });
           let result = {
@@ -438,6 +464,7 @@ export default class Member extends Vue {
       userName: this.user_name,
       departmentId: this.dept_val,
       userId: this.user_ID,
+      phoneNumber: this.phone_number,
     };
     if (validate) {
       api.department
@@ -472,6 +499,7 @@ export default class Member extends Vue {
     this.dept_val = "";
     this.user_name = "";
     this.dept_name = "";
+    this.phone_number = "";
 
     this.rolesData.forEach((el: any) => {
       el.permission = "N";
@@ -483,6 +511,7 @@ export default class Member extends Vue {
     this.status = "U";
     this.dept_val = this.selectNode.id;
     this.user_name = "";
+    this.phone_number = "";
     this.dept_name = "";
     this.user_ID = "";
     this.rolesData = this.dept_role;
@@ -510,6 +539,7 @@ export default class Member extends Vue {
     let deptItem = {
       userId: this.user_ID,
       userName: this.user_name,
+      phoneNumber: this.phone_number,
       departmentId: this.dept_val,
       accountRoles: this.makeJsonRoleData(),
     };

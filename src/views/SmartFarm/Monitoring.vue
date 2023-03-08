@@ -1,13 +1,13 @@
+<!-- monitoring페이지임 (헷갈려서 주석처리함 -이슬연구원) -->
 <template>
-  <v-container fluid class="">
-    <v-row class="d-flex align-center justify-center">
-      <v-card
-        v-for="(item, i) in outdoorSensor"
-        :key="i"
-        class="d-flex justify-center flex-column align-center mx-1 my-1 text-center"
-        min-width="100"
-      >
+  <v-container fluid class="pa-0 ma-0">
+    <!-- appBar 사이에 넣을 텍스트를 입력하세요.<slot> -->
+    <AppBar>모니터링</AppBar>
+    <v-row class="d-flex align-center justify-center pb-6">
+      <v-card v-for="(item, i) in outdoorSensor" :key="i"
+        class="d-flex justify-center flex-column align-center mx-1 my-1 text-center" min-width="100">
         <v-card-text class="py-2">
+          <v-icon v-text="item.icon" @mouseover="openTooltip(item)" color="green"> </v-icon>
           <span class="text-subtitle-1 font-weight-bold">
             {{ outdoorSensor[i].sensorname }}
           </span>
@@ -16,40 +16,18 @@
           <span class="text-h5 font-weight-bold" color="primary">{{
             outdoorSensor[i].value.replace(" (없음)", "")
           }}</span>
-          <span class="text-subtitle-2 font-weight-bold"
-            >&nbsp;{{ outdoorSensor[i].unit }}</span
-          >
+          <span class="text-subtitle-2 font-weight-bold">&nbsp;{{ outdoorSensor[i].unit }}</span>
         </v-card-text>
       </v-card>
-      <v-btn
-        :loading="loading5"
-        :disabled="loading5"
-        color="#CFD8DC"
-        class="ma-2 white--text"
-        fab
-        x-small
-        elevation="0"
-        @click="(loader = 'loading5'), getOutDoor()"
-      >
+      <v-btn :loading="loading5" :disabled="loading5" class="ma-2 white--text btn-gradient btn-glow" fab x-small
+        elevation="0" @click="(loader = 'loading5'), getOutDoor()">
         <v-icon dark> mdi-reload </v-icon>
       </v-btn>
     </v-row>
 
     <v-row dense class="d-flex justify-md-center align-stretch">
-      <v-col
-        v-for="(n, index) in cards"
-        :key="index"
-        lg="6"
-        md="12"
-        sm="12"
-        xs="12"
-        class="d-flex justify-center"
-      >
-        <RoomInfo
-          :roomData="n"
-          @controllPage="goControllPage"
-          @selectPage="openDialog"
-        >
+      <v-col v-for="(n, index) in cards" :key="index" lg="6" md="12" sm="12" xs="12" class="d-flex justify-center">
+        <RoomInfo :roomData="n" @controllPage="goControllPage" @selectPage="openDialog">
         </RoomInfo>
       </v-col>
     </v-row>
@@ -60,7 +38,7 @@
         <v-card>
           <v-card-title class="d-flex">
             <h4 class="px-1">모니터링</h4>
-            <h4 class="px-1">></h4>
+            <h4 class="px-1"></h4>
             <h4 class="px-1">{{ this.section }}</h4>
             <v-btn class="ml-auto" icon @click="dialog = false">
               <v-icon>mdi-close</v-icon>
@@ -79,63 +57,29 @@
 
                   <!-- 시작일 -->
                   <v-col cols="3" lg="2" class="">
-                    <v-menu
-                      v-model="menu1"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
+                    <v-menu v-model="menu1" :close-on-content-click="false" :nudge-right="40"
+                      transition="scale-transition" offset-y min-width="auto">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="s_date"
-                          label="시작일"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
+                        <v-text-field v-model="s_date" label="시작일" prepend-icon="mdi-calendar" readonly v-bind="attrs"
+                          v-on="on"></v-text-field>
                       </template>
-                      <v-date-picker
-                        v-model="s_date"
-                        @input="menu1 = false"
-                        :max="e_date"
-                      ></v-date-picker>
+                      <v-date-picker v-model="s_date" @input="menu1 = false" :max="e_date"></v-date-picker>
                     </v-menu>
                   </v-col>
 
                   <!-- 종료일 -->
                   <v-col cols="3" md="3" lg="2" class="">
-                    <v-menu
-                      v-model="menu2"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
+                    <v-menu v-model="menu2" :close-on-content-click="false" :nudge-right="40"
+                      transition="scale-transition" offset-y min-width="auto">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="e_date"
-                          label="종료일"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
+                        <v-text-field v-model="e_date" label="종료일" prepend-icon="mdi-calendar" readonly v-bind="attrs"
+                          v-on="on"></v-text-field>
                       </template>
-                      <v-date-picker
-                        v-model="e_date"
-                        @input="menu2 = false"
-                        :min="s_date"
-                      ></v-date-picker>
+                      <v-date-picker v-model="e_date" @input="menu2 = false" :min="s_date"></v-date-picker>
                     </v-menu>
                   </v-col>
 
-                  <v-btn class="ml-6 primary" @click="selectedDate()"
-                    >조회</v-btn
-                  >
+                  <v-btn class="ml-6 primary" @click="selectedDate()">조회</v-btn>
                 </v-row>
               </v-card-text>
             </v-card>
@@ -149,11 +93,7 @@
                     조회 센서
                   </h4>
 
-                  <v-chip-group
-                    v-model="selection"
-                    multiple
-                    active-class="primary--text"
-                  >
+                  <v-chip-group v-model="selection" multiple active-class="primary--text">
                     <v-chip v-for="tag in tags" :key="tag">
                       {{ tag }}
                     </v-chip>
@@ -164,18 +104,10 @@
                 <LoadingSpinner v-if="this.isLoading"></LoadingSpinner>
                 <!-- 온습도카드 -->
                 <div v-if="!this.isLoading">
-                  <v-card
-                    class="ma-2"
-                    v-if="this.selection.includes(0)"
-                    :height="500"
-                    elevation="4"
-                  >
+                  <v-card class="ma-2" v-if="this.selection.includes(0)" :height="500" elevation="4">
                     <v-card-title>
                       <div class="d-flex align-center">
-                        <h3
-                          class="pr-3 searchbox-title"
-                          style="white-space: nowrap"
-                        >
+                        <h3 class="pr-3 searchbox-title" style="white-space: nowrap">
                           {{ newData[0].name }}
                         </h3>
                         <h5>
@@ -187,27 +119,15 @@
                           {{ Data_TempHumid[0].unit[1].unit }}
                         </h5>
 
-                        <v-select
-                          class="ml-10"
-                          size="1"
-                          :items="selectSearchUnit"
-                          v-model="temphumid_TimeUnit"
-                          item-text="name"
-                          item-value="value"
-                          label="조회단위"
-                          dense
-                          @change="changeGraphDivision()"
-                        ></v-select>
+                        <v-select class="ml-10" size="1" :items="selectSearchUnit" v-model="temphumid_TimeUnit"
+                          item-text="name" item-value="value" label="조회단위" dense
+                          @change="changeGraphDivision()"></v-select>
                       </div>
                     </v-card-title>
                     <v-card-text>
                       <v-row>
                         <v-col cols="12">
-                          <TestGraphTemp
-                            :Data_TempHumid="Data_TempHumid"
-                            name="humid"
-                            ref="graphtemp"
-                          ></TestGraphTemp>
+                          <TestGraphTemp :Data_TempHumid="Data_TempHumid" name="humid" ref="graphtemp"></TestGraphTemp>
                         </v-col>
                       </v-row>
                     </v-card-text>
@@ -217,21 +137,14 @@
               <v-col cols="12">
                 <div v-if="!this.isLoading">
                   <!-- 양액ECPH카드 -->
-                  <v-card
-                    class="ma-2 pa-3"
-                    v-if="this.selection.includes(1)"
-                    elevation="4"
-                  >
+                  <v-card class="ma-2 pa-3" v-if="this.selection.includes(1)" elevation="4">
                     <v-card-title>
                       <h3 class="searchbox-title" style="white-space: nowrap">
                         {{ newData[1].name }}
                       </h3>
                     </v-card-title>
                     <v-card-text>
-                      <TestGraphWater
-                        :Data_Water="Data_Water"
-                        name="ECPH"
-                      ></TestGraphWater>
+                      <TestGraphWater :Data_Water="Data_Water" name="ECPH"></TestGraphWater>
                     </v-card-text>
                   </v-card>
                 </div>
@@ -252,132 +165,71 @@
         <v-card-text>
           <p v-html="latestRecord"></p>
           <v-col align-self="center">
-            <v-data-table
-              :headers="headers_bala"
-              :items="bala_data"
-              hide-default-footer
-              class="elevation-1"
-              dense
-              fixed-header
-              height="650"
-            >
+            <v-data-table :headers="headers_bala" :items="bala_data" hide-default-footer class="elevation-1" dense
+              fixed-header height="650">
               <template v-slot:[`item.currentStatus`]="{ item }">
-                <div
-                  class="mr-1"
-                  :class="{
-                    on: item.currentStatus === 'ON',
-                    off: item.currentStatus === 'OFF',
-                  }"
-                ></div>
+                <div class="mr-1" :class="{
+                  on: item.currentStatus === 'ON',
+                  off: item.currentStatus === 'OFF',
+                }"></div>
               </template>
               <template v-slot:[`item.controlStatus`]="{ item }">
                 <v-btn-toggle mandatory v-model="item.controlStatus" disabled>
-                  <v-btn
-                    color="green"
-                    text
-                    @click="openMemoModal('control', item, 'ON')"
-                    value="ON"
-                    dense
-                    :loading="item.loadBtn"
-                  >
+                  <v-btn color="green" text @click="openMemoModal('control', item, 'ON')" value="ON" dense
+                    :loading="item.loadBtn">
                     <p class="pa-0 ma-0">on</p>
                   </v-btn>
 
-                  <v-btn
-                    color="red "
-                    text
-                    value="OFF"
-                    @click="openMemoModal('control', item, 'OFF')"
-                    dense
-                    :loading="item.loadBtn"
-                  >
+                  <v-btn color="red " text value="OFF" @click="openMemoModal('control', item, 'OFF')" dense
+                    :loading="item.loadBtn">
                     <p class="pa-0 ma-0">off</p>
                   </v-btn>
 
-                  <v-btn
-                    color="blue"
-                    text
-                    value="AUTO"
-                    @click="openMemoModal('control', item, 'AUTO')"
-                    dense
-                    :loading="item.loadBtn"
-                  >
+                  <v-btn color="blue" text value="AUTO" @click="openMemoModal('control', item, 'AUTO')" dense
+                    :loading="item.loadBtn">
                     <p class="pa-0 ma-0">auto</p>
                   </v-btn>
                 </v-btn-toggle>
               </template>
               <template v-slot:[`item.repeatPeriod`]="{ item }">
                 <div v-if="item.repeatPeriod != null" style="width: 50px">
-                  <v-text-field
-                    prefix="일"
-                    type="number"
-                    :max="99"
-                    :min="0"
-                    v-model="item.repeatPeriod"
-                    reverse
-                    readonly
-                    @click="changePeriodValue(item)"
-                  ></v-text-field>
+                  <v-text-field prefix="일" type="number" :max="99" :min="0" v-model="item.repeatPeriod" reverse readonly
+                    @click="changePeriodValue(item)"></v-text-field>
                 </div>
                 <div v-else style="width: 50px">-</div>
               </template>
               <!-- 시간설정 -->
               <template v-slot:[`item.setting`]="{ item }">
                 <!-- LED부분 -->
-                <div
-                  class="d-flex justify-end justify-sm-space-between align-center"
-                  v-if="
-                    item.equipmentType == 'LED' ||
-                    item.equipmentType == 'WDP' ||
-                    item.equipmentType == 'WSP'
-                  "
-                >
+                <div class="d-flex justify-end justify-sm-space-between align-center" v-if="
+                  item.equipmentType == 'LED' ||
+                  item.equipmentType == 'WDP' ||
+                  item.equipmentType == 'WSP'
+                ">
                   <table>
                     <tr v-if="item.details.length == 0">
                       <td>
                         <span> 세팅정보가 없습니다. 추가해주세요 </span>
                       </td>
                     </tr>
-                    <tr
-                      v-for="(data, index) in item.details"
-                      :key="index + data.startTime"
-                    >
+                    <tr v-for="(data, index) in item.details" :key="index + data.startTime">
                       <td>
-                        <form
-                          class="d-flex justify-end justify-sm-space-between align-center"
-                        >
-                          <input
-                            @change="
-                              changeValue(
-                                data,
-                                item.equipmentName + '_s_' + index
-                              )
-                            "
-                            :ref="item.equipmentName + '_s_' + index"
-                            class="py-1"
-                            type="time"
-                            v-model="data.startTime"
-                            :readonly="!item.modifiedBtn"
-                          />
-                          <input
-                            @change="
-                              changeValue(
-                                data,
-                                item.equipmentName + '_e_' + index
-                              )
-                            "
-                            :ref="item.equipmentName + '_e_' + index"
-                            class="py-1"
-                            type="time"
-                            v-model="data.endTime"
-                            :readonly="!item.modifiedBtn"
-                          />
-                          <v-btn
-                            small
-                            icon
-                            @click="deleteSettingData(item, index)"
-                            v-if="item.modifiedBtn"
-                          >
+                        <form class="d-flex justify-end justify-sm-space-between align-center">
+                          <input @change="
+                            changeValue(
+                              data,
+                              item.equipmentName + '_s_' + index
+                            )
+                          " :ref="item.equipmentName + '_s_' + index" class="py-1" type="time" v-model="data.startTime"
+                            :readonly="!item.modifiedBtn" />
+                          <input @change="
+                            changeValue(
+                              data,
+                              item.equipmentName + '_e_' + index
+                            )
+                          " :ref="item.equipmentName + '_e_' + index" class="py-1" type="time" v-model="data.endTime"
+                            :readonly="!item.modifiedBtn" />
+                          <v-btn small icon @click="deleteSettingData(item, index)" v-if="item.modifiedBtn">
                             <v-icon>mdi-minus-box-outline</v-icon>
                           </v-btn>
                         </form>
@@ -385,123 +237,57 @@
                     </tr>
                   </table>
                   <div class="d-flex flex-column">
-                    <v-btn
-                      class="ml-1 mr-1"
-                      v-if="!item.modifiedBtn"
-                      @click="editValue(item, 'edit')"
-                      >수정</v-btn
-                    >
-                    <v-btn
-                      class="ml-1 mr-1 my-1"
-                      v-if="item.modifiedBtn"
-                      @click="openMemoModal('setting', item, null)"
-                      small
-                      >저장</v-btn
-                    >
-                    <v-btn
-                      class="ml-1 mr-1 my-1"
-                      v-if="item.modifiedBtn"
-                      @click="editValue(item, 'add')"
-                      small
-                      >추가</v-btn
-                    >
+                    <v-btn class="ml-1 mr-1" v-if="!item.modifiedBtn" @click="editValue(item, 'edit')">수정</v-btn>
+                    <v-btn class="ml-1 mr-1 my-1" v-if="item.modifiedBtn" @click="openMemoModal('setting', item, null)"
+                      small>저장</v-btn>
+                    <v-btn class="ml-1 mr-1 my-1" v-if="item.modifiedBtn" @click="editValue(item, 'add')" small>추가</v-btn>
 
-                    <v-btn
-                      class="ml-1 mr-1 my-1"
-                      v-if="item.modifiedBtn"
-                      @click="cancelChangeValue(item)"
-                      small
-                      >취소</v-btn
-                    >
+                    <v-btn class="ml-1 mr-1 my-1" v-if="item.modifiedBtn" @click="cancelChangeValue(item)"
+                      small>취소</v-btn>
                   </div>
                 </div>
                 <!--가습기부분 -->
-                <div
-                  class="d-flex justify-end justify-sm-space-between align-center"
-                  v-if="
-                    item.equipmentType == 'HUM' || item.equipmentType == 'ACF'
-                  "
-                >
+                <div class="d-flex justify-end justify-sm-space-between align-center" v-if="
+                  item.equipmentType == 'HUM' || item.equipmentType == 'ACF'
+                ">
                   <table>
                     <tr v-if="item.details.length == 0">
                       <td>
                         <span> 세팅정보가 없습니다. 추가해주세요 </span>
                       </td>
                     </tr>
-                    <tr
-                      v-for="(data, index) in item.details"
-                      :key="index + data.startTime"
-                    >
+                    <tr v-for="(data, index) in item.details" :key="index + data.startTime">
                       <td>
-                        <form
-                          class="d-flex justify-end justify-sm-space-between align-center flex-wrap flex-sm-nowrap"
-                        >
-                          <div
-                            class="d-flex justify-end justify-sm-space-between align-center flex-nowrap"
-                          >
-                            <input
-                              @change="
-                                changeValue(
-                                  data,
-                                  item.equipmentName + '_s_' + index
-                                )
-                              "
-                              :ref="item.equipmentName + '_s_' + index"
-                              type="time"
-                              v-model="data.startTime"
-                              :readonly="!item.modifiedBtn"
-                            />
-                            <input
-                              @change="
-                                changeValue(
-                                  data,
-                                  item.equipmentName + '_e_' + index
-                                )
-                              "
-                              :ref="item.equipmentName + '_e_' + index"
-                              type="time"
-                              v-model="data.endTime"
-                              :readonly="!item.modifiedBtn"
-                            />
+                        <form class="d-flex justify-end justify-sm-space-between align-center flex-wrap flex-sm-nowrap">
+                          <div class="d-flex justify-end justify-sm-space-between align-center flex-nowrap">
+                            <input @change="
+                              changeValue(
+                                data,
+                                item.equipmentName + '_s_' + index
+                              )
+                            " :ref="item.equipmentName + '_s_' + index" type="time" v-model="data.startTime"
+                              :readonly="!item.modifiedBtn" />
+                            <input @change="
+                              changeValue(
+                                data,
+                                item.equipmentName + '_e_' + index
+                              )
+                            " :ref="item.equipmentName + '_e_' + index" type="time" v-model="data.endTime"
+                              :readonly="!item.modifiedBtn" />
                           </div>
-                          <div
-                            class="d-flex justify-end justify-sm-space-between flex-nowrap"
-                          >
+                          <div class="d-flex justify-end justify-sm-space-between flex-nowrap">
                             <div width="20">
-                              <v-text-field
-                                dense
-                                v-model="data.minValue"
-                                min="1"
-                                max="100"
-                                type="number"
-                                prefix="%"
-                                @change="changeValue(item)"
-                                :readonly="!item.modifiedBtn"
-                                reverse
-                                class="setting_text_width"
-                              >
+                              <v-text-field dense v-model="data.minValue" min="1" max="100" type="number" prefix="%"
+                                @change="changeValue(item)" :readonly="!item.modifiedBtn" reverse
+                                class="setting_text_width">
                               </v-text-field>
                             </div>
 
                             <span class="px-4">~</span>
-                            <v-text-field
-                              dense
-                              min="1"
-                              max="100"
-                              type="number"
-                              prefix="%"
-                              v-model="data.maxValue"
-                              @change="changeValue(item)"
-                              :readonly="!item.modifiedBtn"
-                              reverse
-                              class="setting_text_width"
-                            ></v-text-field>
-                            <v-btn
-                              small
-                              icon
-                              @click="deleteSettingData(item, index)"
-                              v-if="item.modifiedBtn"
-                            >
+                            <v-text-field dense min="1" max="100" type="number" prefix="%" v-model="data.maxValue"
+                              @change="changeValue(item)" :readonly="!item.modifiedBtn" reverse
+                              class="setting_text_width"></v-text-field>
+                            <v-btn small icon @click="deleteSettingData(item, index)" v-if="item.modifiedBtn">
                               <v-icon>mdi-minus-box-outline</v-icon>
                             </v-btn>
                           </div>
@@ -510,122 +296,56 @@
                     </tr>
                   </table>
                   <div class="d-flex flex-column">
-                    <v-btn
-                      class="ml-1 mr-1"
-                      v-if="!item.modifiedBtn"
-                      @click="editValue(item)"
-                      >수정</v-btn
-                    >
+                    <v-btn class="ml-1 mr-1" v-if="!item.modifiedBtn" @click="editValue(item)">수정</v-btn>
 
-                    <v-btn
-                      class="ml-1 mr-1 my-1"
-                      v-if="item.modifiedBtn"
-                      @click="openMemoModal('setting', item, null)"
-                      small
-                      >저장</v-btn
-                    >
-                    <v-btn
-                      class="ml-1 mr-1 my-1"
-                      v-if="item.modifiedBtn"
-                      @click="editValue(item, 'add')"
-                      small
-                      >추가</v-btn
-                    >
-                    <v-btn
-                      class="ml-1 mr-1 my-1"
-                      v-if="item.modifiedBtn"
-                      @click="cancelChangeValue(item)"
-                      small
-                      >취소</v-btn
-                    >
+                    <v-btn class="ml-1 mr-1 my-1" v-if="item.modifiedBtn" @click="openMemoModal('setting', item, null)"
+                      small>저장</v-btn>
+                    <v-btn class="ml-1 mr-1 my-1" v-if="item.modifiedBtn" @click="editValue(item, 'add')" small>추가</v-btn>
+                    <v-btn class="ml-1 mr-1 my-1" v-if="item.modifiedBtn" @click="cancelChangeValue(item)"
+                      small>취소</v-btn>
                   </div>
                 </div>
 
                 <!-- 에어컨부분 -->
-                <div
-                  class="d-flex justify-end justify-sm-space-between align-center"
-                  v-if="item.equipmentType == 'ACN'"
-                >
+                <div class="d-flex justify-end justify-sm-space-between align-center" v-if="item.equipmentType == 'ACN'">
                   <table>
                     <tr v-if="item.details.length == 0">
                       <td>
                         <span> 세팅정보가 없습니다. 추가해주세요 </span>
                       </td>
                     </tr>
-                    <tr
-                      v-for="(data, index) in item.details"
-                      :key="index + data.startTime"
-                    >
+                    <tr v-for="(data, index) in item.details" :key="index + data.startTime">
                       <td>
-                        <form
-                          class="d-flex align-center justify-end justify-sm-space-between flex-wrap flex-sm-nowrap"
-                        >
-                          <div
-                            class="d-flex align-center justify-end justify-sm-space-between flex-nowrap"
-                          >
-                            <input
-                              @change="
-                                changeValue(
-                                  data,
-                                  item.equipmentName + '_s_' + index
-                                )
-                              "
-                              :ref="item.equipmentName + '_s_' + index"
-                              type="time"
-                              v-model="data.startTime"
-                              :readonly="!item.modifiedBtn"
-                            />
-                            <input
-                              @change="
-                                changeValue(
-                                  data,
-                                  item.equipmentName + '_e_' + index
-                                )
-                              "
-                              :ref="item.equipmentName + '_e_' + index"
-                              type="time"
-                              v-model="data.endTime"
-                              :readonly="!item.modifiedBtn"
-                            />
+                        <form class="d-flex align-center justify-end justify-sm-space-between flex-wrap flex-sm-nowrap">
+                          <div class="d-flex align-center justify-end justify-sm-space-between flex-nowrap">
+                            <input @change="
+                              changeValue(
+                                data,
+                                item.equipmentName + '_s_' + index
+                              )
+                            " :ref="item.equipmentName + '_s_' + index" type="time" v-model="data.startTime"
+                              :readonly="!item.modifiedBtn" />
+                            <input @change="
+                              changeValue(
+                                data,
+                                item.equipmentName + '_e_' + index
+                              )
+                            " :ref="item.equipmentName + '_e_' + index" type="time" v-model="data.endTime"
+                              :readonly="!item.modifiedBtn" />
                           </div>
-                          <div
-                            class="d-flex align-center justify-end justify-sm-space-between flex-nowrap"
-                          >
+                          <div class="d-flex align-center justify-end justify-sm-space-between flex-nowrap">
                             <div width="20">
-                              <v-text-field
-                                dense
-                                v-model="data.minValue"
-                                min="1"
-                                max="100"
-                                type="number"
-                                prefix="°C"
-                                @change="changeValue(item)"
-                                :readonly="!item.modifiedBtn"
-                                reverse
-                                class="setting_text_width"
-                              >
+                              <v-text-field dense v-model="data.minValue" min="1" max="100" type="number" prefix="°C"
+                                @change="changeValue(item)" :readonly="!item.modifiedBtn" reverse
+                                class="setting_text_width">
                               </v-text-field>
                             </div>
 
                             <span class="px-4">~</span>
-                            <v-text-field
-                              dense
-                              min="1"
-                              max="100"
-                              type="number"
-                              prefix="°C"
-                              v-model="data.maxValue"
-                              @change="changeValue(item)"
-                              :readonly="!item.modifiedBtn"
-                              reverse
-                              class="setting_text_width"
-                            ></v-text-field>
-                            <v-btn
-                              small
-                              icon
-                              @click="deleteSettingData(item, index)"
-                              v-if="item.modifiedBtn"
-                            >
+                            <v-text-field dense min="1" max="100" type="number" prefix="°C" v-model="data.maxValue"
+                              @change="changeValue(item)" :readonly="!item.modifiedBtn" reverse
+                              class="setting_text_width"></v-text-field>
+                            <v-btn small icon @click="deleteSettingData(item, index)" v-if="item.modifiedBtn">
                               <v-icon>mdi-minus-box-outline</v-icon>
                             </v-btn>
                           </div>
@@ -635,34 +355,13 @@
                   </table>
 
                   <div class="d-flex flex-column">
-                    <v-btn
-                      class="ml-1 mr-1"
-                      v-if="!item.modifiedBtn"
-                      @click="editValue(item)"
-                      >수정</v-btn
-                    >
+                    <v-btn class="ml-1 mr-1" v-if="!item.modifiedBtn" @click="editValue(item)">수정</v-btn>
 
-                    <v-btn
-                      class="ml-1 mr-1 my-1"
-                      v-if="item.modifiedBtn"
-                      @click="openMemoModal('setting', item, null)"
-                      small
-                      >저장</v-btn
-                    >
-                    <v-btn
-                      class="ml-1 mr-1 my-1"
-                      v-if="item.modifiedBtn"
-                      @click="editValue(item, 'add')"
-                      small
-                      >추가</v-btn
-                    >
-                    <v-btn
-                      class="ml-1 mr-1 my-1"
-                      v-if="item.modifiedBtn"
-                      @click="cancelChangeValue(item)"
-                      small
-                      >취소</v-btn
-                    >
+                    <v-btn class="ml-1 mr-1 my-1" v-if="item.modifiedBtn" @click="openMemoModal('setting', item, null)"
+                      small>저장</v-btn>
+                    <v-btn class="ml-1 mr-1 my-1" v-if="item.modifiedBtn" @click="editValue(item, 'add')" small>추가</v-btn>
+                    <v-btn class="ml-1 mr-1 my-1" v-if="item.modifiedBtn" @click="cancelChangeValue(item)"
+                      small>취소</v-btn>
                   </div>
                 </div>
               </template>
@@ -699,38 +398,16 @@
                   <v-chip class="" color="warning"> 주의 </v-chip>
                 </v-col>
                 <v-col cols="2">
-                  <v-text-field
-                    type=""
-                    label="AUTO 30"
-                    v-model="warning_alarm.min"
-                    outlined
-                    color
-                    dense
-                  ></v-text-field>
+                  <v-text-field type="" label="AUTO 30" v-model="warning_alarm.min" outlined color dense></v-text-field>
                 </v-col>
                 <v-col cols="2">
-                  <v-text-field
-                    type=""
-                    label="AUTO 50"
-                    v-model="warning_alarm.max"
-                    outlined
-                    color
-                    dense
-                  ></v-text-field>
+                  <v-text-field type="" label="AUTO 50" v-model="warning_alarm.max" outlined color dense></v-text-field>
                 </v-col>
                 <v-col cols="3">
-                  <v-checkbox
-                    label="사용여부"
-                    v-model="warning_alarm.useYN"
-                    dense
-                  ></v-checkbox>
+                  <v-checkbox label="사용여부" v-model="warning_alarm.useYN" dense></v-checkbox>
                 </v-col>
                 <v-col cols="3">
-                  <v-checkbox
-                    label="Push사용"
-                    v-model="warning_alarm.pushYN"
-                    dense
-                  ></v-checkbox>
+                  <v-checkbox label="Push사용" v-model="warning_alarm.pushYN" dense></v-checkbox>
                 </v-col>
               </v-row>
               <v-row dense align="center">
@@ -738,38 +415,16 @@
                   <v-chip class="" color="error"> 경고 </v-chip>
                 </v-col>
                 <v-col cols="2">
-                  <v-text-field
-                    type=""
-                    label="주의 20"
-                    v-model="error_alarm.min"
-                    outlined
-                    color
-                    dense
-                  ></v-text-field>
+                  <v-text-field type="" label="주의 20" v-model="error_alarm.min" outlined color dense></v-text-field>
                 </v-col>
                 <v-col cols="2">
-                  <v-text-field
-                    type=""
-                    label="주의 70"
-                    v-model="error_alarm.max"
-                    outlined
-                    color
-                    dense
-                  ></v-text-field>
+                  <v-text-field type="" label="주의 70" v-model="error_alarm.max" outlined color dense></v-text-field>
                 </v-col>
                 <v-col cols="3">
-                  <v-checkbox
-                    label="사용여부"
-                    v-model="error_alarm.useYN"
-                    dense
-                  ></v-checkbox>
+                  <v-checkbox label="사용여부" v-model="error_alarm.useYN" dense></v-checkbox>
                 </v-col>
                 <v-col cols="3">
-                  <v-checkbox
-                    label="Push사용"
-                    v-model="error_alarm.pushYN"
-                    dense
-                  ></v-checkbox>
+                  <v-checkbox label="Push사용" v-model="error_alarm.pushYN" dense></v-checkbox>
                 </v-col>
               </v-row>
             </v-col>
@@ -792,11 +447,7 @@
             <v-btn text color="blue" value="cool"> 냉방 </v-btn>
             <v-btn text color="red" value="heat"> 난방 </v-btn>
           </v-btn-toggle>
-          <v-text-field
-            label="온도"
-            type="number"
-            v-model="airCon_val"
-          ></v-text-field>
+          <v-text-field label="온도" type="number" v-model="airCon_val"></v-text-field>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -811,12 +462,7 @@
       <v-card>
         <v-card-title class="headline">메모 작성</v-card-title>
         <v-card-text class="align-center">
-          <v-textarea
-            label="메모입력"
-            v-model="memo_text"
-            outlined
-            maxlength="100"
-          ></v-textarea>
+          <v-textarea label="메모입력" v-model="memo_text" outlined maxlength="100"></v-textarea>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -833,23 +479,15 @@
         <v-card-text>
           <v-row dense>
             <v-col offset="8" cols="4">
-              <v-text-field
-                label="설정주기"
-                type="number"
-                :min="0"
-                :max="99"
-                v-model.number="period_data.repeatPeriod"
-                reverse
-                prefix="일"
-              ></v-text-field>
+              <v-text-field label="설정주기" type="number" :min="0" :max="99" v-model.number="period_data.repeatPeriod"
+                reverse prefix="일"></v-text-field>
             </v-col>
             <v-col cols="12" class="text-right">
               <span>
                 현재시간이 설정시간전일 경우 금일 실행되고
                 <v-spacer></v-spacer>
                 {{ addData(period_data.repeatPeriod) }}부터
-                실행예정입니다.</span
-              >
+                실행예정입니다.</span>
             </v-col>
           </v-row>
         </v-card-text>
@@ -865,7 +503,7 @@
 
 <script>
 import _ from "lodash";
-
+import AppBar from '@/components/Layout/AppBar.vue'
 import LoadingSpinner from "./Loading/LodingSpinner.vue"; // 로딩스피너
 import axios from "axios";
 import cfg from "./Config";
@@ -888,7 +526,7 @@ export default {
     LoadingSpinner,
     TestGraphTemp,
     TestGraphWater,
-    RoomInfo,
+    RoomInfo, AppBar
   },
   data() {
     return {
@@ -1046,32 +684,32 @@ export default {
         {
           sensorname: "일사량",
           value: "-",
-          unit: "kWh/m2",
+          unit: "kWh/m2", icon: "mdi-white-balance-sunny",
         },
         {
           sensorname: "강수량",
           value: "-",
-          unit: "",
+          unit: "", icon: "mdi-weather-pouring",
         },
         {
           sensorname: "풍속(남북)",
           value: "-",
-          unit: "m/s",
+          unit: "m/s", icon: "mdi-weather-windy",
         },
         {
           sensorname: "풍향/풍속",
           value: "-",
-          unit: "",
+          unit: "", icon: "mdi-weather-windy",
         },
         {
           sensorname: "온도",
           value: "-",
-          unit: "°C",
+          unit: "°C", icon: "mdi-thermometer-low",
         },
         {
           sensorname: "습도",
           value: "-",
-          unit: "%",
+          unit: "%", icon: "mdi-water",
         },
 
         //외부센서 측정값
@@ -1488,7 +1126,7 @@ export default {
       console.log(
         "cancelChangeValue",
         Object.entries(this.detailData_before).toString() ===
-          Object.entries(item.details).toString()
+        Object.entries(item.details).toString()
       );
       //Object.entries(this.detailData_before).toString() === Object.entries(item.details).toString();
 
@@ -1639,11 +1277,10 @@ export default {
 
       let baseDate = `${date.getFullYear()}${(date.getMonth() + 1)
         .toString()
-        .padStart(2, "0")}${
-        baseTime == 23
+        .padStart(2, "0")}${baseTime == 23
           ? (date.getDate() - 1).toString().padStart(2, "0")
           : date.getDate().toString().padStart(2, "0")
-      }`; //금일. //padStart = 빈값을 0으로 대체
+        }`; //금일. //padStart = 빈값을 0으로 대체
       console.log(baseDate);
       let reqData = {
         ServiceKey:
@@ -1693,9 +1330,8 @@ export default {
             default:
               Out_RainFall_str = `${Out_RainFall[0].obsrValue}mm`;
           }
-          this.outdoorSensor[1].value = `${Out_RainFall_str} (${
-            pty_code[Out_RainType[0].obsrValue]
-          })`;
+          this.outdoorSensor[1].value = `${Out_RainFall_str} (${pty_code[Out_RainType[0].obsrValue]
+            })`;
 
           var Out_Humid = _.filter(Arr, { category: "REH" });
           console.log("습도", Out_Humid[0].obsrValue);
@@ -1917,9 +1553,8 @@ export default {
     addData(add) {
       let date = new Date();
       date.setDate(date.getDate() + add);
-      return `${date.getFullYear()}년 ${
-        date.getMonth() + 1
-      }월 ${date.getDate()}일`;
+      return `${date.getFullYear()}년 ${date.getMonth() + 1
+        }월 ${date.getDate()}일`;
     },
     savePeriodValue() {
       this.period_modal = false;
@@ -1951,9 +1586,15 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" scoped src="./SmartFarm.scss">
 ::v-deep .v-text-field__details {
   display: none;
+}
+
+.btn-gradient {
+  background-image: linear-gradient(to right, rgb(153, 218, 1), rgb(49, 182, 56));
+  border: 0;
+  color: rgba(var(--text-color));
 }
 
 div {

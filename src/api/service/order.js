@@ -29,12 +29,12 @@ export default {
       params: params,
     }),
 
-  getItems: (
+  /* getItems: (
     params //수주 정보 등록 - 품목 조회
   ) =>
     AuthAPI.post("/api/orderinfo/item", JSON.stringify(params), {
       headers: { "Content-Type": "application/json" },
-    }),
+    }) */
 
   // editOrderInfo: (
   //   params //수주 정보 등록 - 품목 조회

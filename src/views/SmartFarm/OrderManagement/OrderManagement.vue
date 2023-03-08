@@ -1,6 +1,7 @@
 <template>
     <div>
         <v-container fluid>
+<<<<<<< HEAD
             <v-app-bar elevation="0" dense rounded><v-app-bar-nav-icon> </v-app-bar-nav-icon>
                 <v-toolbar-title>
                     <v-btn elevation="0" rounded>
@@ -25,6 +26,78 @@
                             <v-col cols="12" md="2">
                                 <v-text-field prepend-inner-icon="mdi-magnify" color="green" outlined dense label="Search"
                                     hide-details="auto" filled></v-text-field>
+=======
+            <!-- 조회조건 -->
+            <v-row no-gutters>
+                <v-col class="ma-2" md="12">
+                    <h4 class="searchbox-title">조회 조건</h4>
+                    <v-sheet class="pa-3" height="80" elevation="2">
+                        <v-row no-gutters class="d-flex align-center">
+                            <v-col cols="10">
+                                <v-row>
+                                    <v-col cols="2">
+                                        <v-text-field label="수주번호" v-model="search_condition.orderInfoCode"
+                                            dense></v-text-field>
+                                    </v-col>
+
+                                    <v-col cols="2">
+                                        <v-text-field label="거래처명" v-model="search_condition.customerName"
+                                            dense></v-text-field>
+                                    </v-col>
+                                    <v-col cols="2">
+                                        <v-menu ref="order_startDate" v-model="order_startDate"
+                                            :close-on-content-click="false"
+                                            :return-value.sync="search_condition.order_startDate"
+                                            transition="scale-transition" offset-y min-width="auto">
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <v-text-field v-model="search_condition.order_startDate" label="수주시작일"
+                                                    prepend-icon="mdi-calendar" readonly v-bind="attrs" v-on="on"
+                                                    dense></v-text-field>
+                                            </template>
+                                            <v-date-picker v-model="search_condition.order_startDate" no-title scrollable
+                                                locale="ko-KR" :max="search_condition.order_endDate">
+                                                <v-spacer></v-spacer>
+                                                <v-btn text color="primary" @click="order_startDate = false">
+                                                    취소
+                                                </v-btn>
+                                                <v-btn text color="primary" @click="
+                                                    s_date_search_order(
+                                                        search_condition.order_startDate
+                                                    )
+                                                ">
+                                                    확인
+                                                </v-btn>
+                                            </v-date-picker>
+                                        </v-menu>
+                                    </v-col>
+                                    <v-col md="2">
+                                        <v-menu ref="order_endDate" v-model="order_endDate" :close-on-content-click="false"
+                                            :return-value.sync="search_condition.order_endDate"
+                                            transition="scale-transition" offset-y min-width="auto">
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <v-text-field v-model="search_condition.order_endDate" label="수주종료일"
+                                                    prepend-icon="mdi-calendar" readonly v-bind="attrs" v-on="on"
+                                                    dense></v-text-field>
+                                            </template>
+                                            <v-date-picker v-model="search_condition.order_endDate" no-title scrollable
+                                                locale="ko-KR" :min="search_condition.order_startDate">
+                                                <v-spacer></v-spacer>
+                                                <v-btn text color="primary" @click="order_endDate = false">
+                                                    취소
+                                                </v-btn>
+                                                <v-btn text color="primary" @click="
+                                                    e_date_search_order(search_condition.order_endDate)
+                                                ">
+                                                    확인
+                                                </v-btn>
+                                            </v-date-picker>
+                                        </v-menu>
+                                    </v-col>
+                                    <v-col cols="3">
+                                        <v-text-field label="요청사항" v-model="search_condition.memo" dense></v-text-field>
+                                    </v-col>
+                                </v-row>
+>>>>>>> origin/DEV
                             </v-col>
                             <v-col cols="12" md="2">
                                 <v-autocomplete class="text-green" color="green" hide-details dense outlined
@@ -441,6 +514,7 @@ export default class Customer extends Vue {
 }
 </script>
 
+<<<<<<< HEAD
 <style lang="css">
 .btn {
     font-family: 'DM Sans', sans-serif;
@@ -548,3 +622,6 @@ export default class Customer extends Vue {
     background-color: #F2F3F8;
 }
 </style>
+=======
+<style src="../SmartFarm.scss" lang="scss"></style>
+>>>>>>> origin/DEV

@@ -27,4 +27,10 @@ export default {
   },
   updateUserInfoPage: (params) =>
     AuthAPI.post("/api/account/changepw", JSON.stringify(params)),
+  getSMSInfo: (params) =>
+    AuthAPI.get("/api/account/sms", {
+      params: params,
+    }),
+  putSMSInfo: (params) =>
+    AuthAPI.put("/api/account/sms", JSON.stringify(params)),
 };
