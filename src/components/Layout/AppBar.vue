@@ -4,7 +4,7 @@
         <v-toolbar-title>
             <div class="AppBar">
                 <div>
-                    <slot>부모컴포넌트에서 텍스트를 입력해주세요.</slot>
+                    <slot>{{ pageName }}</slot>
                 </div>
             </div>
         </v-toolbar-title>
@@ -76,7 +76,7 @@ import * as api from "@/api/index.js";
 import { Component, Vue, Ref, Watch } from "vue-property-decorator";
 import SidebarUserInfo from "@/components/Sidebar/SidebarUserInfo.vue";
 import SidebarMySetting from "@/components/Sidebar/SidebarMySetting.vue";
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 
 @Component({
     components: {
@@ -87,7 +87,16 @@ import { mapGetters } from "vuex";
         ...mapGetters({
             alarmList: "ALARM/GET_ALARM_LIST",
         }),
+
+
+        pageName() {
+            return this.$store.state.pageName
+        }
     },
+
+
+
+
 })
 export default class Sidebar extends Vue {
     @Ref() form: HTMLFormElement;
@@ -118,6 +127,10 @@ export default class Sidebar extends Vue {
         (v: any) => !!v || "비밀번호 확인은 필수입니다",
     ];
     userInfo?: object;
+
+
+
+
 
     mounted() {
         this.getUserId();

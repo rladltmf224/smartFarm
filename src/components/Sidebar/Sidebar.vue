@@ -8,7 +8,6 @@
       <v-icon v-else @click.stop="mini = !mini" color="lightgrey">
         mdi-arrow-expand-right
       </v-icon> -->
-
       <!--     <v-icon v-else @click.stop="mini = !mini" color="lightgrey">mdi-chevron-right</v-icon> -->
       <v-list height="100" dense>
         <v-list-item class="px-2">
@@ -189,7 +188,7 @@
     </v-list> -->
 
     <v-list height="700" style="overflow-y: auto; overflow-x: hidden; display:contents" dense nav rounded>
-      <v-list-item :link="true" :to="to_home" color="primary">
+      <v-list-item :link="true" :to="to_home" color="primary" @click="selectedPage(subItem == null)">
         <v-list-item-icon @mouseover="openTooltip(item)">
           <v-icon>mdi-monitor</v-icon>
         </v-list-item-icon>
@@ -216,7 +215,7 @@
           </v-list-item-content>
         </template>
         <v-list-item v-for="subItem in item.subItems" :key="subItem.title" :to="subItem.to" dense>
-          <v-list-item-content>
+          <v-list-item-content @click="selectedPage(subItem)">
             <v-list-item-title v-text="'•  ' + subItem.title"></v-list-item-title>
           </v-list-item-content>
         </v-list-item>
@@ -453,6 +452,15 @@ export default class Sidebar extends Vue {
         console.log("유저아이디가없음2222", this.userId);
     } else if (this.userId != "") {
       console.log("유저아이디가있음");
+    }
+  }
+
+
+  selectedPage(subItem: any) {
+    if (subItem.title == undefined) {
+      this.$store.commit("setPageName", '모니터링');
+    } else {
+      this.$store.commit("setPageName", subItem.title);
     }
   }
 

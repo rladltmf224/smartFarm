@@ -1,8 +1,7 @@
 <!-- monitoring페이지임 (헷갈려서 주석처리함 -이슬연구원) -->
 <template>
-  <v-container fluid class="pa-0 ma-0">
+  <v-container fluid>
     <!-- appBar 사이에 넣을 텍스트를 입력하세요.<slot> -->
-    <AppBar>모니터링</AppBar>
     <v-row class="d-flex align-center justify-center pb-6">
       <v-card v-for="(item, i) in outdoorSensor" :key="i"
         class="d-flex justify-center flex-column align-center mx-1 my-1 text-center" min-width="100">

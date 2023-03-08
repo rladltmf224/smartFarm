@@ -4,7 +4,7 @@
       <v-row no-gutters>
         <v-col class="ma-2" md="12">
           <h4 class="searchbox-title">조회 조건</h4>
-          <v-sheet class="pa-3" color="#F6F8F9" height="120" elevation="2">
+          <v-card class="pa-3" height="120" elevation="2">
             <v-row no-gutters>
               <v-col cols="10">
                 <v-row>
@@ -82,7 +82,7 @@
                 </v-btn>
               </v-col>
             </v-row>
-          </v-sheet>
+          </v-card>
         </v-col>
       </v-row>
       <v-row no-gutters>
@@ -359,4 +359,4 @@ export default class Customer extends Vue {
 }
 </script>
 
-<style src="./CustomerMng.scss" lang="scss"></style>
+<style src="../SmartFarm/SmartFarm.scss" lang="scss"></style>

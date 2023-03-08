@@ -5,11 +5,11 @@
       <v-row>
         <!-- 부서/직원 검색 -->
         <v-col md="4">
-          <v-row>
-            <v-col>
-              <h4 class="searchbox-title">부서/직원 검색</h4>
-            </v-col>
-          </v-row>
+
+          <v-col>
+            <h4 class="searchbox-title">부서/직원 검색</h4>
+          </v-col>
+
 
           <v-sheet color="#f5f5f5" max-width="500" height="850">
             <v-sheet class="mb-4 pa-2 blue-grey lighten-2">
