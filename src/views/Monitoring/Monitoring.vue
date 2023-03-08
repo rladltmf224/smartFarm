@@ -2,10 +2,10 @@
   <div class="monitor-page">
     <v-container fluid>
       <v-row>
-        <v-col offset-md="4" md="4">
-          <p class="text-center text-h4 monitor-title font-weight-bold">
-            생산 모니터링 시스템
-          </p>
+        <v-col offset-md="4" md="4"></v-col>
+        <p class="text-center text-h4 monitor-title font-weight-bold">
+          생산 모니터링 시스템
+        </p>
         </v-col>
         <v-col class="text-right" offset-md="3" md="1"><v-btn color="normal">초기화</v-btn></v-col>
       </v-row>

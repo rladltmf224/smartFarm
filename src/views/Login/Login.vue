@@ -43,11 +43,11 @@
           <form>
             <v-row dense>
               <v-col cols="12">
-                <v-text-field label="사번" prepend-inner-icon="mdi-account" v-model="username">
+                <v-text-field label="사번" outlined rounded dense prepend-inner-icon="mdi-account" v-model="username">
                 </v-text-field>
               </v-col>
               <v-col cols="12">
-                <v-text-field prepend-inner-icon="mdi-lock" type="password" label="비밀번호"
+                <v-text-field prepend-inner-icon="mdi-lock" rounded outlined dense type="password" label="비밀번호"
                   v-model="password"></v-text-field>
               </v-col>
               <v-col cols="6">

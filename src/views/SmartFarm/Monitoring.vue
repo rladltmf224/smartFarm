@@ -1,6 +1,9 @@
+<!-- monitoring페이지임 (헷갈려서 주석처리함 -이슬연구원) -->
 <template>
-  <v-container fluid class="">
-    <v-row class="d-flex align-center justify-center">
+  <v-container fluid class="pa-0 ma-0">
+    <!-- appBar 사이에 넣을 텍스트를 입력하세요.<slot> -->
+    <AppBar>모니터링</AppBar>
+    <v-row class="d-flex align-center justify-center pb-6">
       <v-card v-for="(item, i) in outdoorSensor" :key="i"
         class="d-flex justify-center flex-column align-center mx-1 my-1 text-center" min-width="100">
         <v-card-text class="py-2">
@@ -500,7 +503,7 @@
 
 <script>
 import _ from "lodash";
-
+import AppBar from '@/components/Layout/AppBar.vue'
 import LoadingSpinner from "./Loading/LodingSpinner.vue"; // 로딩스피너
 import axios from "axios";
 import cfg from "./Config";
@@ -523,7 +526,7 @@ export default {
     LoadingSpinner,
     TestGraphTemp,
     TestGraphWater,
-    RoomInfo,
+    RoomInfo, AppBar
   },
   data() {
     return {
@@ -1583,7 +1586,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" scoped src="./SmartFarm.scss">
 ::v-deep .v-text-field__details {
   display: none;
 }

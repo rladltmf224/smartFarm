@@ -5,7 +5,7 @@
             <v-row no-gutters>
                 <v-col class="ma-2" md="12">
                     <h4 class="searchbox-title">조회 조건</h4>
-                    <v-sheet class="pa-3" color="#F6F8F9" height="80" elevation="2">
+                    <v-sheet class="pa-3" height="80" elevation="2">
                         <v-row no-gutters class="d-flex align-center">
                             <v-col cols="10">
                                 <v-row>
@@ -412,4 +412,4 @@ export default class Customer extends Vue {
 }
 </script>
 
-<style src="./OrderManagement.scss" lang="scss"></style>
+<style src="../SmartFarm.scss" lang="scss"></style>
