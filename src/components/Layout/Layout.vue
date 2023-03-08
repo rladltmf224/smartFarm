@@ -2,6 +2,7 @@
   <v-app class="pa-6">
     <Sidebar />
     <v-main class="content background-color ">
+      <!-- <AppBar></AppBar> -->
       <router-view></router-view>
     </v-main>
   </v-app>
@@ -10,9 +11,10 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Sidebar from "@/components/Sidebar/Sidebar.vue";
+import AppBar from '@/components/Layout/AppBar.vue'
 @Component({
   components: {
-    Sidebar,
+    Sidebar, AppBar
   },
 })
 export default class Layout extends Vue { }
@@ -24,7 +26,7 @@ export default class Layout extends Vue { }
 
 <style lang="css">
 .background-color {
-  background: #F1F8E9
+  background: #f5f5f5
 }
 </style>
 

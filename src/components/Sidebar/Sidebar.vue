@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer app clipped permanent color="#F1F8E9" :mini-variant="mini">
+  <v-navigation-drawer app clipped permanent color="#f5f5f5" :mini-variant="mini">
     <v-container class="px-0 text-h4 sidebar-main-text home" @click="goHome">
       <!--   <v-icon v-if="!mini" @click.stop="mini = !mini" color="lightgrey" transparent>
         mdi-chevron-left
