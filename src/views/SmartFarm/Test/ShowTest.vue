@@ -1,18 +1,18 @@
 <template>
-	<v-app>
-		<v-container fluid>
+	<div>
+		<v-container>
 			<v-row>
 				<v-col class="ma-2" md="12">
 					<h4 class="searchbox-title">조회 조건</h4>
-					<v-sheet class="pa-3" color="#F6F8F9" height="80" elevation="2">
+					<v-card class="pa-3" height="80">
 						<v-row>
 							<!-- 시작일 -->
 							<v-col cols="2">
 								<v-menu v-model="menu1" :close-on-content-click="false" :nudge-right="40"
 									transition="scale-transition" offset-y min-width="auto">
 									<template v-slot:activator="{ on, attrs }">
-										<v-text-field v-model="startDate" label="시작일" prepend-icon="mdi-calendar"
-											readonly v-bind="attrs" v-on="on"></v-text-field>
+										<v-text-field v-model="startDate" label="시작일" prepend-icon="mdi-calendar" readonly
+											v-bind="attrs" v-on="on"></v-text-field>
 									</template>
 									<v-date-picker v-model="startDate" @input="menu1 = false" no-title></v-date-picker>
 								</v-menu>
@@ -40,7 +40,7 @@
 								</v-btn>
 							</v-col>
 						</v-row>
-					</v-sheet>
+					</v-card>
 				</v-col>
 			</v-row>
 
@@ -53,30 +53,33 @@
 				<v-col class="ma-2 py-0 my-0   " md="12">
 					<v-col cols="3">
 					</v-col>
-					<v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options"
-						:server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" dense
-						hide-default-footer multi-sort @page-count="pageCount = $event" class="elevation-1">
-						<template v-slot:item.showmore="{ item }">
-							<v-icon @click="$router.push({ name: 'ShowTestForm', params: { id: item.growthReportId } })"
-								small>
-								mdi-magnify
-							</v-icon>
-						</template>
-						<template v-slot:item.load="{ item }">
-							<v-btn small fab icon class="ma-1" @click="editItem(item)">
-								<v-icon small>mdi-plus </v-icon></v-btn>
-						</template>
-						<template v-slot:item.delete="{ item }">
-							<v-icon @click="deleteItem(item)" small>
-								mdi-delete
-							</v-icon>
-						</template>
-						<!-- 수정 -->
-						<!-- 제어명칭 -->
-					</v-data-table>
-					<div class="text-center pt-2">
+
+
+					<v-card height="300">
+						<v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options"
+							:server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" dense
+							height="400" hide-default-footer multi-sort @page-count="pageCount = $event">
+							<template v-slot:item.showmore="{ item }">
+								<v-icon @click="$router.push({ name: 'ShowTestForm', params: { id: item.growthReportId } })"
+									small>
+									mdi-magnify
+								</v-icon>
+							</template>
+							<template v-slot:item.load="{ item }">
+								<v-btn small fab icon class="ma-1" @click="editItem(item)">
+									<v-icon small>mdi-plus </v-icon></v-btn>
+							</template>
+							<template v-slot:item.delete="{ item }">
+								<v-icon @click="deleteItem(item)" small>
+									mdi-delete
+								</v-icon>
+							</template>
+							<!-- 수정 -->
+							<!-- 제어명칭 -->
+						</v-data-table>
 						<v-pagination v-model="page" :length="pageCount"></v-pagination>
-					</div>
+					</v-card>
+
 
 				</v-col>
 			</v-row>
@@ -114,8 +117,7 @@
 											:items-per-page=100 item-key="name" class="elevation-1" :search="search"
 											hide-default-footer height="300">
 											<template v-slot:top>
-												<v-text-field v-model="search" label="실험명으로 검색"
-													class="mx-4"></v-text-field>
+												<v-text-field v-model="search" label="실험명으로 검색" class="mx-4"></v-text-field>
 											</template>
 											<template v-slot:item.testName="{ item }">
 												<v-btn @click="cloneItem(item)" class="ma-2" outlined color="indigo">
@@ -199,7 +201,7 @@
 			</template>
 		</v-snackbar>
 
-	</v-app>
+	</div>
 </template>
 <script lang="ts">
 import * as api from "@/api/index.js";
@@ -451,6 +453,6 @@ export default class ShowTest extends Vue {
 
 }
 
-
-
 </script>
+
+<style src="../SmartFarm.scss" lang="scss"></style>
