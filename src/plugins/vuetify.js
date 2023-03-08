@@ -9,9 +9,9 @@ export default new Vuetify({
       light: {
         primary: "#4CAF50", //기본색
         secondary: "#4CAF50",
-        accent: "#00E676", //강조되는 색
-        error: "#b71c1c",
-        my_color: "#ffffff",
+        accent: "#1976d2", //강조되는 색
+        error: "#ff5252",
+        blue: "#2196F3",
       },
     },
   },

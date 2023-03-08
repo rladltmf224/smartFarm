@@ -5,10 +5,16 @@
 .v-card {
   background-color: white;
   box-shadow: 0 20px 27px 0 rgba(0, 0, 0, 0.05) !important;
-  border-radius: 15px;
+  border-radius: 10px;
 }
 
 .v-sheet {
   background-color: white;
-  border-radius: 10px;
+  border-radius: 5px;
+}
+
+.v-pagination .v-pagination_navigation {
+  box-shadow: none;
+  border: 1px solid #dee2e6;
+  color: #6c757d;
 }

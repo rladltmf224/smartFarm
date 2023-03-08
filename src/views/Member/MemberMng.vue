@@ -1,43 +1,21 @@
 <template>
   <div>
     <v-container fluid>
-      <v-row class="pt-10">
+      <v-row>
         <!-- 부서/직원 검색 -->
         <v-col md="4">
-          <v-row>
-            <v-col>
-              <h4 class="searchbox-title">부서/직원 검색</h4>
-            </v-col>
-          </v-row>
 
-          <v-sheet class="pa-5" color="#F6F8F9" max-width="500" height="850">
+          <v-col>
+            <h4 class="searchbox-title">부서/직원 검색</h4>
+          </v-col>
+          <v-sheet color="#f5f5f5" max-width="500" height="850">
             <v-sheet class="mb-4 pa-2 blue-grey lighten-2">
-              <v-text-field
-                v-model="searchTxt"
-                label="검색어를 입력해주세요."
-                dark
-                flat
-                solo-inverted
-                hide-details
-                clearable
-                clear-icon="mdi-close-circle-outline"
-              ></v-text-field>
+              <v-text-field v-model="searchTxt" label="검색어를 입력해주세요." dark flat solo-inverted hide-details clearable
+                clear-icon="mdi-close-circle-outline"></v-text-field>
             </v-sheet>
-            <v-sheet
-              class="pa-4 lighten-2 rounded-xl"
-              style="overflow-y: auto; height: 730px"
-            >
-              <v-treeview
-                v-model="tree"
-                :open="initiallyOpen"
-                :items="items"
-                :search="searchTxt"
-                activatable
-                item-key="name"
-                color="primary"
-                :return-object="true"
-                @update:active="selectTreeNode"
-              >
+            <v-card class="pa-4 lighten-2 " style="overflow-y: auto; height: 730px">
+              <v-treeview v-model="tree" :open="initiallyOpen" :items="items" :search="searchTxt" activatable
+                item-key="name" color="primary" :return-object="true" @update:active="selectTreeNode">
                 <template v-slot:prepend="{ item, open }">
                   <v-icon v-if="!item.file" color="#ffc27a">
                     {{ open ? "mdi-folder-open" : "mdi-folder" }}
@@ -47,7 +25,7 @@
                   </v-icon>
                 </template>
               </v-treeview>
-            </v-sheet>
+            </v-card>
           </v-sheet>
         </v-col>
 
@@ -57,56 +35,22 @@
             <v-col md="2">
               <h4 class="searchbox-title">권한 설정</h4>
             </v-col>
-            <v-col class="text-right" offset-md="3" md="7">
-              <v-btn
-                v-if="inputType == ''"
-                color="primary"
-                @click="dialog3 = true"
-                >부서생성</v-btn
-              >
-              <v-btn
-                v-if="inputType == '' && dept_name != ''"
-                class="ml-2"
-                color="primary"
-                @click="clickCreateUserBtn"
-                >유저생성</v-btn
-              >
-              <v-btn
-                v-if="inputType == ''"
-                class="ml-2"
-                color="primary"
-                @click="clickUpdateBtn"
-                >수정</v-btn
-              >
-              <v-btn
-                v-if="inputType != ''"
-                class="ml-2"
-                color="primary"
-                @click="saveItem"
-                >저장</v-btn
-              >
-              <v-btn
-                v-if="inputType != ''"
-                class="ml-2"
-                color="error"
-                @click="cancleBtn"
-                >취소</v-btn
-              >
+            <v-col class="text-right mb-2" offset-md="3" md="7">
+              <v-btn v-if="inputType == ''" color="primary" @click="dialog3 = true">부서생성</v-btn>
+              <v-btn v-if="inputType == '' && dept_name != ''" class="ml-2" color="primary"
+                @click="clickCreateUserBtn">유저생성</v-btn>
+              <v-btn v-if="inputType == ''" class="ml-2" color="primary" @click="clickUpdateBtn">수정</v-btn>
+              <v-btn v-if="inputType != ''" class="ml-2" color="primary" @click="saveItem">저장</v-btn>
+              <v-btn v-if="inputType != ''" class="ml-2" color="error" @click="cancleBtn">취소</v-btn>
             </v-col>
           </v-row>
 
-          <v-sheet class="pa-5" color="#F6F8F9" max-width="auto" height="840">
+          <v-card class="pa-5" max-width="auto" height="815">
             <div v-if="status == 'U'">
               <v-row>
                 <v-col cols="6">
-                  <v-select
-                    :items="items"
-                    item-text="name"
-                    item-value="id"
-                    label="부서"
-                    v-model="dept_val"
-                    disabled
-                  ></v-select>
+                  <v-select dense :items="items" item-text="name" item-value="id" label="부서" v-model="dept_val"
+                    disabled></v-select>
                 </v-col>
                 <!-- <v-col cols="6">
                   <v-text-field name="name" label="직급" id="id"></v-text-field>
@@ -115,35 +59,16 @@
               <v-form ref="form" lazy-validation>
                 <v-row>
                   <v-col cols="4">
-                    <v-text-field
-                      name="name"
-                      label="아이디"
-                      id="id"
-                      v-model="user_ID"
-                      :rules="user_id_rule"
-                      :disabled="inputType == '' || status != 'U'"
-                      required
-                    ></v-text-field>
+                    <v-text-field name="name" label="아이디" id="id" v-model="user_ID" :rules="user_id_rule"
+                      :disabled="inputType == '' || status != 'U'" required></v-text-field>
                   </v-col>
                   <v-col cols="4">
-                    <v-text-field
-                      name="name"
-                      label="이름"
-                      v-model="user_name"
-                      :rules="user_nm_rule"
-                      :disabled="inputType == '' || status != 'U'"
-                      required
-                    ></v-text-field>
+                    <v-text-field name="name" label="이름" v-model="user_name" :rules="user_nm_rule"
+                      :disabled="inputType == '' || status != 'U'" required></v-text-field>
                   </v-col>
                   <v-col cols="4">
-                    <v-text-field
-                      name="name"
-                      label="전화번호"
-                      v-model="phone_number"
-                      :rules="phone_nb_rule"
-                      :disabled="inputType == '' || status != 'U'"
-                      required
-                    ></v-text-field>
+                    <v-text-field name="name" label="전화번호" v-model="phone_number" :rules="phone_nb_rule"
+                      :disabled="inputType == '' || status != 'U'" required></v-text-field>
                   </v-col>
                 </v-row>
               </v-form>
@@ -152,53 +77,27 @@
             <div v-if="status == 'D'">
               <v-row>
                 <v-col cols="6">
-                  <v-text-field
-                    name="name"
-                    label="부서명"
-                    id="id"
-                    v-model="dept_name"
-                    disabled
-                  ></v-text-field>
+                  <v-text-field name="name" label="부서명" id="id" v-model="dept_name" disabled></v-text-field>
                 </v-col>
               </v-row>
             </div>
 
-            <v-sheet
-              class="pa-3 lighten-2 rounded-xl"
-              style="overflow-y: auto; height: 680px"
-            >
-              <v-data-table
-                v-if="selectNode != ''"
-                ref="roleList"
-                :headers="headers_table"
-                :items="rolesData"
-                :height="650"
-                hide-default-footer
-                fixed-header
-                class="elevation-2"
-                locale="ko-KR"
-                dense
-              >
-                <template #item="{ item }">
-                  <tr>
-                    <td>{{ item.menu }}</td>
-                    <td>
-                      <v-select
-                        :items="permission_list"
-                        item-text="name"
-                        item-value="value"
-                        label="권한"
-                        v-model="item.permission"
-                        :disabled="inputType == ''"
-                      >
-                      </v-select>
-                      <span></span>
-                    </td>
-                  </tr>
-                </template>
-              </v-data-table>
-            </v-sheet>
-          </v-sheet>
+
+            <v-data-table v-if="selectNode != ''" ref="roleList" :headers="headers_table" :items="rolesData" :height="650"
+              hide-default-footer fixed-header class="elevation-0" locale="ko-KR" dense>
+              <template #item="{ item }">
+                <tr>
+                  <td>{{ item.menu }}</td>
+                  <td>
+                    <v-select :items="permission_list" item-text="name" item-value="value" label="권한"
+                      v-model="item.permission" :disabled="inputType == ''">
+                    </v-select>
+                    <span></span>
+                  </td>
+                </tr>
+              </template>
+            </v-data-table>
+          </v-card>
         </v-col>
       </v-row>
     </v-container>
@@ -210,12 +109,7 @@
         </v-card-title>
         <v-card-text>
           <v-col align-self="center">
-            <v-text-field
-              name="name"
-              label="부서명"
-              id="id"
-              v-model="new_dept_name"
-            ></v-text-field>
+            <v-text-field name="name" label="부서명" id="id" v-model="new_dept_name"></v-text-field>
           </v-col>
         </v-card-text>
         <v-card-actions>
@@ -236,10 +130,17 @@ import * as api from "@/api";
 import _ from "lodash";
 import cfg from "./config";
 import { Component, Vue, Ref } from "vue-property-decorator";
+import AppBar from '@/components/Layout/AppBar.vue'
+@Component({
+  components: {
+    AppBar
+  },
+})
 
-@Component
 export default class Member extends Vue {
   @Ref() form: HTMLFormElement;
+
+
 
   dialog3: boolean = false;
   new_dept_name: string = "";

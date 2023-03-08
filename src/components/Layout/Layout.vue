@@ -2,7 +2,7 @@
   <v-app class="pa-6">
     <Sidebar />
     <v-main class="content background-color ">
-      <!-- <AppBar></AppBar> -->
+      <AppBar></AppBar>
       <router-view></router-view>
     </v-main>
   </v-app>

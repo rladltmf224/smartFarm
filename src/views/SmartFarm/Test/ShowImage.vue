@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <div>
     <v-container fluid>
       <v-row>
         <v-col cols="12" class="d-flex">
@@ -17,18 +17,19 @@
           <v-btn color="primary" @click="dialogOpen()">조회</v-btn>
         </v-col>
       </v-row>
-      <v-row>
-        <v-col>
-          <v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options"
-            :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" hide-default-footer
-            v-model="selected" show-select item-key="growthReportId" class="elevation-1" @page-count="pageCount = $event"
-            dense multi-sort>
-          </v-data-table>
-          <div class="text-center pt-2">
-            <v-pagination v-model="page" :length="pageCount"></v-pagination>
-          </div>
-        </v-col>
-      </v-row>
+      <v-card height="800">
+        <v-row>
+          <v-col>
+            <v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options" height="724"
+              :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" hide-default-footer
+              v-model="selected" show-select item-key="growthReportId" @page-count="pageCount = $event" multi-sort>
+            </v-data-table>
+            <div class="text-center pt-2">
+              <v-pagination v-model="page" :length="pageCount"></v-pagination>
+            </div>
+          </v-col>
+        </v-row>
+      </v-card>
       <!-- 이미지갤러리 다이아로그 -->
       <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
         <v-card>
@@ -74,7 +75,8 @@
         </v-card>
       </v-dialog>
     </v-container>
-  </v-app>
+
+  </div>
 </template>
 
 <script lang="ts">
