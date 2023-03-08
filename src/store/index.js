@@ -7,7 +7,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    pageName: "모니터링", //app bar default 페이지이름
+    pageName: "", //app bar default 페이지이름
     // nothing: 아무것도 안함
     // pending: 데이터 기다리는중
     // manager: 로그인 성공

@@ -4,37 +4,22 @@
       <v-row no-gutters>
         <v-col class="ma-2" md="12">
           <h4 class="searchbox-title">조회 조건</h4>
-          <v-sheet class="pa-3" color="#F6F8F9" height="90" elevation="2">
+          <v-sheet class="pa-3" height="90" elevation="2">
             <v-row>
               <v-col cols="2">
-                <v-text-field
-                  label="코드 or 이름"
-                  v-model="search_condition.item"
-                  @keydown.enter="getCustomer"
-                ></v-text-field>
+                <v-text-field label="코드 or 이름" v-model="search_condition.item"
+                  @keydown.enter="getCustomer"></v-text-field>
               </v-col>
               <v-col cols="2">
-                <v-select
-                  label="타입"
-                  v-model="search_condition.type"
-                  :items="items_type_list"
-                  item-text="name"
-                  @change="getCustomer"
-                ></v-select>
+                <v-select label="타입" v-model="search_condition.type" :items="items_type_list" item-text="name"
+                  @change="getCustomer"></v-select>
               </v-col>
               <v-col cols="2">
-                <v-text-field
-                  label="규격 or 단위"
-                  v-model="search_condition.option"
-                  @keydown.enter="getCustomer"
-                ></v-text-field>
+                <v-text-field label="규격 or 단위" v-model="search_condition.option"
+                  @keydown.enter="getCustomer"></v-text-field>
               </v-col>
               <v-col cols="2">
-                <v-text-field
-                  label="버전"
-                  v-model="search_condition.version"
-                  @keydown.enter="getCustomer"
-                ></v-text-field>
+                <v-text-field label="버전" v-model="search_condition.version" @keydown.enter="getCustomer"></v-text-field>
               </v-col>
 
               <v-col class="pt-5 text-right" offset="2" cols="2">
@@ -53,58 +38,30 @@
               <h4 class="searchbox-title">품목 목록</h4>
             </v-col>
             <v-col class="text-right" offset-md="7" md="3">
-              <v-btn class="ml-1" small color="primary" @click="openModal"
-                ><v-icon left> mdi-book-account </v-icon>품목 추가</v-btn
-              >
+              <v-btn class="ml-1" small color="primary" @click="openModal"><v-icon left> mdi-book-account </v-icon>품목
+                추가</v-btn>
             </v-col>
           </v-row>
 
-          <v-data-table
-            height="630"
-            :headers="headers"
-            :items="customer_list"
-            class="elevation-4"
-            fixed-header
-            multi-sort
-            dense
-            @click:row="selectCustomer"
-            :options.sync="itemListCfg.options"
-            :server-items-length="itemListCfg.totalCount"
-            :loading="itemListCfg.loading"
-            :items-per-page="itemListCfg.itemsPerPage"
-            :page.sync="itemListCfg.page"
-            @page-count="itemListCfg.pageCount = $event"
-            hide-default-footer
-          >
+          <v-data-table height="630" :headers="headers" :items="customer_list" class="elevation-4" fixed-header multi-sort
+            dense @click:row="selectCustomer" :options.sync="itemListCfg.options"
+            :server-items-length="itemListCfg.totalCount" :loading="itemListCfg.loading"
+            :items-per-page="itemListCfg.itemsPerPage" :page.sync="itemListCfg.page"
+            @page-count="itemListCfg.pageCount = $event" hide-default-footer>
             <template v-slot:item.edit="{ item }">
-              <v-icon
-                small
-                class="mr-2"
-                @click="editItem(item, (itemDialog_type = false))"
-              >
+              <v-icon small class="mr-2" @click="editItem(item, (itemDialog_type = false))">
                 mdi-pencil
               </v-icon>
               <v-icon small @click="deleteItem_pop(item)"> mdi-delete </v-icon>
             </template>
           </v-data-table>
-          <v-pagination
-            v-model="itemListCfg.page"
-            :length="itemListCfg.pageCount"
-          ></v-pagination>
+          <v-pagination v-model="itemListCfg.page" :length="itemListCfg.pageCount"></v-pagination>
         </v-col>
       </v-row>
     </v-container>
     <!-- 거래처 생성 모달 -->
-    <ItemModal
-      :open="itemDialog"
-      :editedIndex="itemDialog_type"
-      :editedData="editedCustomer"
-      :storageData="storage_data"
-      :locationData="location_data"
-      @changeStorage="getLocation"
-      @closeModal="closeModal"
-      @save-data="handlerSaveData"
-    >
+    <ItemModal :open="itemDialog" :editedIndex="itemDialog_type" :editedData="editedCustomer" :storageData="storage_data"
+      :locationData="location_data" @changeStorage="getLocation" @closeModal="closeModal" @save-data="handlerSaveData">
     </ItemModal>
   </div>
 </template>
@@ -158,7 +115,7 @@ export default {
       return String(val).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
   },
-  mounted() {},
+  mounted() { },
   created() {
     this.itemListCfg = Object.assign({}, gridCfg);
     this.items_type_list = Object.assign({}, cfg.data.items_type_list);

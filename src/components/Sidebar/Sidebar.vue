@@ -316,6 +316,7 @@ export default class Sidebar extends Vue {
   userInfo?: object;
 
   mounted() {
+    this.setPageName()
     this.getUserId();
 
     let decodeData: any = jwt_decode(this.$cookies.get("refreshToken"));
@@ -459,10 +460,24 @@ export default class Sidebar extends Vue {
   selectedPage(subItem: any) {
     if (subItem.title == undefined) {
       this.$store.commit("setPageName", '모니터링');
+      let pageName = '모니터링'
+      localStorage.setItem('setPageName', pageName)
     } else {
       this.$store.commit("setPageName", subItem.title);
+      let pageName = subItem.title
+      localStorage.setItem('setPageName', pageName)
     }
   }
+
+  setPageName() {
+    let origin = this.$store.state.pageName
+    if (!origin) {
+      let getItem = localStorage.getItem('setPageName')
+      this.$store.commit("setPageName", getItem);
+    }
+  }
+
+
 
   openTooltip(item: any): void {
     this.mini = false;

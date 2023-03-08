@@ -1,6 +1,15 @@
 <!-- monitoring페이지임 (헷갈려서 주석처리함 -이슬연구원) -->
 <template>
   <v-container fluid>
+
+    <div style="position:absolute">
+      <canvas width="700" height="681" class="me-lg-0 me-sm-n10 ms-lg-n10 mt-lg-5"
+        style="width: 700px; height: 681px;"></canvas>
+    </div>
+
+
+
+
     <!-- appBar 사이에 넣을 텍스트를 입력하세요.<slot> -->
     <v-row class="d-flex align-center justify-center pb-6">
       <v-card v-for="(item, i) in outdoorSensor" :key="i"
@@ -1589,6 +1598,9 @@ export default {
 ::v-deep .v-text-field__details {
   display: none;
 }
+
+
+
 
 .btn-gradient {
   background-image: linear-gradient(to right, rgb(153, 218, 1), rgb(49, 182, 56));

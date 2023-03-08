@@ -10,5 +10,11 @@
 
 .v-sheet {
   background-color: white;
-  border-radius: 10px;
+  border-radius: 5px;
+}
+
+.v-pagination .v-pagination_navigation {
+  box-shadow: none;
+  border: 1px solid #dee2e6;
+  color: #6c757d;
 }

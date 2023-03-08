@@ -52,19 +52,6 @@
                 </v-list-item>
             </v-list>
         </v-menu>
-        <v-menu left bottom>
-            <template v-slot:activator="{ on, attrs }">
-                <v-btn icon v-bind="attrs" v-on="on">
-                    <v-icon>mdi-dots-vertical</v-icon>
-                </v-btn>
-            </template>
-            <v-list>
-                <v-list-item v-for="n in 5" :key="n" @click="() => { }">
-                    <v-list-item-title>Option {{ n }}</v-list-item-title>
-                </v-list-item>
-            </v-list>
-        </v-menu>
-
     </v-app-bar>
 </template>
 
@@ -87,11 +74,9 @@ import { mapGetters, mapState } from "vuex";
         ...mapGetters({
             alarmList: "ALARM/GET_ALARM_LIST",
         }),
-
-
-        pageName() {
-            return this.$store.state.pageName
-        }
+        /*   pageName() {
+              return this.$store.state.pageName
+          } */
     },
 
 
@@ -134,11 +119,8 @@ export default class Sidebar extends Vue {
 
     mounted() {
         this.getUserId();
-
         let decodeData: any = jwt_decode(this.$cookies.get("refreshToken"));
-
         decodeData = decodeData.roles.split(",");
-
         let menu_Data: any = [];
         decodeData.forEach((el: string) => {
             let menu_name = el.split("_")[0] + "_" + el.split("_")[1];
@@ -148,7 +130,6 @@ export default class Sidebar extends Vue {
                 }
             }
         });
-
         menu_Data = _.filter(menu_Data, { use: "Y" });
         //this.items_dev = _.filter(demo_side_data, { use: "N" });
         this.items = _.sortBy(menu_Data, "sort");
@@ -253,6 +234,13 @@ export default class Sidebar extends Vue {
         }
     }
 
+    get pageName() {
+        return this.$store.state.pageName
+    }
+
+
+
+
     goHome(): void {
         this.$router.push("/monitoring").catch(() => { });
 
@@ -271,6 +259,11 @@ export default class Sidebar extends Vue {
             console.log("유저아이디가있음");
         }
     }
+
+
+
+
+
 
     openTooltip(item: any): void {
         this.mini = false;
@@ -358,5 +351,10 @@ export default class Sidebar extends Vue {
             if (alarmIcon) alarmIcon.click();
         }
     }
+
+
+
+
+
 }
 </script>

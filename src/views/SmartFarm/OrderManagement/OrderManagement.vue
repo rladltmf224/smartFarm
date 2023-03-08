@@ -98,58 +98,62 @@
                         </v-col>
                     </v-row>
                     <!-- 수주 목록 테이블 -->
-                    <v-data-table height="669" :headers="headers" :items="customer_list" class="elevation-4"
-                        :search="search" multi-sort fixed-header dense :options.sync="options"
-                        :server-items-length="totalCount" :loading="loading" :items-per-page="itemsPerPage"
-                        :page.sync="page" @page-count="pageCount = $event" hide-default-footer>
-                        <!-- 상세수정 -->
-                        <template v-slot:item.edit="{ item }">
-                            <div class="d-flex justify-center">
-                                <v-icon small class="mr-2" @click="editItem(item, (customerDialog_type = false))">
-                                    mdi-pencil
-                                </v-icon>
-                            </div>
-                        </template>
-                        <!-- 수주일자 -->
-                        <template v-slot:item.orderDate="props">
-                            <v-menu :nudge-right="40" transition="scale-transition" offset-y min-width="auto">
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-text-field v-model="props.item.orderDate" readonly v-bind="attrs" dense
-                                        v-on="on"></v-text-field>
-                                </template>
-                                <v-date-picker @change="editTableOrderInfo(props.item)" no-title locale="ko-KR"
-                                    v-model="props.item.orderDate"></v-date-picker>
-                            </v-menu>
-                        </template>
-                        <!-- 요청사항 -->
-                        <template v-slot:item.memo="props">
-                            <v-edit-dialog :return-value.sync="props.item.memo" large persistent
-                                @save="editTableOrderInfo(props.item)" cancel-text="취소" save-text="수정">
-                                <div>{{ props.item.memo }}</div>
-                                <template v-slot:input>
-                                    <div class="mt-4 title">Update Iron</div>
-                                </template>
-                                <template v-slot:input>
-                                    <v-text-field v-model="props.item.memo" label="Edit" single-line
-                                        autofocus></v-text-field>
-                                </template>
-                            </v-edit-dialog>
-                        </template>
-                        <!-- 수주삭제 -->
-                        <template v-slot:item.delete="{ item }">
-                            <div class="d-flex justify-center">
-                                <v-btn icon @click="deleteItem(item)">
-                                    <v-icon small class="mr-2"> mdi-trash-can-outline </v-icon>
-                                </v-btn>
-                            </div>
-                        </template>
-                    </v-data-table>
-                    <!-- 페이지네이션 -->
-                    <v-row class="py-3">
-                        <v-col>
-                            <v-pagination v-model="page" :length="pageCount"></v-pagination>
-                        </v-col>
-                    </v-row>
+                    <v-card>
+
+
+                        <v-data-table height="637" :headers="headers" :items="customer_list" :search="search" multi-sort
+                            fixed-header dense :options.sync="options" :server-items-length="totalCount" :loading="loading"
+                            :items-per-page="itemsPerPage" :page.sync="page" @page-count="pageCount = $event"
+                            hide-default-footer>
+                            <!-- 상세수정 -->
+                            <template v-slot:item.edit="{ item }">
+                                <div class="d-flex justify-center">
+                                    <v-icon small class="mr-2" @click="editItem(item, (customerDialog_type = false))">
+                                        mdi-pencil
+                                    </v-icon>
+                                </div>
+                            </template>
+                            <!-- 수주일자 -->
+                            <template v-slot:item.orderDate="props">
+                                <v-menu :nudge-right="40" transition="scale-transition" offset-y min-width="auto">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-text-field v-model="props.item.orderDate" readonly v-bind="attrs" dense
+                                            v-on="on"></v-text-field>
+                                    </template>
+                                    <v-date-picker @change="editTableOrderInfo(props.item)" no-title locale="ko-KR"
+                                        v-model="props.item.orderDate"></v-date-picker>
+                                </v-menu>
+                            </template>
+                            <!-- 요청사항 -->
+                            <template v-slot:item.memo="props">
+                                <v-edit-dialog :return-value.sync="props.item.memo" large persistent
+                                    @save="editTableOrderInfo(props.item)" cancel-text="취소" save-text="수정">
+                                    <div>{{ props.item.memo }}</div>
+                                    <template v-slot:input>
+                                        <div class="mt-4 title">Update Iron</div>
+                                    </template>
+                                    <template v-slot:input>
+                                        <v-text-field v-model="props.item.memo" label="Edit" single-line
+                                            autofocus></v-text-field>
+                                    </template>
+                                </v-edit-dialog>
+                            </template>
+                            <!-- 수주삭제 -->
+                            <template v-slot:item.delete="{ item }">
+                                <div class="d-flex justify-center">
+                                    <v-btn icon @click="deleteItem(item)">
+                                        <v-icon small class="mr-2"> mdi-trash-can-outline </v-icon>
+                                    </v-btn>
+                                </div>
+                            </template>
+                        </v-data-table>
+                        <!-- 페이지네이션 -->
+                        <v-row class="py-3">
+                            <v-col>
+                                <v-pagination circle v-model="page" :length="pageCount"></v-pagination>
+                            </v-col>
+                        </v-row>
+                    </v-card>
                 </v-col>
             </v-row>
         </v-container>

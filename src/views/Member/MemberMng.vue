@@ -1,7 +1,6 @@
 <template>
   <div>
     <v-container fluid>
-      <AppBar>유저관리</AppBar>
       <v-row>
         <!-- 부서/직원 검색 -->
         <v-col md="4">
@@ -9,8 +8,6 @@
           <v-col>
             <h4 class="searchbox-title">부서/직원 검색</h4>
           </v-col>
-
-
           <v-sheet color="#f5f5f5" max-width="500" height="850">
             <v-sheet class="mb-4 pa-2 blue-grey lighten-2">
               <v-text-field v-model="searchTxt" label="검색어를 입력해주세요." dark flat solo-inverted hide-details clearable
@@ -48,11 +45,11 @@
             </v-col>
           </v-row>
 
-          <v-card class="pa-5" color="white" max-width="auto" height="800">
+          <v-card class="pa-5" max-width="auto" height="815">
             <div v-if="status == 'U'">
               <v-row>
                 <v-col cols="6">
-                  <v-select :items="items" item-text="name" item-value="id" label="부서" v-model="dept_val"
+                  <v-select dense :items="items" item-text="name" item-value="id" label="부서" v-model="dept_val"
                     disabled></v-select>
                 </v-col>
                 <!-- <v-col cols="6">
