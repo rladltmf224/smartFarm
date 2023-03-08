@@ -1,5 +1,11 @@
 <template>
-  <v-navigation-drawer app clipped permanent color="#f5f5f5" :mini-variant="mini">
+  <v-navigation-drawer
+    app
+    clipped
+    permanent
+    color="#f5f5f5"
+    :mini-variant="mini"
+  >
     <v-container class="px-0 text-h4 sidebar-main-text home" @click="goHome">
       <!--   <v-icon v-if="!mini" @click.stop="mini = !mini" color="lightgrey" transparent>
         mdi-chevron-left
@@ -19,17 +25,15 @@
             <v-icon>mdi-page-first</v-icon>
           </v-btn>
         </v-list-item>
-        <v-list-item class="px-2 ">
+        <v-list-item class="px-2">
           <v-list-item-avatar>
             <v-img src="https://randomuser.me/api/portraits/men/85.jpg" />
           </v-list-item-avatar>
-          <v-list-item-title class=" ListItemClass d-flex justify-center flex-column">
-            <h3 class="my-1">
-              {{ userId }}님
-            </h3>
-            <span>
-              등급:관리자
-            </span>
+          <v-list-item-title
+            class="ListItemClass d-flex justify-center flex-column"
+          >
+            <h3 class="my-1">{{ userId }}님</h3>
+            <span> 등급:관리자 </span>
           </v-list-item-title>
 
           <!-- 
@@ -43,10 +47,18 @@
 
           <v-menu offset-y>
             <template v-slot:activator="{ on, attrs }">
-              <v-badge overlap :content="alarmOn ? alarmList.length : 0" :value="alarmOn ? alarmList.length : 0"
-                color="error">
+              <v-badge
+                overlap
+                :content="alarmOn ? alarmList.length : 0"
+                :value="alarmOn ? alarmList.length : 0"
+                color="error"
+              >
                 <v-btn id="alarmBell" depressed v-bind="attrs" v-on="on" icon>
-                  <v-icon v-if="alarmOn" :color="alarmList.length > 0 ? 'error' : 'black'" large>
+                  <v-icon
+                    v-if="alarmOn"
+                    :color="alarmList.length > 0 ? 'error' : 'black'"
+                    large
+                  >
                     mdi-bell
                   </v-icon>
                   <v-icon v-if="!alarmOn" color="grey" large>
@@ -56,10 +68,19 @@
               </v-badge>
             </template>
             <v-list>
-              <v-list-item v-if="alarmOn" v-for="(alarm, index) in alarmList" :key="index" two-line>
-                <v-list-item-content @click="removeAlarm(alarm)" class="alarmItem">
+              <v-list-item
+                v-if="alarmOn"
+                v-for="(alarm, index) in alarmList"
+                :key="index"
+                two-line
+              >
+                <v-list-item-content
+                  @click="removeAlarm(alarm)"
+                  class="alarmItem"
+                >
                   <v-list-item-title>
-                    <v-chip class="mr-3" color="warning"> 주의 </v-chip>{{ alarm.title }}
+                    <v-chip class="mr-3" color="warning"> 주의 </v-chip
+                    >{{ alarm.title }}
                   </v-list-item-title>
                   <v-list-item-subtitle class="pl-15">{{
                     alarm.body
@@ -75,7 +96,6 @@
               </v-list-item>
             </v-list>
           </v-menu>
-
 
           <!--      <v-menu offset-y>
             <template v-slot:activator="{ on, attrs }">
@@ -187,8 +207,19 @@
       </v-list-group>
     </v-list> -->
 
-    <v-list height="700" style="overflow-y: auto; overflow-x: hidden; display:contents" dense nav rounded>
-      <v-list-item :link="true" :to="to_home" color="primary" @click="selectedPage(subItem == null)">
+    <v-list
+      height="700"
+      style="overflow-y: auto; overflow-x: hidden; display: contents"
+      dense
+      nav
+      rounded
+    >
+      <v-list-item
+        :link="true"
+        :to="to_home"
+        color="primary"
+        @click="selectedPage(subItem == null)"
+      >
         <v-list-item-icon @mouseover="openTooltip(item)">
           <v-icon>mdi-monitor</v-icon>
         </v-list-item-icon>
@@ -202,28 +233,42 @@
             </v-btn>
  -->
             <v-col id="result" class="pa-0 ma-0 d-flex align-center">
-              <v-btn v-ripple="{ class: 'primary--text' }" elevation="3" color="white">
-                <v-icon v-text="item.icon" small @mouseover="openTooltip(item)" color="green"> </v-icon>
+              <v-btn
+                v-ripple="{ class: 'primary--text' }"
+                elevation="3"
+                color="white"
+              >
+                <v-icon
+                  v-text="item.icon"
+                  small
+                  @mouseover="openTooltip(item)"
+                  color="green"
+                >
+                </v-icon>
               </v-btn>
             </v-col>
-
-
-
           </v-list-item-icon>
           <v-list-item-content>
-            <v-list-item-title class="text-subtitle-1" v-text="item.title"></v-list-item-title>
+            <v-list-item-title
+              class="text-subtitle-1"
+              v-text="item.title"
+            ></v-list-item-title>
           </v-list-item-content>
         </template>
-        <v-list-item v-for="subItem in item.subItems" :key="subItem.title" :to="subItem.to" dense>
+        <v-list-item
+          v-for="subItem in item.subItems"
+          :key="subItem.title"
+          :to="subItem.to"
+          dense
+        >
           <v-list-item-content @click="selectedPage(subItem)">
-            <v-list-item-title v-text="'•  ' + subItem.title"></v-list-item-title>
+            <v-list-item-title
+              v-text="'•  ' + subItem.title"
+            ></v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list-group>
     </v-list>
-
-
-
 
     <v-list dense nav rounded>
       <v-list-item @click="mySettingDialog = true" @mouseover="openTooltip()">
@@ -244,22 +289,25 @@
           <span style="color:white">로그아웃</span>
         </v-btn>
       </v-list-item> -->
-
     </v-list>
     <template v-slot:append v-if="!mini" @click="logout">
       <div class="pa-2">
-        <v-btn block class="btn-gradient" dark>
-          로그아웃
-        </v-btn>
+        <v-btn block class="btn-gradient" dark> 로그아웃 </v-btn>
       </div>
     </template>
 
-
-
     <!--비밀번호 변경 dialog-->
-    <SidebarUserInfo :open="userInfoDialog" @closeModal="close" @save-info="handlerSaveInfo"></SidebarUserInfo>
+    <SidebarUserInfo
+      :open="userInfoDialog"
+      @closeModal="close"
+      @save-info="handlerSaveInfo"
+    ></SidebarUserInfo>
 
-    <SidebarMySetting :open="mySettingDialog" @closeModal="mySettingDialog = false" @save-info="handlerSaveInfo">
+    <SidebarMySetting
+      :open="mySettingDialog"
+      @closeModal="mySettingDialog = false"
+      @save-info="handlerSaveInfo"
+    >
     </SidebarMySetting>
   </v-navigation-drawer>
 </template>
@@ -316,7 +364,7 @@ export default class Sidebar extends Vue {
   userInfo?: object;
 
   mounted() {
-    this.setPageName()
+    this.setPageName();
     this.getUserId();
 
     let decodeData: any = jwt_decode(this.$cookies.get("refreshToken"));
@@ -438,7 +486,7 @@ export default class Sidebar extends Vue {
   }
 
   goHome(): void {
-    this.$router.push("/monitoring").catch(() => { });
+    this.$router.push("/monitoring").catch(() => {});
 
     return;
   }
@@ -456,28 +504,25 @@ export default class Sidebar extends Vue {
     }
   }
 
-
   selectedPage(subItem: any) {
     if (subItem.title == undefined) {
-      this.$store.commit("setPageName", '모니터링');
-      let pageName = '모니터링'
-      localStorage.setItem('setPageName', pageName)
+      this.$store.commit("setPageName", "모니터링");
+      let pageName = "모니터링";
+      localStorage.setItem("setPageName", pageName);
     } else {
       this.$store.commit("setPageName", subItem.title);
-      let pageName = subItem.title
-      localStorage.setItem('setPageName', pageName)
+      let pageName = subItem.title;
+      localStorage.setItem("setPageName", pageName);
     }
   }
 
   setPageName() {
-    let origin = this.$store.state.pageName
+    let origin = this.$store.state.pageName;
     if (!origin) {
-      let getItem = localStorage.getItem('setPageName')
+      let getItem = localStorage.getItem("setPageName");
       this.$store.commit("setPageName", getItem);
     }
   }
-
-
 
   openTooltip(item: any): void {
     this.mini = false;
@@ -571,7 +616,11 @@ export default class Sidebar extends Vue {
 <style src="./Sidebar.scss" lang="scss"></style>
 <style lang="css">
 .btn-gradient {
-  background-image: linear-gradient(to right, rgb(153, 218, 1), rgb(49, 182, 56));
+  background-image: linear-gradient(
+    to right,
+    rgb(153, 218, 1),
+    rgb(49, 182, 56)
+  );
   border: 0;
   color: rgba(var(--text-color));
 }
