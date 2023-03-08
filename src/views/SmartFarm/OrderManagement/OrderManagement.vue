@@ -81,6 +81,10 @@
                     </v-sheet>
                 </v-col>
             </v-row>
+
+            <!--  <Header></Header> -->
+
+
             <!-- 수주목록 -->
             <v-row no-gutters>
                 <v-col class="ma-2" md="12">
@@ -164,9 +168,10 @@ import { gridCfg } from "@/util/config";
 import OrderManagementModal from "./OrderManagementModal.vue";
 import "@/util/filters";
 import { Vue, Component, Watch } from "vue-property-decorator";
+import Header from '@/components/Layout/Header.vue'
 @Component({
     components: {
-        OrderManagementModal,
+        OrderManagementModal, Header
     },
 })
 export default class Customer extends Vue {
