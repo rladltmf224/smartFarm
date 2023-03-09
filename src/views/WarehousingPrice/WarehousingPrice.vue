@@ -10,7 +10,6 @@
                 <v-text-field label="거래처명" v-model="search_condition.customer" @keydown.enter="getCustomer"
                   dense></v-text-field>
               </v-col>
-
               <v-col class="pt-3 text-right" offset="8" cols="2">
                 <v-btn color="primary" @click="getCustomer">
                   <v-icon left> mdi-magnify </v-icon>
