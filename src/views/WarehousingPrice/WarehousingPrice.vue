@@ -4,15 +4,11 @@
       <v-row>
         <v-col class="" lg="12">
           <h4 class="searchbox-title">조회 조건</h4>
-          <v-sheet class="pa-3" color="#F6F8F9" height="60" elevation="2">
+          <v-card class="pa-3" height="60">
             <v-row>
               <v-col cols="2">
-                <v-text-field
-                  label="거래처명"
-                  v-model="search_condition.customer"
-                  @keydown.enter="getCustomer"
-                  dense
-                ></v-text-field>
+                <v-text-field label="거래처명" v-model="search_condition.customer" @keydown.enter="getCustomer"
+                  dense></v-text-field>
               </v-col>
 
               <v-col class="pt-3 text-right" offset="8" cols="2">
@@ -22,7 +18,7 @@
                 </v-btn>
               </v-col>
             </v-row>
-          </v-sheet>
+          </v-card>
         </v-col>
       </v-row>
       <v-row>
@@ -32,30 +28,16 @@
               <h5 class="searchbox-title">거래처 목록</h5>
             </v-col>
             <v-col cols="12">
-              <v-data-table
-                height="680"
-                :headers="headers"
-                :items="statement_list"
-                item-key="id"
-                class="elevation-4"
-                multi-sort
-                single-select
-                fixed-header
-                dense
-                @click:row="selectCustomerItem"
-                :options.sync="customerListCfg.options"
-                :server-items-length="customerListCfg.totalCount"
-                :loading="customerListCfg.loading"
-                :items-per-page="customerListCfg.itemsPerPage"
-                :page.sync="customerListCfg.page"
-                @page-count="customerListCfg.pageCount = $event"
-                hide-default-footer
-              >
-              </v-data-table>
-              <v-pagination
-                v-model="customerListCfg.page"
-                :length="customerListCfg.pageCount"
-              ></v-pagination>
+              <v-card>
+                <v-data-table height="668" :headers="headers" :items="statement_list" item-key="id" multi-sort
+                  single-select fixed-header dense @click:row="selectCustomerItem" :options.sync="customerListCfg.options"
+                  :server-items-length="customerListCfg.totalCount" :loading="customerListCfg.loading"
+                  :items-per-page="customerListCfg.itemsPerPage" :page.sync="customerListCfg.page"
+                  @page-count="customerListCfg.pageCount = $event" hide-default-footer>
+                </v-data-table>
+                <v-col>
+                  <v-pagination circle v-model="customerListCfg.page" :length="customerListCfg.pageCount"></v-pagination>
+                </v-col></v-card>
             </v-col>
           </v-row>
         </v-col>
@@ -65,89 +47,61 @@
               <h5 class="searchbox-title">등록된 품목</h5>
             </v-col>
             <v-col class="text-right" offset-md="7" md="3">
-              <v-btn
-                class="ml-1"
-                small
-                color="success"
-                @click="saveCustomerItem"
-                >적용</v-btn
-              >
-              <v-btn class="ml-1" small color="primary" @click="editItem"
-                ><v-icon left> mdi-pencil-plus </v-icon>품목 추가</v-btn
-              >
+              <v-btn class="ml-1" small color="success" @click="saveCustomerItem">적용</v-btn>
+              <v-btn class="ml-1" small color="primary" @click="editItem"><v-icon left> mdi-pencil-plus </v-icon>품목
+                추가</v-btn>
             </v-col>
             <v-col cols="12">
-              <v-data-table
-                height="340"
-                :headers="headers_detail"
-                :items="statement_detail_list"
-                item-key="itemId"
-                class="elevation-4"
-                single-select
-                multi-sort
-                hide-default-footer
-                dense
-                @click:row="selectItemHistory"
-              >
-                <template v-slot:[`item.unitPrice`]="props">
-                  <v-edit-dialog
-                    :return-value.sync="props.item.unitPrice"
-                    @save="props.item = saveUnitPrice(props.item)"
-                  >
-                    {{ props.item.unitPrice | comma }}
-                    <template v-slot:input>
-                      <v-text-field
-                        v-model="props.item.unitPrice"
-                        label="Edit"
-                        single-line
-                        type="text"
-                        maxlength="15 "
-                        oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"
-                      ></v-text-field>
-                    </template>
-                  </v-edit-dialog>
-                </template>
+              <v-card>
 
-                <template v-slot:[`item.supplyPrice`]="props">
-                  {{ props.item.supplyPrice | comma }}
-                </template>
+                <v-data-table height="340" :headers="headers_detail" :items="statement_detail_list" item-key="itemId"
+                  single-select multi-sort hide-default-footer dense @click:row="selectItemHistory">
+                  <template v-slot:[`item.unitPrice`]="props">
+                    <v-edit-dialog :return-value.sync="props.item.unitPrice"
+                      @save="props.item = saveUnitPrice(props.item)">
+                      {{ props.item.unitPrice | comma }}
+                      <template v-slot:input>
+                        <v-text-field v-model="props.item.unitPrice" label="Edit" single-line type="text" maxlength="15 "
+                          oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"></v-text-field>
+                      </template>
+                    </v-edit-dialog>
+                  </template>
 
-                <template v-slot:[`item.taxAmount`]="props">
-                  {{ props.item.taxAmount | comma }}
-                </template>
+                  <template v-slot:[`item.supplyPrice`]="props">
+                    {{ props.item.supplyPrice | comma }}
+                  </template>
 
-                <template v-slot:[`item.delete`]="{ item }">
-                  <v-icon small @click="deleteItem_pop(item)">
-                    mdi-delete
-                  </v-icon>
-                </template>
-              </v-data-table>
+                  <template v-slot:[`item.taxAmount`]="props">
+                    {{ props.item.taxAmount | comma }}
+                  </template>
+
+                  <template v-slot:[`item.delete`]="{ item }">
+                    <v-icon small @click="deleteItem_pop(item)">
+                      mdi-delete
+                    </v-icon>
+                  </template>
+                </v-data-table>
+              </v-card>
             </v-col>
 
             <v-col cols="2">
               <h5 class="searchbox-title">변경 이력</h5>
             </v-col>
             <v-col cols="12">
-              <v-data-table
-                height="320"
-                :headers="headers_history"
-                :items="item_history_list"
-                class="elevation-4"
-                multi-sort
-                hide-default-footer
-                dense
-              >
-                <template v-slot:[`item.unitPrice`]="props">
-                  {{ props.item.unitPrice | comma }}
-                </template>
-                <template v-slot:[`item.supplyPrice`]="props">
-                  {{ props.item.supplyPrice | comma }}
-                </template>
+              <v-card>
+                <v-data-table height="320" :headers="headers_history" :items="item_history_list" multi-sort
+                  hide-default-footer dense>
+                  <template v-slot:[`item.unitPrice`]="props">
+                    {{ props.item.unitPrice | comma }}
+                  </template>
+                  <template v-slot:[`item.supplyPrice`]="props">
+                    {{ props.item.supplyPrice | comma }}
+                  </template>
 
-                <template v-slot:[`item.taxAmount`]="props">
-                  {{ props.item.taxAmount | comma }}
-                </template>
-              </v-data-table>
+                  <template v-slot:[`item.taxAmount`]="props">
+                    {{ props.item.taxAmount | comma }}
+                  </template>
+                </v-data-table> </v-card>
             </v-col>
           </v-row>
         </v-col>
@@ -155,12 +109,8 @@
     </v-container>
 
     <!-- 생성 모달 -->
-    <WarehousingPriceItemModal
-      :open="edit_customer"
-      :customerID="selectCustomerID"
-      @addItemList="handlerSaveItemModal"
-      @closeModal="close_item_modal"
-    ></WarehousingPriceItemModal>
+    <WarehousingPriceItemModal :open="edit_customer" :customerID="selectCustomerID" @addItemList="handlerSaveItemModal"
+      @closeModal="close_item_modal"></WarehousingPriceItemModal>
   </div>
 </template>
 

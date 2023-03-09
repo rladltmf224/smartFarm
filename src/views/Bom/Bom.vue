@@ -60,27 +60,29 @@
                   <h5>데이터가 없습니다.</h5>
                 </template>
               </v-data-table>
-              <v-data-table multi-sort fixed-header v-show="!dialog" class="ml-2 mr-2 " height="500"
-                :headers="frontBomHeader" :items="frontTable" disable-pagination hide-default-footer dense>
-                <template v-slot:[`item.details`]="{ item }">
-                  <td class="detailTable">
-                    <v-data-table multi-sort fixed-header :headers="frontBomItemHeader" :items="item.details" dense
-                      disable-pagination hide-default-header hide-default-footer>
-                    </v-data-table>
-                  </td>
-                </template>
+              <v-sheet>
+                <v-data-table multi-sort fixed-header v-show="!dialog" class="ml-2 mr-2 px-6" height="500"
+                  :headers="frontBomHeader" :items="frontTable" disable-pagination hide-default-footer dense>
+                  <template v-slot:[`item.details`]="{ item }">
+                    <td class="detailTable">
+                      <v-data-table multi-sort fixed-header :headers="frontBomItemHeader" :items="item.details" dense
+                        disable-pagination hide-default-header hide-default-footer>
+                      </v-data-table>
+                    </td>
+                  </template>
+                  <template v-slot:no-data>
+                    <h5>데이터가 없습니다.</h5>
+                  </template>
+                </v-data-table>
+              </v-sheet>
 
-                <template v-slot:no-data>
-                  <h5>데이터가 없습니다.</h5>
-                </template>
-              </v-data-table>
               <v-btn small class="closeBtn float-right mr-2 mt-3" color="primary" text @click="interimStorage = false">
                 닫기
               </v-btn>
             </v-card>
           </v-dialog>
           <v-card>
-            <v-data-table multi-sort fixed-header show-select item-key="itemId" height="650" v-model="bomSelected"
+            <v-data-table multi-sort fixed-header show-select item-key="itemId" height="600" v-model="bomSelected"
               :headers="totalBomHeader" :items="totalBomTable" return-object dense :options.sync="bomListCfg.options"
               :server-items-length="bomListCfg.totalCount" :loading="bomListCfg.loading"
               :items-per-page="bomListCfg.itemsPerPage" :page.sync="bomListCfg.page"
@@ -116,7 +118,9 @@
                 <h5>데이터가 없습니다.</h5>
               </template>
             </v-data-table>
-            <v-pagination circle v-model="bomListCfg.page" :length="bomListCfg.pageCount"></v-pagination>
+            <v-col>
+              <v-pagination circle v-model="bomListCfg.page" :length="bomListCfg.pageCount"></v-pagination>
+            </v-col>
           </v-card>
         </v-col>
       </v-row>
@@ -149,7 +153,7 @@ export default class Bom extends Vue {
     sortBy: any;
     sortDesc: any;
   } = {
-<<<<<<< HEAD
+
       item: "",
       itemVersion: "",
       page: 1,
@@ -157,19 +161,9 @@ export default class Bom extends Vue {
       sortBy: [],
       sortDesc: [true, false],
     };
-  editedBom: { item: any; details: any } = {
-=======
-    item: "",
-    itemVersion: "",
-    page: 1,
-    size: 0,
-    sortBy: [],
-    sortDesc: [true, false],
-  };
   bomListCfg: any = {}; //페이징변수
   editedBom: { item: object; details: any } = {
     //Modal로 전달되는 수정DATA
->>>>>>> e325bc2d4744348aea05b8f5ddc6e606c04a0d23
     item: [],
     details: [],
   };
