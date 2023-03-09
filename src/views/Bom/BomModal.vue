@@ -46,7 +46,6 @@
                 </v-col>
                 <v-col cols="4" class="pb-0">
                   <v-btn
-                    v-show="keyword != 'bom'"
                     class="mr-3 mt-2"
                     fluid
                     color="primary"
@@ -271,28 +270,46 @@ import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 @Component
 export default class BomModal extends Vue {
   footer_option: object = {
+    //기본 페이징처리
     disableItemsPerPage: false,
     itemsPerPageAllText: "ALL",
     itemsPerPageOptions: [10, 20, 50, -1],
   };
-  bomItemListCfg: any = {};
-  custmerlist: [] = [];
+  bomItemListCfg: any = {}; //페이징처리
+  custmerlist: [] = []; //[response] 거래처 데이터
   itemKeyword: any = "";
-  plusSelected: [] = [];
-  itemlist: [] = [];
-  productlist: [] = [];
-  searchItemkeyword: any = "";
-  searchTypekeyword: any = "";
-  searchItemText: string = "";
-  searchItemCustmerText: any = "";
-  searchProduct: string = "";
-  keyword: string = "";
-  totalItem: any[] = [];
-  step: number = 1;
-  bomData: any;
-  item: any;
-  product: any;
+  plusSelected: [] = []; //원자재테이블 v-model
+  itemlist: [] = []; //[response] 조회된 전체 원자재 데이터
+  productlist: [] = []; //[response] 조회된 전체 완제품 데이터
+  searchItemkeyword: any = ""; //원자재조회조건 v-model
+  searchTypekeyword: any = ""; //원자재조회조건 - 자재타입
+  searchItemText: string = ""; //원자재조회조건-검색어
+  searchItemCustmerText: any = ""; //원자재조회조건- 거래처
+  searchProduct: string = ""; //완제품조회조건 v-model
+  totalItem: any[] = []; //plus된 원자재테이블 v-model
+  step: number = 1; //step단계
+  bomData: { item: any; details: any } = {
+    //원자재테이블 v-model
+    item: [],
+    details: [],
+  };
+
+  /*한번 더 체크하고 삭제할 변수
   totalData: any;
+  keyword: string = "";
+  product: any;
+  item: any;
+  
+  type bomOpt = {
+    options?: any;
+    page: any;
+    itemsPerPage: any;
+    sortBy?: any;
+    sortDesc?: any;
+    loading: boolean;
+    totalCount: number;
+  };
+  */
 
   @Prop({ required: true }) open: boolean;
   @Prop({ required: true }) change: boolean;
@@ -305,6 +322,11 @@ export default class BomModal extends Vue {
     },
   })
   editedBomData: any;
+
+  @Watch("open")
+  onGetProduct() {
+    this.getProduct();
+  }
 
   @Watch("bomItemListCfg.options", { deep: true })
   onBomItemListCfgChange() {
@@ -345,31 +367,32 @@ export default class BomModal extends Vue {
   }
 
   getItem() {
-    this.item = {};
+    let data: any = {};
 
     if (this.searchItemkeyword != null) {
       if (this.searchItemText != null) {
-        this.item["item"] = this.searchItemText;
+        data["item"] = this.searchItemText;
       }
     }
 
     if (this.itemKeyword === "customerName") {
       if (this.searchItemCustmerText != null) {
-        this.item["item"] = "";
-        this.item["type"] = "";
-        this.item["customer"] = this.searchItemCustmerText.name;
+        data["item"] = "";
+        data["type"] = "";
+        data["customer"] = this.searchItemCustmerText.name;
       }
     }
 
     if (this.itemKeyword == "itemtype") {
       if (this.searchTypekeyword != null) {
-        this.item["item"] = "";
-        this.item["customer"] = "";
-        this.item["type"] = this.searchTypekeyword.value;
+        data["item"] = "";
+        data["customer"] = "";
+        data["type"] = this.searchTypekeyword.value;
       }
     }
+
     api.bom
-      .getBomItemPage(this.item)
+      .getBomItemPage(data)
       .then((response) => {
         this.itemlist = response.data.responseData;
       })
@@ -391,7 +414,7 @@ export default class BomModal extends Vue {
     const { page, itemsPerPage, sortBy, sortDesc } =
       this.bomItemListCfg.options;
 
-    this.product = {
+    let data: any = {
       bomCheck: false,
       page: page,
       size: itemsPerPage,
@@ -400,7 +423,7 @@ export default class BomModal extends Vue {
     };
 
     if (this.searchProduct != "") {
-      this.product = {
+      data = {
         bomCheck: false,
         item: this.searchProduct,
         page: page,
@@ -411,10 +434,11 @@ export default class BomModal extends Vue {
     }
     this.bomItemListCfg.loading = true;
     api.bom
-      .getProductList(this.product)
+      .getProductList(data)
       .then((response) => {
         this.productlist = response.data.responseData;
         this.bomItemListCfg.totalCount = response.data.totalCount;
+        this.bomItemListCfg.loading = false;
       })
       .catch((error) => {
         console.log(error);
@@ -461,10 +485,7 @@ export default class BomModal extends Vue {
     }
   }
   minus() {
-    console.log("minus");
-    console.log(this.bomData.details);
     if (this.bomData.details.length == 0) {
-      console.log();
       this.$swal({
         title: "취소시킬 원자재가 선택되지 않았습니다.",
         icon: "warning",
@@ -477,10 +498,9 @@ export default class BomModal extends Vue {
     } else {
       if (this.bomData.details.length != 0) {
         let removeID: any = [];
-        for (var i = 0; i < this.bomData.details.length; i++) {
-          removeID.push(this.bomData.details[i].id);
-          console.log(removeID);
-        }
+        this.bomData.details.forEach((value: any) => {
+          removeID.push(value.id);
+        });
         this.totalItem = _.reject(this.totalItem, function (o) {
           return removeID.includes(o.id);
         });
@@ -489,13 +509,13 @@ export default class BomModal extends Vue {
     }
   }
   complete() {
-    this.totalData = [];
+    let totalData = [];
 
     if (this.bomData.item.length != 0 && this.totalItem.length != 0) {
       let check = true;
 
       for (var i = 0; i < this.totalItem.length; i++) {
-        if (this.totalItem[i].count == null) {
+        if (this.totalItem[i].count == null || this.totalItem[i].count == "") {
           check = false;
           this.$swal({
             title: "입력된 수량이 없는 원자재는 등록되지않습니다.",
@@ -507,17 +527,16 @@ export default class BomModal extends Vue {
             timer: 1500,
           });
         } else {
-          this.totalData.push({
+          totalData.push({
             childId: this.totalItem[i].id,
             count: this.totalItem[i].count,
           });
         }
       }
-
       if (check) {
-        this.item = {
+        let data = {
           itemId: this.bomData.item[0].id,
-          details: this.totalData,
+          details: totalData,
         };
 
         this.$swal
@@ -533,7 +552,7 @@ export default class BomModal extends Vue {
           .then((result) => {
             if (result.isConfirmed) {
               api.bom
-                .createBomList(this.item)
+                .createBomList(data)
                 .then((response) => {
                   if (response.status == 200) {
                     this.$swal({
@@ -545,10 +564,6 @@ export default class BomModal extends Vue {
                       toast: true,
                       timer: 1500,
                     });
-                    this.step = 1;
-                    this.bomData.item = [];
-                    this.plusSelected = [];
-                    this.totalItem = [];
                     this.step = 1;
                     this.bomData.item = [];
                     this.plusSelected = [];
@@ -580,10 +595,10 @@ export default class BomModal extends Vue {
   }
 
   update() {
-    this.totalData = [];
+    let totalData = [];
     let check = true;
     for (var i = 0; i < this.totalItem.length; i++) {
-      if (this.totalItem[i].count == null) {
+      if (this.totalItem[i].count == null || this.totalItem[i].count == "") {
         check = false;
         this.$swal({
           title: "입력된 수량이 없는 원자재는 등록되지않습니다.",
@@ -595,7 +610,7 @@ export default class BomModal extends Vue {
           timer: 1500,
         });
       } else {
-        this.totalData.push({
+        totalData.push({
           childId: this.totalItem[i].itemId,
           count: this.totalItem[i].count,
         });
@@ -603,8 +618,8 @@ export default class BomModal extends Vue {
     }
 
     if (check) {
-      this.item = {
-        details: this.totalData,
+      let data = {
+        details: totalData,
         itemId: this.bomData.item[0],
       };
 
@@ -621,7 +636,7 @@ export default class BomModal extends Vue {
         .then((result) => {
           if (result.isConfirmed) {
             api.bom
-              .updateBomList(this.item)
+              .updateBomList(data)
               .then((response: any) => {
                 this.$swal({
                   title: "수정되었습니다.",

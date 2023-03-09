@@ -19,13 +19,17 @@
             <v-icon>mdi-page-first</v-icon>
           </v-btn>
         </v-list-item>
-        <v-list-item class="px-2">
+        <v-list-item class="px-2 ">
           <v-list-item-avatar>
             <v-img src="https://randomuser.me/api/portraits/men/85.jpg" />
           </v-list-item-avatar>
-          <v-list-item-title class="ListItemClass d-flex justify-center flex-column">
-            <h3 class="my-1">{{ userId }}님</h3>
-            <span> 등급:관리자 </span>
+          <v-list-item-title class=" ListItemClass d-flex justify-center flex-column">
+            <h3 class="my-1">
+              {{ userId }}님
+            </h3>
+            <span>
+              등급:관리자
+            </span>
           </v-list-item-title>
 
           <!-- 
@@ -71,6 +75,7 @@
               </v-list-item>
             </v-list>
           </v-menu>
+
 
           <!--      <v-menu offset-y>
             <template v-slot:activator="{ on, attrs }">
@@ -182,7 +187,7 @@
       </v-list-group>
     </v-list> -->
 
-    <v-list height="700" style="overflow-y: auto; overflow-x: hidden; display: contents" dense nav rounded>
+    <v-list height="700" style="overflow-y: auto; overflow-x: hidden; display:contents" dense nav rounded>
       <v-list-item :link="true" :to="to_home" color="primary" @click="selectedPage(subItem == null)">
         <v-list-item-icon @mouseover="openTooltip(item)">
           <v-icon>mdi-monitor</v-icon>
@@ -198,22 +203,28 @@
  -->
             <v-col id="result" class="pa-0 ma-0 d-flex align-center">
               <v-btn v-ripple="{ class: 'primary--text' }" elevation="3" color="white">
-                <v-icon v-text="item.icon" small @mouseover="openTooltip(item)" color="green">
-                </v-icon>
+                <v-icon v-text="item.icon" small @mouseover="openTooltip(item)" color="green"> </v-icon>
               </v-btn>
             </v-col>
+
+
+
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title class="text-subtitle-1" v-text="item.title"></v-list-item-title>
           </v-list-item-content>
         </template>
-        <v-list-item v-for="subItem in item.subItems" :key="subItem.title" :to="subItem.to" dense>
-          <v-list-item-content @click="selectedPage(subItem)">
+        <v-list-item v-for="subItem in item.subItems" :key="subItem.title" :to="subItem.to" dense
+          @click="selectedPage(subItem)">
+          <v-list-item-content>
             <v-list-item-title v-text="'•  ' + subItem.title"></v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list-group>
     </v-list>
+
+
+
 
     <v-list dense nav rounded>
       <v-list-item @click="mySettingDialog = true" @mouseover="openTooltip()">
@@ -234,12 +245,17 @@
           <span style="color:white">로그아웃</span>
         </v-btn>
       </v-list-item> -->
+
     </v-list>
     <template v-slot:append v-if="!mini" @click="logout">
       <div class="pa-2">
-        <v-btn block class="btn-gradient" dark> 로그아웃 </v-btn>
+        <v-btn block class="btn-gradient" dark>
+          로그아웃
+        </v-btn>
       </div>
     </template>
+
+
 
     <!--비밀번호 변경 dialog-->
     <SidebarUserInfo :open="userInfoDialog" @closeModal="close" @save-info="handlerSaveInfo"></SidebarUserInfo>
@@ -301,7 +317,7 @@ export default class Sidebar extends Vue {
   userInfo?: object;
 
   mounted() {
-    this.setPageName();
+    this.setPageName()
     this.getUserId();
 
     let decodeData: any = jwt_decode(this.$cookies.get("refreshToken"));
@@ -445,26 +461,29 @@ export default class Sidebar extends Vue {
     }
   }
 
+
   selectedPage(subItem: any) {
     console.log('서브아이템서브아이템서브아이템', subItem)
     if (subItem.title == undefined) {
-      this.$store.commit("setPageName", "모니터링");
-      let pageName = "모니터링";
-      localStorage.setItem("setPageName", pageName);
+      this.$store.commit("setPageName", '모니터링');
+      let pageName = '모니터링'
+      localStorage.setItem('setPageName', pageName)
     } else {
       this.$store.commit("setPageName", subItem.title);
-      let pageName = subItem.title;
-      localStorage.setItem("setPageName", pageName);
+      let pageName = subItem.title
+      localStorage.setItem('setPageName', pageName)
     }
   }
 
   setPageName() {
-    let origin = this.$store.state.pageName;
+    let origin = this.$store.state.pageName
     if (!origin) {
-      let getItem = localStorage.getItem("setPageName");
+      let getItem = localStorage.getItem('setPageName')
       this.$store.commit("setPageName", getItem);
     }
   }
+
+
 
   openTooltip(item: any): void {
     this.mini = false;
@@ -558,9 +577,7 @@ export default class Sidebar extends Vue {
 <style src="./Sidebar.scss" lang="scss"></style>
 <style lang="css">
 .btn-gradient {
-  background-image: linear-gradient(to right,
-      rgb(153, 218, 1),
-      rgb(49, 182, 56));
+  background-image: linear-gradient(to right, rgb(153, 218, 1), rgb(49, 182, 56));
   border: 0;
   color: rgba(var(--text-color));
 }

@@ -139,8 +139,9 @@ import { Vue, Component, Watch } from "vue-property-decorator";
   },
 })
 export default class Bom extends Vue {
-  bomDialog: boolean = false;
+  bomDialog: boolean = false; //Modal변수
   search_bom: {
+    //페이징처리
     item: string;
     itemVersion: string;
     page: any;
@@ -148,6 +149,7 @@ export default class Bom extends Vue {
     sortBy: any;
     sortDesc: any;
   } = {
+<<<<<<< HEAD
       item: "",
       itemVersion: "",
       page: 1,
@@ -156,25 +158,49 @@ export default class Bom extends Vue {
       sortDesc: [true, false],
     };
   editedBom: { item: any; details: any } = {
+=======
+    item: "",
+    itemVersion: "",
+    page: 1,
+    size: 0,
+    sortBy: [],
+    sortDesc: [true, false],
+  };
+  bomListCfg: any = {}; //페이징변수
+  editedBom: { item: object; details: any } = {
+    //Modal로 전달되는 수정DATA
+>>>>>>> e325bc2d4744348aea05b8f5ddc6e606c04a0d23
     item: [],
     details: [],
   };
-  bomSelected: [{ itemId: any }] | [];
-  bomlist: [] = [];
-  item: { itemId?: any } = {};
-  bom: object = {};
-  bomListCfg: any = {};
-  product: object = {};
-  totalItem: [] = [];
-  totalData: [] = [];
-  reverseItemData: [] = [];
-  frontBomData: any[] = [];
-  row: any = "";
   interimStorage: boolean = false;
   dialog: boolean = false;
   change: boolean = false;
-  selectedChild: [{ itemId: any }] | [];
-  step: number = 1;
+  bomSelected: [{ itemId: number }] | [] = []; //BOM테이블 완제품 v-model
+  bomlist: [] = []; //[response] BOM데이터
+  reverseItemData: [] = []; //[response] 역전개 데이터
+  frontBomData: any[] = []; //[response] 정전개 데이터
+  row: any = "";
+  selectedChild: [{ itemId: number }] | [] = []; //BOM테이블 원자재 v-model
+  step: number = 1; //step단계
+
+  /* 한번 더 체크하고 삭제할 변수
+  item: { itemId?: any } = {};
+  bom: object = {};
+  product: object = {};
+  totalItem: [] = [];
+  totalData: [] = [];
+
+  type bomOpt = {
+    options?: any;
+    page: any;
+    itemsPerPage: any;
+    sortBy?: any;
+    sortDesc?: any;
+    loading: boolean;
+    totalCount: number;
+  };
+  */
 
   get totalBomTable() {
     return this.bomlist;
@@ -237,8 +263,6 @@ export default class Bom extends Vue {
     this.editedBom.details = item.details;
   }
   deleteBom() {
-    this.item = { itemId: [] };
-
     if (this.bomSelected.length == 0) {
       return this.$swal({
         title: "삭제 할 BOM을 선택해주세요.",
@@ -250,10 +274,14 @@ export default class Bom extends Vue {
         timer: 1500,
       });
     } else {
-      for (var k = 0; k < this.bomSelected.length; k++) {
-        this.item.itemId.push(this.bomSelected[k].itemId);
-      }
+      let dataId = { itemId: [] };
+      let deleteId: any = [];
 
+      this.bomSelected.forEach((value) => {
+        deleteId.push(value.itemId);
+      });
+
+      dataId.itemId = deleteId;
       this.$swal
         .fire({
           title: "삭제",
@@ -267,7 +295,7 @@ export default class Bom extends Vue {
         .then((result) => {
           if (result.isConfirmed) {
             api.bom
-              .deleteBomList(this.item)
+              .deleteBomList(dataId)
               .then((response) => {
                 if (response.status == 200) {
                   this.$swal({
@@ -307,13 +335,12 @@ export default class Bom extends Vue {
     this.search_bom.sortBy = sortBy;
     this.search_bom.sortDesc = sortDesc;
 
-    this.bomListCfg.loading = true;
-
     api.bom
       .getBomPage(this.search_bom)
       .then((response) => {
         this.bomlist = response.data.responseData;
         this.bomListCfg.totalCount = response.data.totalCount;
+        this.bomListCfg.loading = false;
       })
       .catch((error) => {
         console.log(error);
@@ -333,7 +360,10 @@ export default class Bom extends Vue {
   }
   reverseItem() {
     this.dialog = true;
-    this.item = {};
+
+    let dataId = {
+      itemId: 0,
+    };
 
     if (this.selectedChild.length == 0) {
       return this.$swal({
@@ -348,9 +378,10 @@ export default class Bom extends Vue {
     }
 
     this.interimStorage = true;
-    this.item["itemId"] = this.selectedChild[0].itemId;
+    dataId["itemId"] = this.selectedChild[0].itemId;
+
     api.bom
-      .getItemHistoryList(this.item)
+      .getItemHistoryList(dataId)
       .then((response) => {
         this.reverseItemData = response.data.responseData;
       })
@@ -360,8 +391,10 @@ export default class Bom extends Vue {
   }
   frontBom() {
     this.dialog = false;
-    this.item = {};
     this.frontBomData = [];
+    let dataId = {
+      itemId: 0,
+    };
 
     if (this.bomSelected.length == 0) {
       return this.$swal({
@@ -389,14 +422,12 @@ export default class Bom extends Vue {
 
     if (this.bomSelected.length == 1) {
       this.interimStorage = true;
-      this.item["itemId"] = this.bomSelected[0].itemId;
+      dataId["itemId"] = this.bomSelected[0].itemId;
       api.bom
-        .getBomHistoryList(this.item)
+        .getBomHistoryList(dataId)
         .then((response: any) => {
           let resData: any = response;
-          //resData = resData.data.responseData;
           this.frontBomData.push(resData.data.responseData);
-          console.log(this.frontBomData);
         })
         .catch((error) => {
           console.log(error);
