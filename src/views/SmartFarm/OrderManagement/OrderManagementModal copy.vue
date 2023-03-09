@@ -1,481 +1,522 @@
-<template></template>
+<template>
+  <div>
+    <v-container fluid>
+      <!-- 조회조건 -->
+      <v-row no-gutters>
+        <v-col class="ma-2" md="12">
+          <h4 class="searchbox-title">조회 조건</h4>
+          <v-sheet class="pa-3" color="#F6F8F9" height="80" elevation="2">
+            <v-row no-gutters class="d-flex align-center">
+              <v-col cols="10">
+                <v-row>
+                  <v-col cols="2">
+                    <v-text-field
+                      label="수주번호"
+                      v-model="search_condition.orderInfoCode"
+                      dense
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="2">
+                    <v-text-field
+                      label="거래처명"
+                      v-model="search_condition.customerName"
+                      dense
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="2">
+                    <v-menu
+                      ref="order_startDate"
+                      v-model="order_startDate"
+                      :close-on-content-click="false"
+                      :return-value.sync="search_condition.order_startDate"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="search_condition.order_startDate"
+                          label="수주시작일"
+                          prepend-icon="mdi-calendar"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                          dense
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="search_condition.order_startDate"
+                        no-title
+                        scrollable
+                        locale="ko-KR"
+                        :max="search_condition.order_endDate"
+                      >
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="order_startDate = false"
+                        >
+                          취소
+                        </v-btn>
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="
+                            s_date_search_order(
+                              search_condition.order_startDate
+                            )
+                          "
+                        >
+                          확인
+                        </v-btn>
+                      </v-date-picker>
+                    </v-menu>
+                  </v-col>
+                  <v-col md="2">
+                    <v-menu
+                      ref="order_endDate"
+                      v-model="order_endDate"
+                      :close-on-content-click="false"
+                      :return-value.sync="search_condition.order_endDate"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="search_condition.order_endDate"
+                          label="수주종료일"
+                          prepend-icon="mdi-calendar"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                          dense
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="search_condition.order_endDate"
+                        no-title
+                        scrollable
+                        locale="ko-KR"
+                        :min="search_condition.order_startDate"
+                      >
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="order_endDate = false"
+                        >
+                          취소
+                        </v-btn>
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="
+                            e_date_search_order(search_condition.order_endDate)
+                          "
+                        >
+                          확인
+                        </v-btn>
+                      </v-date-picker>
+                    </v-menu>
+                  </v-col>
+                  <v-col cols="3">
+                    <v-text-field
+                      label="요청사항"
+                      v-model="search_condition.memo"
+                      dense
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col class="text-right align-self-center" cols="2">
+                <v-btn color="primary" x-large @click="getOrderAccounts()">
+                  조회
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-sheet>
+        </v-col>
+      </v-row>
+      <!-- 수주목록 -->
+      <v-row no-gutters>
+        <v-col class="ma-2" md="12">
+          <v-row class="mb-1">
+            <v-col md="2">
+              <h4 class="searchbox-title">수주 목록</h4>
+            </v-col>
+            <v-col class="text-right" offset-md="7" md="3">
+              <v-btn small color="primary" @click="add()"
+                ><v-icon left> mdi-book-account </v-icon>수주 등록</v-btn
+              >
+            </v-col>
+          </v-row>
+          <!-- 수주 목록 테이블 -->
+          <v-data-table
+            height="669"
+            :headers="headers"
+            :items="customer_list"
+            class="elevation-4"
+            :search="search"
+            multi-sort
+            fixed-header
+            dense
+            :options.sync="options"
+            :server-items-length="totalCount"
+            :loading="loading"
+            :items-per-page="itemsPerPage"
+            :page.sync="page"
+            @page-count="pageCount = $event"
+            hide-default-footer
+          >
+            <!-- 상세수정 -->
+            <template v-slot:item.edit="{ item }">
+              <div class="d-flex justify-center">
+                <v-icon
+                  small
+                  class="mr-2"
+                  @click="editItem(item, (customerDialog_type = false))"
+                >
+                  mdi-pencil
+                </v-icon>
+              </div>
+            </template>
+            <!-- 수주일자 -->
+            <template v-slot:item.orderDate="props">
+              <v-menu
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="props.item.orderDate"
+                    readonly
+                    v-bind="attrs"
+                    dense
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  @change="editTableOrderInfo(props.item)"
+                  no-title
+                  locale="ko-KR"
+                  v-model="props.item.orderDate"
+                ></v-date-picker>
+              </v-menu>
+            </template>
+            <!-- 요청사항 -->
+            <template v-slot:item.memo="props">
+              <v-edit-dialog
+                :return-value.sync="props.item.memo"
+                large
+                persistent
+                @save="editTableOrderInfo(props.item)"
+                cancel-text="취소"
+                save-text="수정"
+              >
+                <div>{{ props.item.memo }}</div>
+                <template v-slot:input>
+                  <div class="mt-4 title">Update Iron</div>
+                </template>
+                <template v-slot:input>
+                  <v-text-field
+                    v-model="props.item.memo"
+                    label="Edit"
+                    single-line
+                    autofocus
+                  ></v-text-field>
+                </template>
+              </v-edit-dialog>
+            </template>
+            <!-- 수주삭제 -->
+            <template v-slot:item.delete="{ item }">
+              <div class="d-flex justify-center">
+                <v-btn icon @click="deleteItem(item)">
+                  <v-icon small class="mr-2"> mdi-trash-can-outline </v-icon>
+                </v-btn>
+              </div>
+            </template>
+          </v-data-table>
+          <!-- 페이지네이션 -->
+          <v-row class="py-3">
+            <v-col>
+              <v-pagination v-model="page" :length="pageCount"></v-pagination>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-container>
+    <!-- 거래처 생성 모달 -->
+    <OrderManagementModal
+      :open="orderDialog"
+      :orderInfoId="orderInfoId"
+      :orderInfo="orderInfo"
+      :change="change"
+      :editedCustomerData="editedOrder"
+      @closeModal="closeModal"
+    >
+    </OrderManagementModal>
+  </div>
+</template>
+
 <script lang="ts">
 import * as api from "@/api";
-import cfg from "./config/index";
-import _, { functionsIn } from "lodash";
-import { Component, Vue, Prop, Watch } from "vue-property-decorator";
-import { checkPropertyChange } from "json-schema";
-import { it } from "node:test";
-import { strict } from "node:assert";
+import util from "@/util";
+import cfg from "./index";
+import { gridCfg } from "@/util/config";
+import OrderManagementModal from "./OrderManagementModal.vue";
+import "@/util/filters";
+import { Vue, Component, Watch } from "vue-property-decorator";
+@Component({
+  components: {
+    OrderManagementModal,
+  },
+})
+export default class Customer extends Vue {
+  //@Ref() startDataEL: HTMLHtmlElement;
+  orderDialog: boolean = false;
+  editedOrder: any = {
+    name: "", //작업지시서명
+    customer: "", //거래처ID
+    department: "", //부서
+    departmentchargeName: "", //담당자
+    deadline: "", //마감일
+    memo: "", //메모
+    details: [], //추가한 품목 목록
+  };
+  menu_orderDate: boolean = false; //수주일자 datepicker
+  search_condition: any = {
+    customerName: "",
+    orderInfoCode: "",
+    order_startDate: "",
+    order_endDate: "",
+    delivery_startDate: "",
+    delivery_endDate: "",
+  };
+  totalCount: number = 0;
+  pageCount: number = 0;
+  itemsPerPage: number = 13;
+  page: number = 1;
+  size: number = 20;
+  options: any = {};
+  order_startDate: boolean = false;
+  order_endDate: boolean = false;
+  delivery_startDate: boolean = false;
+  delivery_endDate: boolean = false;
+  orderInfo: [] = []; // 수주정보상세조회 orderInfo
+  orderInfoId: number = 0; // 수주정보상세조회 orderInfoId
+  editedMemo: string = "";
+  change: boolean = false;
+  customerDialog: boolean = false;
+  customerDialog_type: boolean = false;
+  loading: boolean = false;
+  customerOption: any = {};
+  customer_type: object[] = [];
+  edit_customer: boolean = false;
+  selected: [] = [];
+  search: string = "";
+  search_text_2: string = "";
+  customer: object = {};
+  editedCustomer: object = {
+    id: "",
+    name: "", //거래처 이름
+    manager: "", //담당자
+    contactPoint: "", //담당자 연락처
+    type: "", //거래처 유형 (매입거래처, 매출거래처, 병합거래처, 기타거래처)
+    businessRegisterNumber: "", //사업자 등록번호
+    ownerName: "", //대표자명
+    businessCondition: "", //업태
+    businessCategory: "", //업종
+    address: "", //주소
+    englishAddress: "", //영문 주소
+    emailAddress: "", //이메일
+    telephone: "", //거래처 전화번호
+    faxNumber: "", //팩스 번호
+    isValid: "", //사용 여부
+    memo: "", //비고
+  };
+  editedIndex: number = -1;
+  customer_list: [] = [];
 
-@Component
-export default class OrderManagementModal extends Vue {
-    footer_option: {
-        disableItemsPerPage: boolean;
-        itemsPerPageAllText: string;
-        itemsPerPageOptions: number[];
-    } = {
-            disableItemsPerPage: false,
-            itemsPerPageAllText: "ALL",
-            itemsPerPageOptions: [10, 20, 50, -1],
-        };
-    name: string = "";
-    menuLoad: boolean = false; //거래처명으로 검색 모달 
-    datas_simple: any[] = [];
-    datas_header_simple: any[] = [
-        {
-            text: "거래처명",
-            value: "customerName",
-        },
-        {
-            text: "거래처코드",
-            value: "customerId", align: ' d-none'
-        }
-    ];
-    order: any =
-        {
-            orderDate: "2023-01-13",  //수주일자
-            orderNum: '', //수주번호
-            deliveryDate: '', //납품예정일
-            customerId: '',//거래처 고유아이디 
-            memo: '',
-            details: [] //수주품목의 디테일
-        }
-    customerName: '' //거래처 이름    
-    itemData: any[] = []; //수주정보 상세조회 resData
-    menu_orderDate: boolean = false; //수주일자 datepicker
-    menu_deliveryDate: boolean = false; //납품예정일 datepicker
-    customerId: number | "" = "";
-    customerList: any[] = [];
-    memo: string = "";
-    search: string = "";
-    searchItem: string = "";
-    selectedProduct: [{ itemId?: number, itemName?: string }] | any[] = [];
-    itemDetail: any[] = [];
-    selected: [] = [];
-    item: any = "";
+  @Watch("edit_customer")
+  onEditCustomerChange(val: object) {
+    return val || this.closeModal_customer();
+  }
+  @Watch("options", { deep: true })
+  onOptionChange() {
+    this.getOrderAccounts();
+  }
+  get headers() {
+    //data-table의 header를 가져온다.
+    return cfg.header.orderList;
+  }
 
-    @Prop({ required: true }) open: boolean;
-    @Prop({ required: true }) change: boolean;
-    @Prop({ required: true }) orderInfoId: any;
-    @Prop({ required: true }) orderInfo: any;
-
-    @Prop({
-        required: true,
-        default: () => {
-            return {
-                name: "", //작업지시서명
-                customer: "", //거래처ID
-                department: "", //부서
-                departmentchargeName: "", //담당자
-                deadline: "", //마감일
-                memo: "", //메모
-                //details: [], //추가한 품목 목록
-            };
-        },
-    })
-    editedCustomerData: any;
-
-    @Watch('selectedProduct')
-    chack() {
-        console.log('셀렉티드프로덕트', this.selectedProduct)
-    }
-
-
-    @Watch("orderInfoId") //orderInfoId로 수주 정보 상세 조회 api 연결함.
-    getOrderInfoId() {
-        console.log('오더넘', this.order.orderNum)
-        this.order.orderNum = this.orderInfoId //수주번호를 바인딩
-        let id = {
-            orderInfoId: this.orderInfoId
-        }
-        api.order.getOrderInfoDetail(id).then((res) => {
-            console.log('품목조회 api 연결 성공', res)
-            this.itemDetail = res.data.responseData
-        })
-    }
-    @Watch("orderInfo") //부모에서 받은 orderInfo
-    getOrderInfo() {
-        console.log('오더인포', this.orderInfo)
-        console.log('오더', this.order)
-        if (this.change) {
-            this.customerName = this.orderInfo.customerName
-            this.order.customerId = this.orderInfo.customerId
-            this.order.deliveryDate = this.orderInfo.orderDate
-            this.order.orderDate = this.orderInfo.orderDate
-            this.order.memo = this.orderInfo.memo
-        }
-    }
-    @Watch('customerId')
-    getCustomerInfo() {
-        console.log('거래처고유아이디거래처고유아이디', this.customerId)
-        api.order.getItems().then((res) => {
-            console.log('품목조회 api 연결 성공', res)
-            this.itemData = res.data.responseData
-        })
-        api.order.getCustomerNameList().then((res) => {
-            console.log('거래처 조회 성공', res)
-            this.datas_simple = res.data.responseData
-        })
-    }
-    get openModal() {
-
-        if (this.change) {
-            api.order.getItems().then((res) => {
-                console.log('품목조회 api 연결 성공', res)
-                this.itemData = res.data.responseData
-            })
-            api.order.getCustomerNameList().then((res) => {
-                console.log('거래처 조회 성공', res)
-                this.datas_simple = res.data.responseData
-            })
-        } else {
-            this.customerName = ''
-        }
-        return this.open;
-    }
-    set openModal(val: any) {
-        console.log('22222222222')
-        if (this.change) {
-            console.log('등록버젼입니다.')
-            this.order = []
-            this.itemData = []
-            this.$emit("closeModal", false);
-        } else if (!this.change) {
-            console.log('수정버젼입니다.')
-            this.order.orderNum = 0
-            this.order = []
-            this.itemData = []
-            this.$emit("closeModal", false);
-        }
-    }
-    get customerData() {
-        return this.customerList;
-    }
-    get itemheaders() {
-        return cfg.header.orderitemheaders;
-    }
-    get register_itemheaders() {
-        return cfg.header.register_itemheaders;
-    }
-    get selectedheaders() {
-        return cfg.header.selectedheaders;
-    }
-    get tempheader() {
-        return cfg.header.tempheader;
-    }
-    get itemTable() {
-        return this.itemDetail
-    }
-    mounted() {
-        this.itemDetail = [];
-        this.search = "";
-    }
-    d_date_search_order(v: any) { //수주일자
-        this.order.orderDate = v;
-        this.menu_orderDate = false;
-        let orderDate: any = this.$refs.menu_orderDate;
-        orderDate.save(v);
-    }
-    d_date_search_delivery(v: any) { //수주일자
-        this.order.deliveryDate = v;
-        this.menu_deliveryDate = false;
-        let deliveryDate: any = this.$refs.menu_deliveryDate;
-        deliveryDate.save(v);
-    }
-    plus() {
-        if (this.selectedProduct.length == 0) {
+  deleteItem(item: any) {
+    this.$swal
+      .fire({
+        title: "삭제",
+        text: "해당 수주를 삭제하시겠습니까?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "예",
+        cancelButtonText: "아니오",
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          let id = {
+            orderInfoId: item.orderInfoId,
+          };
+          api.order.deleteOrderInfo(id).then((res) => {
+            console.log("수주 정보 삭제 성공");
             this.$swal({
-                title: "품목이 선택되지 않았습니다.",
-                icon: "warning",
-                position: "top",
-                showCancelButton: false,
-                showConfirmButton: false,
-                toast: true,
-                timer: 1500,
+              title: "삭제되었습니다.",
+              icon: "info",
+              position: "top",
+              showCancelButton: false,
+              showConfirmButton: false,
+              toast: true,
+              timer: 1500,
             });
-        } else {
-            if (this.itemDetail.length == 0) {
-                let totalID: any = _.map(this.itemDetail, "itemId");
-                for (var i = 0; i < this.selectedProduct.length; i++) {
-                    let plusItem: any = this.selectedProduct[i];
-                    if (totalID.includes(plusItem.id)) continue;
-                    plusItem["quantity"] = null;
-                    plusItem["expectedDeliveryDate"] = null;
-                    plusItem["supplyUnitPrice"] = null;
-                    plusItem["memo"] = null;
-                    this.itemDetail.push(plusItem);
-                }
-            } else {
-                let dupYN: boolean = false
-                let origin: any[] = this.selectedProduct
-                let anys: any[] = this.itemDetail
-                origin.forEach(function (el) {
-                    anys.forEach(function (el2) {
-                        if (el == el2) {
-                            dupYN = true
-                        }
-                    })
-                })
-                if (dupYN) {
-                    this.$swal({
-                        title: "품목을 중복해서 등록할 수 없습니다.",
-                        icon: "warning",
-                        position: "top",
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                        toast: true,
-                        timer: 1500,
-                    });
-                } else {
-                    let totalID: any = _.map(this.itemDetail, "itemId");
-                    for (var i = 0; i < this.selectedProduct.length; i++) {
-                        let plusItem: any = this.selectedProduct[i];
-                        if (totalID.includes(plusItem.id)) continue;
-                        //plusItem["id"] = plusItem["id"];
-                        plusItem["quantity"] = null;
-                        plusItem["expectedDeliveryDate"] = null;
-                        plusItem["supplyUnitPrice"] = null;
-                        plusItem["memo"] = null;
-                        this.itemDetail.push(plusItem);
-                    }
-                }
-            }
+            this.getOrderAccounts();
+          });
         }
-        this.selectedProduct = []
-    }
-    minus(item: any) {
-        for (let i = 0; i < this.itemDetail.length; i++) {
-            if (this.itemDetail[i].itemId === item.itemId) {
-                this.itemDetail.splice(i, 1);
-                i--;
-            }
-        }
-    }
-    complete() { //최종 수주 등록
-        this.$swal
-            .fire({
-                title: "등록",
-                text: "해당 데이터를 등록하시겠습니까?",
-                icon: "info",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "등록",
-            }).then((res) => {
-                if (res.isConfirmed) {
-                    this.order.details = this.itemDetail
-                    for (let i = 0; i < this.order.details.length; i++) { //this.order.details의itemName을 뺀다 (백엔드요청)
-                        delete this.order.details[i].itemName
-                    }
-                    this.validCheck_register()
+      });
+  }
+  editTableOrderInfo(item: any) {
+    //수주 즉시 수정
+    let param: any = {
+      orderInfoId: item.orderInfoId,
+      orderDate: item.orderDate,
+      memo: item.memo,
+    };
+    api.order.editOrderInfo(param).then((res) => {
+      if (res.status == 200) {
+        console.log("수주 즉시 수정 성공", res);
+        this.swalSuccess();
+        this.getOrderAccounts();
+      } else {
+        this.swalFail();
+      }
+    });
+  }
+  swalSuccess() {
+    this.$swal({
+      title: "수정되었습니다.",
+      icon: "success",
+      position: "top",
+      showCancelButton: false,
+      showConfirmButton: false,
+      toast: true,
+      timer: 1500,
+    });
+  }
 
+  swalFail() {
+    this.$swal({
+      title: "조회에 실패하였습니다.",
+      icon: "error",
+      position: "top",
+      showCancelButton: false,
+      showConfirmButton: false,
+      toast: true,
+      timer: 1500,
+    });
+  }
 
-                }
-            })
-    }
-    validCheck_register() { //수주 정보 유효성 검사 
-        let validYN: boolean = false //수주품목 유효성 검사
-        for (let i = 0; i < this.order.details.length; i++) {
-            let temp = this.order.details[i]
-            let order = this.order
-            if (temp.expectedDeliveryDate == null || temp.quantity == null || temp.supplyUnitPrice == null || order.customerId == '' || order.deliveryDate == '' || order.details == null) {
-                validYN = true
-            }
-        }
-        if (!validYN) {
-            let body = this.order
-            api.order.saveOrderInfo(body).then((res: any) => {
-                if (res.status == 200) {
-                    this.openModal = false
-                    this.$swal({
-                        title: "등록되었습니다.",
-                        icon: "success",
-                        position: "top",
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                        toast: true,
-                        timer: 1500,
-                    });
-                } else {
-                    this.$swal({
-                        title: "등록이 실패되었습니다.",
-                        icon: "error",
-                        position: "top",
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                        toast: true,
-                        timer: 1500,
-                    });
-                }
-            })
-        } else {
-            this.$swal({
-                title: "유효성 검사 실패",
-                icon: "error",
-                position: "top",
-                showCancelButton: false,
-                showConfirmButton: false,
-                toast: true,
-                timer: 1500,
-            });
-        }
-
-    }
-    edit() {  //수주 정보 수정
-        this.order.details = this.itemDetail
-        for (let i = 0; i < this.order.details.length; i++) { //this.order.details의itemName을 뺀다 (백엔드요청)
-            delete this.order.details[i].itemName
-        }
-        let body = {
-            orderInfoId: this.order.orderNum,
-            orderDate: this.order.orderDate,
-            customerId: this.order.customerId,
-            memo: this.order.memo,
-            details: this.order.details
-        }
-        this.$swal
-            .fire({
-                title: "수정",
-                text: "수정하시겠습니까?",
-                icon: "info",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "수정",
-            }).then((res) => {
-                // if (res.isConfirmed) {
-                //     api.order.editOrderInfo(body).then((res: any) => {
-                //         if (res.status == 200) {
-                //             console.log('수주정보수정 성공,', res)
-                //             this.$swal({
-                //                 title: "수정되었습니다.",
-                //                 icon: "success",
-                //                 position: "top",
-                //                 showCancelButton: false,
-                //                 showConfirmButton: false,
-                //                 toast: true,
-                //                 timer: 1500,
-                //             });
-                //             this.openModal = false
-                //         } else {
-                //             this.$swal({
-                //                 title: "수정이 실패되었습니다.",
-                //                 icon: "error",
-                //                 position: "top",
-                //                 showCancelButton: false,
-                //                 showConfirmButton: false,
-                //                 toast: true,
-                //                 timer: 1500,
-                //             });
-                //         }
-
-                //     })
-                // }
-                if (res.isConfirmed) {
-                    this.validCheck_edit()
-                }
-            })
-
-
-
-
-
-        //this.validCheck()
-    }
-    validCheck_edit() {
-        let validYN: boolean = false //수주품목 유효성 검사
-        for (let i = 0; i < this.order.details.length; i++) {
-            let temp = this.order.details[i]
-            let order = this.order
-            if (temp.expectedDeliveryDate == null || temp.quantity == null || temp.supplyUnitPrice == null || order.customerId == '' || order.deliveryDate == '' || order.details == null) {
-                validYN = true
-            }
-        }
-        if (!validYN) {
-            let body = {
-                orderInfoId: this.order.orderNum,
-                orderDate: this.order.orderDate,
-                customerId: this.order.customerId,
-                memo: this.order.memo,
-                details: this.order.details
-            }
-            api.order.editOrderInfo(body).then((res: any) => {
-                if (res.status == 200) {
-                    this.openModal = false
-                    this.$swal({
-                        title: "수정되었습니다.",
-                        icon: "success",
-                        position: "top",
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                        toast: true,
-                        timer: 1500,
-                    });
-                } else {
-                    this.$swal({
-                        title: "수정이 실패되었습니다.",
-                        icon: "error",
-                        position: "top",
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                        toast: true,
-                        timer: 1500,
-                    });
-                }
-            })
-        } else {
-            this.$swal({
-                title: "유효성 검사 실패",
-                icon: "error",
-                position: "top",
-                showCancelButton: false,
-                showConfirmButton: false,
-                toast: true,
-                timer: 1500,
-            });
-        }
-
-
-
-
-
-    }
-    getData() {  //거래처 상세조회 불러오기 api
-        console.log('거래처 상세조회 api 연결하겠습니다.')
-        let id = {
-            orderInfoId: this.orderInfoId
-        }
-        api.order.getOrderInfoDetail(id).then((res) => {
-            console.log('수주정보 상세조회 성공', res)
-            this.itemDetail = res.data.responseData
-            this.order.memo = res.data.responseData.memo
-        })
-    }
-    getItems() {
-        console.log('품목조회  api 연결하겠습니다.')
-        api.order.getItems().then((res) => {
-            console.log('품목조회 api 연결 성공', res)
-            this.itemData = res.data.responseData
-        })
-    }
-    cloneItem(item: any) { //거래처 명 클릭 시 
-        this.order.customerId = item.customerId
-        this.customerName = item.customerName
-        this.getItems()
-    }
-    closeMenuLoadCard(event: any, item: any) { //그냥 닫기 클릭 시 
-        this.menuLoad = false
-    }
-    closeModal(item: any) {
-        this.change = false;
-    }
-    getCustomer(item: any) {
-        api.order.getCustomerNameList().then((res) => {
-            console.log('거래처 조회 성공', res)
-            this.datas_simple = res.data.responseData
-        })
-    }
+  closeModal() {
+    this.orderInfoId = 0;
+    this.orderDialog = false;
+    this.editedCustomer = Object.assign({}, this.customer);
+    this.getOrderAccounts();
+  }
+  date(v: any) {
+    //수주일자
+    //this.order.orderDate = v;
+    this.menu_orderDate = false;
+    let orderDate: any = this.$refs.menu_orderDate;
+    orderDate.save(v);
+  }
+  s_date_search_order(v: any) {
+    this.search_condition.order_startDate = v;
+    this.order_startDate = false;
+    let startDate: any = this.$refs.order_startDate;
+    startDate.save(v);
+  }
+  s_date_search_delivery(v: any) {
+    this.search_condition.delivery_startDate = v;
+    this.delivery_startDate = false;
+    let startDate: any = this.$refs.delivery_startDate;
+    startDate.save(v);
+  }
+  e_date_search_order(v: any) {
+    this.search_condition.order_endDate = v;
+    this.order_endDate = false;
+    let endDate: any = this.$refs.order_endDate;
+    endDate.save(v);
+  }
+  e_date_search_delivery(v: any) {
+    this.search_condition.delivery_endDate = v;
+    this.delivery_endDate = false;
+    let endDate: any = this.$refs.delivery_endDate;
+    endDate.save(v);
+  }
+  getOrderAccounts() {
+    const { page, itemsPerPage, sortBy, sortDesc } = this.options;
+    this.loading = true;
+    let item = {
+      code: this.search_condition.orderInfoCode,
+      startDate: this.search_condition.order_startDate,
+      endDate: this.search_condition.order_endDate,
+      memo: this.search_condition.memo,
+      customer_name: this.search_condition.customerName,
+      page: page,
+      size: itemsPerPage,
+      sortBy: sortBy,
+      sortDesc: sortDesc,
+    };
+    api.order.getAccounts(item).then((res: any) => {
+      this.loading = false;
+      if (res.status == 200) {
+        this.customer_list = res.data.responseData;
+        this.totalCount = res.data.totalCount;
+      } else {
+        this.$swal.fire("오류", "조회에 실패하였습니다.", "error");
+      }
+    });
+  }
+  closeModal_customer() {
+    this.edit_customer = false;
+    this.$nextTick(() => {
+      this.editedCustomer = Object.assign({}, this.customer);
+      this.editedIndex = -1;
+    });
+    this.customer = {
+      code: "",
+      contactPoint: "",
+      manager: "",
+      name: "",
+    };
+  }
+  editItem(item: any, edit_type: boolean) {
+    this.orderDialog = true;
+    // this.editedIndex = this.customer_list.indexOf(JSON.stringify(item));
+    this.change = true;
+    this.orderInfoId = item.orderInfoId;
+    this.orderInfo = item;
+    //this.editedCustomer = Object.assign({}, item);
+    // this.customerDialog_type = edit_type;
+    // this.edit_customer = true;
+  }
+  add() {
+    this.orderDialog = true;
+    this.change = false;
+  }
 }
 </script>
+
 <style src="./OrderManagement.scss" lang="scss"></style>
