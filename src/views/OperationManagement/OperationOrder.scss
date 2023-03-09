@@ -15,7 +15,7 @@
   justify-content: space-between;
 }
 .closeBtn {
-  border: 2px solid #1976d2;
+  border: 2px solid #72e072;
 }
 .dialog-title {
   font-weight: bold;
@@ -65,7 +65,7 @@ tr.v-data-table__selected {
   height: 30px;
 }
 .editBtn {
-  border: 1px solid #1976d2;
+  border: 1px solid #72e072;
 }
 .statusBox .v-input__slot {
   border-bottom: 1px solid #6e7c87;
@@ -76,7 +76,7 @@ tr.v-data-table__selected {
 }
 .v-data-table-header th {
   white-space: nowrap;
-  background-color: #f6f8f9 !important;
+  background-color: #ffffff !important;
 }
 .text-start {
   border-right: 1px solid #d8dadb;
@@ -84,4 +84,12 @@ tr.v-data-table__selected {
 }
 .orderTableRow {
   margin-top: -34px;
+}
+.v-data-table-header {
+  background-color: #ffffff;
+}
+.v-card {
+  background-color: white;
+  box-shadow: 0 20px 27px 0 rgba(0, 0, 0, 0.05) !important;
+  border-radius: 10px;
 }
