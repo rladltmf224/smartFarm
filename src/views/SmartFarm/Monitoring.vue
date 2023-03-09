@@ -1599,8 +1599,10 @@ export default {
   display: none;
 }
 
-
-
+@media (min-width: 600px)
+.v-application--is-ltr .me-sm-n10 {
+    margin-right: -40px!important;
+}
 
 .btn-gradient {
   background-image: linear-gradient(to right, rgb(153, 218, 1), rgb(49, 182, 56));

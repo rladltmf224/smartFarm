@@ -9,152 +9,82 @@
         <v-card-text>
           <v-row>
             <v-col cols="2" align-self="center">
-              <v-text-field
-                v-if="!editedIndex"
-                label="code"
-                v-model.trim="customerData.code"
-                disabled
-                dense
-              ></v-text-field>
+              <v-text-field v-if="!editedIndex" label="code" v-model.trim="customerData.code" disabled
+                dense></v-text-field>
             </v-col>
           </v-row>
           <v-row>
             <v-col align-self="center">
-              <v-text-field
-                label="거래처명"
-                v-model.trim="customerData.name"
-                dense
-              ></v-text-field>
+              <v-text-field label="거래처명" v-model.trim="customerData.name" dense></v-text-field>
             </v-col>
             <v-col align-self="center">
-              <v-text-field
-                label="대표자명"
-                v-model.trim="customerData.ownerName"
-                dense
-              ></v-text-field>
+              <v-text-field label="대표자명" v-model.trim="customerData.ownerName" dense></v-text-field>
             </v-col>
 
             <v-col align-self="center">
-              <v-text-field
-                label="연락처"
-                dense
-                :value="customerData.contactPoint | PhoneMask"
-                @input="(value) => (customerData.contactPoint = value)"
-              ></v-text-field>
+              <v-text-field label="연락처" dense :value="customerData.contactPoint | PhoneMask"
+                @input="(value) => (customerData.contactPoint = value)"></v-text-field>
             </v-col>
           </v-row>
           <v-row>
             <v-col align-self="center">
-              <v-select
-                v-model="customerData.type"
-                :items="customer_type"
-                label="거래처 유형"
-                item-text="name"
-                item-value="name"
-                dense
-              ></v-select>
+              <v-select v-model="customerData.type" :items="customer_type" label="거래처 유형" item-text="name"
+                item-value="name" dense></v-select>
             </v-col>
             <v-col align-self="center">
-              <v-text-field
-                label="사업자등록번호"
-                :value="customerData.businessRegisterNumber | bizNumMask"
-                @input="
-                  (value) => (customerData.businessRegisterNumber = value)
-                "
-                dense
-              ></v-text-field>
+              <v-text-field label="사업자등록번호" :value="customerData.businessRegisterNumber | bizNumMask" @input="
+                (value) => (customerData.businessRegisterNumber = value)
+              " dense></v-text-field>
             </v-col>
             <v-col align-self="center">
-              <v-text-field
-                label="담당자"
-                v-model.trim="customerData.manager"
-                dense
-              ></v-text-field>
+              <v-text-field label="담당자" v-model.trim="customerData.manager" dense></v-text-field>
             </v-col>
           </v-row>
           <v-row>
             <v-col cols="2" align-self="center">
-              <v-text-field
-                label="업태"
-                v-model="customerData.businessCondition"
-                dense
-              ></v-text-field>
+              <v-text-field label="업태" v-model="customerData.businessCondition" dense></v-text-field>
             </v-col>
             <v-col cols="2" align-self="center">
-              <v-text-field
-                label="업종"
-                v-model="customerData.businessCategory"
-                dense
-              ></v-text-field>
+              <v-text-field label="업종" v-model="customerData.businessCategory" dense></v-text-field>
             </v-col>
           </v-row>
 
           <v-row>
             <v-col cols="8" align-self="center">
-              <v-text-field
-                label="주소"
-                v-model="customerData.address"
-                dense
-              ></v-text-field>
+              <v-text-field label="주소" v-model="customerData.address" dense></v-text-field>
             </v-col>
           </v-row>
 
           <v-row>
             <v-col cols="8" align-self="center">
-              <v-text-field
-                label="영문주소"
-                v-model="customerData.englishAddress"
-                dense
-              ></v-text-field>
+              <v-text-field label="영문주소" v-model="customerData.englishAddress" dense></v-text-field>
             </v-col>
           </v-row>
 
           <v-row>
             <v-col cols="4" align-self="center">
-              <v-text-field
-                label="거래처 이메일"
-                v-model.trim="customerData.emailAddress"
-                dense
-              ></v-text-field>
+              <v-text-field label="거래처 이메일" v-model.trim="customerData.emailAddress" dense></v-text-field>
             </v-col>
             <v-col cols="4" align-self="center">
-              <v-text-field
-                label="거래처 팩스번호"
-                :value="customerData.faxNumber | PhoneMask"
-                @input="(value) => (customerData.faxNumber = value)"
-                dense
-              ></v-text-field>
+              <v-text-field label="거래처 팩스번호" :value="customerData.faxNumber | PhoneMask"
+                @input="(value) => (customerData.faxNumber = value)" dense></v-text-field>
             </v-col>
             <v-col cols="4" align-self="center">
-              <v-text-field
-                label="거래처 전화번호"
-                :value="customerData.telephone | PhoneMask"
-                @input="(value) => (customerData.telephone = value)"
-                dense
-              ></v-text-field>
+              <v-text-field label="거래처 전화번호" :value="customerData.telephone | PhoneMask"
+                @input="(value) => (customerData.telephone = value)" dense></v-text-field>
             </v-col>
           </v-row>
 
           <v-row>
             <v-col align-self="center">
-              <v-text-field
-                label="비고"
-                v-model="customerData.memo"
-                dense
-              ></v-text-field>
+              <v-text-field label="비고" v-model="customerData.memo" dense></v-text-field>
             </v-col>
           </v-row>
 
           <v-row class="text-right">
             <v-col cols="2">
-              <v-select
-                :items="search_list4"
-                v-model="customerData.isValid"
-                label="사용여부"
-                item-text="name"
-                item-value="name"
-                dense
-              ></v-select>
+              <v-select :items="search_list4" v-model="customerData.isValid" label="사용여부" item-text="name"
+                item-value="name" dense></v-select>
             </v-col>
           </v-row>
         </v-card-text>

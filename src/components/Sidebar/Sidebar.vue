@@ -194,7 +194,7 @@
         </v-list-item-icon>
         <v-list-item-title>모니터링</v-list-item-title>
       </v-list-item>
-      <v-list-group v-for="(item, i) in items" :key="i" mandatory>
+      <v-list-group v-for="(item, i) in items" :key="i" mandatory @click="test(item)">
         <template v-slot:activator>
           <v-list-item-icon>
             <!--    <v-btn color="white" fab x-small elevation="1">
@@ -214,8 +214,9 @@
             <v-list-item-title class="text-subtitle-1" v-text="item.title"></v-list-item-title>
           </v-list-item-content>
         </template>
-        <v-list-item v-for="subItem in item.subItems" :key="subItem.title" :to="subItem.to" dense>
-          <v-list-item-content @click="selectedPage(subItem)">
+        <v-list-item v-for="subItem in item.subItems" :key="subItem.title" :to="subItem.to" dense
+          @click="selectedPage(subItem)">
+          <v-list-item-content>
             <v-list-item-title v-text="'•  ' + subItem.title"></v-list-item-title>
           </v-list-item-content>
         </v-list-item>
@@ -437,6 +438,10 @@ export default class Sidebar extends Vue {
     }
   }
 
+  test(item: any) {
+    console.log('리스트', item.title)
+  }
+
   goHome(): void {
     this.$router.push("/monitoring").catch(() => { });
 
@@ -458,6 +463,7 @@ export default class Sidebar extends Vue {
 
 
   selectedPage(subItem: any) {
+    console.log('서브아이템서브아이템서브아이템', subItem)
     if (subItem.title == undefined) {
       this.$store.commit("setPageName", '모니터링');
       let pageName = '모니터링'

@@ -4,7 +4,7 @@
       <v-row no-gutters>
         <v-col class="ma-2" md="12">
           <h4 class="searchbox-title">조회 조건</h4>
-          <v-card class="pa-3" height="120" elevation="2">
+          <v-card class="pa-3" height="120">
             <v-row no-gutters>
               <v-col cols="10">
                 <v-row>
@@ -99,22 +99,27 @@
                   > -->
             </v-col>
           </v-row>
+          <v-card height="672">
+            <v-data-table height="600" :headers="headers" :items="customer_list" item-key="barcode" :search="search"
+              multi-sort fixed-header dense :options.sync="customerOption.options"
+              :server-items-length="customerOption.totalCount" :loading="customerOption.loading"
+              :items-per-page="customerOption.itemsPerPage" :page.sync="customerOption.page"
+              @page-count="customerOption.pageCount = $event" hide-default-footer>
+              <template v-slot:item.contactPoint="props">
+                {{ props.item.contactPoint | PhoneMask }}
+              </template>
+              <template v-slot:item.edit="{ item }">
+                <v-icon small class="mr-2" @click="editItem(item, (customerDialog_type = false))">
+                  mdi-pencil
+                </v-icon>
+              </template>
+            </v-data-table>
+            <v-col>
+              <v-pagination circle v-model="customerOption.page" :length="customerOption.pageCount"></v-pagination>
+            </v-col>
+          </v-card>
 
-          <v-data-table height="640" :headers="headers" :items="customer_list" item-key="barcode" class="elevation-4"
-            :search="search" multi-sort fixed-header dense :options.sync="customerOption.options"
-            :server-items-length="customerOption.totalCount" :loading="customerOption.loading"
-            :items-per-page="customerOption.itemsPerPage" :page.sync="customerOption.page"
-            @page-count="customerOption.pageCount = $event" hide-default-footer>
-            <template v-slot:item.contactPoint="props">
-              {{ props.item.contactPoint | PhoneMask }}
-            </template>
-            <template v-slot:item.edit="{ item }">
-              <v-icon small class="mr-2" @click="editItem(item, (customerDialog_type = false))">
-                mdi-pencil
-              </v-icon>
-            </template>
-          </v-data-table>
-          <v-pagination v-model="customerOption.page" :length="customerOption.pageCount"></v-pagination>
+
         </v-col>
       </v-row>
     </v-container>
