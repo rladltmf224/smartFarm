@@ -486,4 +486,4 @@ export default class Member extends Vue {
 }
 </script>
 
-<style src="./MemberMng.scss" lang="scss"></style>
+<style src="../SmartFarm/SmartFarm.scss" lang="scss"></style>

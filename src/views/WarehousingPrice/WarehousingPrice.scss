@@ -1,5 +1,5 @@
 .warehousing .v-data-table-header {
-  background-color: #f6f8f9;
+  background-color: #ffffff;
 }
 
 .warehousing .v-data-table > .v-data-table__wrapper > table > tbody > tr > td,
@@ -16,4 +16,21 @@ tr.v-data-table__selected {
 .select {
   max-width: 89px;
   font-size: 12px;
+}
+
+.v-card {
+  background-color: white;
+  box-shadow: 0 20px 27px 0 rgba(0, 0, 0, 0.05) !important;
+  border-radius: 10px;
+}
+
+.v-sheet {
+  background-color: white;
+  border-radius: 5px;
+}
+
+.v-pagination .v-pagination_navigation {
+  box-shadow: none;
+  border: 1px solid #dee2e6;
+  color: #6c757d;
 }

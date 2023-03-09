@@ -4,20 +4,17 @@
       <v-row>
         <v-col class="ma-2" md="12">
           <h4 class="searchbox-title">조회 조건</h4>
-          <v-sheet class="pa-3" color="#F6F8F9" height="90" elevation="2">
+          <v-card class="pa-3" height="90">
             <v-row>
               <v-col cols="2">
-                <v-text-field
-                  label="시설명"
-                  v-model="search_condition.name"
-                ></v-text-field>
+                <v-text-field label="시설명" v-model="search_condition.name"></v-text-field>
               </v-col>
 
               <v-col class="pt-5 text-right" offset="8" cols="2">
                 <v-btn color="primary" x-large> 조회 </v-btn>
               </v-col>
             </v-row>
-          </v-sheet>
+          </v-card>
         </v-col>
       </v-row>
     </v-container>
@@ -27,13 +24,12 @@
           <v-row>
             <v-col cols="6">
               <v-row class="mb-2">
-                <v-col cols="9"
-                  ><h4 class="searchbox-title">시설 목록</h4></v-col
-                >
+                <v-col cols="9">
+                  <h4 class="searchbox-title">시설 목록</h4>
+                </v-col>
                 <v-col cols="3" class="text-right">
-                  <v-btn @click="openModal_facility" small color="primary"
-                    ><v-icon left> mdi-book-account </v-icon>시설 추가</v-btn
-                  >
+                  <v-btn @click="openModal_facility" small color="primary"><v-icon left> mdi-book-account </v-icon>시설
+                    추가</v-btn>
 
                   <!-- 시설 등록 -->
                   <v-dialog v-model="facility_modal" max-width="500px">
@@ -44,10 +40,7 @@
                       </v-card-title>
                       <v-card-text>
                         <v-col align-self="center">
-                          <v-text-field
-                            label="시설명"
-                            v-model="facilityName"
-                          ></v-text-field>
+                          <v-text-field label="시설명" v-model="facilityName"></v-text-field>
                         </v-col>
                       </v-card-text>
                       <v-card-actions>
@@ -56,11 +49,7 @@
                             저장
                           </v-btn>
 
-                          <v-btn
-                            color="primary"
-                            text
-                            @click="closeModal_facility"
-                          >
+                          <v-btn color="primary" text @click="closeModal_facility">
                             닫기
                           </v-btn>
                         </v-col>
@@ -69,107 +58,63 @@
                   </v-dialog>
                 </v-col>
               </v-row>
-              <v-data-table
-                multi-sort
-                fixed-header
-                height="630"
-                :headers="headers"
-                v-model="facilityTable"
-                :items="facilityList"
-                item-key="facilityId"
-                class="elevation-4"
-                dense
-                single-select
-                @click:row="selectFacility"
-                hide-default-footer
-              >
-                <template v-slot:item.edit="{ item }">
-                  <v-icon small class="mr-2" @click="editFacility(item)">
-                    mdi-pencil
-                  </v-icon>
-                  <v-icon small @click="deleteFacility(item)">
-                    mdi-delete
-                  </v-icon>
-                </template>
-              </v-data-table>
+              <v-card>
+                <v-data-table multi-sort fixed-header height="630" :headers="headers" v-model="facilityTable"
+                  :items="facilityList" item-key="facilityId" dense single-select @click:row="selectFacility"
+                  hide-default-footer>
+                  <template v-slot:item.edit="{ item }">
+                    <v-icon small class="mr-2" @click="editFacility(item)">
+                      mdi-pencil
+                    </v-icon>
+                    <v-icon small @click="deleteFacility(item)">
+                      mdi-delete
+                    </v-icon>
+                  </template>
+                </v-data-table>
+              </v-card>
             </v-col>
             <v-col cols="6">
               <v-row class="mb-2">
-                <v-col cols="6"
-                  ><h4 class="searchbox-title">시설 구역 목록</h4></v-col
-                >
+                <v-col cols="6">
+                  <h4 class="searchbox-title">시설 구역 목록</h4>
+                </v-col>
                 <v-col cols="6" class="text-right pl-2">
-                  <v-btn
-                    class="text-right ml-2"
-                    small
-                    color="primary"
-                    @click="saveLocation"
-                    ><v-icon small>mdi-content-save-check</v-icon> 구역 저장
+                  <v-btn class="text-right ml-2" small color="primary" @click="saveLocation"><v-icon
+                      small>mdi-content-save-check</v-icon> 구역 저장
                   </v-btn>
-                  <v-btn
-                    class="text-right ml-2"
-                    small
-                    color="primary"
-                    @click="addLocation"
-                    ><v-icon small>mdi-plus </v-icon> 구역 추가
+                  <v-btn class="text-right ml-2" small color="primary" @click="addLocation"><v-icon small>mdi-plus
+                    </v-icon> 구역 추가
                   </v-btn>
-                  <v-btn
-                    class="text-right ml-2"
-                    small
-                    color="primary"
-                    @click="deleteLocation"
-                    ><v-icon small>mdi-minus </v-icon> 구역 삭제
+                  <v-btn class="text-right ml-2" small color="primary" @click="deleteLocation"><v-icon small>mdi-minus
+                    </v-icon> 구역 삭제
                   </v-btn>
                 </v-col>
               </v-row>
-              <v-data-table
-                dense
-                fixed-header
-                multi-sort
-                height="630"
-                v-model="locationTable"
-                :headers="Locationheaders"
-                :items="locationList"
-                item-key="code"
-                class="elevation-4"
-                show-select
-                :expanded.sync="expanded"
-                hide-default-footer
-              >
-                <template v-slot:item.name="props">
-                  <v-edit-dialog :return-value.sync="props.item.name">
-                    {{ props.item.name }}
-                    <template v-slot:input>
-                      <v-text-field
-                        v-model="props.item.name"
-                        placeholder="* 구역명"
-                        single-line
-                        counter
-                        dense
-                      ></v-text-field>
-                    </template>
-                  </v-edit-dialog>
-                </template>
+              <v-card>
+                <v-data-table dense fixed-header multi-sort height="630" v-model="locationTable"
+                  :headers="Locationheaders" :items="locationList" item-key="code" show-select :expanded.sync="expanded"
+                  hide-default-footer>
+                  <template v-slot:item.name="props">
+                    <v-edit-dialog :return-value.sync="props.item.name">
+                      {{ props.item.name }}
+                      <template v-slot:input>
+                        <v-text-field v-model="props.item.name" placeholder="* 구역명" single-line counter
+                          dense></v-text-field>
+                      </template>
+                    </v-edit-dialog>
+                  </template>
 
-                <template v-slot:item.memo="props">
-                  <v-edit-dialog
-                    :return-value.sync="props.item.memo"
-                    v-show="props.item.jobOrderId != null"
-                  >
-                    {{ props.item.memo }}
-                    <template v-slot:input>
-                      <v-text-field
-                        v-model="props.item.memo"
-                        placeholder="* 비고"
-                        single-line
-                        counter
-                        dense
-                      ></v-text-field>
-                    </template>
-                  </v-edit-dialog>
-                </template>
+                  <template v-slot:item.memo="props">
+                    <v-edit-dialog :return-value.sync="props.item.memo" v-show="props.item.jobOrderId != null">
+                      {{ props.item.memo }}
+                      <template v-slot:input>
+                        <v-text-field v-model="props.item.memo" placeholder="* 비고" single-line counter
+                          dense></v-text-field>
+                      </template>
+                    </v-edit-dialog>
+                  </template>
 
-                <!--<template v-slot:item.name="props">
+                  <!--<template v-slot:item.name="props">
                   <v-text-field
                     dense
                     class="pa-0"
@@ -193,23 +138,19 @@
                   </v-text-field>
                 </template>-->
 
-                <template v-slot:item.jobOrderId="{ item }">
-                  <v-btn
-                    class="center mt-1 mb-1 childBtn"
-                    small
-                    :color="getColor(item.jobOrderId)"
-                    dark
-                    style="width: 100px"
-                    depressed
-                  >
-                    {{ item.jobOrderId == null ? "사용가능" : "사용중" }}
-                  </v-btn>
-                </template>
+                  <template v-slot:item.jobOrderId="{ item }">
+                    <v-btn class="center mt-1 mb-1 childBtn" small :color="getColor(item.jobOrderId)" dark
+                      style="width: 100px" depressed>
+                      {{ item.jobOrderId == null ? "사용가능" : "사용중" }}
+                    </v-btn>
+                  </template>
 
-                <template v-slot:no-data>
-                  <h5>데이터가 없습니다.</h5>
-                </template>
-              </v-data-table>
+                  <template v-slot:no-data>
+                    <h5>데이터가 없습니다.</h5>
+                  </template>
+                </v-data-table>
+              </v-card>
+
             </v-col>
           </v-row>
         </v-col>

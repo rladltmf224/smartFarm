@@ -7,20 +7,9 @@
         <v-spacer></v-spacer>
       </v-card-title>
       <div class="px-7">
-        <v-text-field
-          label="부서"
-          v-model="userInfo.departmentName"
-          disabled
-        ></v-text-field>
-        <v-text-field
-          label="이름"
-          v-model="userInfo.userName"
-          disabled
-        ></v-text-field>
-        <v-text-field
-          label="전화번호"
-          v-model="userInfo.phoneNumber"
-        ></v-text-field>
+        <v-text-field label="부서" v-model="userInfo.departmentName" disabled></v-text-field>
+        <v-text-field label="이름" v-model="userInfo.userName" disabled></v-text-field>
+        <v-text-field label="전화번호" v-model="userInfo.phoneNumber"></v-text-field>
         <div class="d-flex flex-row align-center">
           <v-subheader><strong>SMS 수신</strong></v-subheader>
           <div style="width: 15px"></div>
