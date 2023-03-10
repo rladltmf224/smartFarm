@@ -10,49 +10,22 @@
           </v-row>
 
           <v-sheet class="pa-5" color="#F6F8F9" max-width="600" height="870">
-            <v-sheet
-              height="115px"
-              class="pa-4 lighten-2 rounded-xl"
-              style="overflow-y: auto"
-            >
+            <v-card height="115px" class="pa-4 lighten-2 " style="overflow-y: auto">
               <v-row class="clockRow">
                 <v-col cols="5" class="pa-0">
-                  <v-menu
-                    ref="startDate"
-                    v-model="menu_start_date"
-                    :close-on-content-click="false"
-                    :return-value.sync="search_stock.startDate"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="auto"
-                  >
+                  <v-menu ref="startDate" v-model="menu_start_date" :close-on-content-click="false"
+                    :return-value.sync="search_stock.startDate" transition="scale-transition" offset-y min-width="auto">
                     <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
-                        class="ml-6"
-                        v-model="search_stock.startDate"
-                        label="시작일"
-                        prepend-icon="mdi-calendar"
-                        readonly
-                        v-bind="attrs"
-                        v-on="on"
-                      ></v-text-field>
+                      <v-text-field class="ml-6" v-model="search_stock.startDate" label="시작일" prepend-icon="mdi-calendar"
+                        readonly v-bind="attrs" v-on="on"></v-text-field>
                     </template>
-                    <v-date-picker
-                      v-model="search_stock.startDate"
-                      no-title
-                      scrollable
-                      locale="ko-KR"
-                      :max="search_stock.endDate"
-                    >
+                    <v-date-picker v-model="search_stock.startDate" no-title scrollable locale="ko-KR"
+                      :max="search_stock.endDate">
                       <v-spacer></v-spacer>
                       <v-btn text color="primary" @click="cancelStart">
                         취소
                       </v-btn>
-                      <v-btn
-                        text
-                        color="primary"
-                        @click="s_date_search(search_stock.startDate)"
-                      >
+                      <v-btn text color="primary" @click="s_date_search(search_stock.startDate)">
                         확인
                       </v-btn>
                     </v-date-picker>
@@ -64,42 +37,19 @@
                   </span>
                 </v-col>
                 <v-col cols="5" class="pa-0">
-                  <v-menu
-                    ref="endDate"
-                    v-model="menu_end_date"
-                    :close-on-content-click="false"
-                    :return-value.sync="search_stock.endDate"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="auto"
-                  >
+                  <v-menu ref="endDate" v-model="menu_end_date" :close-on-content-click="false"
+                    :return-value.sync="search_stock.endDate" transition="scale-transition" offset-y min-width="auto">
                     <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
-                        class="ml-4"
-                        v-model="search_stock.endDate"
-                        label="종료일"
-                        prepend-icon="mdi-calendar"
-                        readonly
-                        v-bind="attrs"
-                        v-on="on"
-                      ></v-text-field>
+                      <v-text-field class="ml-4" v-model="search_stock.endDate" label="종료일" prepend-icon="mdi-calendar"
+                        readonly v-bind="attrs" v-on="on"></v-text-field>
                     </template>
-                    <v-date-picker
-                      v-model="search_stock.endDate"
-                      no-title
-                      scrollable
-                      locale="ko-KR"
-                      :min="search_stock.startDate"
-                    >
+                    <v-date-picker v-model="search_stock.endDate" no-title scrollable locale="ko-KR"
+                      :min="search_stock.startDate">
                       <v-spacer></v-spacer>
                       <v-btn text color="primary" @click="cancelEnd">
                         취소
                       </v-btn>
-                      <v-btn
-                        text
-                        color="primary"
-                        @click="e_date_search(search_stock.endDate)"
-                      >
+                      <v-btn text color="primary" @click="e_date_search(search_stock.endDate)">
                         확인
                       </v-btn>
                     </v-date-picker>
@@ -108,12 +58,7 @@
               </v-row>
               <v-row class="clockRow">
                 <v-col cols="12" class="pa-0">
-                  <v-radio-group
-                    class="ml-6"
-                    v-model="row"
-                    @change="getSearch"
-                    row
-                  >
+                  <v-radio-group class="ml-6" v-model="row" @change="getSearch" row>
                     <v-radio label="전체" value=""> </v-radio>
                     <v-radio label="일주일 전" value="week"> </v-radio>
                     <v-radio label="한달 전" value="month"> </v-radio>
@@ -121,17 +66,12 @@
                   </v-radio-group>
                 </v-col>
               </v-row>
-            </v-sheet>
+            </v-card>
 
             <v-row class="mt-1">
               <v-col cols="6">
-                <v-text-field
-                  class="pa-0 ml-2"
-                  v-model="search_stock.createdId"
-                  @keydown.enter="getSearch"
-                  return-object
-                  label="등록자"
-                ></v-text-field>
+                <v-text-field class="pa-0 ml-2" v-model="search_stock.createdId" @keydown.enter="getSearch" return-object
+                  label="등록자"></v-text-field>
               </v-col>
               <v-col cols="2" class="text-right">
                 <v-btn color="primary" small class="mt-2" @click="getSearch">
@@ -140,32 +80,20 @@
                 </v-btn>
               </v-col>
             </v-row>
-            <v-data-table
-              multi-sort
-              fixed-header
-              height="580"
-              item-key="inventoryCheckId"
-              :items="stockTakingTable"
-              :headers="checkListHeader"
-              @click:row="selectedStock"
-              single-select
-              :options.sync="stockListCfg.options"
-              :server-items-length="stockListCfg.totalCount"
-              :loading="stockListCfg.loading"
-              :items-per-page="stockListCfg.itemsPerPage"
-              :page.sync="stockListCfg.page"
-              @page-count="stockListCfg.pageCount = $event"
-              hide-default-footer
-              class="overflow-scroll elevation-4 ml-2 mr-2"
-            >
-              <template v-slot:no-data>
-                <h5>데이터가 없습니다.</h5>
-              </template>
-            </v-data-table>
-            <v-pagination
-              v-model="stockListCfg.page"
-              :length="stockListCfg.pageCount"
-            ></v-pagination>
+            <v-card>
+              <v-data-table multi-sort fixed-header height="580" item-key="inventoryCheckId" :items="stockTakingTable"
+                :headers="checkListHeader" @click:row="selectedStock" single-select :options.sync="stockListCfg.options"
+                :server-items-length="stockListCfg.totalCount" :loading="stockListCfg.loading"
+                :items-per-page="stockListCfg.itemsPerPage" :page.sync="stockListCfg.page"
+                @page-count="stockListCfg.pageCount = $event" hide-default-footer class="overflow-scroll  ml-2 mr-2">
+                <template v-slot:no-data>
+                  <h5>데이터가 없습니다.</h5>
+                </template>
+              </v-data-table>
+              <v-col>
+                <v-pagination circle v-model="stockListCfg.page" :length="stockListCfg.pageCount"></v-pagination>
+              </v-col>
+            </v-card>
           </v-sheet>
         </v-col>
 
@@ -178,70 +106,37 @@
           </v-row>
           <v-sheet class="pa-5" color="#F6F8F9" max-width="auto" height="870">
             <v-col class="text-right" offset-md="9" md="3">
-              <v-btn
-                class="saveStock"
-                color="primary"
-                @click="open_dialog"
-                small
-              >
+              <v-btn class="saveStock" color="primary" @click="open_dialog" small>
                 실 사 등 록
               </v-btn>
             </v-col>
-
-            <v-data-table
-              fixed-header
-              multi-sort
-              v-model="lotTable"
-              :items="stockTakingDetailTable"
-              height="720"
-              item-key="itemId"
-              single-select
-              :options.sync="stockDetailListCfg.options"
-              :server-items-length="stockDetailListCfg.totalCount"
-              :loading="stockDetailListCfg.loading"
-              :items-per-page="stockDetailListCfg.itemsPerPage"
-              :page.sync="stockDetailListCfg.page"
-              @page-count="stockDetailListCfg.pageCount = $event"
-              hide-default-footer
-              :headers="checkListDetailHeader"
-              @click:row="(item, slot) => slot.expand(!slot.isExpanded)"
-              class="overflow-scroll elevation-4 ml-2 mr-2"
-            >
-              <template #expanded-item="{ headers, item }">
-                <td class="stockTreeTable" :colspan="headers.length">
-                  <v-data-table
-                    fixed-header
-                    multi-sort
-                    class="second-tableBorder"
-                    :headers="checkListLotHeader"
-                    :items="item.detail"
-                    dense
-                    single-select
-                    return-object
-                    elevation="0"
-                    disable-pagination
-                    hide-default-footer
-                  >
-                  </v-data-table>
-                </td>
-              </template>
-              <template v-slot:item.itemType="{ item }">
-                <v-btn
-                  class="center mt-1 mb-1 childBtn"
-                  small
-                  :color="getTypeColor(item.itemType)"
-                  dark
-                  style="width: 100px"
-                  depressed
-                >
-                  {{ item.itemType }}
-                </v-btn>
-              </template>
-            </v-data-table>
-            <v-pagination
-              v-model="stockDetailListCfg.page"
-              :length="stockDetailListCfg.pageCount"
-            ></v-pagination>
+            <v-card>
+              <v-data-table fixed-header multi-sort v-model="lotTable" :items="stockTakingDetailTable" height="720"
+                item-key="itemId" single-select :options.sync="stockDetailListCfg.options"
+                :server-items-length="stockDetailListCfg.totalCount" :loading="stockDetailListCfg.loading"
+                :items-per-page="stockDetailListCfg.itemsPerPage" :page.sync="stockDetailListCfg.page"
+                @page-count="stockDetailListCfg.pageCount = $event" hide-default-footer :headers="checkListDetailHeader"
+                @click:row="(item, slot) => slot.expand(!slot.isExpanded)" class="overflow-scroll  ml-2 mr-2">
+                <template #expanded-item="{ headers, item }">
+                  <td class="stockTreeTable" :colspan="headers.length">
+                    <v-data-table fixed-header multi-sort class="second-tableBorder" :headers="checkListLotHeader"
+                      :items="item.detail" dense single-select return-object elevation="0" disable-pagination
+                      hide-default-footer>
+                    </v-data-table>
+                  </td>
+                </template>
+                <template v-slot:item.itemType="{ item }">
+                  <v-btn class="center mt-1 mb-1 childBtn" small :color="getTypeColor(item.itemType)" dark
+                    style="width: 100px" depressed>
+                    {{ item.itemType }}
+                  </v-btn>
+                </template>
+              </v-data-table>
+              <v-col>
+                <v-pagination circle v-model="stockDetailListCfg.page"
+                  :length="stockDetailListCfg.pageCount"></v-pagination>
+              </v-col>
+            </v-card>
           </v-sheet>
         </v-col>
       </v-row>

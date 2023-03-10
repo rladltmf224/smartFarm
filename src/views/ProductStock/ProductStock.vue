@@ -4,41 +4,26 @@
       <v-row no-gutters>
         <v-col class="ma-2" md="12">
           <h4 class="searchbox-title">조회 조건</h4>
-          <v-sheet class="pa-3" color="#F6F8F9" height="90" elevation="2">
+          <v-card class="pa-3" height="90">
             <v-row dense>
               <v-col cols="2">
-                <v-text-field
-                  label="품목명 or 품목코드"
-                  v-model="search_condition.item"
-                  @keydown.enter="getCustomer"
-                ></v-text-field>
+                <v-text-field label="품목명 or 품목코드" v-model="search_condition.item"
+                  @keydown.enter="getCustomer"></v-text-field>
               </v-col>
 
               <v-col cols="2">
-                <v-text-field
-                  label="작업지시코드"
-                  v-model="search_condition.jobOrderCode"
-                  @keydown.enter="getCustomer"
-                ></v-text-field>
+                <v-text-field label="작업지시코드" v-model="search_condition.jobOrderCode"
+                  @keydown.enter="getCustomer"></v-text-field>
               </v-col>
 
               <v-col cols="2">
-                <v-text-field
-                  label="LOT코드"
-                  v-model="search_condition.productLot"
-                  @keydown.enter="getCustomer"
-                ></v-text-field>
+                <v-text-field label="LOT코드" v-model="search_condition.productLot"
+                  @keydown.enter="getCustomer"></v-text-field>
               </v-col>
 
               <v-col cols="2">
-                <v-select
-                  label="창고"
-                  v-model="search_condition.storage"
-                  :items="storage_list_search"
-                  item-text="name"
-                  item-value="id"
-                  @change="getCustomer"
-                ></v-select>
+                <v-select label="창고" v-model="search_condition.storage" :items="storage_list_search" item-text="name"
+                  item-value="id" @change="getCustomer"></v-select>
               </v-col>
 
               <v-col class="pt-5 text-right" offset="2" cols="2">
@@ -48,7 +33,7 @@
                 </v-btn>
               </v-col>
             </v-row>
-          </v-sheet>
+          </v-card>
         </v-col>
         <v-col class="ma-2" md="12">
           <v-row no-gutters class="mb-2">
@@ -56,43 +41,25 @@
               <h4 class="searchbox-title">완제품 재고 목록</h4>
             </v-col>
           </v-row>
+          <v-card>
 
-          <v-data-table
-            height="300"
-            :headers="headers"
-            :items="statement_list"
-            fixed-header
-            item-key="barcode"
-            class="elevation-4"
-            multi-sort
-            single-select
-            dense
-            :options.sync="productStockOption.options"
-            :server-items-length="productStockOption.totalCount"
-            :loading="productStockOption.loading"
-            :items-per-page="productStockOption.itemsPerPage"
-            :page.sync="productStockOption.page"
-            @page-count="productStockOption.pageCount = $event"
-            hide-default-footer
-          >
-            <template v-slot:item.storageName="{ item }">
-              {{ item.storageName }} &nbsp;
-              <v-btn
-                text
-                x-small
-                fluid
-                color="primary"
-                class="editBtn"
-                @click="edit_changeStorage(item)"
-              >
-                <v-icon x-small> mdi-pencil </v-icon>
-              </v-btn>
-            </template>
-          </v-data-table>
-          <v-pagination
-            v-model="productStockOption.page"
-            :length="productStockOption.pageCount"
-          ></v-pagination>
+            <v-data-table height="300" :headers="headers" :items="statement_list" fixed-header item-key="barcode"
+              multi-sort single-select dense :options.sync="productStockOption.options"
+              :server-items-length="productStockOption.totalCount" :loading="productStockOption.loading"
+              :items-per-page="productStockOption.itemsPerPage" :page.sync="productStockOption.page"
+              @page-count="productStockOption.pageCount = $event" hide-default-footer>
+              <template v-slot:item.storageName="{ item }">
+                {{ item.storageName }} &nbsp;
+                <v-btn text x-small fluid color="green" class="editBtn" @click="edit_changeStorage(item)">
+                  <v-icon x-small> mdi-pencil </v-icon>
+                </v-btn>
+              </template>
+            </v-data-table>
+            <v-col>
+              <v-pagination circle v-model="productStockOption.page"
+                :length="productStockOption.pageCount"></v-pagination>
+            </v-col>
+          </v-card>
         </v-col>
         <v-col class="ma-2" md="12">
           <v-row no-gutters class="mb-2">
@@ -100,28 +67,17 @@
               <h4 class="searchbox-title">검색된 품목별 리스트</h4>
             </v-col>
           </v-row>
-          <v-data-table
-            height="320"
-            :headers="headers_detail"
-            :items="item_list"
-            item-key="barcode"
-            class="elevation-4"
-            hide-default-footer
-            fixed-header
-            multi-sort
-            dense
-          >
-          </v-data-table>
+          <v-card>
+            <v-data-table height="300" :headers="headers_detail" :items="item_list" item-key="barcode" hide-default-footer
+              fixed-header multi-sort dense>
+            </v-data-table>
+          </v-card>
         </v-col>
       </v-row>
     </v-container>
     <!-- 창고 변경 모달 -->
-    <ProductStockStorage
-      :open="edit_storage"
-      :originalData="originalData"
-      :totalStorage_list="totalStorage_list"
-      @closeModal="close_modal"
-    >
+    <ProductStockStorage :open="edit_storage" :originalData="originalData" :totalStorage_list="totalStorage_list"
+      @closeModal="close_modal">
     </ProductStockStorage>
   </div>
 </template>
@@ -174,10 +130,10 @@ export default class ProductStock extends Vue {
     original_locationName: string;
     original_storageId: number | "";
   } = {
-    original_storageName: "",
-    original_locationName: "",
-    original_storageId: "",
-  };
+      original_storageName: "",
+      original_locationName: "",
+      original_storageId: "",
+    };
 
   get headers() {
     return cfg.header.headers;
