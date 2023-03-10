@@ -8,16 +8,8 @@
             <v-col cols="11" class="">
               <v-row class="pa-0 ma-0 d-flex">
                 <v-col cols="2" class="pa-0 ma-0">
-                  <v-select
-                    :items="search_list1"
-                    label="실 선택"
-                    v-model="search_type_1"
-                    item-text="name"
-                    item-value="value"
-                    dense="dense"
-                    single-line
-                    return-object
-                  ></v-select>
+                  <v-select :items="search_list1" label="실 선택" v-model="search_type_1" item-text="name" item-value="value"
+                    dense="dense" single-line return-object></v-select>
                 </v-col>
 
                 <!-- <v-col cols="2" class="pa-0 ma-0 pl-4">
@@ -35,18 +27,10 @@
               <v-row dense class="">
                 <!-- 탭스 -->
                 <v-col class="pa-0 ma-0">
-                  <v-tabs
-                    v-model="tab"
-                    align-with-title="align-with-title"
-                    background-color=""
-                  >
+                  <v-tabs v-model="tab" align-with-title="align-with-title" background-color="transparent">
                     <v-tabs-slider color="primary"></v-tabs-slider>
 
-                    <v-tab
-                      v-for="item in items"
-                      :key="item"
-                      @click="clickTest(item)"
-                    >
+                    <v-tab v-for="item in items" :key="item" @click="clickTest(item)">
                       {{ item }}
                     </v-tab>
                   </v-tabs>
@@ -60,14 +44,10 @@
           </v-row>
         </v-col>
       </v-row>
-      <TempHumid
-        v-if="this.search_type_1 != null && this.selectedTabs == '온/습도'"
-        :search_type_1="search_type_1"
-      ></TempHumid>
-      <WaterpH
-        v-if="this.search_type_1 != null && this.selectedTabs == '양액pH/EC'"
-        :search_type_1="search_type_1"
-      ></WaterpH>
+      <TempHumid v-if="this.search_type_1 != null && this.selectedTabs == '온/습도'" :search_type_1="search_type_1">
+      </TempHumid>
+      <WaterpH v-if="this.search_type_1 != null && this.selectedTabs == '양액pH/EC'" :search_type_1="search_type_1">
+      </WaterpH>
       <v-row> </v-row>
     </v-container>
   </div>

@@ -5,128 +5,64 @@
       <v-row no-gutters>
         <v-col class="ma-2" md="12">
           <h4 class="searchbox-title">조회 조건</h4>
-          <v-sheet class="pa-3" color="#F6F8F9" height="80" elevation="2">
+          <v-card class="pa-3" height="80">
             <v-row no-gutters class="d-flex align-center">
               <v-col cols="10">
                 <v-row>
                   <v-col cols="2">
-                    <v-text-field
-                      label="수주번호"
-                      v-model="search_condition.orderInfoCode"
-                      dense
-                    ></v-text-field>
+                    <v-text-field label="수주번호" v-model="search_condition.orderInfoCode" dense></v-text-field>
                   </v-col>
                   <v-col cols="2">
-                    <v-text-field
-                      label="거래처명"
-                      v-model="search_condition.customerName"
-                      dense
-                    ></v-text-field>
+                    <v-text-field label="거래처명" v-model="search_condition.customerName" dense></v-text-field>
                   </v-col>
                   <v-col cols="2">
-                    <v-menu
-                      ref="order_startDate"
-                      v-model="order_startDate"
-                      :close-on-content-click="false"
-                      :return-value.sync="search_condition.order_startDate"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
+                    <v-menu ref="order_startDate" v-model="order_startDate" :close-on-content-click="false"
+                      :return-value.sync="search_condition.order_startDate" transition="scale-transition" offset-y
+                      min-width="auto">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="search_condition.order_startDate"
-                          label="수주시작일"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                          dense
-                        ></v-text-field>
+                        <v-text-field v-model="search_condition.order_startDate" label="수주시작일" prepend-icon="mdi-calendar"
+                          readonly v-bind="attrs" v-on="on" dense></v-text-field>
                       </template>
-                      <v-date-picker
-                        v-model="search_condition.order_startDate"
-                        no-title
-                        scrollable
-                        locale="ko-KR"
-                        :max="search_condition.order_endDate"
-                      >
+                      <v-date-picker v-model="search_condition.order_startDate" no-title scrollable locale="ko-KR"
+                        :max="search_condition.order_endDate">
                         <v-spacer></v-spacer>
-                        <v-btn
-                          text
-                          color="primary"
-                          @click="order_startDate = false"
-                        >
+                        <v-btn text color="primary" @click="order_startDate = false">
                           취소
                         </v-btn>
-                        <v-btn
-                          text
-                          color="primary"
-                          @click="
-                            s_date_search_order(
-                              search_condition.order_startDate
-                            )
-                          "
-                        >
+                        <v-btn text color="primary" @click="
+                          s_date_search_order(
+                            search_condition.order_startDate
+                          )
+                        ">
                           확인
                         </v-btn>
                       </v-date-picker>
                     </v-menu>
                   </v-col>
                   <v-col md="2">
-                    <v-menu
-                      ref="order_endDate"
-                      v-model="order_endDate"
-                      :close-on-content-click="false"
-                      :return-value.sync="search_condition.order_endDate"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
+                    <v-menu ref="order_endDate" v-model="order_endDate" :close-on-content-click="false"
+                      :return-value.sync="search_condition.order_endDate" transition="scale-transition" offset-y
+                      min-width="auto">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="search_condition.order_endDate"
-                          label="수주종료일"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                          dense
-                        ></v-text-field>
+                        <v-text-field v-model="search_condition.order_endDate" label="수주종료일" prepend-icon="mdi-calendar"
+                          readonly v-bind="attrs" v-on="on" dense></v-text-field>
                       </template>
-                      <v-date-picker
-                        v-model="search_condition.order_endDate"
-                        no-title
-                        scrollable
-                        locale="ko-KR"
-                        :min="search_condition.order_startDate"
-                      >
+                      <v-date-picker v-model="search_condition.order_endDate" no-title scrollable locale="ko-KR"
+                        :min="search_condition.order_startDate">
                         <v-spacer></v-spacer>
-                        <v-btn
-                          text
-                          color="primary"
-                          @click="order_endDate = false"
-                        >
+                        <v-btn text color="primary" @click="order_endDate = false">
                           취소
                         </v-btn>
-                        <v-btn
-                          text
-                          color="primary"
-                          @click="
-                            e_date_search_order(search_condition.order_endDate)
-                          "
-                        >
+                        <v-btn text color="primary" @click="
+                          e_date_search_order(search_condition.order_endDate)
+                        ">
                           확인
                         </v-btn>
                       </v-date-picker>
                     </v-menu>
                   </v-col>
                   <v-col cols="3">
-                    <v-text-field
-                      label="요청사항"
-                      v-model="search_condition.memo"
-                      dense
-                    ></v-text-field>
+                    <v-text-field label="요청사항" v-model="search_condition.memo" dense></v-text-field>
                   </v-col>
                 </v-row>
               </v-col>
@@ -136,7 +72,7 @@
                 </v-btn>
               </v-col>
             </v-row>
-          </v-sheet>
+          </v-card>
         </v-col>
       </v-row>
       <!-- 수주목록 -->
@@ -147,87 +83,41 @@
               <h4 class="searchbox-title">수주 목록</h4>
             </v-col>
             <v-col class="text-right" offset-md="7" md="3">
-              <v-btn small color="primary" @click="add()"
-                ><v-icon left> mdi-book-account </v-icon>수주 등록</v-btn
-              >
+              <v-btn small color="primary" @click="add()"><v-icon left> mdi-book-account </v-icon>수주 등록</v-btn>
             </v-col>
           </v-row>
           <!-- 수주 목록 테이블 -->
-          <v-data-table
-            height="669"
-            :headers="headers"
-            :items="customer_list"
-            class="elevation-4"
-            :search="search"
-            multi-sort
-            fixed-header
-            dense
-            :options.sync="options"
-            :server-items-length="totalCount"
-            :loading="loading"
-            :items-per-page="itemsPerPage"
-            :page.sync="page"
-            @page-count="pageCount = $event"
-            hide-default-footer
-          >
+          <v-data-table height="669" :headers="headers" :items="customer_list" class="elevation-4" :search="search"
+            multi-sort fixed-header dense :options.sync="options" :server-items-length="totalCount" :loading="loading"
+            :items-per-page="itemsPerPage" :page.sync="page" @page-count="pageCount = $event" hide-default-footer>
             <!-- 상세수정 -->
             <template v-slot:item.edit="{ item }">
               <div class="d-flex justify-center">
-                <v-icon
-                  small
-                  class="mr-2"
-                  @click="editItem(item, (customerDialog_type = false))"
-                >
+                <v-icon small class="mr-2" @click="editItem(item, (customerDialog_type = false))">
                   mdi-pencil
                 </v-icon>
               </div>
             </template>
             <!-- 수주일자 -->
             <template v-slot:item.orderDate="props">
-              <v-menu
-                :nudge-right="40"
-                transition="scale-transition"
-                offset-y
-                min-width="auto"
-              >
+              <v-menu :nudge-right="40" transition="scale-transition" offset-y min-width="auto">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    v-model="props.item.orderDate"
-                    readonly
-                    v-bind="attrs"
-                    dense
-                    v-on="on"
-                  ></v-text-field>
+                  <v-text-field v-model="props.item.orderDate" readonly v-bind="attrs" dense v-on="on"></v-text-field>
                 </template>
-                <v-date-picker
-                  @change="editTableOrderInfo(props.item)"
-                  no-title
-                  locale="ko-KR"
-                  v-model="props.item.orderDate"
-                ></v-date-picker>
+                <v-date-picker @change="editTableOrderInfo(props.item)" no-title locale="ko-KR"
+                  v-model="props.item.orderDate"></v-date-picker>
               </v-menu>
             </template>
             <!-- 요청사항 -->
             <template v-slot:item.memo="props">
-              <v-edit-dialog
-                :return-value.sync="props.item.memo"
-                large
-                persistent
-                @save="editTableOrderInfo(props.item)"
-                cancel-text="취소"
-                save-text="수정"
-              >
+              <v-edit-dialog :return-value.sync="props.item.memo" large persistent @save="editTableOrderInfo(props.item)"
+                cancel-text="취소" save-text="수정">
                 <div>{{ props.item.memo }}</div>
                 <template v-slot:input>
                   <div class="mt-4 title">Update Iron</div>
                 </template>
                 <template v-slot:input>
-                  <v-text-field
-                    v-model="props.item.memo"
-                    label="Edit"
-                    single-line
-                    autofocus
-                  ></v-text-field>
+                  <v-text-field v-model="props.item.memo" label="Edit" single-line autofocus></v-text-field>
                 </template>
               </v-edit-dialog>
             </template>
@@ -250,14 +140,8 @@
       </v-row>
     </v-container>
     <!-- 거래처 생성 모달 -->
-    <OrderManagementModal
-      :open="orderDialog"
-      :orderInfoId="orderInfoId"
-      :orderInfo="orderInfo"
-      :change="change"
-      :editedCustomerData="editedOrder"
-      @closeModal="closeModal"
-    >
+    <OrderManagementModal :open="orderDialog" :orderInfoId="orderInfoId" :orderInfo="orderInfo" :change="change"
+      :editedCustomerData="editedOrder" @closeModal="closeModal">
     </OrderManagementModal>
   </div>
 </template>

@@ -127,77 +127,79 @@
               <h4 class="searchbox-title">출고 상세(원자재)</h4>
             </v-col>
           </v-row>
-          <v-data-table height="270" :headers="headers_detail" :items="statement_detail_list" fixed-header
-            item-key="barcode" class="elevation-4" hide-default-footer multi-sort>
-            <template v-slot:[`item.count`]="props">
-              <v-edit-dialog :return-value.sync="props.item.count">
-                {{ props.item.count | comma }}
-                <template v-slot:input>
-                  <v-text-field v-model="props.item.count" :rules="[max25chars]" label="Edit" single-line
-                    counter></v-text-field>
-                </template>
-              </v-edit-dialog>
-            </template>
-            <template v-slot:[`item.standard`]="props">
-              <v-edit-dialog :return-value.sync="props.item.standard">
-                {{ props.item.standard | comma }}
-                <template v-slot:input>
-                  <v-text-field v-model="props.item.standard" :rules="[max25chars]" label="Edit" single-line
-                    counter></v-text-field>
-                </template>
-              </v-edit-dialog>
-            </template>
-            <template v-slot:[`item.storageId`]="props">
-              <v-select :items="storage_list" item-text="name" item-value="id" label="창고"
-                v-model="props.item.storageId"></v-select>
-              <v-edit-dialog :return-value.sync="props.item.storageId">
-                <template v-slot:input>
-                  <v-select :items="storage_list" item-text="name" item-value="id" label="창고"
-                    v-model="props.item.storageId"></v-select>
-                </template>
-              </v-edit-dialog>
-            </template>
-            <template v-slot:[`item.supplyPrice`]="props">
-              <v-edit-dialog :return-value.sync="props.item.supplyPrice">
-                {{ props.item.supplyPrice | comma }}원
-                <template v-slot:input>
-                  <v-text-field v-model="props.item.supplyPrice" :rules="[max25chars]" label="Edit" single-line
-                    counter></v-text-field>
-                </template>
-              </v-edit-dialog>
-            </template>
-            <template v-slot:item.taxAmount="props">
-              <v-edit-dialog :return-value.sync="props.item.taxAmount">
-                {{ props.item.taxAmount | comma }}원
-                <template v-slot:input>
-                  <v-text-field v-model="props.item.taxAmount" :rules="[max25chars]" label="Edit" single-line
-                    counter></v-text-field>
-                </template>
-              </v-edit-dialog>
-            </template>
+          <v-card>
+            <v-data-table height="230" :headers="headers_detail" :items="statement_detail_list" fixed-header
+              item-key="barcode" hide-default-footer multi-sort>
+              <template v-slot:[`item.count`]="props">
+                <v-edit-dialog :return-value.sync="props.item.count">
+                  {{ props.item.count | comma }}
+                  <template v-slot:input>
+                    <v-text-field v-model="props.item.count" :rules="[max25chars]" label="Edit" single-line
+                      counter></v-text-field>
+                  </template>
+                </v-edit-dialog>
+              </template>
+              <template v-slot:[`item.standard`]="props">
+                <v-edit-dialog :return-value.sync="props.item.standard">
+                  {{ props.item.standard | comma }}
+                  <template v-slot:input>
+                    <v-text-field v-model="props.item.standard" :rules="[max25chars]" label="Edit" single-line
+                      counter></v-text-field>
+                  </template>
+                </v-edit-dialog>
+              </template>
+              <template v-slot:[`item.storageId`]="props">
+                <v-select :items="storage_list" item-text="name" item-value="id" label="창고"
+                  v-model="props.item.storageId"></v-select>
+                <v-edit-dialog :return-value.sync="props.item.storageId">
+                  <template v-slot:input>
+                    <v-select :items="storage_list" item-text="name" item-value="id" label="창고"
+                      v-model="props.item.storageId"></v-select>
+                  </template>
+                </v-edit-dialog>
+              </template>
+              <template v-slot:[`item.supplyPrice`]="props">
+                <v-edit-dialog :return-value.sync="props.item.supplyPrice">
+                  {{ props.item.supplyPrice | comma }}원
+                  <template v-slot:input>
+                    <v-text-field v-model="props.item.supplyPrice" :rules="[max25chars]" label="Edit" single-line
+                      counter></v-text-field>
+                  </template>
+                </v-edit-dialog>
+              </template>
+              <template v-slot:item.taxAmount="props">
+                <v-edit-dialog :return-value.sync="props.item.taxAmount">
+                  {{ props.item.taxAmount | comma }}원
+                  <template v-slot:input>
+                    <v-text-field v-model="props.item.taxAmount" :rules="[max25chars]" label="Edit" single-line
+                      counter></v-text-field>
+                  </template>
+                </v-edit-dialog>
+              </template>
 
-            <template v-slot:[`item.unitPrice`]="props">
-              <v-edit-dialog :return-value.sync="props.item.unitPrice">
-                {{ props.item.unitPrice | comma }}원
-                <template v-slot:input>
-                  <v-text-field v-model="props.item.unitPrice" :rules="[max25chars]" label="Edit" single-line
-                    counter></v-text-field>
-                </template>
-              </v-edit-dialog>
-            </template>
-            <template v-slot:[`item.price`]="props">
-              <v-edit-dialog :return-value.sync="props.item.price">
-                {{ props.item.price | comma }}원
-                <template v-slot:input>
-                  <v-text-field v-model="props.item.price" :rules="[max25chars]" label="Edit" single-line
-                    counter></v-text-field>
-                </template>
-              </v-edit-dialog>
-            </template>
-            <template v-slot:[`item.edit`]="{ item }">
-              <v-icon small @click="deleteItem_pop(item)"> mdi-delete </v-icon>
-            </template>
-          </v-data-table>
+              <template v-slot:[`item.unitPrice`]="props">
+                <v-edit-dialog :return-value.sync="props.item.unitPrice">
+                  {{ props.item.unitPrice | comma }}원
+                  <template v-slot:input>
+                    <v-text-field v-model="props.item.unitPrice" :rules="[max25chars]" label="Edit" single-line
+                      counter></v-text-field>
+                  </template>
+                </v-edit-dialog>
+              </template>
+              <template v-slot:[`item.price`]="props">
+                <v-edit-dialog :return-value.sync="props.item.price">
+                  {{ props.item.price | comma }}원
+                  <template v-slot:input>
+                    <v-text-field v-model="props.item.price" :rules="[max25chars]" label="Edit" single-line
+                      counter></v-text-field>
+                  </template>
+                </v-edit-dialog>
+              </template>
+              <template v-slot:[`item.edit`]="{ item }">
+                <v-icon small @click="deleteItem_pop(item)"> mdi-delete </v-icon>
+              </template>
+            </v-data-table>
+          </v-card>
         </v-col>
       </v-row>
     </v-container>

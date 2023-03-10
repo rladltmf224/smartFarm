@@ -1,12 +1,7 @@
 <template>
-  <div>
+  <v-app>
     <v-container fluid>
-      <v-row>
-        <v-col cols="12" class="d-flex">
-          <h4 class="searchbox-title" @click="getData()">이미지 갤러리</h4>
-        </v-col>
-      </v-row>
-      <v-row>
+      <!--   <v-row>
         <v-col cols="12" class="d-flex ">
           <v-chip-group multiple active-class=" primary--text pa-0 ma-0">
             <v-chip v-for="(item, i) in selected" :key="i">
@@ -16,19 +11,15 @@
           <v-spacer></v-spacer>
           <v-btn color="primary" @click="dialogOpen()">조회</v-btn>
         </v-col>
-      </v-row>
-      <v-card height="800">
-        <v-row>
-          <v-col>
-            <v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options" height="724"
-              :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" hide-default-footer
-              v-model="selected" show-select item-key="growthReportId" @page-count="pageCount = $event" multi-sort>
-            </v-data-table>
-            <div class="text-center pt-2">
-              <v-pagination v-model="page" :length="pageCount"></v-pagination>
-            </div>
-          </v-col>
-        </v-row>
+      </v-row> -->
+      <v-card>
+        <v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options" height="724"
+          :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" hide-default-footer
+          v-model="selected" show-select item-key="growthReportId" @page-count="pageCount = $event" multi-sort>
+        </v-data-table>
+        <v-col>
+          <v-pagination circle v-model="page" :length="pageCount"></v-pagination>
+        </v-col>
       </v-card>
       <!-- 이미지갤러리 다이아로그 -->
       <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
@@ -76,7 +67,7 @@
       </v-dialog>
     </v-container>
 
-  </div>
+  </v-app>
 </template>
 
 <script lang="ts">
@@ -319,5 +310,10 @@ export default class ShowImage extends Vue {
 <style>
 tr.v-data-table__selected {
   background: rgb(224, 238, 255) !important;
+}
+
+.v-card {
+  background-color: white;
+  box-shadow: 0 20px 27px 0 rgba(0, 0, 0, 0.05) !important;
 }
 </style>
