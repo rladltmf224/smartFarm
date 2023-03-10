@@ -5,219 +5,22 @@
     permanent
     color="#f5f5f5"
     :mini-variant="mini"
+    class="my-4 ms-4 border-radius-lg"
   >
     <v-container class="px-0 text-h4 sidebar-main-text home" @click="goHome">
-      <!--   <v-icon v-if="!mini" @click.stop="mini = !mini" color="lightgrey" transparent>
-        mdi-chevron-left
-      </v-icon> -->
-      <!-- 
-      <v-icon v-else @click.stop="mini = !mini" color="lightgrey">
-        mdi-arrow-expand-right
-      </v-icon> -->
-      <!--     <v-icon v-else @click.stop="mini = !mini" color="lightgrey">mdi-chevron-right</v-icon> -->
-      <v-list height="100" dense>
-        <v-list-item class="px-2">
-          <v-btn icon v-if="mini" @click="mini = !mini">
-            <v-icon>mdi-page-last </v-icon>
-          </v-btn>
-          <v-list-item-title></v-list-item-title>
-          <v-btn icon @click.stop="mini = !mini">
-            <v-icon>mdi-page-first</v-icon>
-          </v-btn>
-        </v-list-item>
-        <v-list-item class="px-2">
-          <v-list-item-avatar>
-            <v-img src="https://randomuser.me/api/portraits/men/85.jpg" />
-          </v-list-item-avatar>
-          <v-list-item-title
-            class="ListItemClass d-flex justify-center flex-column"
-          >
-            <h3 class="my-1">{{ userId }}님</h3>
-            <span> 등급:관리자 </span>
-          </v-list-item-title>
-
-          <!-- 
-          <v-btn icon v-if="mini" @click="mini = !mini">
-            <v-icon>mdi-cog </v-icon>
-          </v-btn>
-          <v-list-item-title></v-list-item-title>
-          <v-btn icon @click.stop="mini = !mini">
-            <v-icon>mdi-cog</v-icon>
-          </v-btn> -->
-
-          <v-menu offset-y>
-            <template v-slot:activator="{ on, attrs }">
-              <v-badge
-                overlap
-                :content="alarmOn ? alarmList.length : 0"
-                :value="alarmOn ? alarmList.length : 0"
-                color="error"
-              >
-                <v-btn id="alarmBell" depressed v-bind="attrs" v-on="on" icon>
-                  <v-icon
-                    v-if="alarmOn"
-                    :color="alarmList.length > 0 ? 'error' : 'black'"
-                    large
-                  >
-                    mdi-bell
-                  </v-icon>
-                  <v-icon v-if="!alarmOn" color="grey" large>
-                    mdi-bell-off
-                  </v-icon>
-                </v-btn>
-              </v-badge>
-            </template>
-            <v-list>
-              <v-list-item
-                v-if="alarmOn"
-                v-for="(alarm, index) in alarmList"
-                :key="index"
-                two-line
-              >
-                <v-list-item-content
-                  @click="removeAlarm(alarm)"
-                  class="alarmItem"
-                >
-                  <v-list-item-title>
-                    <v-chip class="mr-3" color="warning"> 주의 </v-chip
-                    >{{ alarm.title }}
-                  </v-list-item-title>
-                  <v-list-item-subtitle class="pl-15">{{
-                    alarm.body
-                  }}</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-content @click="alarmToggle()" class="alarmItem">
-                  <v-list-item-title class="d-flex justify-center">
-                    {{ alarmOn ? "알람 끄기" : "알람 켜기" }}
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-
-          <!--      <v-menu offset-y>
-            <template v-slot:activator="{ on, attrs }">
-              <v-badge overlap :content="alarmOn ? alarmList.length : 0" :value="alarmOn ? alarmList.length : 0"
-                color="error">
-                <v-btn id="alarmBell" depressed v-bind="attrs" v-on="on" icon>
-                  <v-icon v-if="alarmOn" :color="alarmList.length > 0 ? 'error' : 'black'" large>
-                    mdi-bell
-                  </v-icon>
-                  <v-icon v-if="!alarmOn" color="grey" large>
-                    mdi-bell-off
-                  </v-icon>
-                </v-btn>
-              </v-badge>
-            </template>
-            <v-list>
-              <v-list-item v-if="alarmOn" v-for="(alarm, index) in alarmList" :key="index" two-line>
-                <v-list-item-content @click="removeAlarm(alarm)" class="alarmItem">
-                  <v-list-item-title>
-                    <v-chip class="mr-3" color="warning"> 주의 </v-chip>{{ alarm.title }}
-                  </v-list-item-title>
-                  <v-list-item-subtitle class="pl-15">{{
-                    alarm.body
-                  }}</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-content @click="alarmToggle()" class="alarmItem">
-                  <v-list-item-title class="d-flex justify-center">
-                    {{ alarmOn ? "알람 끄기" : "알람 켜기" }}
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </v-menu> -->
-        </v-list-item>
-      </v-list>
-
-      <!--   <v-menu offset-y>
-        <template v-slot:activator="{ on, attrs }">
-          <v-badge
-            overlap
-            :content="alarmOn ? alarmList.length : 0"
-            :value="alarmOn ? alarmList.length : 0"
-            color="error"
-          >
-            <v-btn id="alarmBell" depressed v-bind="attrs" v-on="on" icon>
-              <v-icon
-                v-if="alarmOn"
-                :color="alarmList.length > 0 ? 'error' : 'black'"
-                large
-              >
-                mdi-bell
-              </v-icon>
-              <v-icon v-if="!alarmOn" color="grey" large> mdi-bell-off </v-icon>
-            </v-btn>
-          </v-badge>
-        </template>
-        <v-list>
-          <v-list-item
-            v-if="alarmOn"
-            v-for="(alarm, index) in alarmList"
-            :key="index"
-            two-line
-          >
-            <v-list-item-content @click="removeAlarm(alarm)" class="alarmItem">
-              <v-list-item-title>
-                <v-chip class="mr-3" color="warning"> 주의 </v-chip>{{ alarm.title }}
-              </v-list-item-title>
-              <v-list-item-subtitle class="pl-15">{{
-                alarm.body
-              }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-content @click="alarmToggle()" class="alarmItem">
-              <v-list-item-title class="d-flex justify-center">
-                {{ alarmOn ? "알람 끄기" : "알람 켜기" }}
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-menu> -->
     </v-container>
     <v-divider></v-divider>
-    <!--  <v-list height="676" style="overflow-y: auto;overflow-x: hidden" dense nav rounded @mouseover="openTooltip()">
-      <v-list-item :link="true" :to="to_home" color="primary">
-        <v-list-item-icon @mouseover="openTooltip(item)">
-          <v-icon>mdi-monitor</v-icon>
-        </v-list-item-icon>
-        <v-list-item-title>모니터링</v-list-item-title>
-      </v-list-item>
-      <v-list-group v-for="(item, i) in items" :key="i" mandatory>
-        <template v-slot:activator class="d-flex">
-          <v-list-item-icon id="result">
-            <v-btn elevation="3" v-ripple="{ class: 'primary--text' }" color="white">
-              <v-icon v-text="item.icon" small color="green" @mouseover="openTooltip(item)"></v-icon>
-            </v-btn>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title class="text-subtitle-1" v-text="item.title"></v-list-item-title>
-          </v-list-item-content>
-        </template>
-        <v-list-item v-for="subItem in item.subItems" :key="subItem.title" :to="subItem.to" dense>
-          <v-list-item-content>
-            <v-list-item-title v-text="'•  ' + subItem.title"></v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list-group>
-    </v-list> -->
 
     <v-list
       height="700"
       style="overflow-y: auto; overflow-x: hidden; display: contents"
       dense
       nav
-      rounded
     >
       <v-list-item
+        class="pb-1 mx-2"
         :link="true"
         :to="to_home"
-        color="primary"
         @click="selectedPage(subItem == null)"
       >
         <v-list-item-icon @mouseover="openTooltip(item)">
@@ -225,32 +28,58 @@
         </v-list-item-icon>
         <v-list-item-title>모니터링</v-list-item-title>
       </v-list-item>
-      <v-list-group v-for="(item, i) in items" :key="i" mandatory>
+      <v-list-group
+        v-for="(item, i) in items"
+        :key="i"
+        mandatory
+        class="pb-1 mx-2"
+      >
         <template v-slot:activator>
-          <v-list-item-icon>
-            <!--    <v-btn color="white" fab x-small elevation="1">
-              <v-icon v-text="item.icon" small @mouseover="openTooltip(item)"></v-icon>
-            </v-btn>
- -->
-            <v-col id="result" class="pa-0 ma-0 d-flex align-center">
-              <v-btn
-                v-ripple="{ class: 'primary--text' }"
-                elevation="3"
-                color="white"
+          <v-list-item-icon class="shadow border-radius-md mx-2 align-center">
+            <!-- <v-icon v-text="item.icon" small @mouseover="openTooltip(item)">
+            </v-icon> -->
+            <div>
+              <svg
+                width="12px"
+                height="12px"
+                viewBox="0 0 45 40"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
               >
-                <v-icon
-                  v-text="item.icon"
-                  small
-                  @mouseover="openTooltip(item)"
-                  color="green"
+                <title>shop</title>
+                <g
+                  stroke="none"
+                  stroke-width="1"
+                  fill="none"
+                  fill-rule="evenodd"
                 >
-                </v-icon>
-              </v-btn>
-            </v-col>
+                  <g
+                    transform="translate(-1716.000000, -439.000000)"
+                    fill="#FFFFFF"
+                    fill-rule="nonzero"
+                  >
+                    <g transform="translate(1716.000000, 291.000000)">
+                      <g transform="translate(0.000000, 148.000000)">
+                        <path
+                          class="color-background"
+                          d="M46.7199583,10.7414583 L40.8449583,0.949791667 C40.4909749,0.360605034 39.8540131,0 39.1666667,0 L7.83333333,0 C7.1459869,0 6.50902508,0.360605034 6.15504167,0.949791667 L0.280041667,10.7414583 C0.0969176761,11.0460037 -1.23209662e-05,11.3946378 -1.23209662e-05,11.75 C-0.00758042603,16.0663731 3.48367543,19.5725301 7.80004167,19.5833333 L7.81570833,19.5833333 C9.75003686,19.5882688 11.6168794,18.8726691 13.0522917,17.5760417 C16.0171492,20.2556967 20.5292675,20.2556967 23.494125,17.5760417 C26.4604562,20.2616016 30.9794188,20.2616016 33.94575,17.5760417 C36.2421905,19.6477597 39.5441143,20.1708521 42.3684437,18.9103691 C45.1927731,17.649886 47.0084685,14.8428276 47.0000295,11.75 C47.0000295,11.3946378 46.9030823,11.0460037 46.7199583,10.7414583 Z"
+                          opacity="0.598981585"
+                        ></path>
+                        <path
+                          class="color-background"
+                          d="M39.198,22.4912623 C37.3776246,22.4928106 35.5817531,22.0149171 33.951625,21.0951667 L33.92225,21.1107282 C31.1430221,22.6838032 27.9255001,22.9318916 24.9844167,21.7998837 C24.4750389,21.605469 23.9777983,21.3722567 23.4960833,21.1018359 L23.4745417,21.1129513 C20.6961809,22.6871153 17.4786145,22.9344611 14.5386667,21.7998837 C14.029926,21.6054643 13.533337,21.3722507 13.0522917,21.1018359 C11.4250962,22.0190609 9.63246555,22.4947009 7.81570833,22.4912623 C7.16510551,22.4842162 6.51607673,22.4173045 5.875,22.2911849 L5.875,44.7220845 C5.875,45.9498589 6.7517757,46.9451667 7.83333333,46.9451667 L19.5833333,46.9451667 L19.5833333,33.6066734 L27.4166667,33.6066734 L27.4166667,46.9451667 L39.1666667,46.9451667 C40.2482243,46.9451667 41.125,45.9498589 41.125,44.7220845 L41.125,22.2822926 C40.4887822,22.4116582 39.8442868,22.4815492 39.198,22.4912623 Z"
+                        ></path>
+                      </g>
+                    </g>
+                  </g>
+                </g>
+              </svg>
+            </div>
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title
-              class="text-subtitle-1"
+              class="ms-1 text-subtitle-1"
               v-text="item.title"
             ></v-list-item-title>
           </v-list-item-content>
@@ -259,6 +88,7 @@
           v-for="subItem in item.subItems"
           :key="subItem.title"
           :to="subItem.to"
+          color="#3a416f"
           dense
         >
           <v-list-item-content @click="selectedPage(subItem)">
@@ -614,20 +444,3 @@ export default class Sidebar extends Vue {
 </script>
 
 <style src="./Sidebar.scss" lang="scss"></style>
-<style lang="css">
-.btn-gradient {
-  background-image: linear-gradient(
-    to right,
-    rgb(153, 218, 1),
-    rgb(49, 182, 56)
-  );
-  border: 0;
-  color: rgba(var(--text-color));
-}
-
-#result .v-btn {
-  min-width: 36px;
-  width: 36px;
-  border-radius: 11px;
-}
-</style>
