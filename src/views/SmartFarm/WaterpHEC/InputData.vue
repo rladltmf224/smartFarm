@@ -4,11 +4,11 @@
       <v-row>
         <v-col class="ma-2" md="12">
           <h4 class="searchbox-title">조회 조건</h4>
-          <v-sheet class="pa-3" color="#F6F8F9" height="80" elevation="2">
+          <v-card class="pa-3" height="80">
             <v-row class="">
               <v-col cols="2" class="pl-12 d-flex align-center">
-                <v-select class="select pt-4" :items="search_list1" label="조회항목" v-model="search_type_1"
-                  item-text="name" item-value="value" dense></v-select>
+                <v-select class="select pt-4" :items="search_list1" label="조회항목" v-model="search_type_1" item-text="name"
+                  item-value="value" dense></v-select>
               </v-col>
               <v-col md="4" class="pa-0 ma-0 d-flex align-center justify-center">
                 <v-menu ref="test_menu1" v-model="test_menu1" :close-on-content-click="false"
@@ -59,8 +59,8 @@
                 <!-- 양액EC -->
                 <p class="px-4" style="font-size: 12px">양액EC</p>
 
-                <v-range-slider v-model="EC_range" step=".1" thumb-label="always" :max="EC_max" :min="EC_min"
-                  hide-details class="align-center">
+                <v-range-slider v-model="EC_range" step=".1" thumb-label="always" :max="EC_max" :min="EC_min" hide-details
+                  class="align-center">
                   <template v-slot:append> </template>
                 </v-range-slider>
               </v-col>
@@ -73,7 +73,7 @@
             <!-- 조회버튼 -->
             <!-- 여기row
                  -->
-          </v-sheet>
+          </v-card>
         </v-col>
       </v-row>
     </v-container>
@@ -86,10 +86,10 @@
 
       <v-row>
         <v-col class="ma-2" md="12">
-          <div>
+          <v-card>
             <v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options"
-              :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" dense
-              hide-default-footer multi-sort @page-count="pageCount = $event" class="elevation-1" height="670">
+              :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" dense hide-default-footer
+              multi-sort @page-count="pageCount = $event" height="620">
               <!-- 버튼을 chip으로 표현 -->
               <template v-slot:item.inputDate="{ item }">
                 <!-- 수정전 버튼만-->
@@ -118,10 +118,11 @@
               <!-- 수정 -->
               <!-- 제어명칭 -->
             </v-data-table>
-            <div class="text-center pt-2">
-              <v-pagination v-model="page" :length="pageCount"></v-pagination>
-            </div>
-          </div>
+            <v-col>
+              <v-pagination circle v-model="page" :length="pageCount"></v-pagination>
+            </v-col>
+          </v-card>
+
         </v-col>
       </v-row>
     </v-container>
@@ -570,5 +571,11 @@ export default {
 <style>
 .select {
   max-width: 200px;
+}
+
+.v-card {
+  background-color: white;
+  box-shadow: 0 20px 27px 0 rgba(0, 0, 0, 0.05) !important;
+  border-radius: 10px;
 }
 </style>
