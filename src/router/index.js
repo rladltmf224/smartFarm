@@ -192,6 +192,11 @@ const routes = [
         name: "Schedule ",
         component: () => import("@/views/Schedule/Schedule"),
       },
+      {
+        path: "AlarmHistory",
+        name: "AlarmHistory ",
+        component: () => import("@/views/SmartFarm/Details/AlarmHistory"),
+      },
     ],
   },
 ];
