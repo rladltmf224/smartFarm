@@ -14,6 +14,8 @@
                       v-model="search_condition.jobOrder"
                       @keydown.enter="getCustomer"
                       dense
+                      solo
+                      rounded
                     ></v-text-field>
                   </v-col>
                   <v-col cols="2">
@@ -403,7 +405,7 @@ export default class ReleaseOrder extends Vue {
   releaseOrderOption: any = {};
   search_dateType: object[] = [];
   search_job_status_list: object[] = [];
-  search_condition: any={};
+  search_condition: any = {};
   max25chars: any = (v: any) => v.length <= 25 || "Input too long!";
   tabs: any = null;
   selectedId: number = -1;
