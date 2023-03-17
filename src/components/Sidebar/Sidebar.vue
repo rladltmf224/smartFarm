@@ -3,7 +3,7 @@
     app
     clipped
     permanent
-    color="#F0F3F5"
+    color="white"
     :mini-variant="mini"
     class="py-4 ps-4 border-radius-lg"
   >
@@ -36,7 +36,7 @@
       >
         <template v-slot:activator>
           <v-list-item-icon
-            class="shadow icon-btn-shadow border-radius-md mx-2 align-center"
+            class="border-radius-md mx-2 align-center"
             style="height: 28px; width: 28px; padding: 6px"
           >
             <v-icon v-text="item.icon" small @mouseover="openTooltip(item)">
@@ -88,7 +88,7 @@
     </v-list>
     <template v-slot:append v-if="!mini" @click="logout">
       <div class="pa-2">
-        <v-btn block class="btn-gradient" dark> 로그아웃 </v-btn>
+        <v-btn block color="#27d98f" dark> 로그아웃 </v-btn>
       </div>
     </template>
 

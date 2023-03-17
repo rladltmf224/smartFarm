@@ -3,7 +3,7 @@
     <v-chip small :color="whatColor()">
       <strong>{{ title }}</strong>
     </v-chip>
-    <div class="text-h5 font-weight-bold">{{ value }}</div>
+    <div class="text-h5">{{ value }}</div>
   </div>
 </template>
 

@@ -25,6 +25,6 @@ export default class Layout extends Vue {}
 
 <style lang="css">
 .background-color {
-  background: #27d98f;
+  background: #f0f3f5;
 }
 </style>

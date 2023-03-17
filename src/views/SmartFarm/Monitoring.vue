@@ -19,12 +19,7 @@
         min-width="100"
       >
         <v-card-text class="py-2">
-          <v-icon
-            v-text="item.icon"
-            @mouseover="openTooltip(item)"
-            color="#21D18E"
-          >
-          </v-icon>
+          <v-icon v-text="item.icon" @mouseover="openTooltip(item)"> </v-icon>
           <span class="text-subtitle-1 font-weight-bold">
             {{ outdoorSensor[i].sensorname }}
           </span>
@@ -41,7 +36,8 @@
       <v-btn
         :loading="loading5"
         :disabled="loading5"
-        class="ma-2 white--text btn-gradient btn-glow"
+        class="ma-2 white--text btn-glow"
+        color="#27d98f"
         fab
         x-small
         elevation="0"
