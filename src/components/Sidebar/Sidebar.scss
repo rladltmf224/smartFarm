@@ -30,6 +30,9 @@
 .v-application {
   font-family: "Pretendard" !important;
 }
+.loginCard {
+  font-family: "Pretendard" !important;
+}
 .rowBox {
   margin: 2px !important;
   height: 40px;
@@ -87,7 +90,7 @@
 
 .v-list-item--active {
   background: white;
-  box-shadow: 0 20px 27px 0 rgb(0 0 0 / 5%);
+  box-shadow: 0 10px 27px 0 rgb(0 0 0 / 5%);
   border-radius: 0.375rem;
 }
 
@@ -101,15 +104,46 @@
   // background-image: linear-gradient(310deg, #82d616, #82d616);
 }
 
-.active-item-title {
-  font-size: 20px !important;
-  color: #1976d2;
+// .active-item-title {
+//   font-size: 20px !important;
+
+//   background-color: #f3f4fd;
+//   .v-list-item__title {
+//     color: #000000;
+//   }
+// }
+
+.item_title {
+  color: #b5b4c7;
 }
-.active-group {
-  .v-list-item__icon.icon-btn-shadow {
-    background-image: linear-gradient(310deg, #21d18e, #82d616);
-    i {
-      color: white;
-    }
+
+.v-navigation-drawer__content {
+  overflow-y: hidden;
+  &:hover {
+    overflow-y: auto;
   }
+}
+
+// .v-navigation-drawer__content:hover {
+//   overflow-y: auto;
+// }
+
+.v-navigation-drawer__content::-webkit-scrollbar {
+  width: 8px; /* 스크롤바의 너비 */
+}
+
+.v-navigation-drawer__content::-webkit-scrollbar-thumb {
+  height: 15%; /* 스크롤바의 길이 */
+  //background: #4980FF; /* 스크롤바의 색상 */
+  background: #ececec; /* 스크롤바의 색상 */
+
+  border-radius: 15px;
+}
+
+.v-navigation-drawer__content::-webkit-scrollbar-track {
+  background: rgb(255, 255, 255); /*스크롤바 뒷 배경 색상*/
+}
+
+.theme--light.v-icon {
+  color: #222;
 }

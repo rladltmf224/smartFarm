@@ -1,135 +1,67 @@
 <template>
   <v-app id="inspire">
-
-
-
-    <v-main style="background-color:#E8F5E9">
+    <v-main class="login-background">
       <!-- Login Component -->
 
-
-
-
-      <v-card class="background d-flex justify-center" elevation="0">
-        <v-toolbar color="transparent" dark elevation="0">
-          <v-app-bar-nav-icon></v-app-bar-nav-icon>
-          <v-toolbar-title>
-            SmartFarm System
-          </v-toolbar-title>
-          <v-row>
-            <v-col cols="7" class="text-center mx-auto">
-              <v-btn text>Text1</v-btn>
-              <v-btn text>Text2</v-btn>
-              <v-btn text>Text3</v-btn>
-              <v-btn text>Text4</v-btn>
-              <v-btn text>Text5</v-btn>
-            </v-col>
-          </v-row>
-          <v-btn icon>
-            <v-icon>mdi-magnify</v-icon>
-          </v-btn>
-          <v-btn icon>
-            <v-icon>mdi-heart</v-icon>
-          </v-btn>
-          <v-btn icon>
-            <v-icon>mdi-dots-vertical</v-icon>
-          </v-btn>
-        </v-toolbar>
-      </v-card>
-      <v-card class="loginCard " elevation="6">
-        <div class="pa-10 ">
-          <div style="width:100px;height:100px" class="mx-auto">
-            <img src="./twim_logo_green.png" style="width:100px;">
+      <v-card class="loginCard card-shadow" rounded="xl">
+        <div class="pa-10">
+          <div style="width: 100px; height: 100px" class="mx-auto">
+            <img src="./twim_logo_green.png" style="width: 100px" />
           </div>
           <form>
             <v-row dense>
+              <font-awesome-icon icon="fa-solid fa-user-secret" />
+
               <v-col cols="12">
-                <v-text-field label="사번" outlined rounded dense prepend-inner-icon="mdi-account" v-model="username">
+                <v-text-field
+                  label="사번"
+                  solo
+                  rounded
+                  prepend-inner-icon="mdi-account"
+                  v-model="username"
+                >
                 </v-text-field>
+                <v-text-field
+                  prepend-inner-icon="mdi-lock"
+                  rounded
+                  solo
+                  type="password"
+                  label="비밀번호"
+                  v-model="password"
+                ></v-text-field>
               </v-col>
-              <v-col cols="12">
-                <v-text-field prepend-inner-icon="mdi-lock" rounded outlined dense type="password" label="비밀번호"
-                  v-model="password"></v-text-field>
+
+              <v-col cols="6">
+                <v-checkbox
+                  v-model="checkbox_ID"
+                  label="ID 저장"
+                  dense
+                ></v-checkbox>
               </v-col>
               <v-col cols="6">
-                <v-checkbox v-model="checkbox_ID" label="ID 저장" dense></v-checkbox>
-              </v-col>
-              <v-col cols="6">
-                <v-checkbox v-model="checkbox_IDPW" color="green" label="ID/PW 저장" dense></v-checkbox>
+                <v-checkbox
+                  v-model="checkbox_IDPW"
+                  label="ID/PW 저장"
+                  dense
+                ></v-checkbox>
               </v-col>
             </v-row>
 
-            <v-btn type="button" color="blue lighten-1 text-capitalize" depressed large block dark class="mb-3 gradient"
-              @click="loginManager">접속</v-btn>
+            <v-btn
+              type="button"
+              color="#16A2F1"
+              depressed
+              large
+              block
+              dark
+              class="mb-3 gradient"
+              @click="loginManager"
+              >접속</v-btn
+            >
           </form>
-          <!-- <a id="kakao-login-btn" :href="loginWithKakao()">
-                  <img
-                    src="https://k.kakaocdn.net/14/dn/btroDszwNrM/I6efHub1SN5KCJqLm1Ovx1/o.jpg"
-                    width="222"
-                    alt="카카오 로그인 버튼"
-                  />
-                </a> -->
         </div>
       </v-card>
-      <v-card elevation="0" color="transparent">
-        <v-row>
-          <v-col cols="12" class="mx-auto text-center">
-            <a href="" class="mx-4 text-decoration-none">Creative</a>
-            <a href="" class="mx-4 text-decoration-none">About Us</a>
-            <a href="" class="mx-4 text-decoration-none">Blog</a>
-            <a href="" class="mx-4 text-decoration-none">License</a>
-          </v-col>
-        </v-row>
-
-      </v-card>
-
-      <!--   <v-container style="max-width: 450px;" fill-height>
-
-        <v-layout align-center row wrap>
-          <v-flex xs12>
-
-
-
-            <v-card>
-              <div class="pa-10">
-                <h1 style="text-align: center">MES</h1>
-                <form>
-                  <v-row dense>
-                    <v-col cols="12">
-                      <v-text-field label="사번" prepend-inner-icon="mdi-account" v-model="username">
-                      </v-text-field>
-                    </v-col>
-                    <v-col cols="12">
-                      <v-text-field prepend-inner-icon="mdi-lock" type="password" label="비밀번호"
-                        v-model="password"></v-text-field>
-                    </v-col>
-                    <v-col cols="6">
-                      <v-checkbox v-model="checkbox_ID" label="ID 저장" dense></v-checkbox>
-                    </v-col>
-                    <v-col cols="6">
-                      <v-checkbox v-model="checkbox_IDPW" label="ID/PW 저장" dense></v-checkbox>
-                    </v-col>
-                  </v-row>
-
-                  <v-btn type="button" color="blue lighten-1 text-capitalize" depressed large block dark class="mb-3"
-                    @click="loginManager">접속</v-btn>
-                </form>
-             <a id="kakao-login-btn" :href="loginWithKakao()">
-                  <img
-                    src="https://k.kakaocdn.net/14/dn/btroDszwNrM/I6efHub1SN5KCJqLm1Ovx1/o.jpg"
-                    width="222"
-                    alt="카카오 로그인 버튼"
-                  />
-                </a> -->
-      <!--    </div>
-      </v-card>
-      </v-flex>
-      </v-layout>
-      <v-card class="mx-auto">
-
-      </v-card>
-      </v-container>  -->
     </v-main>
-
   </v-app>
 </template>
 
@@ -182,7 +114,6 @@ export default class Login extends Vue {
   }
 
   async loginManager(): Promise<unknown> {
-
     if (this.checkbox_ID) {
       this.check_Type = "ID";
       this.$store.commit("setSaveType", "ID");
@@ -219,7 +150,7 @@ export default class Login extends Vue {
     console.log("loginManager", this.$store.state.userId);
     if (this.$store.state.userId !== "") {
       this.$router.push({ path: "monitoring" });
-      let userId = this.$store.state.userId
+      let userId = this.$store.state.userId;
       localStorage.setItem("userId", JSON.stringify(userId));
       return;
     }
@@ -237,11 +168,6 @@ export default class Login extends Vue {
 }
 </script>
 
-
-
-
-
-
 <style lang="scss">
 .v-application .mask {
   position: absolute;
@@ -249,7 +175,7 @@ export default class Login extends Vue {
   left: 0;
   width: 100%;
   height: 100%;
-  transition: all .15s ease;
+  transition: all 0.15s ease;
 }
 
 .background {
@@ -263,19 +189,29 @@ export default class Login extends Vue {
 }
 
 .loginCard {
-  position: relative;
   width: 80%;
   max-width: 467px;
   margin: auto;
-  top: -254px;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05) !important;
+  margin-top: 13%;
 }
-</style>
 
+.login-background {
+  background-color: #e7ebee;
+  background-image: radial-gradient(
+    55% 116% at left,
+    rgb(38, 217, 143) 61%,
+    rgb(38, 217, 143) 92%,
+    transparent 92%
+  );
+}
 
-<style lang="css">
-.gradient {
-  background-image: linear-gradient(to right, rgb(153, 218, 1), rgb(49, 182, 56));
-  border: 0;
-  color: rgba(var(--text-color));
+.theme--light.v-text-field--solo > .v-input__control > .v-input__slot {
+  background: #e7ebee;
+  box-shadow: none !important;
+}
+
+.loginCard {
+  font-family: "Pretendard" !important;
 }
 </style>

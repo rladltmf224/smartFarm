@@ -8,7 +8,7 @@
           <v-spacer></v-spacer>
         </v-card-title>
         <v-card-text>
-          <v-row no-gutters>
+          <v-row dense>
             <v-col cols="3" align-self="center">
               <v-text-field
                 label="code"
@@ -29,7 +29,7 @@
               ></v-text-field>
             </v-col>
           </v-row>
-          <v-row>
+          <v-row dense>
             <v-col cols="4" align-self="center">
               <v-text-field
                 label="규격"
@@ -49,12 +49,12 @@
               ></v-select>
             </v-col>
           </v-row>
-          <v-row>
+          <v-row dense>
             <v-col cols="6" align-self="center">
               <v-select
                 :items="storageData"
                 label="지정창고"
-                :value="itemData.storageId"
+                v-model="itemData.storageId"
                 item-text="name"
                 item-value="id"
                 @change="getLocation"
@@ -64,7 +64,7 @@
               <v-select
                 :items="locationData"
                 label="지정구역"
-                :value="itemData.storageLocationId"
+                v-model="itemData.storageLocationId"
                 item-text="area"
                 item-value="storageLocationId"
               ></v-select>
@@ -91,6 +91,8 @@ import cfg from "./config/index";
 @Component
 export default class ItemModal extends Vue {
   items_type: object[] = [];
+  storageID: number = 0;
+  locationID: number = 0;
 
   @Prop({ required: true }) readonly open: boolean;
   @Prop({
@@ -160,6 +162,7 @@ export default class ItemModal extends Vue {
 
   getLocation(item: object) {
     console.log("location", item);
+    //this.itemData.storageId = item.id;
     this.$emit("changeStorage", item);
   }
 

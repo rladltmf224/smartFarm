@@ -10,7 +10,7 @@ export default {
       { text: "창고", value: "storageName" },
       { text: "구역", value: "storageArea" },
       { text: "공정", value: "process" },
-      { text: "수정", value: "edit" },
+      { text: "수정/삭제", value: "edit" },
     ],
     processList: [
       { text: "공정명", value: "processName" },

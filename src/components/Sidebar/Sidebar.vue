@@ -5,11 +5,12 @@
     permanent
     color="white"
     :mini-variant="mini"
-    class="py-4 ps-4 border-radius-lg"
+    class="py-4 border-radius-lg hover"
   >
     <v-container class="px-0 text-h4 sidebar-main-text home" @click="goHome">
     </v-container>
     <v-divider></v-divider>
+    <font-awesome-icon :icon="['fas', 'angle-down']" />
 
     <v-list
       height="700"
@@ -31,7 +32,7 @@
       <v-list-group
         v-for="(item, i) in items"
         :key="i"
-        class="pb-1 mx-2"
+        class="pb-1 mx-2 box-shadow"
         active-class="active-group"
       >
         <template v-slot:activator>
@@ -53,12 +54,15 @@
           v-for="subItem in item.subItems"
           :key="subItem.title"
           :to="subItem.to"
-          color="#3a416f"
-          class="ps-7"
+          color="F3F4FD"
+          class="ps-10"
+          active-class="active-item-title"
+          active-color="red"
           dense
         >
           <v-list-item-content @click="selectedPage(subItem)">
             <v-list-item-title
+              color="#b5b4c7"
               v-text="'•  ' + subItem.title"
             ></v-list-item-title>
           </v-list-item-content>
@@ -86,9 +90,11 @@
         </v-btn>
       </v-list-item> -->
     </v-list>
-    <template v-slot:append v-if="!mini" @click="logout">
+    <template v-slot:append v-if="!mini">
       <div class="pa-2">
-        <v-btn block color="#27d98f" dark> 로그아웃 </v-btn>
+        <v-btn block color="#27d98f" dark elevation="0" @click="logout">
+          로그아웃
+        </v-btn>
       </div>
     </template>
 
@@ -410,3 +416,4 @@ export default class Sidebar extends Vue {
 </script>
 
 <style src="./Sidebar.scss" lang="scss"></style>
+<style src="./Sidebar.sass" lang="sass"></style>

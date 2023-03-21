@@ -1,7 +1,7 @@
 input[type="text"] {
-  background-color: white;
-  border: 1px solid rgba(97, 117, 134, 0.2);
-  border-radius: 4px;
+  background-color: rgb(146, 73, 73);
+  border: 1px solid rgba(148, 148, 148, 0.479);
+  border-radius: 10px;
 }
 
 .bg-gradient-success {
@@ -18,4 +18,9 @@ input[type="text"] {
 
 .card-shadow {
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05) !important;
+}
+
+.theme--light.v-text-field--solo > .v-input__control > .v-input__slot {
+  background: #e7ebee;
+  box-shadow: none !important;
 }

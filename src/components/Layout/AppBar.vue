@@ -1,6 +1,6 @@
 <template>
   <v-app-bar color="transparent" dense elevation="0">
-    <v-app-bar-nav-icon></v-app-bar-nav-icon>
+    <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
     <v-toolbar-title>
       <div class="AppBar">
         <div>
@@ -9,14 +9,6 @@
       </div>
     </v-toolbar-title>
     <v-spacer></v-spacer>
-    <v-btn elevation="0" color="transparent" rounded>
-      <v-badge bordered bottom color="red" dot offset-x="10" offset-y="10">
-        <v-avatar size="30" class="mx-2">
-          <v-img src="https://randomuser.me/api/portraits/men/85.jpg" />
-        </v-avatar>
-      </v-badge>
-      <span>{{ userId }}님</span>
-    </v-btn>
 
     <v-menu offset-y>
       <template v-slot:activator="{ on, attrs }">
@@ -30,9 +22,8 @@
             <v-icon
               v-if="alarmOn"
               :color="alarmList.length > 0 ? 'error' : 'black'"
-              large
             >
-              mdi-bell
+              mdi-bell-outline
             </v-icon>
             <v-icon v-if="!alarmOn" color="grey" large> mdi-bell-off </v-icon>
           </v-btn>
@@ -64,6 +55,14 @@
         </v-list-item>
       </v-list>
     </v-menu>
+    <v-btn elevation="0" color="transparent" rounded>
+      <v-badge bordered bottom color="red" dot offset-x="10" offset-y="10">
+        <v-avatar size="30" class="mx-2">
+          <v-img src="https://randomuser.me/api/portraits/men/85.jpg" />
+        </v-avatar>
+      </v-badge>
+      <span>{{ userId }}님</span>
+    </v-btn>
   </v-app-bar>
 </template>
 
