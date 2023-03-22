@@ -32,7 +32,7 @@
       <v-list-group
         v-for="(item, i) in items"
         :key="i"
-        class="pb-1 mx-2 box-shadow"
+        class="pb-1 mx-2 card-shadow"
         active-class="active-group"
       >
         <template v-slot:activator>

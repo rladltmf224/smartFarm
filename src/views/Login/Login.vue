@@ -5,12 +5,12 @@
 
       <v-card class="loginCard card-shadow" rounded="xl">
         <div class="pa-10">
-          <div style="width: 100px; height: 100px" class="mx-auto">
-            <img src="./twim_logo_green.png" style="width: 100px" />
-          </div>
           <form>
             <v-row dense>
               <font-awesome-icon icon="fa-solid fa-user-secret" />
+              <div style="width: 100px; height: 100px" class="mx-auto">
+                <img src="./twim_logo_green.png" style="width: 100px" />
+              </div>
 
               <v-col cols="12">
                 <v-text-field
@@ -19,6 +19,8 @@
                   rounded
                   prepend-inner-icon="mdi-account"
                   v-model="username"
+                  hide-details="auto"
+                  class="pb-4"
                 >
                 </v-text-field>
                 <v-text-field
@@ -28,6 +30,8 @@
                   type="password"
                   label="비밀번호"
                   v-model="password"
+                  @keydown.enter="loginManager"
+                  hide-details="auto"
                 ></v-text-field>
               </v-col>
 
@@ -193,7 +197,8 @@ export default class Login extends Vue {
   max-width: 467px;
   margin: auto;
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05) !important;
-  margin-top: 13%;
+  margin-top: 11%;
+  font-family: "Pretendard" !important;
 }
 
 .login-background {
@@ -209,9 +214,5 @@ export default class Login extends Vue {
 .theme--light.v-text-field--solo > .v-input__control > .v-input__slot {
   background: #e7ebee;
   box-shadow: none !important;
-}
-
-.loginCard {
-  font-family: "Pretendard" !important;
 }
 </style>

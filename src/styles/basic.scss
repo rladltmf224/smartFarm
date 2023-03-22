@@ -23,4 +23,9 @@ input[type="text"] {
 .theme--light.v-text-field--solo > .v-input__control > .v-input__slot {
   background: #e7ebee;
   box-shadow: none !important;
+  border-radius: 10px !important;
+}
+
+.text-box-style {
+  border-radius: 10px !important;
 }

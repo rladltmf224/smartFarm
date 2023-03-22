@@ -479,7 +479,7 @@
                           <div
                             class="d-flex justify-end justify-sm-space-between flex-nowrap"
                           >
-                            <div width="20">
+                            <div class="setting_text_width">
                               <v-text-field
                                 dense
                                 v-model="data.minValue"
@@ -490,24 +490,29 @@
                                 @change="changeValue(item)"
                                 :readonly="!item.modifiedBtn"
                                 reverse
-                                class="setting_text_width"
+                                solo
+                                hide-details="false"
                               >
                               </v-text-field>
                             </div>
 
-                            <span class="px-4">~</span>
-                            <v-text-field
-                              dense
-                              min="1"
-                              max="100"
-                              type="number"
-                              prefix="%"
-                              v-model="data.maxValue"
-                              @change="changeValue(item)"
-                              :readonly="!item.modifiedBtn"
-                              reverse
-                              class="setting_text_width"
-                            ></v-text-field>
+                            <span class="py-2">~</span>
+                            <div class="setting_text_width">
+                              <v-text-field
+                                dense
+                                min="1"
+                                max="100"
+                                type="number"
+                                prefix="%"
+                                v-model="data.maxValue"
+                                @change="changeValue(item)"
+                                :readonly="!item.modifiedBtn"
+                                reverse
+                                solo
+                                hide-details="false"
+                              ></v-text-field>
+                            </div>
+
                             <v-btn
                               small
                               icon
@@ -614,7 +619,7 @@
                                 @change="changeValue(item)"
                                 :readonly="!item.modifiedBtn"
                                 reverse
-                                class="setting_text_width"
+                                class="setting-text-width"
                               >
                               </v-text-field>
                             </div>
@@ -630,8 +635,16 @@
                               @change="changeValue(item)"
                               :readonly="!item.modifiedBtn"
                               reverse
-                              class="setting_text_width"
+                              class="setting-text-width"
                             ></v-text-field>
+                            <v-btn-toggle mandatory v-model="data.acType">
+                              <v-btn color="blue" value="cool">
+                                <span>냉방</span>
+                              </v-btn>
+                              <v-btn color="red" value="heat">
+                                <span>난방</span>
+                              </v-btn>
+                            </v-btn-toggle>
                             <v-btn
                               small
                               icon
@@ -939,13 +952,6 @@ export default {
           value: "controlStatus",
           sortable: false,
           width: "2%",
-          align: "center",
-        },
-        {
-          text: "주기",
-          value: "repeatPeriod",
-          sortable: false,
-          width: "4%",
           align: "center",
         },
 
@@ -2003,7 +2009,7 @@ div {
   }
 }
 
-.setting_text_width {
-  width: 60px;
+.setting-text-width {
+  width: 80px !important;
 }
 </style>

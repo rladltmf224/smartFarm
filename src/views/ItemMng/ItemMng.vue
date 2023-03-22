@@ -1,10 +1,10 @@
 <template>
   <div>
     <v-container fluid>
-      <v-row no-gutters>
+      <v-row>
         <v-col class="ma-2" md="12">
           <span class="searchbox-title">조회 조건</span>
-          <v-card class="card-shadow pa-3" height="70">
+          <v-card class="card-shadow pa-3" height="65">
             <v-row dense>
               <v-col cols="2">
                 <v-text-field
@@ -13,7 +13,7 @@
                   @keydown.enter="getCustomer"
                   dense
                   solo
-                  rounded="xl1"
+                  rounded
                   elevation-0
                 ></v-text-field>
               </v-col>
@@ -26,7 +26,7 @@
                   @change="getCustomer"
                   dense
                   solo
-                  rounded="xl"
+                  rounded
                 ></v-select>
               </v-col>
               <v-col cols="2">
@@ -36,7 +36,7 @@
                   @keydown.enter="getCustomer"
                   dense
                   solo
-                  rounded="xl"
+                  rounded
                 ></v-text-field>
               </v-col>
               <!-- <v-col cols="1">
@@ -50,8 +50,8 @@
                 ></v-text-field>
               </v-col> -->
 
-              <v-col class="pt-3 text-right" offset="4" cols="2">
-                <v-btn color="primary" @click="getCustomer" elevation="0">
+              <v-col class="text-right" offset="4" cols="2">
+                <v-btn color="primary" @click="getCustomer" large elevation="0">
                   조회
                 </v-btn>
               </v-col>
@@ -62,13 +62,12 @@
       <v-row no-gutters>
         <v-col class="ma-2" md="12">
           <v-row dense class="mb-2">
-            <v-col md="2">
+            <v-col md="2" align-self="center">
               <span class="searchbox-title">품목 목록</span>
             </v-col>
             <v-col class="text-right" offset-md="7" md="3">
               <v-btn
                 class="ml-1"
-                small
                 color="primary"
                 @click="openModal"
                 elevation="0"
@@ -78,7 +77,7 @@
           </v-row>
           <v-card>
             <v-data-table
-              height="620"
+              height="650"
               :headers="headers"
               :items="customer_list"
               fixed-header
@@ -108,7 +107,6 @@
                 <v-btn
                   v-show="item.type == '완제품'"
                   color="primary"
-                  small
                   @click="openProcessModal(item)"
                   elevation="0"
                   >공정관리</v-btn

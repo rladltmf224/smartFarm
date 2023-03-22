@@ -2,7 +2,7 @@
   <div>
     <!-- 생성 모달 -->
     <v-dialog v-model="openModal" max-width="600px">
-      <v-card>
+      <v-card class="box-radius">
         <v-card-title>
           <span>{{ editedType ? "품목 생성" : "품목 수정" }}</span>
           <v-spacer></v-spacer>
@@ -10,74 +10,101 @@
         <v-card-text>
           <v-row dense>
             <v-col cols="3" align-self="center">
+              <span>code</span>
               <v-text-field
-                label="code"
                 v-model="itemData.code"
                 disabled
+                solo
+                hide-details="false"
+                class="text-box-style"
               ></v-text-field>
             </v-col>
-            <v-col cols="3" align-self="center">
+            <!-- <v-col cols="3" align-self="center">
               <v-text-field
                 label="버전"
                 v-model="itemData.version"
+                solo
+                rounded="xl"
               ></v-text-field>
-            </v-col>
+            </v-col> -->
             <v-col cols="6" align-self="center">
+              <span>품목명</span>
               <v-text-field
-                label="품목명"
                 v-model="itemData.name"
+                solo
+                hide-details="false"
+                class="text-box-style"
               ></v-text-field>
             </v-col>
           </v-row>
           <v-row dense>
             <v-col cols="4" align-self="center">
+              <span>규격</span>
               <v-text-field
-                label="규격"
                 v-model="itemData.standard"
+                solo
+                hide-details="false"
+                class="text-box-style"
               ></v-text-field>
             </v-col>
             <v-col cols="4" align-self="center">
-              <v-text-field label="unit" v-model="itemData.unit"></v-text-field>
+              <span>unit</span>
+              <v-text-field
+                v-model="itemData.unit"
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-text-field>
             </v-col>
             <v-col cols="4" align-self="center">
+              <span>타입</span>
               <v-select
                 :items="items_type"
-                label="타입"
                 v-model="itemData.type"
                 item-text="name"
                 item-value="name"
+                solo
+                hide-details="false"
+                class="text-box-style"
               ></v-select>
             </v-col>
           </v-row>
           <v-row dense>
             <v-col cols="6" align-self="center">
+              <span>지정창고</span>
               <v-select
                 :items="storageData"
-                label="지정창고"
                 v-model="itemData.storageId"
                 item-text="name"
                 item-value="id"
                 @change="getLocation"
+                solo
+                hide-details="false"
+                class="text-box-style"
               ></v-select>
             </v-col>
             <v-col cols="6" align-self="center">
+              <span>지정구역</span>
               <v-select
                 :items="locationData"
-                label="지정구역"
                 v-model="itemData.storageLocationId"
                 item-text="area"
                 item-value="storageLocationId"
+                solo
+                hide-details="false"
+                class="text-box-style"
               ></v-select>
             </v-col>
           </v-row>
         </v-card-text>
         <v-card-actions>
-          <v-col class="text-right">
-            <v-btn color="success" text @click="clickSaveInfo"> 저장 </v-btn>
-            <v-btn color="primary" text @click="openModal = false">
-              닫기
-            </v-btn>
-          </v-col>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="clickSaveInfo" elevation="0">
+            저장
+          </v-btn>
+          <v-btn color="error" @click="openModal = false" elevation="0">
+            닫기
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -197,5 +224,12 @@ export default class ItemModal extends Vue {
   }
 }
 </script>
+<style lang="scss">
+.text-box-style {
+  border-radius: 10px !important;
+}
+</style>
 
-<style></style>
+<style lang="sass">
+$text-field-border-radius:10px
+</style>
