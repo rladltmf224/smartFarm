@@ -2058,6 +2058,8 @@ export default class Schedule extends Vue {
   }
 
   clickedExisting(item: any, row: any) {
+    this.titleList = JSON.parse(JSON.stringify(this.resetTypeData));
+    this.secondTitleList = JSON.parse(JSON.stringify(this.secondResetTypeData));
     this.clickedExistingId = item.workScheduleId;
     this.scheduleData.cropName = item.cropName;
     this.scheduleData.varietyName = item.varietyName;
