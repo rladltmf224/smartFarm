@@ -8,6 +8,40 @@
     class="py-4 border-radius-lg hover"
   >
     <v-container class="px-0 text-h4 sidebar-main-text home" @click="goHome">
+
+      <!--   <v-icon v-if="!mini" @click.stop="mini = !mini" color="lightgrey" transparent>
+        mdi-chevron-left
+      </v-icon> -->
+      <!-- 
+      <v-icon v-else @click.stop="mini = !mini" color="lightgrey">
+        mdi-arrow-expand-right
+      </v-icon> -->
+      <!--     <v-icon v-else @click.stop="mini = !mini" color="lightgrey">mdi-chevron-right</v-icon> -->
+      <v-list height="100" dense>
+        <v-list-item class="px-2">
+          <v-btn icon v-if="mini" @click="mini = !mini">
+            <v-icon>mdi-page-last </v-icon>
+          </v-btn>
+          <v-list-item-title></v-list-item-title>
+          <v-btn icon @click.stop="mini = !mini">
+            <v-icon>mdi-page-first</v-icon>
+          </v-btn>
+        </v-list-item>
+        <v-list-item class="px-2">
+          <v-list-item-avatar>
+            <v-img src="https://randomuser.me/api/portraits/men/85.jpg" />
+          </v-list-item-avatar>
+          <v-list-item-title
+            class="ListItemClass d-flex justify-center flex-column"
+          >
+            <h3 class="my-1">{{ userId }}님</h3>
+            <span> 등급:관리자 </span>
+          </v-list-item-title>
+
+          <Alarm></Alarm>
+        </v-list-item>
+      </v-list>
+
     </v-container>
     <v-divider></v-divider>
     <font-awesome-icon :icon="['fas', 'angle-down']" />
@@ -32,8 +66,13 @@
       <v-list-group
         v-for="(item, i) in items"
         :key="i"
+
         class="pb-1 mx-2 card-shadow"
         active-class="active-group"
+
+        mandatory
+        @click="test(item)"
+
       >
         <template v-slot:activator>
           <v-list-item-icon
@@ -123,11 +162,13 @@ import { Component, Vue, Ref, Watch } from "vue-property-decorator";
 import SidebarUserInfo from "./SidebarUserInfo.vue";
 import SidebarMySetting from "./SidebarMySetting.vue";
 import { mapGetters } from "vuex";
+import Alarm from "./Alarm.vue";
 
 @Component({
   components: {
     SidebarUserInfo,
     SidebarMySetting,
+    Alarm,
   },
   computed: {
     ...mapGetters({
@@ -217,6 +258,10 @@ export default class Sidebar extends Vue {
             title: "이력 조회",
             to: "DetailHistory",
           },
+          {
+            title: "알람이력 조회",
+            to: "AlarmHistory",
+          },
         ],
       }
     );
@@ -287,6 +332,10 @@ export default class Sidebar extends Vue {
     }
   }
 
+  test(item: any) {
+    console.log("리스트", item.title);
+  }
+
   goHome(): void {
     this.$router.push("/monitoring").catch(() => {});
 
@@ -307,6 +356,7 @@ export default class Sidebar extends Vue {
   }
 
   selectedPage(subItem: any) {
+    console.log("서브아이템서브아이템서브아이템", subItem);
     if (subItem.title == undefined) {
       this.$store.commit("setPageName", "모니터링");
       let pageName = "모니터링";

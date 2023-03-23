@@ -2,7 +2,7 @@
   <div>
     <v-container dense class="ma-0 pa-0">
       <v-col class="pa-0 ma-0" md="12">
-        <v-sheet class="mx-4 mt-3 pa-0 ma-0 d-flex align-center" color="#F6F8F9" height="60" elevation="2">
+        <v-card class="mx-4 mt-3 pa-0 ma-0 d-flex align-center" height="60">
           <v-row>
             <v-col cols="12 " class="d-flex">
               <v-col cols="2" class="">
@@ -30,8 +30,8 @@
               <!-- 슬라이더 -->
               <v-col class="pr-12 d-flex align-center mt-4" md="2">
                 <p class="px-4" style="font-size: 12px">양액pH</p>
-                <v-range-slider v-model="range_ph" step=".1" :max="max_ph" thumb-label="always" :min="min_ph"
-                  hide-details class="align-center">
+                <v-range-slider v-model="range_ph" step=".1" :max="max_ph" thumb-label="always" :min="min_ph" hide-details
+                  class="align-center">
                   <template v-slot:prepend> </template>
                   <template v-slot:append> </template>
                 </v-range-slider>
@@ -40,8 +40,8 @@
               </v-col>
               <v-col class="pr-12 d-flex align-center mt-4" md="2">
                 <p class="px-4" style="font-size: 12px">양액EC</p>
-                <v-range-slider v-model="range_ec" step=".1" :max="max_ec" thumb-label="always" :min="min_ec"
-                  hide-details class="align-center">
+                <v-range-slider v-model="range_ec" step=".1" :max="max_ec" thumb-label="always" :min="min_ec" hide-details
+                  class="align-center">
                   <template v-slot:prepend> </template>
                   <template v-slot:append> </template>
                 </v-range-slider>
@@ -55,7 +55,7 @@
               <v-row></v-row>
             </v-col>
           </v-row>
-        </v-sheet>
+        </v-card>
       </v-col>
     </v-container>
     <v-container fluid="fluid" class="pa-0 pa-0">
@@ -92,27 +92,17 @@
             <h5 class="searchbox-title">양액pH 데이터 표</h5>
           </v-col>
           <!-- 데이터 테이블 -->
-          <div>
-            <v-data-table
-              :headers="datas_header"
-              :items="datas"
-              :page.sync="page"
-              :options.sync="options"
-              :server-items-length="totalData"
-              :items-per-page="itemsPerPage"
-              :loading="loading"
-              hide-default-footer
-              class="elevation-1"
-              @page-count="pageCount = $event"
-              dense
-              multi-sort
-            >
 
+          <v-card>
+            <v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options" height="620"
+              :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" hide-default-footer
+              @page-count="pageCount = $event" dense multi-sort>
             </v-data-table>
-            <div class="text-center pt-2">
-              <v-pagination v-model="page" :length="pageCount"></v-pagination>
-            </div>
-          </div>
+            <v-col>
+              <v-pagination circle v-model="page" :length="pageCount"></v-pagination>
+            </v-col>
+          </v-card>
+
         </v-col>
       </v-row>
     </v-container>
@@ -586,5 +576,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+.v-card {
+  background-color: white;
+  box-shadow: 0 20px 27px 0 rgba(0, 0, 0, 0.05) !important;
+}
 </style>

@@ -4,119 +4,54 @@
       <v-row class="">
         <v-col class="ma-2" md="12">
           <h4 class="searchbox-title">조회 조건</h4>
-          <v-sheet class="pa-3" color="#F6F8F9" height="80" elevation="2">
+          <v-card class="pa-3" height="80">
             <v-row>
               <v-col cols="12" class="">
                 <v-row class="">
                   <v-col cols="2" class="d-flex align-center">
-                    <v-select
-                      :items="search_list2"
-                      label="구역항목"
-                      v-model="search_type_2"
-                      item-text="facilityName"
-                      item-value="facilityId"
-                      @change="changeRoomData()"
-                      dense
-                    ></v-select>
+                    <v-select :items="search_list2" label="구역항목" v-model="search_type_2" item-text="facilityName"
+                      item-value="facilityId" @change="changeRoomData()" dense></v-select>
                   </v-col>
                   <v-col cols="2" class="d-flex align-center">
-                    <v-select
-                      :items="search_list1"
-                      label="제어항목"
-                      v-model="search_type_1"
-                      item-text="equipmentName"
-                      item-value="equipmentId"
-                      :disabled="search_list1.length == 0"
-                      dense
-                      multiple
-                    ></v-select>
+                    <v-select :items="search_list1" label="제어항목" v-model="search_type_1" item-text="equipmentName"
+                      item-value="equipmentId" :disabled="search_list1.length == 0" dense multiple></v-select>
                   </v-col>
 
                   <v-col md="2" class="d-flex align-center">
                     <!-- 시작일 -->
 
-                    <v-menu
-                      ref="menu1"
-                      v-model="menu1"
-                      :close-on-content-click="false"
-                      :return-value.sync="s_date"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="290px"
-                    >
+                    <v-menu ref="menu1" v-model="menu1" :close-on-content-click="false" :return-value.sync="s_date"
+                      transition="scale-transition" offset-y min-width="290px">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="s_date"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
+                        <v-text-field v-model="s_date" prepend-icon="mdi-calendar" readonly v-bind="attrs"
+                          v-on="on"></v-text-field>
                       </template>
-                      <v-date-picker
-                        v-model="s_date"
-                        no-title
-                        scrollable
-                        :max="e_date"
-                      >
+                      <v-date-picker v-model="s_date" no-title scrollable :max="e_date">
                         <v-spacer></v-spacer>
-                        <v-btn text color="primary" @click="menu1 = false"
-                          >Cancel</v-btn
-                        >
-                        <v-btn
-                          text
-                          color="primary"
-                          @click="s_date_search(s_date)"
-                          >OK</v-btn
-                        >
+                        <v-btn text color="primary" @click="menu1 = false">Cancel</v-btn>
+                        <v-btn text color="primary" @click="s_date_search(s_date)">OK</v-btn>
                       </v-date-picker>
                     </v-menu>
 
                     <!-- 시작일 -->
                   </v-col>
                   <!-- 종료일 -->
-
                   <v-col md="2" class="d-flex align-center">
-                    <v-menu
-                      ref="menu2"
-                      v-model="menu2"
-                      :close-on-content-click="false"
-                      :return-value.sync="e_date"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="290px"
-                    >
+                    <v-menu ref="menu2" v-model="menu2" :close-on-content-click="false" :return-value.sync="e_date"
+                      transition="scale-transition" offset-y min-width="290px">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="e_date"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
+                        <v-text-field v-model="e_date" prepend-icon="mdi-calendar" readonly v-bind="attrs"
+                          v-on="on"></v-text-field>
                       </template>
-                      <v-date-picker
-                        v-model="e_date"
-                        no-title
-                        scrollable
-                        :min="s_date"
-                        :max="date"
-                      >
+                      <v-date-picker v-model="e_date" no-title scrollable :min="s_date" :max="date">
                         <v-spacer></v-spacer>
-                        <v-btn text color="primary" @click="menu2 = false"
-                          >Cancel</v-btn
-                        >
-                        <v-btn
-                          text
-                          color="primary"
-                          @click="e_date_search(e_date)"
-                          >OK</v-btn
-                        >
+                        <v-btn text color="primary" @click="menu2 = false">Cancel</v-btn>
+                        <v-btn text color="primary" @click="e_date_search(e_date)">OK</v-btn>
                       </v-date-picker>
                     </v-menu>
-
-                    <!-- 종료일 --> </v-col
-                  ><v-col cols="1">
+                  </v-col>
+                  <v-spacer></v-spacer>
+                  <v-col cols="1">
                     <v-col class="text-right d-flex align-center">
                       <v-btn color="primary" @click="getHistory()">
                         조회
@@ -126,7 +61,7 @@
                 </v-row>
               </v-col>
             </v-row>
-          </v-sheet>
+          </v-card>
         </v-col>
       </v-row>
     </v-container>
@@ -139,37 +74,19 @@
             </v-col>
           </v-row>
 
-          <div>
-            <v-data-table
-              :headers="datas_header"
-              :items="datas"
-              :page.sync="page"
-              :options.sync="options"
-              :server-items-length="totalData"
-              :items-per-page="itemsPerPage"
-              :loading="loading"
-              hide-default-footer
-              class="elevation-1"
-              @page-count="pageCount = $event"
-              dense
-              :height="700"
-              multi-sort
-            >
+          <v-card>
+            <v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options"
+              :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" hide-default-footer
+              @page-count="pageCount = $event" dense :height="620" multi-sort>
               <!-- 버튼을 chip으로 표현 -->
               <template v-slot:item.before="{ item }">
                 <!-- 수정전 버튼만-->
-                <div
-                  v-if="
-                    item.before == 'ON' ||
-                    item.before == 'OFF' ||
-                    item.before == 'AUTO'
-                  "
-                >
-                  <v-chip
-                    :color="getColor(item.before)"
-                    dark
-                    class="d-flex justify-center"
-                  >
+                <div v-if="
+                  item.before == 'ON' ||
+                  item.before == 'OFF' ||
+                  item.before == 'AUTO'
+                ">
+                  <v-chip :color="getColor(item.before)" dark class="d-flex justify-center">
                     {{ item.settingTemperatureBefore || item.before }}
                   </v-chip>
                 </div>
@@ -179,18 +96,12 @@
               </template>
               <template v-slot:item.after="{ item }">
                 <!-- 수정후 버튼만 -->
-                <div
-                  v-if="
-                    item.after == 'ON' ||
-                    item.after == 'AUTO' ||
-                    item.after == 'OFF'
-                  "
-                >
-                  <v-chip
-                    :color="getColor(item.after)"
-                    dark
-                    class="d-flex justify-center"
-                  >
+                <div v-if="
+                  item.after == 'ON' ||
+                  item.after == 'AUTO' ||
+                  item.after == 'OFF'
+                ">
+                  <v-chip :color="getColor(item.after)" dark class="d-flex justify-center">
                     {{ item.settingTemperatureAfter || item.after }}
                   </v-chip>
                 </div>
@@ -199,50 +110,33 @@
                 <!-- <div v-else>{{ item.after }}</div> -->
               </template>
               <template v-slot:item.humidifier="{ item }">
-                <v-chip
-                  v-if="item.humidifier"
-                  :color="getColor(item.humidifier)"
-                  dark
-                  class="d-flex justify-center"
-                >
+                <v-chip v-if="item.humidifier" :color="getColor(item.humidifier)" dark class="d-flex justify-center">
                   {{ item.humidifier }}
                 </v-chip>
               </template>
               <template v-slot:item.airFan="{ item }">
-                <v-chip
-                  v-if="item.airFan"
-                  :color="getColor(item.airFan)"
-                  dark
-                  class="d-flex justify-center"
-                >
+                <v-chip v-if="item.airFan" :color="getColor(item.airFan)" dark class="d-flex justify-center">
                   {{ item.airFan }}
                 </v-chip>
               </template>
               <template v-slot:item.ledFirst="{ item }">
-                <v-chip
-                  v-if="item.ledFirst"
-                  :color="getColor(item.ledFirst)"
-                  dark
-                  class="d-flex justify-center"
-                >
+                <v-chip v-if="item.ledFirst" :color="getColor(item.ledFirst)" dark class="d-flex justify-center">
                   {{ item.ledFirst }}
                 </v-chip>
               </template>
               <template v-slot:item.ledSecond="{ item }">
-                <v-chip
-                  v-if="item.ledSecond"
-                  :color="getColor(item.ledSecond)"
-                  dark
-                  class="d-flex justify-center"
-                >
+                <v-chip v-if="item.ledSecond" :color="getColor(item.ledSecond)" dark class="d-flex justify-center">
                   {{ item.ledSecond }}
                 </v-chip>
               </template>
             </v-data-table>
             <div class="text-center pt-2">
-              <v-pagination v-model="page" :length="pageCount"></v-pagination>
+              <v-col>
+                <v-pagination v-model="page" circle :length="pageCount"></v-pagination>
+              </v-col>
             </div>
-          </div>
+
+          </v-card>
         </v-col>
       </v-row>
     </v-container>
@@ -262,7 +156,7 @@ export default {
       page: 1,
       totalData: 0, //총 데이타의 개수 백엔드에서받아서 교체할것임
       loading: false,
-      itemsPerPage: 20,
+      itemsPerPage: 18,
       pageCount: 10,
       options: {},
       datas_header: [
@@ -476,5 +370,10 @@ export default {
 .v-chip {
   height: 27px;
   width: 60px;
+}
+
+.v-card {
+  background-color: white;
+  box-shadow: 0 20px 27px 0 rgba(0, 0, 0, 0.05) !important;
 }
 </style>

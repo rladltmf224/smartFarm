@@ -4,7 +4,7 @@
       <v-row>
         <v-col class="ma-2" md="12">
           <h4 class="searchbox-title">조회 조건</h4>
-          <v-sheet class="pa-3" color="#F6F8F9" height="140" elevation="2">
+          <v-card class="pa-3" height="140">
             <v-row>
               <v-col cols="10">
                 <v-row>
@@ -17,132 +17,65 @@
                       solo
                       rounded
                     ></v-text-field>
+
                   </v-col>
                   <v-col cols="2">
-                    <v-text-field
-                      label="거래처명 or 코드"
-                      v-model="search_condition.customer"
-                      @keydown.enter="getCustomer"
-                      dense
-                    ></v-text-field>
+                    <v-text-field label="거래처명 or 코드" v-model="search_condition.customer" @keydown.enter="getCustomer"
+                      dense></v-text-field>
                   </v-col>
                   <v-col cols="2">
-                    <v-text-field
-                      label="작업지시서 담당자"
-                      v-model="search_condition.jobOrderManager"
-                      @keydown.enter="getCustomer"
-                      dense
-                    ></v-text-field>
+                    <v-text-field label="작업지시서 담당자" v-model="search_condition.jobOrderManager"
+                      @keydown.enter="getCustomer" dense></v-text-field>
                   </v-col>
                   <v-col cols="2">
-                    <v-select
-                      :items="search_job_status_list"
-                      v-model="search_condition.jobOrderStatus"
-                      label="작업지시서 상태"
-                      item-text="name"
-                      item-value="value"
-                      dense
-                    ></v-select>
+                    <v-select :items="search_job_status_list" v-model="search_condition.jobOrderStatus" label="작업지시서 상태"
+                      item-text="name" item-value="value" dense></v-select>
                   </v-col>
                   <v-col cols="3">
-                    <v-text-field
-                      label="작업지시서 메모"
-                      v-model="search_condition.jobOrderMemo"
-                      @keydown.enter="getCustomer"
-                      dense
-                    ></v-text-field>
+                    <v-text-field label="작업지시서 메모" v-model="search_condition.jobOrderMemo" @keydown.enter="getCustomer"
+                      dense></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row>
                   <v-col cols="2">
-                    <v-select
-                      :items="search_dateType"
-                      v-model="search_condition.dateType"
-                      label="날짜타입"
-                      item-text="name"
-                      item-value="value"
-                      dense
-                    ></v-select>
+                    <v-select :items="search_dateType" v-model="search_condition.dateType" label="날짜타입" item-text="name"
+                      item-value="value" dense></v-select>
                   </v-col>
                   <v-col md="2">
-                    <v-menu
-                      ref="startDate"
-                      v-model="startDate"
-                      :close-on-content-click="false"
-                      :return-value.sync="search_condition.startDate"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
+                    <v-menu ref="startDate" v-model="startDate" :close-on-content-click="false"
+                      :return-value.sync="search_condition.startDate" transition="scale-transition" offset-y
+                      min-width="auto">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="search_condition.startDate"
-                          label="시작일"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                          dense
-                        ></v-text-field>
+                        <v-text-field v-model="search_condition.startDate" label="시작일" prepend-icon="mdi-calendar"
+                          readonly v-bind="attrs" v-on="on" dense></v-text-field>
                       </template>
-                      <v-date-picker
-                        v-model="search_condition.startDate"
-                        no-title
-                        scrollable
-                        locale="ko-KR"
-                        :max="search_condition.endDate"
-                      >
+                      <v-date-picker v-model="search_condition.startDate" no-title scrollable locale="ko-KR"
+                        :max="search_condition.endDate">
                         <v-spacer></v-spacer>
                         <v-btn text color="primary" @click="startDate = false">
                           취소
                         </v-btn>
-                        <v-btn
-                          text
-                          color="primary"
-                          @click="s_date_search(search_condition.startDate)"
-                        >
+                        <v-btn text color="primary" @click="s_date_search(search_condition.startDate)">
                           확인
                         </v-btn>
                       </v-date-picker>
                     </v-menu>
                   </v-col>
                   <v-col md="2">
-                    <v-menu
-                      ref="endDate"
-                      v-model="endDate"
-                      :close-on-content-click="false"
-                      :return-value.sync="search_condition.endDate"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
+                    <v-menu ref="endDate" v-model="endDate" :close-on-content-click="false"
+                      :return-value.sync="search_condition.endDate" transition="scale-transition" offset-y
+                      min-width="auto">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="search_condition.endDate"
-                          label="종료일"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                          dense
-                        ></v-text-field>
+                        <v-text-field v-model="search_condition.endDate" label="종료일" prepend-icon="mdi-calendar" readonly
+                          v-bind="attrs" v-on="on" dense></v-text-field>
                       </template>
-                      <v-date-picker
-                        v-model="search_condition.endDate"
-                        no-title
-                        scrollable
-                        locale="ko-KR"
-                        :min="search_condition.startDate"
-                      >
+                      <v-date-picker v-model="search_condition.endDate" no-title scrollable locale="ko-KR"
+                        :min="search_condition.startDate">
                         <v-spacer></v-spacer>
                         <v-btn text color="primary" @click="endDate = false">
                           취소
                         </v-btn>
-                        <v-btn
-                          text
-                          color="primary"
-                          @click="e_date_search(search_condition.endDate)"
-                        >
+                        <v-btn text color="primary" @click="e_date_search(search_condition.endDate)">
                           확인
                         </v-btn>
                       </v-date-picker>
@@ -150,12 +83,8 @@
                   </v-col>
 
                   <v-col cols="2">
-                    <v-text-field
-                      label="출고코드"
-                      v-model="search_condition.releaseCode"
-                      @keydown.enter="getCustomer"
-                      dense
-                    ></v-text-field>
+                    <v-text-field label="출고코드" v-model="search_condition.releaseCode" @keydown.enter="getCustomer"
+                      dense></v-text-field>
                   </v-col>
                 </v-row>
               </v-col>
@@ -167,7 +96,7 @@
                 </v-col>
               </v-col>
             </v-row>
-          </v-sheet>
+          </v-card>
         </v-col>
         <v-col class="ma-2 mt-0" md="12">
           <v-row class="mb-1">
@@ -175,96 +104,54 @@
               <h4 class="searchbox-title">출고 목록</h4>
             </v-col>
             <v-col class="text-right" offset-md="7" md="3">
-              <v-btn class="ml-1" small color="primary" @click="editItem"
-                ><v-icon left> mdi-book-account </v-icon>출고 요청</v-btn
-              >
+              <v-btn class="ml-1" small color="primary" @click="editItem"><v-icon left> mdi-book-account </v-icon>출고
+                요청</v-btn>
             </v-col>
           </v-row>
+          <v-card>
 
-          <v-data-table
-            height="240"
-            :headers="headers"
-            :items="statement_list"
-            item-key="jobOrderId"
-            class="elevation-4"
-            fixed-header
-            dense
-            multi-sort
-            single-select
-            @click:row="selectCustomer"
-            :options.sync="releaseOrderOption.options"
-            :server-items-length="releaseOrderOption.totalCount"
-            :loading="releaseOrderOption.loading"
-            :items-per-page="releaseOrderOption.itemsPerPage"
-            :page.sync="releaseOrderOption.page"
-            @page-count="releaseOrderOption.pageCount = $event"
-            hide-default-footer
-          >
-            <template v-slot:[`item.jobOrderStatus`]="{ item }">
-              <v-btn
-                class="text-left"
-                small
-                :color="getStatusColor(item.jobOrderStatus)"
-                dark
-                style="width: 120px"
-                depressed
-              >
-                <v-icon left> mdi-album </v-icon>
-                {{ item.jobOrderStatus }}
-              </v-btn>
-            </template>
-            <template v-slot:[`item.releaseStatus`]="{ item }">
-              <v-btn
-                class="text-left"
-                small
-                :color="getStatusColor(item.releaseStatus)"
-                dark
-                style="width: 100px"
-                depressed
-              >
-                <v-icon left> mdi-album </v-icon>
-                {{ item.releaseStatus }}
-              </v-btn>
-            </template>
-            <template v-slot:[`item.totalPrice`]="{ item }">
-              {{ item.totalPrice | comma }}원
-            </template>
-            <template v-slot:[`item.edit`]="{ item }">
-              <v-btn
-                v-if="item.status == '출고 요청'"
-                small
-                class="mr-2"
-                @click="releaseProcess(item)"
-              >
-                출고진행
-              </v-btn>
-              <v-btn
-                v-if="item.status == '출고 진행'"
-                small
-                class="mr-2"
-                @click="releaseDone(item)"
-              >
-                출고완료
-              </v-btn>
-              <v-btn
-                v-if="item.status != '출고 취소'"
-                small
-                class="mr-2"
-                @click="releaseCancle(item)"
-              >
-                출고취소
-              </v-btn>
-            </template>
-          </v-data-table>
-          <v-pagination
-            v-model="releaseOrderOption.page"
-            :length="releaseOrderOption.pageCount"
-          ></v-pagination>
+            <v-data-table height="315" :headers="headers" :items="statement_list" item-key="jobOrderId" fixed-header dense
+              multi-sort single-select @click:row="selectCustomer" :options.sync="releaseOrderOption.options"
+              :server-items-length="releaseOrderOption.totalCount" :loading="releaseOrderOption.loading"
+              :items-per-page="releaseOrderOption.itemsPerPage" :page.sync="releaseOrderOption.page"
+              @page-count="releaseOrderOption.pageCount = $event" hide-default-footer>
+              <template v-slot:[`item.jobOrderStatus`]="{ item }">
+                <v-btn class="text-left" small :color="getStatusColor(item.jobOrderStatus)" dark style="width: 120px"
+                  depressed>
+                  <v-icon left> mdi-album </v-icon>
+                  {{ item.jobOrderStatus }}
+                </v-btn>
+              </template>
+              <template v-slot:[`item.releaseStatus`]="{ item }">
+                <v-btn class="text-left" small :color="getStatusColor(item.releaseStatus)" dark style="width: 100px"
+                  depressed>
+                  <v-icon left> mdi-album </v-icon>
+                  {{ item.releaseStatus }}
+                </v-btn>
+              </template>
+              <template v-slot:[`item.totalPrice`]="{ item }">
+                {{ item.totalPrice | comma }}원
+              </template>
+              <template v-slot:[`item.edit`]="{ item }">
+                <v-btn v-if="item.status == '출고 요청'" small class="mr-2" @click="releaseProcess(item)">
+                  출고진행
+                </v-btn>
+                <v-btn v-if="item.status == '출고 진행'" small class="mr-2" @click="releaseDone(item)">
+                  출고완료
+                </v-btn>
+                <v-btn v-if="item.status != '출고 취소'" small class="mr-2" @click="releaseCancle(item)">
+                  출고취소
+                </v-btn>
+              </template>
+            </v-data-table>
+            <v-col>
+              <v-pagination circle v-model="releaseOrderOption.page"
+                :length="releaseOrderOption.pageCount"></v-pagination></v-col>
+          </v-card>
         </v-col>
         <v-col cols="12" class="pt-0 pb-0">
           <v-tabs v-model="tabs" align-with-title>
-            <v-tabs-slider color="blue"></v-tabs-slider>
-
+            <v-tabs-slider color="green"></v-tabs-slider>
             <v-tab v-for="item in way_list" :key="item.name">
               {{ item.name }}
             </v-tab>
@@ -273,34 +160,18 @@
         <v-col cols="12">
           <v-tabs-items v-model="tabs">
             <v-tab-item>
-              <v-data-table
-                height="220"
-                :headers="headers_release"
-                :items="release_list"
-                item-key="barcode"
-                class="elevation-4"
-                fixed-header
-                multi-sort
-                single-select
-                dense
-                hide-default-footer
-              >
-              </v-data-table>
+              <v-card>
+                <v-data-table height="180" :headers="headers_release" :items="release_list" item-key="barcode"
+                  class="elevation-4" fixed-header multi-sort single-select dense hide-default-footer>
+                </v-data-table>
+              </v-card>
             </v-tab-item>
-            <v-tab-item>
-              <v-data-table
-                height="210"
-                :headers="headers_raw"
-                :items="raw_list"
-                item-key="barcode"
-                class="elevation-4"
-                fixed-header
-                multi-sort
-                single-select
-                dense
-                hide-default-footer
-              >
-              </v-data-table>
+            <v-tab-item><v-card>
+                <v-data-table height="180" :headers="headers_raw" :items="raw_list" item-key="barcode" class="elevation-4"
+                  fixed-header multi-sort single-select dense hide-default-footer>
+                </v-data-table>
+              </v-card>
+
             </v-tab-item>
           </v-tabs-items>
         </v-col>
@@ -318,43 +189,22 @@
         <v-card-title>
           <span>자재 환입</span>
           <v-spacer></v-spacer>
-          <span
-            >출고된 수량 : {{ txtReleaseCount_check }} | 선택된 수량 :
-            {{ txtSelectCount_check }}</span
-          >
+          <span>출고된 수량 : {{ txtReleaseCount_check }} | 선택된 수량 :
+            {{ txtSelectCount_check }}</span>
         </v-card-title>
         <v-card-text>
           <v-row>
             <v-col>
-              <v-data-table
-                height="300"
-                ref="rawGrid"
-                v-model="selected_check"
-                :headers="headers_raw_reversal"
-                :items="raw_reversal_list"
-                item-key="rawMaterialDetailId"
-                class="elevation-4"
-                @item-selected="addRawItem_reversal"
-                hide-default-footer
-                multi-sort
-                show-select
-                dense
-              >
+              <v-data-table height="300" ref="rawGrid" v-model="selected_check" :headers="headers_raw_reversal"
+                :items="raw_reversal_list" item-key="rawMaterialDetailId" class="elevation-4"
+                @item-selected="addRawItem_reversal" hide-default-footer multi-sort show-select dense>
                 <template v-slot:item.reversalCount="props">
-                  <v-edit-dialog
-                    :return-value.sync="props.item.reversalCount"
-                    @save="props.item = saveReversalCount(props.item)"
-                  >
+                  <v-edit-dialog :return-value.sync="props.item.reversalCount"
+                    @save="props.item = saveReversalCount(props.item)">
                     {{ props.item.reversalCount | comma }}
                     <template v-slot:input>
-                      <v-text-field
-                        v-model="props.item.reversalCount"
-                        label="Edit"
-                        single-line
-                        type="text"
-                        maxlength="10"
-                        oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"
-                      ></v-text-field>
+                      <v-text-field v-model="props.item.reversalCount" label="Edit" single-line type="text" maxlength="10"
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"></v-text-field>
                     </template>
                   </v-edit-dialog>
                 </template>

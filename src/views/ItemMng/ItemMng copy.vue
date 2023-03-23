@@ -4,7 +4,7 @@
       <v-row no-gutters>
         <v-col class="ma-2" md="12">
           <h4 class="searchbox-title">조회 조건</h4>
-          <v-sheet class="pa-3" height="90" elevation="2">
+          <v-sheet class="pa-3"  height="90" elevation="2">
             <v-row>
               <v-col cols="2">
                 <v-text-field label="코드 or 이름" v-model="search_condition.item"

@@ -34,6 +34,7 @@
 								<v-text-field label="검색어" v-model="keyword" append-icon="mdi-magnify"></v-text-field>
 							</v-col>
 							<!-- 조회버튼 -->
+							<v-spacer></v-spacer>
 							<v-col cols="1" class="d-flex justify-center align-center">
 								<v-btn color="primary" @click="getData()">
 									조회
@@ -54,11 +55,10 @@
 					<v-col cols="3">
 					</v-col>
 
-
-					<v-card height="300">
+					<v-card>
 						<v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options"
 							:server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" dense
-							height="400" hide-default-footer multi-sort @page-count="pageCount = $event">
+							height="620" hide-default-footer multi-sort @page-count="pageCount = $event">
 							<template v-slot:item.showmore="{ item }">
 								<v-icon @click="$router.push({ name: 'ShowTestForm', params: { id: item.growthReportId } })"
 									small>
@@ -77,7 +77,9 @@
 							<!-- 수정 -->
 							<!-- 제어명칭 -->
 						</v-data-table>
-						<v-pagination v-model="page" :length="pageCount"></v-pagination>
+						<v-col>
+							<v-pagination circle v-model="page" :length="pageCount"></v-pagination>
+						</v-col>
 					</v-card>
 
 

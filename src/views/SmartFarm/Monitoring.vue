@@ -1981,6 +1981,13 @@ export default {
   display: none;
 }
 
+
+@media (min-width: 600px)
+.v-application--is-ltr .me-sm-n10 {
+    margin-right: -40px!important;
+}
+
+
 .btn-gradient {
   background-image: linear-gradient(
     to right,
