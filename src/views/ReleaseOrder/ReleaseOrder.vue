@@ -9,8 +9,15 @@
               <v-col cols="10">
                 <v-row>
                   <v-col cols="3">
-                    <v-text-field label="작업지시서명 or 코드" v-model="search_condition.jobOrder" @keydown.enter="getCustomer"
-                      dense></v-text-field>
+                    <v-text-field
+                      label="작업지시서명 or 코드"
+                      v-model="search_condition.jobOrder"
+                      @keydown.enter="getCustomer"
+                      dense
+                      solo
+                      rounded
+                    ></v-text-field>
+
                   </v-col>
                   <v-col cols="2">
                     <v-text-field label="거래처명 or 코드" v-model="search_condition.customer" @keydown.enter="getCustomer"

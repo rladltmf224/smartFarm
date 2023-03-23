@@ -1,5 +1,5 @@
 <template>
-  <v-app class="pa-6">
+  <v-app>
     <Sidebar />
     <v-main class="content background-color">
       <AppBar></AppBar>
@@ -25,6 +25,6 @@ export default class Layout extends Vue {}
 
 <style lang="css">
 .background-color {
-  background: #f5f5f5;
+  background: #f0f3f5;
 }
 </style>
