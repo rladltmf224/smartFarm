@@ -1,18 +1,30 @@
 @font-face {
   font-family: "Pretendard";
-  src: url("/src/assets/font/Pretendard-Medium.ttf") format("truetype");
+  src: url("/src/assets/font/Pretendard-Medium.woff") format("woff");
   font-style: normal;
   font-weight: normal;
 }
 @font-face {
   font-family: "PretendardSemiBold";
-  src: url("/src/assets/font/Pretendard-SemiBold.ttf") format("truetype");
+  src: url("/src/assets/font/Pretendard-SemiBold.woff") format("woff");
   font-style: normal;
   font-weight: normal;
 }
 @font-face {
   font-family: "PretendardBold";
-  src: url("/src/assets/font/Pretendard-Bold.ttf") format("truetype");
+  src: url("/src/assets/font/Pretendard-Bold.woff") format("woff");
   font-style: normal;
   font-weight: normal;
+}
+
+p,
+a,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  transform: skew(-0.1deg);
+  color: #222;
 }

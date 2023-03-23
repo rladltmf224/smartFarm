@@ -3,10 +3,12 @@
     app
     clipped
     permanent
-    color="#f5f5f5"
+    color="white"
     :mini-variant="mini"
+    class="py-4 border-radius-lg hover"
   >
     <v-container class="px-0 text-h4 sidebar-main-text home" @click="goHome">
+
       <!--   <v-icon v-if="!mini" @click.stop="mini = !mini" color="lightgrey" transparent>
         mdi-chevron-left
       </v-icon> -->
@@ -39,45 +41,21 @@
           <Alarm></Alarm>
         </v-list-item>
       </v-list>
+
     </v-container>
     <v-divider></v-divider>
-    <!--  <v-list height="676" style="overflow-y: auto;overflow-x: hidden" dense nav rounded @mouseover="openTooltip()">
-      <v-list-item :link="true" :to="to_home" color="primary">
-        <v-list-item-icon @mouseover="openTooltip(item)">
-          <v-icon>mdi-monitor</v-icon>
-        </v-list-item-icon>
-        <v-list-item-title>모니터링</v-list-item-title>
-      </v-list-item>
-      <v-list-group v-for="(item, i) in items" :key="i" mandatory>
-        <template v-slot:activator class="d-flex">
-          <v-list-item-icon id="result">
-            <v-btn elevation="3" v-ripple="{ class: 'primary--text' }" color="white">
-              <v-icon v-text="item.icon" small color="green" @mouseover="openTooltip(item)"></v-icon>
-            </v-btn>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title class="text-subtitle-1" v-text="item.title"></v-list-item-title>
-          </v-list-item-content>
-        </template>
-        <v-list-item v-for="subItem in item.subItems" :key="subItem.title" :to="subItem.to" dense>
-          <v-list-item-content>
-            <v-list-item-title v-text="'•  ' + subItem.title"></v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list-group>
-    </v-list> -->
+    <font-awesome-icon :icon="['fas', 'angle-down']" />
 
     <v-list
       height="700"
       style="overflow-y: auto; overflow-x: hidden; display: contents"
       dense
       nav
-      rounded
     >
       <v-list-item
+        class="pb-1 mx-2"
         :link="true"
         :to="to_home"
-        color="primary"
         @click="selectedPage(subItem == null)"
       >
         <v-list-item-icon @mouseover="openTooltip(item)">
@@ -88,34 +66,25 @@
       <v-list-group
         v-for="(item, i) in items"
         :key="i"
+
+        class="pb-1 mx-2 card-shadow"
+        active-class="active-group"
+
         mandatory
         @click="test(item)"
+
       >
         <template v-slot:activator>
-          <v-list-item-icon>
-            <!--    <v-btn color="white" fab x-small elevation="1">
-              <v-icon v-text="item.icon" small @mouseover="openTooltip(item)"></v-icon>
-            </v-btn>
- -->
-            <v-col id="result" class="pa-0 ma-0 d-flex align-center">
-              <v-btn
-                v-ripple="{ class: 'primary--text' }"
-                elevation="3"
-                color="white"
-              >
-                <v-icon
-                  v-text="item.icon"
-                  small
-                  @mouseover="openTooltip(item)"
-                  color="green"
-                >
-                </v-icon>
-              </v-btn>
-            </v-col>
+          <v-list-item-icon
+            class="border-radius-md mx-2 align-center"
+            style="height: 28px; width: 28px; padding: 6px"
+          >
+            <v-icon v-text="item.icon" small @mouseover="openTooltip(item)">
+            </v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title
-              class="text-subtitle-1"
+              class="ms-1 text-subtitle-1"
               v-text="item.title"
             ></v-list-item-title>
           </v-list-item-content>
@@ -124,10 +93,15 @@
           v-for="subItem in item.subItems"
           :key="subItem.title"
           :to="subItem.to"
+          color="F3F4FD"
+          class="ps-10"
+          active-class="active-item-title"
+          active-color="red"
           dense
         >
           <v-list-item-content @click="selectedPage(subItem)">
             <v-list-item-title
+              color="#b5b4c7"
               v-text="'•  ' + subItem.title"
             ></v-list-item-title>
           </v-list-item-content>
@@ -155,9 +129,11 @@
         </v-btn>
       </v-list-item> -->
     </v-list>
-    <template v-slot:append v-if="!mini" @click="logout">
+    <template v-slot:append v-if="!mini">
       <div class="pa-2">
-        <v-btn block class="btn-gradient" dark> 로그아웃 </v-btn>
+        <v-btn block color="#27d98f" dark elevation="0" @click="logout">
+          로그아웃
+        </v-btn>
       </div>
     </template>
 
@@ -490,20 +466,4 @@ export default class Sidebar extends Vue {
 </script>
 
 <style src="./Sidebar.scss" lang="scss"></style>
-<style lang="css">
-.btn-gradient {
-  background-image: linear-gradient(
-    to right,
-    rgb(153, 218, 1),
-    rgb(49, 182, 56)
-  );
-  border: 0;
-  color: rgba(var(--text-color));
-}
-
-#result .v-btn {
-  min-width: 36px;
-  width: 36px;
-  border-radius: 11px;
-}
-</style>
+<style src="./Sidebar.sass" lang="sass"></style>
