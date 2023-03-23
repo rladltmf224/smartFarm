@@ -71,6 +71,8 @@
 }
 .menuBox {
   width: 350px;
+  height: 400px;
+  overflow-y: scroll;
 }
 .historyBox {
   width: 400px;
@@ -88,6 +90,16 @@
 .historyDate {
   font-size: 11px;
 }
+.timelineBox {
+  height: 250px;
+  overflow-y: scroll;
+  background-color: #fdfdfd;
+}
+
+.v-expansion-panel::before {
+  box-shadow: none !important;
+}
+
 .v-menu__content {
   min-width: 0px !important;
 }

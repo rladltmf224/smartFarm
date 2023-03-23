@@ -18,7 +18,7 @@ export default {
       headers: { "Content-Type": "application/json" },
     }),
   updateScheduleInfo: (params) =>
-    AuthAPI.post("/api/workschedule", JSON.stringify(params), {
+    AuthAPI.put("/api/workschedule/detail", JSON.stringify(params), {
       headers: { "Content-Type": "application/json" },
     }),
   updateTotalScheduleInfo: (params) =>

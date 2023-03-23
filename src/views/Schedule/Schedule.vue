@@ -41,13 +41,31 @@
       <div class="graphBox">
         <canvas ref="barChart" />
       </div>
-      <v-data-table
-        class="mt-4"
-        dense
-        height="300"
-        :items="timelineTable"
-        :headers="timelineHeader"
-      ></v-data-table>
+
+      <v-card class="timelineBox elevation-0">
+        <v-expansion-panels v-model="activePanel">
+          <v-expansion-panel v-for="(item, index) in panels" :key="index">
+            <v-expansion-panel-header
+              color="#fdfdfd"
+              class="elevation-0"
+              @click="moreDetail(item)"
+              vaule="index"
+              dense
+            >
+              {{ item }}
+            </v-expansion-panel-header>
+            <v-expansion-panel-content class="elevation-0" color="#fdfdfd">
+              <v-data-table
+                style="background-color: #fdfdfd"
+                dense
+                :headers="timelineHeader"
+                :items="timelineTable"
+                hide-default-footer
+              ></v-data-table>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </v-card>
     </div>
 
     <div class="totalBox" v-show="this.selectedTabs == '달력'">
@@ -274,8 +292,6 @@
           </v-row>
 
           <v-row v-for="item in titleList" class="dateBox" :key="item.title">
-            <!--:class="{ active: n.date != '' }" //:style="{ backgroundColor:
-              scheduleData.backgroundColor }"-->
             <v-col cols="2" class="pa-0">
               <v-text-field
                 :value="item.title"
@@ -530,10 +546,10 @@
       :close-on-content-click="false"
     >
       <v-card class="menuBox">
-        <v-list>
+        <v-list class="pa-0">
           <v-list-item>
             <v-list-item-content>
-              <v-row class="pt-2">
+              <v-row class="pt-0">
                 <v-col cols="9" class="pt-0">
                   <v-list-item-title
                     ><strong>{{
@@ -541,129 +557,119 @@
                     }}</strong>
                   </v-list-item-title>
                 </v-col>
-                <v-col cols="11" class="pt-0 d-flex justify-space-between">
-                  <v-list-item-subtitle v-show="!update"
-                    >{{
-                      this.detailEvent == ""
-                        ? "일정없음"
-                        : `${detailEvent[0].start} ~ ${detailEvent[0].end}`
-                    }}
-                  </v-list-item-subtitle>
-
-                  <v-btn
-                    color="success"
-                    text
-                    x-small
-                    @click="
-                      openModalHistory(detailEvent[0].workScheduleDetailId)
-                    "
-                    >히스토리 보기
-
-                    <v-badge
-                      :content="
-                        historyTable.length != 0 ? historyTable.length : 0
-                      "
-                      color="error"
-                    >
-                      <v-icon color="success">mdi mdi-history</v-icon>
-                    </v-badge>
-                  </v-btn>
-
-                  <v-list-item-subtitle v-show="update">
-                    <v-row class="mt-2"
-                      ><v-col cols="7" class="pt-0">
-                        <v-menu
-                          dense
-                          ref="updateDate"
-                          :close-on-content-click="false"
-                          :return-value.sync="updateStartDate"
-                          transition="scale-transition"
-                          offset-y
-                          min-width="auto"
-                        >
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-text-field
-                              dense
-                              v-model="updateStartDate"
-                              prepend-icon="mdi-calendar"
-                              readonly
-                              label="시작일"
-                              v-bind="attrs"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-date-picker
-                            v-model="updateStartDate"
-                            no-title
-                            scrollable
-                            locale="ko-KR"
-                          >
-                            <v-spacer></v-spacer>
-                            <v-btn text color="primary" @click="menu = false">
-                              취소
-                            </v-btn>
-                            <v-btn
-                              text
-                              color="primary"
-                              @click="updateS_date_search(updateStartDate)"
-                            >
-                              확인
-                            </v-btn>
-                          </v-date-picker>
-                        </v-menu>
-                      </v-col>
-                      <v-col cols="7" class="pt-0">
-                        <v-menu
-                          dense
-                          ref="updateStartDate"
-                          :close-on-content-click="false"
-                          :return-value.sync="updateEndDate"
-                          transition="scale-transition"
-                          offset-y
-                          min-width="auto"
-                        >
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-text-field
-                              dense
-                              v-model="updateEndDate"
-                              prepend-icon="mdi-calendar"
-                              readonly
-                              label="종료일"
-                              v-bind="attrs"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-date-picker
-                            v-model="updateEndDate"
-                            no-title
-                            scrollable
-                            locale="ko-KR"
-                          >
-                            <v-spacer></v-spacer>
-                            <v-btn text color="primary" @click="menu = false">
-                              취소
-                            </v-btn>
-                            <v-btn
-                              text
-                              color="primary"
-                              @click="updateE_date_search(updateEndDate)"
-                            >
-                              확인
-                            </v-btn>
-                          </v-date-picker>
-                        </v-menu></v-col
-                      ></v-row
-                    >
-                  </v-list-item-subtitle></v-col
-                ></v-row
-              >
+              </v-row>
             </v-list-item-content>
           </v-list-item>
         </v-list>
-        <v-divider></v-divider>
-        <v-list>
-          <v-list-item>
+        <!--<v-divider></v-divider>-->
+        <v-list class="pa-0">
+          <v-list-item class="pt-0 pb-0">
             <v-list-item-content>
+              <v-list-item-subtitle>
+                <v-row class="mb-1">
+                  <v-col cols="6">
+                    <span><strong>시작일 : </strong></span>
+                    <span v-show="!update">{{
+                      this.detailEvent == "" || this.detailEvent[0].start == ""
+                        ? "시작일없음"
+                        : `${this.detailEvent[0].start}`
+                    }}</span>
+                    <span v-show="update">
+                      <v-menu
+                        dense
+                        :key="updateStartDate"
+                        ref="updateDate"
+                        :close-on-content-click="false"
+                        :return-value.sync="updateStartDate"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            dense
+                            v-model="updateStartDate"
+                            prepend-icon="mdi-calendar"
+                            readonly
+                            label="시작일"
+                            v-bind="attrs"
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker
+                          v-model="updateStartDate"
+                          no-title
+                          scrollable
+                          locale="ko-KR"
+                        >
+                          <v-spacer></v-spacer>
+                          <v-btn text color="primary" @click="menu = false">
+                            취소
+                          </v-btn>
+                          <v-btn
+                            text
+                            color="primary"
+                            @click="updateS_date_search(updateStartDate)"
+                          >
+                            확인
+                          </v-btn>
+                        </v-date-picker>
+                      </v-menu>
+                    </span>
+                  </v-col>
+                  <v-col cols="6">
+                    <span><strong>종료일 : </strong></span>
+                    <span v-show="!update">{{
+                      this.detailEvent == "" ||
+                      this.detailEvent[0].cropName.start == ""
+                        ? "종료일없음"
+                        : `${this.detailEvent[0].start}`
+                    }}</span>
+                    <span v-show="update">
+                      <v-menu
+                        dense
+                        :key="updateEndDate"
+                        ref="updateEndDate"
+                        :close-on-content-click="false"
+                        :return-value.sync="updateEndDate"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            dense
+                            v-model="updateEndDate"
+                            prepend-icon="mdi-calendar"
+                            readonly
+                            label="종료일"
+                            v-bind="attrs"
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker
+                          v-model="updateEndDate"
+                          no-title
+                          scrollable
+                          locale="ko-KR"
+                        >
+                          <v-spacer></v-spacer>
+                          <v-btn text color="primary" @click="menu = false">
+                            취소
+                          </v-btn>
+                          <v-btn
+                            text
+                            color="primary"
+                            @click="updateE_date_search(updateEndDate)"
+                          >
+                            확인
+                          </v-btn>
+                        </v-date-picker>
+                      </v-menu>
+                    </span>
+                  </v-col>
+                </v-row>
+              </v-list-item-subtitle>
               <v-list-item-subtitle>
                 <v-row class="mb-1">
                   <v-col cols="6"
@@ -751,9 +757,7 @@
             </v-list-item-content>
           </v-list-item>
         </v-list>
-        <v-divider class="t-3"></v-divider>
-
-        <v-card-actions>
+        <v-card-actions class="pa-0">
           <v-row justify="center" class="ma-0"
             ><v-btn v-show="!update" text @click="updateStatus" class="ma-1">
               <v-icon color="success" right class="mr-1"> mdi-pencil </v-icon>
@@ -771,28 +775,9 @@
             </v-btn></v-row
           >
         </v-card-actions>
-      </v-card>
-    </v-menu>
+        <v-divider class="t-3"></v-divider>
 
-    <!-- 일정 히스토리-->
-    <v-menu
-      :position-x="x"
-      :position-y="y"
-      absolute
-      v-model="historyMenu"
-      :close-on-content-click="false"
-      ><v-card class="historyBox">
-        <v-card-title class="d-flex justify-space-between"
-          >{{ title }}
-          <v-btn x-small @click="back(detailEvent[0].id)" color="success" text
-            ><v-icon>mdi mdi-arrow-left </v-icon>상세일정보기</v-btn
-          >
-        </v-card-title>
-        <v-card
-          class="ma-2"
-          elevation="0"
-          style="border: 1px solid white; border-top-color: lightgrey"
-        >
+        <v-card class="ma-2" elevation="0">
           <v-list v-show="historyTable.length == 0" class="text-center"
             >댓글이 존재하지않습니다.</v-list
           >
@@ -805,7 +790,7 @@
               <v-list-item-content class="pa-0">
                 <v-list-item-subtitle>
                   <v-row>
-                    <v-col cols="3"
+                    <v-col cols="2"
                       ><span>{{ item.createdId }}</span></v-col
                     >
                     <v-col cols="3"
@@ -813,7 +798,7 @@
                         item.createdDate
                       }}</span></v-col
                     >
-                    <v-col cols="5">
+                    <v-col cols="4">
                       <v-btn
                         small
                         @click="addRecomment(item)"
@@ -915,7 +900,7 @@
                             historyDetailId == item.workScheduleCommentId
                           "
                         >
-                          <v-col cols="8" class="pa-0 text-body-1"
+                          <v-col cols="9" class="pa-0 text-body-1"
                             ><v-textarea
                               class="ml-2 mt-2"
                               v-model="historyReMessage"
@@ -925,13 +910,13 @@
                             ></v-textarea
                           ></v-col>
                           <v-col
-                            cols="4"
+                            cols="3"
                             class="d-flex flex-column justify-center"
                             ><v-btn
                               color="success"
                               x-small
                               @click="saveHistoryDetailInfo"
-                              >댓글달기</v-btn
+                              >답글달기</v-btn
                             >
                             <v-btn
                               class="mt-1"
@@ -964,14 +949,25 @@
           <v-col cols="2" class="pa-0"
             ><v-btn
               color="success"
-              class="mx-3 py-6"
+              class="mx-2 py-6"
               small
               @click="saveHistoryInfo"
               >댓글달기</v-btn
             ></v-col
           >
+          >
         </v-row>
       </v-card>
+    </v-menu>
+
+    <!-- 일정 히스토리-->
+    <v-menu
+      :position-x="x"
+      :position-y="y"
+      absolute
+      v-model="historyMenu"
+      :close-on-content-click="false"
+    >
     </v-menu>
   </v-card>
 </template>
@@ -1259,6 +1255,10 @@ export default class Schedule extends Vue {
       value: "month",
     },
   ];
+  activePanel: any = null;
+  panels: any[] = [];
+  groupBy: any[] = [];
+  expanded: any[] = [];
   timelineTableList: any[] = [];
   timelineHeader: any = [
     { text: "일정명", value: "title" },
@@ -1378,8 +1378,6 @@ export default class Schedule extends Vue {
   };
   x: number = 0;
   y: number = 0;
-  historyX: number = 0;
-  historyY: number = 0;
   historyId: number = 0;
   historyDetailId: number = 0;
   historyMessage: string = "";
@@ -1510,9 +1508,6 @@ export default class Schedule extends Vue {
       this.chartData.options.scales.xAxis.time.unit = "day";
       this.chartData.data["datasets"][0].datalabels.display = false;
       this.getTotalSchedule();
-
-      //this.getdayDate();
-      //chart.resize();
     }
   }
 
@@ -1606,6 +1601,7 @@ export default class Schedule extends Vue {
       customerId: "",
     };
     let yArea = new Set();
+    let groupList = new Set();
     let oneDayColor: any = [];
     let oneDayData: any = [];
     let scheduleData: any = [];
@@ -1622,27 +1618,23 @@ export default class Schedule extends Vue {
     api.schedule.getScheduleInfo(searchItem).then((response) => {
       response.data.responseData.forEach((value: any) => {
         this.selectedTimelineView = "day";
-
         value.details.forEach((value_detail: any) => {
           value_detail["cropName"] = value.cropName;
           value_detail["varietyName"] = value.varietyName;
           value_detail["backgroundColor"] = value.backgroundColor;
           value_detail["customerName"] = value.customerName;
           value_detail["workScheduleId"] = value.workScheduleId;
-          yArea.add(`${value.customerId}-${value_detail.workScheduleId}`);
           value_detail[
             "id"
           ] = `${value.customerId}-${value_detail.workScheduleId}`; //toast 일정데이터 선별하기 임의데이터 사용
+          yArea.add(`${value.customerId}-${value_detail.workScheduleId}`);
 
           if (value_detail.start != value_detail.end) {
             scheduleData.push({
               x: [value_detail.start, value_detail.end],
               y: value_detail.id,
               t: value_detail.customerName,
-              l: `[${value.customerName}]${value_detail.title.replace(
-                value_detail.customerName + "-",
-                " "
-              )}`,
+              l: `[${value.customerName}]${value_detail.title}`,
               c: value_detail.cropName,
               v: value_detail.varietyName,
             });
@@ -1658,10 +1650,7 @@ export default class Schedule extends Vue {
                 x: value_detail.start,
                 y: value_detail.id,
                 t: value_detail.customerName,
-                l: `[${value.customerName}]${value_detail.title.replace(
-                  value_detail.customerName + "-",
-                  " "
-                )}`,
+                l: `[${value.customerName}]${value_detail.title}`,
                 c: value.cropName,
                 v: value.varietyName,
                 //r: 15,
@@ -1692,13 +1681,16 @@ export default class Schedule extends Vue {
 
       api.schedule.getTotalScheduleInfo().then((response) => {
         response.data.responseData.forEach((value: any) => {
+          groupList.add(value.customerName);
           this.timelineList.push({
             x: [value.start, value.end],
+            w: value.workScheduleId,
             y: `${value.customerId}-${value.workScheduleId}`,
             t: value.customerName,
             c: `${value.cropName}(${value.varietyName})`,
           });
         });
+        this.panels = Array.from(groupList);
       });
 
       this.chartData.data["labels"] = Array.from(yArea);
@@ -1746,7 +1738,7 @@ export default class Schedule extends Vue {
 
   //전체 일정List
   getSchedule(item: any) {
-    this.timelineTableList = [];
+    //this.timelineTableList = [];
     this.totalEvents = [];
     this.events = [];
     this.filterList = [];
@@ -1759,8 +1751,10 @@ export default class Schedule extends Vue {
 
     api.schedule.getScheduleInfo(searchItem).then((response) => {
       this.totalEvents = response.data.responseData;
+
       response.data.responseData.forEach((value: any) => {
         value.details.forEach((detailVAlue: any) => {
+          detailVAlue["customerName"] = value.customerName;
           detailVAlue["category"] = "allday";
           detailVAlue["isAllDay"] = "true";
           detailVAlue["cropName"] = value.cropName;
@@ -1771,7 +1765,7 @@ export default class Schedule extends Vue {
             "id"
           ] = `${value.customerId}-${detailVAlue.workScheduleDetailId}`; //toast 일정데이터 선별하기 임의데이터 사용
           this.events.push(detailVAlue);
-          this.timelineTableList.push(detailVAlue);
+          //this.timelineTableList.push(detailVAlue);
         });
       });
 
@@ -1826,9 +1820,16 @@ export default class Schedule extends Vue {
   }
   //일정 title 커스텀
   getTemplateForAllday(event: any) {
-    let customerName = event.title.substring(0, event.title.indexOf("-"));
-    let type = event.title.replace(customerName + "-", " ");
-    return `[${customerName}] ${type} `;
+    this.events.forEach((value: any) => {
+      if (value.id == event.id) {
+        event["customerName"] = value.customerName;
+        event["commentCount"] = value.commentCount;
+      }
+    });
+
+    return event.commentCount != 0
+      ? `[${event.customerName}]${event.title} (${event.commentCount})`
+      : `[${event.customerName}]${event.title}`;
   }
 
   //month에서 일정표 늘릴 수있는 옵션
@@ -1863,10 +1864,7 @@ export default class Schedule extends Vue {
 
     this.events.forEach((value: any) => {
       if (value.id == event.event.id) {
-        let customerName = value.title.substring(0, value.title.indexOf("-"));
-        let type = value.title.replace(customerName + "-", " ");
-
-        this.title = `[${customerName}] ${type} `;
+        this.title = `[${value.customerName}] ${value.title} `;
         this.backgroundColor = value.backgroundColor;
         this.detailEvent.push(value);
         this.historyId = this.detailEvent[0].workScheduleDetailId;
@@ -1923,7 +1921,7 @@ export default class Schedule extends Vue {
       this.titleList.forEach((value: any) => {
         if (value.start != "" && value.end != "") {
           schedule.details.push({
-            title: `${this.scheduleData.customer.customerName}-${value.title}`,
+            title: value.title,
             start: value.start,
             end: value.end,
             memo: value.memo,
@@ -1934,7 +1932,7 @@ export default class Schedule extends Vue {
       this.secondTitleList.forEach((value: any) => {
         if (value.title != "" && value.start != "" && value.end != "") {
           schedule.details.push({
-            title: `${this.scheduleData.customer.customerName}-${value.title}`,
+            title: value.title,
             start: value.start,
             end: value.end,
             memo: value.memo,
@@ -1974,7 +1972,6 @@ export default class Schedule extends Vue {
           this.chooseDialog = false;
           this.getSchedule("");
           this.getTotalSchedule();
-          this.getTotalSchedule();
         })
         .catch((error) => {
           console.log(error);
@@ -2011,7 +2008,6 @@ export default class Schedule extends Vue {
           this.dialog = false;
           this.chooseDialog = false;
           this.getSchedule("");
-          this.getTotalSchedule();
           this.getTotalSchedule();
         })
         .catch((error) => {
@@ -2068,9 +2064,6 @@ export default class Schedule extends Vue {
       ) {
         value.details.forEach((value_detail: any) => {
           this.scheduleData.backgroundColor = value_detail.backgroundColor;
-          value_detail.title = value_detail.title.slice(
-            value_detail.title.indexOf("-") + 1
-          );
 
           let onlyTitle = _.map(this.titleList, "title"); // [파종, 1차육묘, ...]
           if (onlyTitle.includes(value_detail.title)) {
@@ -2237,8 +2230,6 @@ export default class Schedule extends Vue {
     this.selectedTabs = item;
 
     if (this.selectedTabs == "달력") {
-      //'GetInstance'는 호출 값을 한 번만 제공합니다.
-      // 두 번 이상 호출하면 'null'을 호출하기 때문에 오류가 발생합니다.
       this.getSchedule("");
     } else {
       this.getTotalSchedule();
@@ -2246,7 +2237,7 @@ export default class Schedule extends Vue {
   }
   deleteTotalInfo(item: any) {
     let deleteItem = 0;
-    deleteItem = this.timelineList[item].y;
+    deleteItem = this.timelineList[item].w;
 
     this.$swal
       .fire({
@@ -2554,12 +2545,18 @@ export default class Schedule extends Vue {
     this.detailMenu = true;
     this.events.forEach((value: any) => {
       if (value.id == item) {
-        let customerName = value.title.substring(0, value.title.indexOf("-"));
-        let type = value.title.replace(customerName + "-", " ");
-
-        this.title = `[${customerName}] ${type} `;
+        this.title = `[${value.customerName}] ${value.title} `;
         this.backgroundColor = value.backgroundColor;
         this.detailEvent.push(value);
+      }
+    });
+  }
+  moreDetail(item: any) {
+    this.timelineTableList = [];
+
+    this.events.forEach((value: any) => {
+      if (item == value.customerName) {
+        this.timelineTableList.push(value);
       }
     });
   }
