@@ -53,4 +53,8 @@ export default {
     AuthAPI.post("/api/workschedule/commentDelete", JSON.stringify(params), {
       headers: { "Content-Type": "application/json" },
     }),
+  getTodayScheduleInfo: () =>
+    AuthAPI.get("/api/workschedule/today", {
+      headers: { "Content-Type": "application/json" },
+    }),
 };

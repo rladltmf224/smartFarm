@@ -10,51 +10,15 @@
     </v-toolbar-title>
     <v-spacer></v-spacer>
 
-    <v-menu offset-y>
-      <template v-slot:activator="{ on, attrs }">
-        <v-badge
-          overlap
-          :content="alarmOn ? alarmList.length : 0"
-          :value="alarmOn ? alarmList.length : 0"
-          color="error"
-        >
-          <v-btn id="alarmBell" small depressed v-bind="attrs" v-on="on" icon>
-            <v-icon
-              v-if="alarmOn"
-              :color="alarmList.length > 0 ? 'error' : 'black'"
-            >
-              mdi-bell-outline
-            </v-icon>
-            <v-icon v-if="!alarmOn" color="grey" large> mdi-bell-off </v-icon>
-          </v-btn>
-        </v-badge>
-      </template>
-      <v-list>
-        <v-list-item
-          v-if="alarmOn"
-          v-for="(alarm, index) in alarmList"
-          :key="index"
-          two-line
-        >
-          <v-list-item-content @click="removeAlarm(alarm)" class="alarmItem">
-            <v-list-item-title>
-              <v-chip class="mr-3" color="warning"> 주의 </v-chip
-              >{{ alarm.title }}
-            </v-list-item-title>
-            <v-list-item-subtitle class="pl-15">{{
-              alarm.body
-            }}</v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-content @click="alarmToggle()" class="alarmItem">
-            <v-list-item-title class="d-flex justify-center">
-              {{ alarmOn ? "알람 끄기" : "알람 켜기" }}
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-menu>
+    <div class="scheduleBar">
+      <p class="mb-0">
+        {{
+          todayList.length != 0
+            ? `[${todayList.customerName}] ${todayList.title}`
+            : ""
+        }}
+      </p>
+    </div>
     <v-btn elevation="0" color="transparent" rounded>
       <v-badge bordered bottom color="red" dot offset-x="10" offset-y="10">
         <v-avatar size="30" class="mx-2">
@@ -76,15 +40,14 @@ import SidebarUserInfo from "@/components/Sidebar/SidebarUserInfo.vue";
 import SidebarMySetting from "@/components/Sidebar/SidebarMySetting.vue";
 import { mapGetters, mapState } from "vuex";
 
+var interval;
+
 @Component({
   components: {
     SidebarUserInfo,
     SidebarMySetting,
   },
   computed: {
-    ...mapGetters({
-      alarmList: "ALARM/GET_ALARM_LIST",
-    }),
     /*   pageName() {
               return this.$store.state.pageName
           } */
@@ -119,8 +82,13 @@ export default class Sidebar extends Vue {
     (v: any) => !!v || "비밀번호 확인은 필수입니다",
   ];
   userInfo?: object;
+  todayList: any[] = [];
+  todayTotalList: any[] = [];
+  i: number = 0;
 
   mounted() {
+    this.getTodayInfo();
+
     this.getUserId();
     let decodeData: any = jwt_decode(this.$cookies.get("refreshToken"));
     decodeData = decodeData.roles.split(",");
@@ -336,6 +304,25 @@ export default class Sidebar extends Vue {
     } else {
       console.log("알람을 받지 않습니다");
     }
+  }
+
+  async getTodayInfo() {
+    this.todayTotalList = [];
+    api.schedule.getTodayScheduleInfo().then((response) => {
+      this.todayTotalList = response.data.responseData;
+    });
+
+    return new Promise((resolve) => {
+      resolve(this.startSchedule());
+    });
+  }
+
+  changeToday() {
+    this.todayList = this.todayTotalList[this.i++ % this.todayTotalList.length];
+  }
+
+  startSchedule() {
+    interval = setInterval(this.changeToday, 3000);
   }
 
   @Watch("alarmList.length", { deep: true })
