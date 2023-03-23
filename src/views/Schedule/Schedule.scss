@@ -55,10 +55,7 @@
   left: 200px;
 }
 .innerTextBox {
-  position: absolute;
-  top: 5px;
-  left: 83px;
-  font-size: 11px;
+  font-size: 10px;
 }
 // #B1D8FFFF
 .toastui-calendar-timegrid-scroll-area {
@@ -74,7 +71,35 @@
 }
 .menuBox {
   width: 350px;
+  height: 400px;
+  overflow-y: scroll;
 }
+.historyBox {
+  width: 400px;
+  height: 550px;
+  overflow-y: scroll;
+}
+.historyRow {
+  border: 1px solid white;
+  border-bottom-color: lightgrey;
+}
+.messageBox {
+  border: 1px solid white;
+  border-color: lightgrey;
+}
+.historyDate {
+  font-size: 11px;
+}
+.timelineBox {
+  height: 250px;
+  overflow-y: scroll;
+  background-color: #fdfdfd;
+}
+
+.v-expansion-panel::before {
+  box-shadow: none !important;
+}
+
 .v-menu__content {
   min-width: 0px !important;
 }
