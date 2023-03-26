@@ -10,6 +10,7 @@
     </v-toolbar-title>
     <v-spacer></v-spacer>
 
+
     <!-- <v-menu offset-y>
       <template v-slot:activator="{ on, attrs }">
         <v-badge
@@ -56,6 +57,17 @@
       </v-list>
     </v-menu> -->
     <Alarm></Alarm>
+
+    <div class="scheduleBar">
+      <p class="mb-0">
+        {{
+          todayList.length != 0
+            ? `[${todayList.customerName}] ${todayList.title}`
+            : ""
+        }}
+      </p>
+    </div>
+
     <v-btn elevation="0" color="transparent" rounded>
       <v-badge bordered bottom color="red" dot offset-x="10" offset-y="10">
         <v-avatar size="30" class="mx-2">
@@ -78,6 +90,8 @@ import SidebarMySetting from "@/components/Sidebar/SidebarMySetting.vue";
 import { mapGetters, mapState } from "vuex";
 import Alarm from "../Sidebar/Alarm.vue";
 
+var interval;
+
 @Component({
   components: {
     SidebarUserInfo,
@@ -85,9 +99,6 @@ import Alarm from "../Sidebar/Alarm.vue";
     Alarm,
   },
   computed: {
-    ...mapGetters({
-      alarmList: "ALARM/GET_ALARM_LIST",
-    }),
     /*   pageName() {
               return this.$store.state.pageName
           } */
@@ -122,6 +133,9 @@ export default class Sidebar extends Vue {
     (v: any) => !!v || "비밀번호 확인은 필수입니다",
   ];
   userInfo?: object;
+  todayList: any[] = [];
+  todayTotalList: any[] = [];
+  i: number = 0;
 
   // @Watch("alarmList.length", { deep: true })
   // onAlarmListChanged(newVal: number, oldVal: number): void {
@@ -133,6 +147,8 @@ export default class Sidebar extends Vue {
   // }
 
   mounted() {
+    this.getTodayInfo();
+
     this.getUserId();
     let decodeData: any = jwt_decode(this.$cookies.get("refreshToken"));
     decodeData = decodeData.roles.split(",");
@@ -361,6 +377,25 @@ export default class Sidebar extends Vue {
     } else {
       console.log("알람을 받지 않습니다");
     }
+  }
+
+  async getTodayInfo() {
+    this.todayTotalList = [];
+    api.schedule.getTodayScheduleInfo().then((response) => {
+      this.todayTotalList = response.data.responseData;
+    });
+
+    return new Promise((resolve) => {
+      resolve(this.startSchedule());
+    });
+  }
+
+  changeToday() {
+    this.todayList = this.todayTotalList[this.i++ % this.todayTotalList.length];
+  }
+
+  startSchedule() {
+    interval = setInterval(this.changeToday, 3000);
   }
 
   @Watch("alarmList.length", { deep: true })

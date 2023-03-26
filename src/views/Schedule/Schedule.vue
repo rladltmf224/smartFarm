@@ -60,6 +60,7 @@
                 dense
                 :headers="timelineHeader"
                 :items="timelineTable"
+                disable-pagination
                 hide-default-footer
               ></v-data-table>
             </v-expansion-panel-content>
@@ -291,7 +292,11 @@
             </v-col>
           </v-row>
 
-          <v-row v-for="item in titleList" class="dateBox" :key="item.title">
+          <v-row
+            v-for="(item, index) in titleList"
+            class="dateBox"
+            :key="item.title"
+          >
             <v-col cols="2" class="pa-0">
               <v-text-field
                 :value="item.title"
@@ -332,21 +337,16 @@
                   ></v-text-field>
                 </template>
                 <v-date-picker
+                  :max="item.end"
+                  @change="checkText(index)"
                   v-model="item.start"
                   no-title
                   scrollable
                   locale="ko-KR"
                 >
                   <v-spacer></v-spacer>
-                  <v-btn text color="primary" @click="menu = false">
+                  <v-btn text color="primary" @click="item.start = ''">
                     취소
-                  </v-btn>
-                  <v-btn
-                    text
-                    color="primary"
-                    @click="s_date_search(item.start)"
-                  >
-                    확인
                   </v-btn>
                 </v-date-picker>
               </v-menu>
@@ -375,17 +375,16 @@
                   ></v-text-field>
                 </template>
                 <v-date-picker
+                  :min="item.start"
+                  @change="autoText(index, item.end)"
                   v-model="item.end"
                   no-title
                   scrollable
                   locale="ko-KR"
                 >
                   <v-spacer></v-spacer>
-                  <v-btn text color="primary" @click="menu = false">
+                  <v-btn text color="primary" @click="item.end = ''">
                     취소
-                  </v-btn>
-                  <v-btn text color="primary" @click="e_date_search(item.end)">
-                    확인
                   </v-btn>
                 </v-date-picker>
               </v-menu>
@@ -603,15 +602,12 @@
                           locale="ko-KR"
                         >
                           <v-spacer></v-spacer>
-                          <v-btn text color="primary" @click="menu = false">
-                            취소
-                          </v-btn>
                           <v-btn
                             text
                             color="primary"
-                            @click="updateS_date_search(updateStartDate)"
+                            @click="updateStartDate = ''"
                           >
-                            확인
+                            취소
                           </v-btn>
                         </v-date-picker>
                       </v-menu>
@@ -654,15 +650,12 @@
                           locale="ko-KR"
                         >
                           <v-spacer></v-spacer>
-                          <v-btn text color="primary" @click="menu = false">
-                            취소
-                          </v-btn>
                           <v-btn
                             text
                             color="primary"
-                            @click="updateE_date_search(updateEndDate)"
+                            @click="updateEndDate = ''"
                           >
-                            확인
+                            취소
                           </v-btn>
                         </v-date-picker>
                       </v-menu>
@@ -1111,7 +1104,7 @@ export default class Schedule extends Vue {
             offset: -10,
             font: {
               weight: "bold",
-              size: "12",
+              size: "10",
             },
             formatter: (value: any) => {
               return value.l + "\n" + value.c + "(" + value.v + ")";
@@ -1264,7 +1257,8 @@ export default class Schedule extends Vue {
     { text: "일정명", value: "title" },
     { text: "작물명", value: "cropName" },
     { text: "품종명", value: "varietyName" },
-    { text: "일정", value: "start" },
+    { text: "시작일", value: "start" },
+    { text: "종료일", value: "end" },
     { text: "생성자", value: "createdId" },
     { text: "생성일", value: "createdDate" },
     { text: "수정자", value: "modifiedId" },
@@ -2050,6 +2044,8 @@ export default class Schedule extends Vue {
   }
 
   clickedExisting(item: any, row: any) {
+    this.titleList = JSON.parse(JSON.stringify(this.resetTypeData));
+    this.secondTitleList = JSON.parse(JSON.stringify(this.secondResetTypeData));
     this.clickedExistingId = item.workScheduleId;
     this.scheduleData.cropName = item.cropName;
     this.scheduleData.varietyName = item.varietyName;
@@ -2559,6 +2555,33 @@ export default class Schedule extends Vue {
         this.timelineTableList.push(value);
       }
     });
+  }
+  autoText(item: any, data: any) {
+    if (item != 6) {
+      this.titleList[item + 1]["start"] = data;
+      return this.titleList;
+    }
+  }
+  checkText(item: any) {
+    if (item != 0 && item != 6) {
+      if (
+        this.titleList[item]["start"] != "" &&
+        new Date(this.titleList[item - 1]["end"]).getTime() >
+          new Date(this.titleList[item]["start"]).getTime()
+      ) {
+        this.titleList[item]["start"] = "";
+
+        return this.$swal({
+          title: "이전 일정보다 빠른 일정은 존재할 수 없습니다.",
+          icon: "error",
+          position: "top",
+          showCancelButton: false,
+          showConfirmButton: false,
+          toast: true,
+          timer: 1500,
+        });
+      }
+    }
   }
 }
 </script>
