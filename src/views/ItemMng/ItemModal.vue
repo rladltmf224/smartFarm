@@ -9,7 +9,7 @@
         </v-card-title>
         <v-card-text>
           <v-row dense>
-            <v-col cols="3" align-self="center">
+            <v-col cols="3" align-self="center" v-if="!editedType">
               <span>code</span>
               <v-text-field
                 v-model="itemData.code"
@@ -19,14 +19,15 @@
                 class="text-box-style"
               ></v-text-field>
             </v-col>
-            <!-- <v-col cols="3" align-self="center">
+            <v-col cols="3" align-self="center">
+              <span>버전</span>
               <v-text-field
-                label="버전"
                 v-model="itemData.version"
+                hide-details="false"
+                class="text-box-style"
                 solo
-                rounded="xl"
               ></v-text-field>
-            </v-col> -->
+            </v-col>
             <v-col cols="6" align-self="center">
               <span>품목명</span>
               <v-text-field
@@ -224,7 +225,7 @@ export default class ItemModal extends Vue {
   }
 }
 </script>
-<style lang="scss">
+<!-- <style lang="scss">
 .text-box-style {
   border-radius: 10px !important;
 }
@@ -232,4 +233,4 @@ export default class ItemModal extends Vue {
 
 <style lang="sass">
 $text-field-border-radius:10px
-</style>
+</style> -->

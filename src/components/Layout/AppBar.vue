@@ -10,6 +10,54 @@
     </v-toolbar-title>
     <v-spacer></v-spacer>
 
+
+    <!-- <v-menu offset-y>
+      <template v-slot:activator="{ on, attrs }">
+        <v-badge
+          overlap
+          :content="alarmOn ? alarmList.length : 0"
+          :value="alarmOn ? alarmList.length : 0"
+          color="error"
+        >
+          <v-btn id="alarmBell" small depressed v-bind="attrs" v-on="on" icon>
+            <v-icon
+              v-if="alarmOn"
+              :color="alarmList.length > 0 ? 'error' : 'black'"
+            >
+              mdi-bell-outline
+            </v-icon>
+            <v-icon v-if="!alarmOn" color="grey" large> mdi-bell-off </v-icon>
+          </v-btn>
+        </v-badge>
+      </template>
+      <v-list>
+        <v-list-item
+          v-if="alarmOn"
+          v-for="(alarm, index) in alarmList"
+          :key="index"
+          two-line
+        >
+          <v-list-item-content @click="removeAlarm(alarm)" class="alarmItem">
+            <v-list-item-title>
+              <v-chip class="mr-3" color="warning"> 주의 </v-chip
+              >{{ alarm.title }}
+            </v-list-item-title>
+            <v-list-item-subtitle class="pl-15">{{
+              alarm.body
+            }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-content @click="alarmToggle()" class="alarmItem">
+            <v-list-item-title class="d-flex justify-center">
+              {{ alarmOn ? "알람 끄기" : "알람 켜기" }}
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-menu> -->
+    <Alarm></Alarm>
+
     <div class="scheduleBar">
       <p class="mb-0">
         {{
@@ -19,6 +67,7 @@
         }}
       </p>
     </div>
+
     <v-btn elevation="0" color="transparent" rounded>
       <v-badge bordered bottom color="red" dot offset-x="10" offset-y="10">
         <v-avatar size="30" class="mx-2">
@@ -39,6 +88,7 @@ import { Component, Vue, Ref, Watch } from "vue-property-decorator";
 import SidebarUserInfo from "@/components/Sidebar/SidebarUserInfo.vue";
 import SidebarMySetting from "@/components/Sidebar/SidebarMySetting.vue";
 import { mapGetters, mapState } from "vuex";
+import Alarm from "../Sidebar/Alarm.vue";
 
 var interval;
 
@@ -46,6 +96,7 @@ var interval;
   components: {
     SidebarUserInfo,
     SidebarMySetting,
+    Alarm,
   },
   computed: {
     /*   pageName() {
@@ -85,6 +136,15 @@ export default class Sidebar extends Vue {
   todayList: any[] = [];
   todayTotalList: any[] = [];
   i: number = 0;
+
+  // @Watch("alarmList.length", { deep: true })
+  // onAlarmListChanged(newVal: number, oldVal: number): void {
+  //   // 새로운 알림이 생긴 경우
+  //   if (newVal - oldVal > 0) {
+  //     let alarmIcon: HTMLElement | null = document.getElementById("alarmBell");
+  //     if (alarmIcon) alarmIcon.click();
+  //   }
+  // }
 
   mounted() {
     this.getTodayInfo();
@@ -208,6 +268,19 @@ export default class Sidebar extends Vue {
   get pageName() {
     return this.$store.state.pageName;
   }
+
+  // alarmToggle() {
+  //   this.alarmOn = !this.alarmOn;
+  //   if (this.alarmOn) {
+  //     console.log("알람을 받습니다");
+  //   } else {
+  //     console.log("알람을 받지 않습니다");
+  //   }
+  // }
+
+  // removeAlarm(alarm: Object): void {
+  //   this.$store.commit("ALARM/removeAlarm", alarm);
+  // }
 
   goHome(): void {
     this.$router.push("/monitoring").catch(() => {});

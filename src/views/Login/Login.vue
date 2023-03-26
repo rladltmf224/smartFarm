@@ -60,6 +60,7 @@
               dark
               class="mb-3 gradient"
               @click="loginManager"
+              :loading="login_check"
               >접속</v-btn
             >
           </form>
@@ -87,6 +88,7 @@ export default class Login extends Vue {
   checkbox_IDPW: boolean = false;
   check_Type: string = "";
   yes: boolean = false;
+  login_check: boolean = false;
   username?: string = "" || this.$cookies.get("id");
 
   password?: string = "" || this.$cookies.get("pw");
@@ -129,6 +131,7 @@ export default class Login extends Vue {
       this.$store.commit("setSaveType", "");
     }
     // this.pushToken = await api.webpush.subscribe();
+    this.login_check = true;
     await this.$store
       .dispatch("getUserInfo", {
         account: {
@@ -156,6 +159,7 @@ export default class Login extends Vue {
       this.$router.push({ path: "monitoring" });
       let userId = this.$store.state.userId;
       localStorage.setItem("userId", JSON.stringify(userId));
+      this.login_check = false;
       return;
     }
     // this.$router.push({ path: "monitoring" });
@@ -163,6 +167,7 @@ export default class Login extends Vue {
     this.username = "";
     this.password = "";
     this.$swal.fire("ERROR", "ID/PW를 확인해주시길 바랍니다", "error");
+    this.login_check = false;
     return;
   }
 

@@ -4,6 +4,7 @@
 
 <script>
 import "@/styles/FontSize.scss";
+import "@/styles/basic.scss";
 export default {
   name: "App",
   components: {},

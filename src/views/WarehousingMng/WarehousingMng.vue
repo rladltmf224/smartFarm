@@ -7,8 +7,12 @@
           <v-card class="pa-3" height="60">
             <v-row>
               <v-col cols="2">
-                <v-text-field label="입고코드" v-model="search_condition.code" @keydown.enter="getCustomer"
-                  dense></v-text-field>
+                <v-text-field
+                  label="입고코드"
+                  v-model="search_condition.code"
+                  @keydown.enter="getCustomer"
+                  dense
+                ></v-text-field>
               </v-col>
 
               <v-col class="pt-2 text-right" offset="8" cols="2">
@@ -26,39 +30,71 @@
               <h4 class="searchbox-title">입고 목록</h4>
             </v-col>
             <v-col class="text-right" offset-md="7" md="3">
-              <v-btn class="ml-1" small color="primary" @click="editItem"><v-icon left> mdi-pencil-plus </v-icon>입고
-                추가</v-btn>
+              <v-btn class="ml-1" small color="primary" @click="editItem"
+                ><v-icon left> mdi-pencil-plus </v-icon>입고 추가</v-btn
+              >
             </v-col>
           </v-row>
           <v-card>
-
-            <v-data-table height="286" :headers="headers" :items="statement_list" item-key="id" multi-sort single-select
-              fixed-header dense disable-items-per-page @click:row="selectCustomer"
-              :options.sync="warehousingListCfg.options" :server-items-length="warehousingListCfg.totalCount"
-              :loading="warehousingListCfg.loading" :items-per-page="warehousingListCfg.itemsPerPage"
-              :page.sync="warehousingListCfg.page" @page-count="warehousingListCfg.pageCount = $event"
-              hide-default-footer>
+            <v-data-table
+              height="286"
+              :headers="headers"
+              :items="statement_list"
+              item-key="id"
+              multi-sort
+              single-select
+              fixed-header
+              dense
+              disable-items-per-page
+              @click:row="selectCustomer"
+              :options.sync="warehousingListCfg.options"
+              :server-items-length="warehousingListCfg.totalCount"
+              :loading="warehousingListCfg.loading"
+              :items-per-page="warehousingListCfg.itemsPerPage"
+              :page.sync="warehousingListCfg.page"
+              @page-count="warehousingListCfg.pageCount = $event"
+              hide-default-footer
+            >
               <template v-slot:item.code="{ item }">
-                <v-btn class="closeBtn  text-left mt-1 mb-1" text small @click="selectHistory(item)">
+                <v-btn
+                  class="closeBtn text-left mt-1 mb-1"
+                  text
+                  small
+                  @click="selectHistory(item)"
+                >
                   {{ item.code }}
                 </v-btn>
               </template>
               <template v-slot:item.status="{ item }">
-                <v-btn class="text-left mt-1 mb-1" small :color="getStatusColor(item.status)" dark style="width: 100px"
-                  depressed>
+                <v-btn
+                  class="text-left mt-1 mb-1"
+                  small
+                  :color="getStatusColor(item.status)"
+                  dark
+                  style="width: 100px"
+                  depressed
+                >
                   <v-icon left> mdi-album </v-icon>
                   {{ item.status }}
                 </v-btn>
               </template>
               <template v-slot:item.edit="{ item }">
-                <v-btn v-if="item.status != '반품'" small @click="deleteItem_pop(item)" color="error">
+                <v-btn
+                  v-if="item.status != '반품'"
+                  small
+                  @click="deleteItem_pop(item)"
+                  color="error"
+                >
                   반품 요청
                 </v-btn>
               </template>
             </v-data-table>
             <v-col>
-              <v-pagination circle v-model="warehousingListCfg.page"
-                :length="warehousingListCfg.pageCount"></v-pagination>
+              <v-pagination
+                circle
+                v-model="warehousingListCfg.page"
+                :length="warehousingListCfg.pageCount"
+              ></v-pagination>
             </v-col>
           </v-card>
         </v-col>
@@ -69,8 +105,16 @@
             </v-col>
           </v-row>
           <v-card>
-            <v-data-table height="300" :headers="headers_detail" :items="statement_detail_list" fixed-header
-              item-key="barcode" multi-sort hide-default-footer dense>
+            <v-data-table
+              height="300"
+              :headers="headers_detail"
+              :items="statement_detail_list"
+              fixed-header
+              item-key="barcode"
+              multi-sort
+              hide-default-footer
+              dense
+            >
               <template v-slot:item.orderCount="props">
                 {{ props.item.orderCount | comma }}
               </template>
@@ -83,7 +127,9 @@
               </template>
 
               <template v-slot:item.edit="{ item }">
-                <v-icon small @click="deleteItem_pop(item)"> mdi-delete </v-icon>
+                <v-icon small @click="deleteItem_pop(item)">
+                  mdi-delete
+                </v-icon>
               </template>
             </v-data-table>
           </v-card>
@@ -92,12 +138,20 @@
     </v-container>
 
     <!-- 생성 모달 -->
-    <WarehousingItemModal ref="ItemModal" :open="edit_customer" @closeModal="closeModal_customer">
+    <WarehousingItemModal
+      ref="ItemModal"
+      :open="edit_customer"
+      @closeModal="closeModal_customer"
+    >
     </WarehousingItemModal>
 
     <!-- 이력 모달 -->
-    <WarehousingHistoryModal :open="history_modal" :history_modal_title="history_modal_title"
-      :history_list="item_history_modal" @closeModal="closeModal_history"></WarehousingHistoryModal>
+    <WarehousingHistoryModal
+      :open="history_modal"
+      :history_modal_title="history_modal_title"
+      :history_list="item_history_modal"
+      @closeModal="closeModal_history"
+    ></WarehousingHistoryModal>
   </div>
 </template>
 

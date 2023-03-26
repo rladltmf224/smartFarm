@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog v-model="open" max-width="1500px" persistent>
+    <v-dialog v-model="open_prop" max-width="1500px" persistent>
       <v-card>
         <v-card-title>
           <span></span>
@@ -190,6 +190,11 @@ export default class ProductWarehousingItemModal extends Vue {
 
   @Prop({ required: true }) open: boolean;
 
+  get open_prop() {
+    this.getDefaultData();
+    return this.open;
+  }
+
   get headers_item() {
     return cfg.header.headers_item;
   }
@@ -364,6 +369,8 @@ export default class ProductWarehousingItemModal extends Vue {
     return item;
   }
   closeModal_customer() {
+    this.joborder_list = [];
+    this.joborder_detail_list = [];
     this.$emit("closeModal");
   }
 }

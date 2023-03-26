@@ -60,4 +60,20 @@ export default {
       { text: "개수", value: "count" },
     ],
   },
+  data: {
+    status: [
+      { code: "WAIT", name: "대기" },
+      { code: "SPROUT", name: "발아" },
+      { code: "SEED1", name: "1차육묘" },
+      { code: "GRAFT", name: "접목활착" },
+      { code: "SEED2", name: "2차육묘" },
+      { code: "DONE", name: "완료" },
+    ],
+    status2: [
+      { code: "대기", name: "대기" },
+      { code: "작업 진행중", name: "작업 진행중" },
+      { code: "생산 완료", name: "생산 완료" },
+      { code: "완료", name: "완료" },
+    ],
+  },
 };
