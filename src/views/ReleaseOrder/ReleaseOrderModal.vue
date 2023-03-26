@@ -426,6 +426,7 @@ export default class ReleaseOrderModal extends Vue {
         console.log("createCustomerItem", response);
         if (response.status == 200) {
           this.$swal("성공", "자재가 입력되었습니다", "success");
+          this.$emit("closeModal");
         }
       })
       .catch((error) => {

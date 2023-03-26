@@ -242,7 +242,7 @@
             >
               등 록
             </v-btn>
-            <v-btn class="closeBtn" color="primary" text @click="closeModal">
+            <v-btn class="closeBtn" color="error" @click="closeModal">
               닫기
             </v-btn>
           </v-row>
@@ -811,17 +811,17 @@ export default class OperationOrderModal extends Vue {
       //
     }
 
-    if (validation_check) {
-      return this.$swal({
-        title: "입력칸의 공백을 확인해주세요",
-        icon: "error",
-        position: "top",
-        showCancelButton: false,
-        showConfirmButton: false,
-        toast: true,
-        timer: 1500,
-      });
-    }
+    // if (validation_check) {
+    //   return this.$swal({
+    //     title: "입력칸의 공백을 확인해주세요",
+    //     icon: "error",
+    //     position: "top",
+    //     showCancelButton: false,
+    //     showConfirmButton: false,
+    //     toast: true,
+    //     timer: 1500,
+    //   });
+    // }
 
     if (this.change) {
       joborder.id = this.orderData.id;

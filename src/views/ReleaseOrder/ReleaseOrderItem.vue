@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog v-model="open" max-width="1000px" persistent>
+    <v-dialog v-model="open_prop" max-width="1000px" persistent>
       <v-card>
         <v-card-title>
           <span>자재 추가</span>
@@ -16,7 +16,7 @@
               <v-data-table
                 height="300"
                 ref="rawGrid"
-                v-model="selected_prop"
+                v-model="selected_data"
                 :headers="headers_raw_add"
                 :items="raw_detail_list_prop"
                 item-key="rawMaterialDetailId"
@@ -63,6 +63,7 @@
 </template>
 <script lang="ts">
 import cfg from "./config";
+import _ from "lodash";
 import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 
 @Component({
@@ -78,7 +79,7 @@ import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 })
 export default class ReleaseOrderItem extends Vue {
   txtSelectCount: number = 0;
-  //selected: object[] = [];
+  selected_data: object[] = [];
   @Prop({ required: true }) open: boolean = false;
   @Prop({ required: true }) selected: object[] = [];
   @Prop({ required: true }) txtReleaseCount: number = 0;
@@ -92,16 +93,29 @@ export default class ReleaseOrderItem extends Vue {
     return this.raw_detail_list;
   }
 
-  get selected_prop(): any {
-    return this.selected;
+  // get selected_prop(): any {
+  //   this.selected_data = _.cloneDeep(this.selected);
+  //   return this.selected;
+  // }
+
+  get open_prop(): any {
+    this.openModal();
+    return this.open;
+  }
+
+  openModal() {
+    console.log("selected", this.selected);
+    this.selected_data = _.cloneDeep(this.selected);
+    let sum_data = _.cloneDeep(this.selected);
+    this.txtSelectCount = _.sumBy(sum_data, "count");
   }
 
   addRawItem(item: any) {
-    console.log("addRawItem", item, this.selected);
+    console.log("addRawItem", item, this.selected_data);
 
     let sumData = 0;
-    if (this.selected_prop != undefined) {
-      this.selected_prop.forEach((el: any) => {
+    if (this.selected_data != undefined) {
+      this.selected_data.forEach((el: any) => {
         sumData += parseInt(el.releaseCount);
       });
       if (item.value) {
@@ -124,16 +138,23 @@ export default class ReleaseOrderItem extends Vue {
   }
 
   totalAddRawItem(item: any) {
-    console.log("totalAddRawItem", item);
-    item.items.forEach((el: any) => {
-      this.addRawItem({ item: el, value: item.value });
-    });
+    console.log("totalAddRawItem", item, this.selected_data);
+
+    if (!item.value) {
+      this.txtSelectCount = 0;
+    } else {
+      let sum_data = _.cloneDeep(item.items);
+
+      console.log(_.sumBy(sum_data, "count"));
+
+      this.txtSelectCount = _.sumBy(sum_data, "count");
+    }
   }
 
   saveRawData() {
     console.log("saveRawData", this.$refs.rawGrid);
 
-    this.$emit("saveItem", this.selected_prop, this.txtSelectCount);
+    this.$emit("saveItem", this.selected_data, this.txtSelectCount);
     //this.$refs.rawListGrid.$forceUpdate();
 
     this.closeRawDetail();
@@ -142,7 +163,7 @@ export default class ReleaseOrderItem extends Vue {
   saveReleaseCount(item: any) {
     item.releaseCount = parseInt(item.releaseCount);
     let sumData = 0;
-    this.selected_prop.forEach((el: any) => {
+    this.selected.forEach((el: any) => {
       sumData += parseInt(el.releaseCount);
     });
     console.log("sumData", sumData);

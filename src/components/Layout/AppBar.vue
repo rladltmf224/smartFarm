@@ -10,7 +10,7 @@
     </v-toolbar-title>
     <v-spacer></v-spacer>
 
-    <v-menu offset-y>
+    <!-- <v-menu offset-y>
       <template v-slot:activator="{ on, attrs }">
         <v-badge
           overlap
@@ -54,7 +54,8 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
-    </v-menu>
+    </v-menu> -->
+    <Alarm></Alarm>
     <v-btn elevation="0" color="transparent" rounded>
       <v-badge bordered bottom color="red" dot offset-x="10" offset-y="10">
         <v-avatar size="30" class="mx-2">
@@ -75,11 +76,13 @@ import { Component, Vue, Ref, Watch } from "vue-property-decorator";
 import SidebarUserInfo from "@/components/Sidebar/SidebarUserInfo.vue";
 import SidebarMySetting from "@/components/Sidebar/SidebarMySetting.vue";
 import { mapGetters, mapState } from "vuex";
+import Alarm from "../Sidebar/Alarm.vue";
 
 @Component({
   components: {
     SidebarUserInfo,
     SidebarMySetting,
+    Alarm,
   },
   computed: {
     ...mapGetters({
@@ -119,6 +122,15 @@ export default class Sidebar extends Vue {
     (v: any) => !!v || "비밀번호 확인은 필수입니다",
   ];
   userInfo?: object;
+
+  // @Watch("alarmList.length", { deep: true })
+  // onAlarmListChanged(newVal: number, oldVal: number): void {
+  //   // 새로운 알림이 생긴 경우
+  //   if (newVal - oldVal > 0) {
+  //     let alarmIcon: HTMLElement | null = document.getElementById("alarmBell");
+  //     if (alarmIcon) alarmIcon.click();
+  //   }
+  // }
 
   mounted() {
     this.getUserId();
@@ -240,6 +252,19 @@ export default class Sidebar extends Vue {
   get pageName() {
     return this.$store.state.pageName;
   }
+
+  // alarmToggle() {
+  //   this.alarmOn = !this.alarmOn;
+  //   if (this.alarmOn) {
+  //     console.log("알람을 받습니다");
+  //   } else {
+  //     console.log("알람을 받지 않습니다");
+  //   }
+  // }
+
+  // removeAlarm(alarm: Object): void {
+  //   this.$store.commit("ALARM/removeAlarm", alarm);
+  // }
 
   goHome(): void {
     this.$router.push("/monitoring").catch(() => {});

@@ -17,11 +17,10 @@
             <v-icon
               v-if="alarmOn"
               :color="alarmList.length > 0 ? 'error' : 'black'"
-              large
             >
               mdi-bell
             </v-icon>
-            <v-icon v-if="!alarmOn" color="grey" large> mdi-bell-off </v-icon>
+            <v-icon v-if="!alarmOn" color="grey"> mdi-bell-off </v-icon>
           </v-btn>
         </v-badge>
       </template>

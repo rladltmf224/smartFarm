@@ -7,7 +7,7 @@ export default {
       { text: "출고 코드", value: "releaseCode" },
       { text: "출고상태", value: "releaseStatus" },
       { text: "거래처", value: "customerName" },
-      { text: "작업지시서 담당자", value: "manager" },
+      { text: "작업지시서 담당자", value: "chargeName" },
       { text: "작업지시서 생성일", value: "jobOrderCreatedDate" },
       { text: "작업지시서 생성자", value: "jobOrderCreatedId" },
       { text: "작업지시서 수정일", value: "jobOrderModifiedDate" },
@@ -133,5 +133,13 @@ export default {
       taxAmount: 0,
       unitPrice: 0,
     },
+    status: [
+      { code: "WAIT", name: "대기" },
+      { code: "SPROUT", name: "발아" },
+      { code: "SEED1", name: "1차육묘" },
+      { code: "GRAFT", name: "접목활착" },
+      { code: "SEED2", name: "2차육묘" },
+      { code: "DONE", name: "완료" },
+    ],
   },
 };

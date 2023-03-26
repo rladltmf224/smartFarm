@@ -9,55 +9,141 @@
               <v-col cols="10">
                 <v-row class="pa-0 mt-1 searchRow">
                   <v-col cols="2" class="pt-0">
-                    <v-text-field dense label="작업지시서" v-model="searchJobOrder" return-object @keydown.enter="getSearch"
-                      required></v-text-field>
+                    <v-text-field
+                      dense
+                      label="작업지시서"
+                      v-model="searchJobOrder"
+                      return-object
+                      @keydown.enter="getSearch"
+                      required
+                    ></v-text-field>
                   </v-col>
 
                   <v-col cols="2" class="pt-0">
-                    <v-autocomplete dense label="거래처" class="pl-3" v-model="searchCustomer" :items="searchCustomerData"
-                      @change="getSearch" item-value="id" item-text="name" return-object required></v-autocomplete>
+                    <v-autocomplete
+                      dense
+                      label="거래처"
+                      class="pl-3"
+                      v-model="searchCustomer"
+                      :items="searchCustomerData"
+                      @change="getSearch"
+                      item-value="id"
+                      item-text="name"
+                      return-object
+                      required
+                    ></v-autocomplete>
                   </v-col>
 
                   <v-col cols="2" class="pt-0">
-                    <v-autocomplete dense label="부서" class="pl-3" @change="getSearch" v-model="searchDepartment"
-                      :items="searchDepartmentData" item-text="departmentName" item-value="departmentId"
-                      return-object></v-autocomplete>
+                    <v-autocomplete
+                      dense
+                      label="부서"
+                      class="pl-3"
+                      @change="getSearch"
+                      v-model="searchDepartment"
+                      :items="searchDepartmentData"
+                      item-text="departmentName"
+                      item-value="departmentId"
+                      return-object
+                    ></v-autocomplete>
                   </v-col>
                   <v-col cols="2" class="pt-0">
-                    <v-autocomplete dense class="pl-3" v-model="searchCrew" :items="searchCrewData" @change="getSearch"
-                      item-text="chargeName" label="담당자" return-object></v-autocomplete>
+                    <v-autocomplete
+                      dense
+                      class="pl-3"
+                      v-model="searchCrew"
+                      :items="searchCrewData"
+                      @change="getSearch"
+                      item-text="chargeName"
+                      label="담당자"
+                      return-object
+                    ></v-autocomplete>
                   </v-col>
                   <v-col cols="2" class="pt-0">
-                    <v-menu dense ref="startDate" v-model="menu_start_date" :close-on-content-click="false"
-                      :return-value.sync="startDate" transition="scale-transition" offset-y min-width="auto">
+                    <v-menu
+                      dense
+                      ref="startDate"
+                      v-model="menu_start_date"
+                      :close-on-content-click="false"
+                      :return-value.sync="startDate"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
                       <template v-slot:activator="{ on, attrs }">
-                        <v-text-field dense v-model="startDate" label="시작일" prepend-icon="mdi-calendar" readonly
-                          v-bind="attrs" v-on="on"></v-text-field>
+                        <v-text-field
+                          dense
+                          v-model="startDate"
+                          label="시작일"
+                          prepend-icon="mdi-calendar"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-text-field>
                       </template>
-                      <v-date-picker v-model="startDate" no-title scrollable locale="ko-KR" :max="endDate">
+                      <v-date-picker
+                        v-model="startDate"
+                        no-title
+                        scrollable
+                        locale="ko-KR"
+                        :max="endDate"
+                      >
                         <v-spacer></v-spacer>
                         <v-btn text color="primary" @click="menu = false">
                           취소
                         </v-btn>
-                        <v-btn text color="primary" @click="s_date_search(startDate)">
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="s_date_search(startDate)"
+                        >
                           확인
                         </v-btn>
                       </v-date-picker>
                     </v-menu>
                   </v-col>
                   <v-col cols="2" class="pt-0">
-                    <v-menu dense ref="endDate" v-model="menu_end_date" :close-on-content-click="false"
-                      :return-value.sync="endDate" transition="scale-transition" offset-y min-width="auto">
+                    <v-menu
+                      dense
+                      ref="endDate"
+                      v-model="menu_end_date"
+                      :close-on-content-click="false"
+                      :return-value.sync="endDate"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
                       <template v-slot:activator="{ on, attrs }">
-                        <v-text-field dense v-model="endDate" label="종료일" prepend-icon="mdi-calendar" readonly
-                          v-bind="attrs" v-on="on"></v-text-field>
+                        <v-text-field
+                          dense
+                          v-model="endDate"
+                          label="종료일"
+                          prepend-icon="mdi-calendar"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-text-field>
                       </template>
-                      <v-date-picker v-model="endDate" no-title scrollable locale="ko-KR" :min="startDate">
+                      <v-date-picker
+                        v-model="endDate"
+                        no-title
+                        scrollable
+                        locale="ko-KR"
+                        :min="startDate"
+                      >
                         <v-spacer></v-spacer>
-                        <v-btn text color="primary" @click="menu_end_date = false">
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="menu_end_date = false"
+                        >
                           취소
                         </v-btn>
-                        <v-btn text color="primary" @click="e_date_search(endDate)">
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="e_date_search(endDate)"
+                        >
                           확인
                         </v-btn>
                       </v-date-picker>
@@ -66,7 +152,13 @@
                 </v-row>
                 <v-row dense>
                   <v-col cols="10" class="pt-0">
-                    <v-radio-group dense v-model="row" row class="statusBox" @change="getSearch">
+                    <v-radio-group
+                      dense
+                      v-model="row"
+                      row
+                      class="statusBox"
+                      @change="getSearch"
+                    >
                       진행 상태 :
                       <v-radio class="pl-5" label="전체" value=""> </v-radio>
                       <v-radio class="pl-5" label="대기" value="대기">
@@ -108,46 +200,82 @@
             </v-col>
           </v-row>
           <v-card>
-            <v-data-table multi-sort fixed-header class="mt-1 " height="470" v-model="toatalselected" :headers="headers"
-              :items="totalTable" @click:row="dataDetail" dense :options.sync="orderListCfg.options"
-              :server-items-length="orderListCfg.totalCount" :loading="orderListCfg.loading"
-              :items-per-page="orderListCfg.itemsPerPage" :page.sync="orderListCfg.page"
-              @page-count="orderListCfg.pageCount = $event" hide-default-footer>
+            <v-data-table
+              multi-sort
+              fixed-header
+              class="mt-1"
+              height="470"
+              v-model="toatalselected"
+              :headers="headers"
+              :items="totalTable"
+              @click:row="dataDetail"
+              dense
+              :options.sync="orderListCfg.options"
+              :server-items-length="orderListCfg.totalCount"
+              :loading="orderListCfg.loading"
+              :items-per-page="orderListCfg.itemsPerPage"
+              :page.sync="orderListCfg.page"
+              @page-count="orderListCfg.pageCount = $event"
+              hide-default-footer
+              no-data-text="데이터가 없습니다."
+            >
               <template v-slot:item.status="{ item }">
-                <v-btn class="text-left mt-1 mb-1" small :color="getStatusColor(item.status)" dark style="width: 100px"
-                  depressed>
+                <v-btn
+                  class="text-left mt-1 mb-1"
+                  small
+                  :color="getStatusColor(item.status)"
+                  dark
+                  style="width: 100px"
+                  depressed
+                >
                   <v-icon left> mdi-album </v-icon>
-                  {{ item.status }}
+                  {{ getStatusCode(item.status) }}
                 </v-btn>
               </template>
               <template v-slot:[`item.deadline`]="{ item }">
                 {{ item.deadline }}
               </template>
               <template v-slot:[`item.edit`]="{ item }">
-                <v-icon v-show="item.status == '대기' || item.status == '생산전'" small class="mr-1" @click="changeData(item)">
+                <v-icon
+                  v-show="item.status == '대기' || item.status == '생산전'"
+                  small
+                  class="mr-1"
+                  @click="changeData(item)"
+                >
                   mdi-pencil
                 </v-icon>
-                <v-icon v-show="item.status == '대기' || item.status == '생산전'" small @click="deleteData(item)">
+                <v-icon
+                  v-show="item.status == '대기' || item.status == '생산전'"
+                  small
+                  @click="deleteData(item)"
+                >
                   mdi-delete
                 </v-icon>
               </template>
 
               <template v-slot:[`item.changeOrder`]="{ item }">
-                <v-btn v-show="item.status == '대기' || item.status == '생산전'" text small fluid color="primary"
-                  class="mr-1 editBtn" value="작업 진행중" @click="start(item)">
-                  시 작
-                </v-btn>
-                <v-btn v-show="item.status == '생산중'" small fluid text color="primary" class="mr-1 editBtn"
-                  @click="finish(item)">
-                  생 산 완 료
+                <v-btn
+                  v-show="item.status !== 'DONE'"
+                  text
+                  small
+                  fluid
+                  color="primary"
+                  class="mr-1 editBtn"
+                  :value="getStatusCodeNext(item.status).code"
+                  @click="start(item, getStatusCodeNext(item.status).code)"
+                >
+                  {{ getStatusCodeNext(item.status).name }}
                 </v-btn>
               </template>
             </v-data-table>
             <v-col>
-              <v-pagination circle v-model="orderListCfg.page" :length="orderListCfg.pageCount"></v-pagination>
+              <v-pagination
+                circle
+                v-model="orderListCfg.page"
+                :length="orderListCfg.pageCount"
+              ></v-pagination>
             </v-col>
           </v-card>
-
         </v-col>
       </v-row>
     </v-container>
@@ -160,12 +288,27 @@
             </v-col>
           </v-row>
           <v-card>
-
-            <v-data-table multi-sort class=" detailFont" fixed-header :headers="headersDetail" height="69"
-              :items="datatable" item-key="index" dense disable-pagination hide-default-footer>
+            <v-data-table
+              multi-sort
+              class="detailFont"
+              fixed-header
+              :headers="headersDetail"
+              height="69"
+              :items="datatable"
+              item-key="index"
+              dense
+              disable-pagination
+              hide-default-footer
+            >
               <template v-slot:item.status="{ item }">
-                <v-btn class="text-left mt-1 mb-1" small :color="getStatusColor(item.status)" dark style="width: 100px"
-                  depressed>
+                <v-btn
+                  class="text-left mt-1 mb-1"
+                  small
+                  :color="getStatusColor(item.status)"
+                  dark
+                  style="width: 100px"
+                  depressed
+                >
                   <v-icon left> mdi-album </v-icon>
                   {{ item.status }}
                 </v-btn>
@@ -173,8 +316,15 @@
 
               <template v-slot:item.details="{ item }">
                 <td :colspan="1" class="treeTable">
-                  <v-data-table multi-sort :headers="totalItem" :items="item.details" dense disable-pagination
-                    hide-default-footer hide-default-header>
+                  <v-data-table
+                    multi-sort
+                    :headers="totalItem"
+                    :items="item.details"
+                    dense
+                    disable-pagination
+                    hide-default-footer
+                    hide-default-header
+                  >
                   </v-data-table>
                 </td>
               </template>
@@ -191,8 +341,12 @@
       </v-row>
     </v-container>
     <!--작업지시서 등록 모달-->
-    <order-modal :open="orderDialog" :change="change" :editedCustomerData="editedOrder"
-      @closeModal="closeModal"></order-modal>
+    <order-modal
+      :open="orderDialog"
+      :change="change"
+      :editedCustomerData="editedOrder"
+      @closeModal="closeModal"
+    ></order-modal>
   </div>
 </template>
 
@@ -202,6 +356,7 @@ import cfg from "./config";
 import { gridCfg } from "@/util/config/";
 import OrderModal from "./OperationOrderModal.vue";
 import { Component, Vue, Watch } from "vue-property-decorator";
+import _ from "lodash";
 
 @Component({
   components: {
@@ -239,6 +394,7 @@ export default class OperationOrder extends Vue {
   endDate: string = "";
   jobordeList: any = {};
   departmentCrewList: any;
+  statusCode: any = [];
 
   @Watch("searchDepartment")
   onSearchDepartmentChange() {
@@ -288,6 +444,7 @@ export default class OperationOrder extends Vue {
   created() {
     this.orderListCfg = Object.assign({}, gridCfg);
     this.editedOrder = Object.assign({}, this.editedOrder);
+    this.statusCode = _.cloneDeep(cfg.data.status);
   }
 
   mounted() {
@@ -422,12 +579,12 @@ export default class OperationOrder extends Vue {
       details: [],
     };
   }
-  start(item: any) {
+  start(item: any, code: string) {
     let joborder: object;
 
     joborder = {
       jobOrderId: item.id,
-      status: "시작",
+      status: code,
     };
 
     this.$swal
@@ -694,6 +851,38 @@ export default class OperationOrder extends Vue {
     else if (status == "생산중") return "blue darken-1";
     else if (status == "생산 완료") return "green";
     else return "black";
+  }
+
+  getStatusCode(status: string) {
+    if (status === undefined) {
+      return "";
+    }
+    if (_.find(this.statusCode, { code: status }).name == undefined) {
+      return "오류";
+    }
+    return _.find(this.statusCode, { code: status }).name;
+  }
+  getStatusCodeNext(status: any) {
+    if (status == undefined) {
+      return "오류";
+    }
+    if (_.find(this.statusCode, { code: status }).name == undefined) {
+      return "오류";
+    }
+    const index: number = this.statusCode.findIndex(
+      (item: any) => item.code === status
+    );
+
+    console.log("status", status, index);
+
+    if (index == this.statusCode.length - 1) {
+      console.log("getStatusCodeNext2", index);
+      return this.statusCode[index];
+    } else {
+      console.log("getStatusCodeNext1", index, this.statusCode[index + 1]);
+
+      return this.statusCode[index + 1];
+    }
   }
   closeModal() {
     this.orderDialog = false;

@@ -1,13 +1,13 @@
 <template>
   <div>
-    <v-container fluid>
+    <v-container fluid v-resize="onResize">
       <v-row>
         <!-- 부서/직원 검색 -->
-        <v-col md="4">
+        <v-col cols="4">
           <v-col>
             <h4 class="searchbox-title">부서/직원 검색</h4>
           </v-col>
-          <v-sheet color="#f5f5f5" max-width="500" height="850">
+          <v-sheet color="#f5f5f5" :height="dept_height">
             <v-sheet class="mb-4 pa-2 blue-grey lighten-2">
               <v-text-field
                 v-model="searchTxt"
@@ -22,7 +22,8 @@
             </v-sheet>
             <v-card
               class="pa-4 lighten-2"
-              style="overflow-y: auto; height: 730px"
+              style="overflow-y: auto"
+              :height="dept_height"
             >
               <v-treeview
                 v-model="tree"
@@ -49,12 +50,12 @@
         </v-col>
 
         <!-- 권한 설정 -->
-        <v-col md="8">
+        <v-col cols="8">
           <v-row>
-            <v-col md="2">
+            <v-col cols="2">
               <h4 class="searchbox-title">권한 설정</h4>
             </v-col>
-            <v-col class="text-right mb-2" offset-md="3" md="7">
+            <v-col class="text-right mb-2" offset="3" cols="7">
               <v-btn
                 v-if="inputType == ''"
                 color="primary"
@@ -93,10 +94,11 @@
             </v-col>
           </v-row>
 
-          <v-card class="pa-5" max-width="auto" height="815">
+          <v-card class="pa-5" max-width="auto" :height="setting_height">
             <div v-if="status == 'U'">
               <v-row>
                 <v-col cols="6">
+                  <span>부서</span>
                   <v-select
                     dense
                     :items="items"
@@ -105,6 +107,9 @@
                     label="부서"
                     v-model="dept_val"
                     disabled
+                    solo
+                    hide-details="false"
+                    class="text-box-style"
                   ></v-select>
                 </v-col>
                 <!-- <v-col cols="6">
@@ -114,34 +119,43 @@
               <v-form ref="form" lazy-validation>
                 <v-row>
                   <v-col cols="4">
+                    <span>아이디</span>
                     <v-text-field
-                      name="name"
                       label="아이디"
                       id="id"
                       v-model="user_ID"
                       :rules="user_id_rule"
                       :disabled="inputType == '' || status != 'U'"
                       required
+                      solo
+                      hide-details="false"
+                      class="text-box-style"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="4">
+                    <span>이름</span>
                     <v-text-field
-                      name="name"
                       label="이름"
                       v-model="user_name"
                       :rules="user_nm_rule"
                       :disabled="inputType == '' || status != 'U'"
                       required
+                      solo
+                      hide-details="false"
+                      class="text-box-style"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="4">
+                    <span>전화번호</span>
                     <v-text-field
-                      name="name"
                       label="전화번호"
                       v-model="phone_number"
                       :rules="phone_nb_rule"
                       :disabled="inputType == '' || status != 'U'"
                       required
+                      solo
+                      hide-details="false"
+                      class="text-box-style"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -151,12 +165,15 @@
             <div v-if="status == 'D'">
               <v-row>
                 <v-col cols="6">
+                  <span>부서명</span>
                   <v-text-field
-                    name="name"
                     label="부서명"
                     id="id"
                     v-model="dept_name"
                     disabled
+                    solo
+                    hide-details="false"
+                    class="text-box-style"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -185,9 +202,9 @@
                       label="권한"
                       v-model="item.permission"
                       :disabled="inputType == ''"
+                      hide-details="false"
                     >
                     </v-select>
-                    <span></span>
                   </td>
                 </tr>
               </template>
@@ -204,21 +221,20 @@
         </v-card-title>
         <v-card-text>
           <v-col align-self="center">
+            <span>부서명</span>
             <v-text-field
-              name="name"
-              label="부서명"
               id="id"
               v-model="new_dept_name"
+              solo
+              hide-details="false"
+              class="text-box-style"
             ></v-text-field>
           </v-col>
         </v-card-text>
         <v-card-actions>
-          <v-col class="text-right">
-            <v-btn color="success" text @click="clickSaveDeptItem_Modal">
-              저장
-            </v-btn>
-            <v-btn color="primary" text @click="dialog3 = false"> 닫기 </v-btn>
-          </v-col>
+          <v-spacer></v-spacer>
+          <v-btn color="success" @click="clickSaveDeptItem_Modal"> 저장 </v-btn>
+          <v-btn color="error" @click="dialog3 = false"> 닫기 </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -238,7 +254,8 @@ import AppBar from "@/components/Layout/AppBar.vue";
 })
 export default class Member extends Vue {
   @Ref() form: HTMLFormElement;
-
+  dept_height: number = 0;
+  setting_height: number = 0;
   dialog3: boolean = false;
   new_dept_name: string = "";
   initiallyOpen: string[] = ["public"];
@@ -290,6 +307,14 @@ export default class Member extends Vue {
 
   mounted() {
     this.getdeptItem();
+    this.onResize();
+  }
+
+  onResize() {
+    this.dept_height = window.innerHeight - 48 - 48 - 102;
+    this.setting_height = window.innerHeight - 48 - 68;
+
+    console.log("onResize", this.dept_height, this.setting_height);
   }
 
   searchUsesr(e: { target: any }) {

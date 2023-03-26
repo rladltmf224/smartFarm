@@ -1,8 +1,8 @@
 <template>
   <div>
-    <v-container fluid>
+    <v-container fluid v-resize="onResize">
       <v-row>
-        <v-col class="ma-2" md="12">
+        <v-col class="ma-2" cols="12">
           <span class="searchbox-title">조회 조건</span>
           <v-card class="card-shadow pa-3" height="65">
             <v-row dense>
@@ -49,8 +49,9 @@
                   rounded="xl"
                 ></v-text-field>
               </v-col> -->
+              <v-spacer></v-spacer>
 
-              <v-col class="text-right" offset="4" cols="2">
+              <v-col class="text-right" cols="2">
                 <v-btn color="primary" @click="getCustomer" large elevation="0">
                   조회
                 </v-btn>
@@ -60,24 +61,22 @@
         </v-col>
       </v-row>
       <v-row no-gutters>
-        <v-col class="ma-2" md="12">
+        <v-col class="ma-2" cols="12">
           <v-row dense class="mb-2">
-            <v-col md="2" align-self="center">
+            <v-col cols="1" align-self="center">
               <span class="searchbox-title">품목 목록</span>
             </v-col>
-            <v-col class="text-right" offset-md="7" md="3">
-              <v-btn
-                class="ml-1"
-                color="primary"
-                @click="openModal"
-                elevation="0"
+            <v-spacer></v-spacer>
+
+            <v-col class="text-right" cols="3">
+              <v-btn color="primary" @click="openModal" elevation="0"
                 ><v-icon left> mdi-book-account </v-icon>품목 추가</v-btn
               >
             </v-col>
           </v-row>
           <v-card>
             <v-data-table
-              height="650"
+              :height="table_height"
               :headers="headers"
               :items="customer_list"
               fixed-header
@@ -279,6 +278,11 @@ import { Vue, Component, Watch } from "vue-property-decorator";
   },
 })
 export default class Item extends Vue {
+  windowSize: any = {
+    x: 0,
+    y: 0,
+  };
+  table_height: number = 0;
   itemDialog: boolean = false;
   itemDialog_type: boolean = false;
   processDialog: boolean = false;
@@ -337,13 +341,22 @@ export default class Item extends Vue {
     this.items_type = Object.assign([], cfg.data.items_type);
   }
 
+  mounted() {
+    this.onResize();
+  }
+
   @Watch("itemListCfg.options", { deep: true })
   onItemListChange() {
     this.getCustomer();
   }
 
+  onResize() {
+    this.table_height = window.innerHeight - 48 - 129 - 44 - 44 - 20;
+    console.log("onResize", this.table_height);
+  }
+
   handlerSaveData(data: any, editedIndex: number) {
-    if (editedIndex > -1) {
+    if (!editedIndex) {
       data = {
         version: data.version,
         name: data.name,
@@ -382,7 +395,7 @@ export default class Item extends Vue {
   alertResult(isSuccess: boolean) {
     if (isSuccess) {
       this.$swal({
-        title: "수정되었습니다.",
+        title: "저장되었습니다.",
         icon: "success",
         position: "top",
         showCancelButton: false,
@@ -659,6 +672,7 @@ export default class Item extends Vue {
   cloaseProcessAddModal() {
     this.processData.name = "";
     (this.processData.verson = 1.0), (this.processData.file = "");
+    this.processData.verson = 0;
     this.ProcessAddDialog = false;
     this.processDetailList = [];
     this.getProcessList();
