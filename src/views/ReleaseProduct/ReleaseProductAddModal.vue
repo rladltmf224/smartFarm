@@ -131,11 +131,14 @@
       @closeModal="closeItemModal"
     >
     </ReleaseProductItemModal>
-    <ReleaseOrderModal
+    <ReleaseProductModal
       :open="add_rawModal"
+      :product_detail_list="product_detail_list"
+      :selected="selected"
       @addRaw="addRaw"
       @closeModal="closeRawDetail"
-    ></ReleaseOrderModal>
+      @saveData="saveSelectedItem"
+    ></ReleaseProductModal>
   </div>
 </template>
 <script lang="ts">
@@ -144,7 +147,7 @@ import _ from "lodash";
 import * as api from "@/api";
 import { Component, Vue, Prop } from "vue-property-decorator";
 import ReleaseProductItemModal from "./ReleaseProductItemModal.vue";
-import ReleaseOrderModal from "../ReleaseOrder/ReleaseOrderModal.vue";
+import ReleaseProductModal from "./ReleaseProductModal.vue";
 
 @Component({
   filters: {
@@ -158,7 +161,7 @@ import ReleaseOrderModal from "../ReleaseOrder/ReleaseOrderModal.vue";
   },
   components: {
     ReleaseProductItemModal,
-    ReleaseOrderModal,
+    ReleaseProductModal,
   },
 })
 export default class ReleaseProductAddModal extends Vue {
@@ -173,6 +176,10 @@ export default class ReleaseProductAddModal extends Vue {
     deadline: "",
     details: [],
   };
+  product_detail_list: object[] = [];
+  select_product_id: number = 0;
+  txtReleaseCount: number = 0;
+  selected: object[] = [];
   deadDate: boolean = false;
 
   @Prop({ required: true }) open: boolean;
@@ -198,6 +205,18 @@ export default class ReleaseProductAddModal extends Vue {
   }
 
   addRaw() {}
+
+  saveSelectedItem(item: object[], count: number) {
+    console.log("saveSelectedItem", item, count);
+
+    this.item_list_modal.forEach((el: any) => {
+      console.log(el, this.select_product_id);
+      if (el.productDetailId == this.select_product_id) {
+        el.details = item;
+        el.count = count;
+      }
+    });
+  }
 
   addItem(data: object[]) {
     data.forEach((el: { id: number; name: string; code: string }) => {
@@ -243,6 +262,11 @@ export default class ReleaseProductAddModal extends Vue {
   }
 
   closeModal_customer() {
+    this.editedCustomer.customerId = 0;
+    this.editedCustomer.requester = "";
+    this.editedCustomer.requesterContact = "";
+    this.editedCustomer.deadline = "";
+    this.item_list_modal = [];
     this.open_prop = false;
   }
   closeRawDetail() {
@@ -250,8 +274,7 @@ export default class ReleaseProductAddModal extends Vue {
   }
 
   selectRawDetail(item: any) {
-    // this.txtReleaseCount = item.count;
-    // this.select_rawID = item.productDetailId;
+    this.txtReleaseCount = item.count;
     // if (item.details.length != 0) {
     //   this.selected = item.details;
     //   let sumData = 0;
@@ -260,6 +283,9 @@ export default class ReleaseProductAddModal extends Vue {
     //   });
     //   this.txtSelectCount = sumData;
     // }
+    this.selected = item.details;
+
+    this.select_product_id = item.productDetailId;
 
     let reqData = {
       item: item.productDetailId,
@@ -270,10 +296,14 @@ export default class ReleaseProductAddModal extends Vue {
       .getReleaseProductStockList(reqData)
       .then((response) => {
         console.log("getReleaseRawDetailList", response);
-        response.data.forEach((el: any) => {
-          el.productDetailId = el.id;
+        response.data.responseData.forEach((el: any) => {
+          el.productDetailId = el.itemId;
           el.releaseCount = el.count;
         });
+
+        this.product_detail_list = response.data.responseData;
+
+        console.log("product_detail_list", this.product_detail_list);
 
         this.add_rawModal = true;
       })
