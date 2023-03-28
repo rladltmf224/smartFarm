@@ -10,7 +10,6 @@
     </v-toolbar-title>
     <v-spacer></v-spacer>
 
-
     <!-- <v-menu offset-y>
       <template v-slot:activator="{ on, attrs }">
         <v-badge
@@ -391,7 +390,10 @@ export default class Sidebar extends Vue {
   }
 
   changeToday() {
-    this.todayList = this.todayTotalList[this.i++ % this.todayTotalList.length];
+    if (this.todayList.length != 0) {
+      this.todayList =
+        this.todayTotalList[this.i++ % this.todayTotalList.length];
+    }
   }
 
   startSchedule() {
