@@ -55,8 +55,6 @@
         </v-list-item>
       </v-list>
     </v-menu> -->
-    <Alarm></Alarm>
-
     <div class="scheduleBar">
       <p class="mb-0">
         {{
@@ -66,6 +64,8 @@
         }}
       </p>
     </div>
+
+    <Alarm></Alarm>
 
     <v-btn elevation="0" color="transparent" rounded>
       <v-badge bordered bottom color="red" dot offset-x="10" offset-y="10">
@@ -390,10 +390,7 @@ export default class Sidebar extends Vue {
   }
 
   changeToday() {
-    if (this.todayList.length != 0) {
-      this.todayList =
-        this.todayTotalList[this.i++ % this.todayTotalList.length];
-    }
+    this.todayList = this.todayTotalList[this.i++ % this.todayTotalList.length];
   }
 
   startSchedule() {
