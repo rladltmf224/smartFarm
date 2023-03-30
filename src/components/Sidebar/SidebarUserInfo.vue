@@ -68,7 +68,7 @@
 <script lang="ts">
 import { Component, Vue, Ref, Prop, Emit } from "vue-property-decorator";
 import jwt_decode from "jwt-decode";
-
+import * as api from "@/api/index.js";
 @Component
 export default class SidebarUserInfo extends Vue {
   @Ref() form: HTMLFormElement;
@@ -93,10 +93,9 @@ export default class SidebarUserInfo extends Vue {
     (v: any) => !!v || "비밀번호 확인은 필수입니다",
   ];
 
-  @Emit("save-info")
   change(): any {
     if (this.form.validate()) {
-      this.$swal({
+      return this.$swal({
         title: "비밀번호가 동일하지 않습니다.",
         icon: "error",
         position: "top",
@@ -105,7 +104,6 @@ export default class SidebarUserInfo extends Vue {
         toast: true,
         timer: 1500,
       });
-      return;
     }
 
     if (this.password == this.changePassword) {
@@ -116,7 +114,48 @@ export default class SidebarUserInfo extends Vue {
         checkChangePw: this.changePassword,
       };
 
-      return userInfo;
+      this.$swal
+        .fire({
+          title: "수정",
+          text: "해당 데이터를 수정 이후 재로그인 해주셔야합니다",
+          icon: "info",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "수정",
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            api.login
+              .updateUserInfoPage(userInfo)
+              .then((response: object) => {
+                this.$swal({
+                  title: "수정되었습니다.",
+                  icon: "success",
+                  position: "top",
+                  showCancelButton: false,
+                  showConfirmButton: false,
+                  toast: true,
+                  timer: 1500,
+                });
+
+                //수정된 이후의 상황
+                this.close();
+                this.$emit("log-out");
+              })
+              .catch((error: object) => {
+                this.$swal({
+                  title: "수정 실패되었습니다.",
+                  icon: "error",
+                  position: "top",
+                  showCancelButton: false,
+                  showConfirmButton: false,
+                  toast: true,
+                  timer: 1500,
+                });
+              });
+          }
+        });
     }
   }
   @Emit("closeModal")

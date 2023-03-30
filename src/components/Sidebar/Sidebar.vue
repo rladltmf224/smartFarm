@@ -43,6 +43,12 @@
         </v-list-item-icon>
         <v-list-item-title>모니터링</v-list-item-title>
       </v-list-item>
+      <v-list-item class="pb-1 mx-2" :link="true" :to="to_schedule">
+        <v-list-item-icon @mouseover="openTooltip(item)">
+          <v-icon>mdi mdi-calendar-month-outline</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title>일정관리</v-list-item-title>
+      </v-list-item>
       <v-list-group
         v-for="(item, i) in items"
         :key="i"
@@ -118,6 +124,7 @@
     <SidebarUserInfo
       :open="userInfoDialog"
       @closeModal="close"
+      @log-out="logout"
       @save-info="handlerSaveInfo"
     ></SidebarUserInfo>
 
@@ -162,6 +169,7 @@ export default class Sidebar extends Vue {
   userInfoDialog: boolean = false;
   mySettingDialog: boolean = false;
   to_home?: string = "monitoring";
+  to_schedule?: string = "schedule";
   to_notdev?: string = "notdev";
   items?: any[] = [];
   items_dev?: any[] = [];
@@ -367,6 +375,8 @@ export default class Sidebar extends Vue {
     return;
   }
   handlerSaveInfo(userInfo: object): void {
+    console.log("handlerSaveInfo 눌림");
+    console.log("userInfo", userInfo);
     this.$swal
       .fire({
         title: "수정",
@@ -410,7 +420,6 @@ export default class Sidebar extends Vue {
       });
     return;
   }
-
   close(): void {
     //this.form.reset();
     this.userInfoDialog = false;

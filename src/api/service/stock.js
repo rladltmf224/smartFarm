@@ -2,10 +2,8 @@ import AuthAPI from "../api/AuthAPI";
 
 export default {
   updateProductWarehousing: (params) =>
-    AuthAPI.put("/api/inventory/product/storage", {
-      headers: { "Content-Type": "application/json" },
-      params: params,
-    }),
+    AuthAPI.put("/api/inventory/product/storage", JSON.stringify(params)),
+
   updateItemWarehousing: (params) =>
     AuthAPI.put("/api/inventory/rawmaterial/storage", JSON.stringify(params)),
   getStockList: () => AuthAPI.get("/api/inventory/check/lists"),

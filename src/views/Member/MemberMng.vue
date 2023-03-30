@@ -126,6 +126,7 @@
                   <v-col cols="4">
                     <span>아이디</span>
                     <v-text-field
+                      style="background-color: white"
                       label="아이디"
                       id="id"
                       v-model="user_ID"
@@ -133,33 +134,32 @@
                       :disabled="inputType == '' || status != 'U'"
                       required
                       solo
-                      hide-details="false"
                       class="text-box-style"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="4">
                     <span>이름</span>
                     <v-text-field
+                      style="background-color: white"
                       label="이름"
                       v-model="user_name"
                       :rules="user_nm_rule"
                       :disabled="inputType == '' || status != 'U'"
                       required
                       solo
-                      hide-details="false"
                       class="text-box-style"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="4">
                     <span>전화번호</span>
                     <v-text-field
+                      style="background-color: white"
                       label="전화번호"
                       v-model="phone_number"
                       :rules="phone_nb_rule"
                       :disabled="inputType == '' || status != 'U'"
                       required
                       solo
-                      hide-details="false"
                       class="text-box-style"
                     ></v-text-field>
                   </v-col>
@@ -500,6 +500,7 @@ export default class Member extends Vue {
       userId: this.user_ID,
       phoneNumber: this.phone_number,
     };
+
     if (validate) {
       api.department
         .createUserItem(userItem)
@@ -507,9 +508,27 @@ export default class Member extends Vue {
           console.log("createUserItem", response);
           if (response.status == 200) {
             this.inputType = "";
+            this.$swal({
+              title: "유저가 생성되었습니다.",
+              icon: "success",
+              position: "top",
+              showCancelButton: false,
+              showConfirmButton: false,
+              toast: true,
+              timer: 1500,
+            });
+            this.getdeptItem();
+          } else {
+            this.$swal({
+              title: "유저가 생성에 실패하였습니다.",
+              icon: "error",
+              position: "top",
+              showCancelButton: false,
+              showConfirmButton: false,
+              toast: true,
+              timer: 1500,
+            });
           }
-
-          this.getdeptItem();
         })
         .catch((error) => {
           console.log(error);
@@ -577,6 +596,7 @@ export default class Member extends Vue {
       departmentId: this.dept_val,
       accountRoles: this.makeJsonRoleData(),
     };
+
     api.department
       .updateUserItem(deptItem)
       .then((response) => {

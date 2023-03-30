@@ -56,6 +56,9 @@ export default {
           pointRadius: 2,
           borderWidth: 1,
           yAxisID: "y1",
+          datalabels: {
+            display: false,
+          },
         },
         {
           label: "1,2,1,1",
@@ -67,6 +70,9 @@ export default {
           pointRadius: 2, //점 크기
           borderWidth: 1, //라인굵기
           yAxisID: "y",
+          datalabels: {
+            display: false,
+          },
         },
       ],
     },

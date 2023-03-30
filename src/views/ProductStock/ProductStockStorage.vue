@@ -123,8 +123,8 @@ export default class ProductStockStorage extends Vue {
       //   };
       let item = {
         productDetailId: this.originalData.original_storageId,
-        changeStorageName: this.update_storageName.storageName,
-        changeStorageLocation: this.update_locationeName.area,
+        storageId: this.update_storageName.storageId,
+        storageLocationId: this.update_locationeName.storageLocationId,
       };
       api.stock
         .updateProductWarehousing(item)
