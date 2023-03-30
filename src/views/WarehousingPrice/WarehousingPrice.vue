@@ -1,16 +1,25 @@
 <template>
   <div class="warehousing">
-    <v-container fluid>
+    <v-container fluid v-resize="onResize">
       <v-row>
         <v-col class="" lg="12">
-          <h4 class="searchbox-title">조회 조건</h4>
+          <span class="searchbox-title">조회 조건</span>
           <v-card class="pa-3" height="60">
             <v-row>
               <v-col cols="2">
-                <v-text-field label="거래처명" v-model="search_condition.customer" @keydown.enter="getCustomer"
-                  dense></v-text-field>
+                <v-text-field
+                  label="거래처명"
+                  v-model="search_condition.customer"
+                  @keydown.enter="getCustomer"
+                  dense
+                  solo
+                  rounded
+                  elevation-0
+                  hide-details="false"
+                ></v-text-field>
               </v-col>
-              <v-col class="pt-3 text-right" offset="8" cols="2">
+              <v-spacer></v-spacer>
+              <v-col class="pt-3 text-right" cols="3">
                 <v-btn color="primary" @click="getCustomer">
                   <v-icon left> mdi-magnify </v-icon>
                   조회
@@ -20,48 +29,84 @@
           </v-card>
         </v-col>
       </v-row>
-      <v-row>
+      <v-row dense>
         <v-col cols="4">
-          <v-row class="mb-2">
-            <v-col cols="3">
-              <h5 class="searchbox-title">거래처 목록</h5>
+          <v-row dense>
+            <v-col class="mb-1 pt-3" cols="4" align-self="center">
+              <span class="">거래처 목록</span>
             </v-col>
             <v-col cols="12">
               <v-card>
-                <v-data-table height="668" :headers="headers" :items="statement_list" item-key="id" multi-sort
-                  single-select fixed-header dense @click:row="selectCustomerItem" :options.sync="customerListCfg.options"
-                  :server-items-length="customerListCfg.totalCount" :loading="customerListCfg.loading"
-                  :items-per-page="customerListCfg.itemsPerPage" :page.sync="customerListCfg.page"
-                  @page-count="customerListCfg.pageCount = $event" hide-default-footer>
+                <v-data-table
+                  :height="customerList_height"
+                  :headers="headers"
+                  :items="statement_list"
+                  item-key="id"
+                  multi-sort
+                  single-select
+                  fixed-header
+                  dense
+                  @click:row="selectCustomerItem"
+                  :options.sync="customerListCfg.options"
+                  :server-items-length="customerListCfg.totalCount"
+                  :loading="customerListCfg.loading"
+                  :items-per-page="customerListCfg.itemsPerPage"
+                  :page.sync="customerListCfg.page"
+                  @page-count="customerListCfg.pageCount = $event"
+                  hide-default-footer
+                >
                 </v-data-table>
-                <v-col>
-                  <v-pagination circle v-model="customerListCfg.page" :length="customerListCfg.pageCount"></v-pagination>
-                </v-col></v-card>
+              </v-card>
+              <v-pagination
+                circle
+                v-model="customerListCfg.page"
+                :length="customerListCfg.pageCount"
+              ></v-pagination>
             </v-col>
           </v-row>
         </v-col>
         <v-col cols="8">
-          <v-row class="mb-2">
-            <v-col cols="2">
-              <h5 class="searchbox-title">등록된 품목</h5>
+          <v-row dense>
+            <v-col cols="4" align-self="center">
+              <span class="searchbox-title">등록된 품목</span>
             </v-col>
-            <v-col class="text-right" offset-md="7" md="3">
-              <v-btn class="ml-1" small color="success" @click="saveCustomerItem">적용</v-btn>
-              <v-btn class="ml-1" small color="primary" @click="editItem"><v-icon left> mdi-pencil-plus </v-icon>품목
-                추가</v-btn>
+            <v-spacer></v-spacer>
+            <v-col class="text-right" cols="5" align-self="center">
+              <v-btn class="ml-1" color="success" @click="saveCustomerItem"
+                >적용</v-btn
+              >
+              <v-btn class="ml-1" color="primary" @click="editItem"
+                ><v-icon left> mdi-pencil-plus </v-icon>품목 추가</v-btn
+              >
             </v-col>
             <v-col cols="12">
               <v-card>
-
-                <v-data-table height="340" :headers="headers_detail" :items="statement_detail_list" item-key="itemId"
-                  single-select multi-sort hide-default-footer dense @click:row="selectItemHistory">
+                <v-data-table
+                  :height="itemList_height"
+                  :headers="headers_detail"
+                  :items="statement_detail_list"
+                  item-key="itemId"
+                  single-select
+                  multi-sort
+                  hide-default-footer
+                  dense
+                  @click:row="selectItemHistory"
+                >
                   <template v-slot:[`item.unitPrice`]="props">
-                    <v-edit-dialog :return-value.sync="props.item.unitPrice"
-                      @save="props.item = saveUnitPrice(props.item)">
+                    <v-edit-dialog
+                      :return-value.sync="props.item.unitPrice"
+                      @save="props.item = saveUnitPrice(props.item)"
+                    >
                       {{ props.item.unitPrice | comma }}
                       <template v-slot:input>
-                        <v-text-field v-model="props.item.unitPrice" label="Edit" single-line type="text" maxlength="15 "
-                          oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"></v-text-field>
+                        <v-text-field
+                          v-model="props.item.unitPrice"
+                          label="Edit"
+                          single-line
+                          type="text"
+                          maxlength="15 "
+                          oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"
+                        ></v-text-field>
                       </template>
                     </v-edit-dialog>
                   </template>
@@ -84,12 +129,18 @@
             </v-col>
 
             <v-col cols="2">
-              <h5 class="searchbox-title">변경 이력</h5>
+              <span class="searchbox-title">변경 이력</span>
             </v-col>
             <v-col cols="12">
               <v-card>
-                <v-data-table height="320" :headers="headers_history" :items="item_history_list" multi-sort
-                  hide-default-footer dense>
+                <v-data-table
+                  :height="changeList_height"
+                  :headers="headers_history"
+                  :items="item_history_list"
+                  multi-sort
+                  hide-default-footer
+                  dense
+                >
                   <template v-slot:[`item.unitPrice`]="props">
                     {{ props.item.unitPrice | comma }}
                   </template>
@@ -100,7 +151,8 @@
                   <template v-slot:[`item.taxAmount`]="props">
                     {{ props.item.taxAmount | comma }}
                   </template>
-                </v-data-table> </v-card>
+                </v-data-table>
+              </v-card>
             </v-col>
           </v-row>
         </v-col>
@@ -108,8 +160,12 @@
     </v-container>
 
     <!-- 생성 모달 -->
-    <WarehousingPriceItemModal :open="edit_customer" :customerID="selectCustomerID" @addItemList="handlerSaveItemModal"
-      @closeModal="close_item_modal"></WarehousingPriceItemModal>
+    <WarehousingPriceItemModal
+      :open="edit_customer"
+      :customerID="selectCustomerID"
+      @addItemList="handlerSaveItemModal"
+      @closeModal="close_item_modal"
+    ></WarehousingPriceItemModal>
   </div>
 </template>
 
@@ -185,6 +241,9 @@ export default class WarehousingPrice extends Vue {
   item_list_modal: any[] = [];
   selectCustomerID: string = "";
   itemModal_Loading: boolean = false;
+  customerList_height: number = 0;
+  itemList_height: number = 0;
+  changeList_height: number = 0;
 
   created() {
     this.customerListCfg = Object.assign({}, gridCfg);
@@ -212,6 +271,10 @@ export default class WarehousingPrice extends Vue {
     this.getCustomer();
   }
 
+  mounted() {
+    this.onResize();
+  }
+
   // closeModal() {
   //   this.item = false;
   //   this.itemInfo = Object.assign({}, this.itemInfo_default);
@@ -222,6 +285,12 @@ export default class WarehousingPrice extends Vue {
   //   console.log(this.itemInfo.count);
   //   this.itemInfo.count = this.itemInfo.count.replace(/[^0-9]/g, "");
   // }
+
+  onResize() {
+    this.customerList_height = window.innerHeight - 48 - 129 - 90;
+    this.itemList_height = window.innerHeight - 48 - 550;
+    this.changeList_height = window.innerHeight - 48 - 550;
+  }
   getStatusColor(status: string) {
     switch (status) {
       case "부분입고":

@@ -268,6 +268,7 @@
               :headers="headers_bala"
               :items="bala_data"
               hide-default-footer
+              items-per-page="20"
               class="elevation-1"
               dense
               fixed-header
@@ -341,7 +342,8 @@
                   v-if="
                     item.equipmentType == 'LED' ||
                     item.equipmentType == 'WDP' ||
-                    item.equipmentType == 'WSP'
+                    item.equipmentType == 'WSP' ||
+                    item.equipmentType == 'ACF'
                   "
                 >
                   <table>
@@ -431,7 +433,9 @@
                 <div
                   class="d-flex justify-end justify-sm-space-between align-center"
                   v-if="
-                    item.equipmentType == 'HUM' || item.equipmentType == 'ACF'
+                    item.equipmentType == 'HUM' ||
+                    item.equipmentType == 'EXF' ||
+                    item.equipmentType == 'DHM'
                   "
                 >
                   <table>
@@ -479,7 +483,10 @@
                           <div
                             class="d-flex justify-end justify-sm-space-between flex-nowrap"
                           >
-                            <div class="setting_text_width">
+                            <div
+                              class="setting_text_width"
+                              v-if="item.equipmentType == 'HUM'"
+                            >
                               <v-text-field
                                 dense
                                 v-model="data.minValue"
@@ -496,7 +503,11 @@
                               </v-text-field>
                             </div>
 
-                            <span class="py-2">~</span>
+                            <span
+                              class="py-2"
+                              v-if="item.equipmentType == 'HUM'"
+                              >~</span
+                            >
                             <div class="setting_text_width">
                               <v-text-field
                                 dense
@@ -717,9 +728,9 @@
           </span>
         </v-card-title>
         <v-card-text>
-          <v-row class="mt-2" dense align="center">
+          <v-row class="mt-2" dense align-self="center">
             <v-col cols="12">
-              <v-row dense align="center">
+              <v-row dense align-self="center">
                 <v-col cols="2">
                   <v-chip class="" color="warning"> 주의 </v-chip>
                 </v-col>
@@ -758,7 +769,7 @@
                   ></v-checkbox>
                 </v-col>
               </v-row>
-              <v-row dense align="center">
+              <v-row dense align-self="center">
                 <v-col cols="2">
                   <v-chip class="" color="error"> 경고 </v-chip>
                 </v-col>
@@ -1108,6 +1119,7 @@ export default {
       status: "disconnected",
       // 웹소켓
       socket: null,
+      socket2: null,
       message: "",
       receivedMessage: [],
       textarea: "",
@@ -1981,12 +1993,9 @@ export default {
   display: none;
 }
 
-
-@media (min-width: 600px)
-.v-application--is-ltr .me-sm-n10 {
-    margin-right: -40px!important;
+@media (min-width: 600px) .v-application--is-ltr .me-sm-n10 {
+  margin-right: -40px !important;
 }
-
 
 .btn-gradient {
   background-image: linear-gradient(

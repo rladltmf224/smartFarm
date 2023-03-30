@@ -10,7 +10,7 @@
             </v-col>
           </v-row>
 
-          <v-sheet color="#f5f5f5" :height="dept_height">
+          <v-sheet class="card-shadow" color="#f5f5f5" :height="dept_height">
             <v-sheet class="mb-4 pa-2 blue-grey lighten-2">
               <v-text-field
                 v-model="searchTxt"
@@ -194,7 +194,6 @@
               fixed-header
               class="elevation-0"
               locale="ko-KR"
-              dense
             >
               <template #item="{ item }">
                 <tr>

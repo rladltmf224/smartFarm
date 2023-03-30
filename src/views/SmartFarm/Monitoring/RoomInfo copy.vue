@@ -1,5 +1,5 @@
 <template>
-  <v-card class="ma-3 pb-2 card-shadow">
+  <v-card class="ma-3 pb-2 card-shadow" max-width="515">
     <v-app-bar color="transparent" dense elevation="0">
       <!-- <v-app-bar color="#C5E1A5" dense elevation="0"> -->
       <v-toolbar-title
@@ -8,15 +8,7 @@
       >
         {{ roomInfo_prop.facilityName }}
         <div>
-          <v-btn
-            color="black"
-            text
-            @click="
-              roomInfo_prop.facilityName == `육묘실`
-                ? openStreamModal1(roomInfo_prop)
-                : openStreamModal2(roomInfo_prop)
-            "
-          >
+          <v-btn color="black" text @click="openStreamModal(roomInfo_prop)">
             <!-- 바깥조회버튼눌리면 dialog오픈 ,  -->
             <v-icon class="mr-1"> mdi-cctv </v-icon>
 
@@ -101,51 +93,35 @@
         </v-row>
       </div>
     </v-card-text>
-    <v-dialog v-model="streamModal1" persistent max-width="1400">
+    <!-- <v-dialog v-model="streamModal" persistent max-width="500">
       <v-card>
-        <v-card-title class="headline">{{ streamModal1_title }}</v-card-title>
+        <v-card-title class="headline">headline</v-card-title>
         <v-card-text>
-          <img ref="img1" id="image1" />
+          <img id="image" />
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="error" @click="closeModal1()">닫기</v-btn>
+          <v-btn color="primary" flat @click.native="streamModal = false"
+            >Disagree</v-btn
+          >
+          <v-btn color="primary" flat @click.native="streamModal = false"
+            >Agree</v-btn
+          >
         </v-card-actions>
       </v-card>
-    </v-dialog>
-
-    <v-dialog v-model="streamModal2" persistent max-width="1400">
-      <v-card>
-        <v-card-title class="headline">{{ streamModal2_title }}</v-card-title>
-        <v-card-text>
-          <img ref="img2" id="image2" />
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="error" @click="closeModal2()">닫기</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    </v-dialog> -->
   </v-card>
 </template>
 <script>
 import EquipStatusChip from "./EquipStatusChip.vue";
 import EnvStatusChip from "./EnvStatusChip.vue";
 import { io } from "socket.io-client";
-
 export default {
   name: "RoomInfo",
-  data() {
-    return {
-      streamModal1: false,
-      streamModal2: false,
-      streamModal1_title: "",
-      streamModal2_title: "",
-      socket: null,
-    };
-  },
   props: ["roomData"],
-
+  data() {
+    this.streamModal = false;
+  },
   components: {
     EquipStatusChip,
     EnvStatusChip,
@@ -155,10 +131,6 @@ export default {
       return this.roomData;
     },
   },
-  created() {
-    this.socket = io("http://192.168.0.61:3030");
-    console.log("socket", this.socket);
-  },
   methods: {
     goControllPage(data) {
       this.$emit("controllPage", data);
@@ -166,41 +138,14 @@ export default {
     openDialog(data) {
       this.$emit("selectPage", data);
     },
-    openStreamModal1(data) {
-      console.log("data", data, this.$refs.img1);
-      this.streamModal1_title = data.facilityName;
-
-      this.streamModal1 = true;
-
-      this.socket.emit("start1");
-      this.socket.on("image1", (image) => {
+    openStreamModal(data) {
+      this.streamModal = true;
+      const socket = io.connect("http://192.168.0.61:3030");
+      socket.on("image1", (image) => {
         // console.log('data', data);
-        const img = document.getElementById("image1");
-        console.log("openStreamModal1", img);
+        const img = document.getElementById("image");
         img.src = `data:image/jpeg;base64,${image}`;
       });
-    },
-    openStreamModal2(data) {
-      console.log("data", data, this.$refs.img2);
-      this.streamModal2_title = data.facilityName;
-
-      this.streamModal2 = true;
-      this.socket.emit("start2");
-      this.socket.on("image2", (image) => {
-        const img = document.getElementById("image2");
-        console.log("openStreamModal2", img);
-        img.src = `data:image/jpeg;base64,${image}`;
-      });
-    },
-    closeModal1() {
-      this.socket.emit("stop1");
-
-      this.streamModal1 = false;
-    },
-    closeModal2() {
-      this.socket.emit("stop2");
-
-      this.streamModal2 = false;
     },
   },
 };
