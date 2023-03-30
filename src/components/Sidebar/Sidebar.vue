@@ -93,6 +93,7 @@
     </v-list>
 
     <v-list dense nav rounded>
+      <!--
       <v-list-item @click="mySettingDialog = true" @mouseover="openTooltip()">
         <v-list-item-icon>
           <v-icon>mdi-account-circle-outline</v-icon>
@@ -104,7 +105,7 @@
           <v-icon>mdi-account-circle-outline</v-icon>
         </v-list-item-icon>
         <v-list-item-title>비밀번호 변경</v-list-item-title>
-      </v-list-item>
+      </v-list-item>-->
       <!-- <v-list-item @click="logout" @mouseover="openTooltip()">
         <v-btn block class="btn-gradient" dark v-if="!mini">
           <v-icon>mdi-power</v-icon>
@@ -119,21 +120,6 @@
         </v-btn>
       </div>
     </template>
-
-    <!--비밀번호 변경 dialog-->
-    <SidebarUserInfo
-      :open="userInfoDialog"
-      @closeModal="close"
-      @log-out="logout"
-      @save-info="handlerSaveInfo"
-    ></SidebarUserInfo>
-
-    <SidebarMySetting
-      :open="mySettingDialog"
-      @closeModal="mySettingDialog = false"
-      @save-info="handlerSaveInfo"
-    >
-    </SidebarMySetting>
   </v-navigation-drawer>
 </template>
 
@@ -143,15 +129,12 @@ import _ from "lodash";
 import jwt_decode from "jwt-decode";
 import * as api from "@/api/index.js";
 import { Component, Vue, Ref, Watch } from "vue-property-decorator";
-import SidebarUserInfo from "./SidebarUserInfo.vue";
-import SidebarMySetting from "./SidebarMySetting.vue";
+
 import { mapGetters } from "vuex";
 import Alarm from "./Alarm.vue";
 
 @Component({
   components: {
-    SidebarUserInfo,
-    SidebarMySetting,
     Alarm,
   },
   computed: {

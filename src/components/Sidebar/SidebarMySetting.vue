@@ -1,15 +1,26 @@
 <template>
   <!-- 생성 모달 -->
-  <v-dialog v-model="dialog" max-width="600px">
+  <v-dialog v-model="dialog" max-width="600px" persistent>
     <v-card>
       <v-card-title>
         <span>내 정보 수정</span>
         <v-spacer></v-spacer>
       </v-card-title>
       <div class="px-7">
-        <v-text-field label="부서" v-model="userInfo.departmentName" disabled></v-text-field>
-        <v-text-field label="이름" v-model="userInfo.userName" disabled></v-text-field>
-        <v-text-field label="전화번호" v-model="userInfo.phoneNumber"></v-text-field>
+        <v-text-field
+          label="부서"
+          v-model="userInfo.departmentName"
+          disabled
+        ></v-text-field>
+        <v-text-field
+          label="이름"
+          v-model="userInfo.userName"
+          disabled
+        ></v-text-field>
+        <v-text-field
+          label="전화번호"
+          v-model="userInfo.phoneNumber"
+        ></v-text-field>
         <div class="d-flex flex-row align-center">
           <v-subheader><strong>SMS 수신</strong></v-subheader>
           <div style="width: 15px"></div>
