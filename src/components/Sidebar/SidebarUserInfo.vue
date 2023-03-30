@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" width="500">
+  <v-dialog v-model="dialog" width="500" persistent>
     <v-card height="300">
       <v-card-title
         class="display-flex justify-space-between pa-0 pl-2 pt-2 pr-10"
@@ -94,18 +94,6 @@ export default class SidebarUserInfo extends Vue {
   ];
 
   change(): any {
-    if (this.form.validate()) {
-      return this.$swal({
-        title: "비밀번호가 동일하지 않습니다.",
-        icon: "error",
-        position: "top",
-        showCancelButton: false,
-        showConfirmButton: false,
-        toast: true,
-        timer: 1500,
-      });
-    }
-
     if (this.password == this.changePassword) {
       let jwt: any = jwt_decode(this.$cookies.get("accessToken"));
       let userInfo: object = {
@@ -156,6 +144,16 @@ export default class SidebarUserInfo extends Vue {
               });
           }
         });
+    } else {
+      return this.$swal({
+        title: "비밀번호가 동일하지 않습니다.",
+        icon: "error",
+        position: "top",
+        showCancelButton: false,
+        showConfirmButton: false,
+        toast: true,
+        timer: 1500,
+      });
     }
   }
   @Emit("closeModal")

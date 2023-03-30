@@ -10,71 +10,102 @@
     </v-toolbar-title>
     <v-spacer></v-spacer>
 
-    <!-- <v-menu offset-y>
-      <template v-slot:activator="{ on, attrs }">
-        <v-badge
-          overlap
-          :content="alarmOn ? alarmList.length : 0"
-          :value="alarmOn ? alarmList.length : 0"
-          color="error"
-        >
-          <v-btn id="alarmBell" small depressed v-bind="attrs" v-on="on" icon>
-            <v-icon
-              v-if="alarmOn"
-              :color="alarmList.length > 0 ? 'error' : 'black'"
-            >
-              mdi-bell-outline
-            </v-icon>
-            <v-icon v-if="!alarmOn" color="grey" large> mdi-bell-off </v-icon>
-          </v-btn>
-        </v-badge>
-      </template>
-      <v-list>
-        <v-list-item
-          v-if="alarmOn"
-          v-for="(alarm, index) in alarmList"
-          :key="index"
-          two-line
-        >
-          <v-list-item-content @click="removeAlarm(alarm)" class="alarmItem">
-            <v-list-item-title>
-              <v-chip class="mr-3" color="warning"> 주의 </v-chip
-              >{{ alarm.title }}
-            </v-list-item-title>
-            <v-list-item-subtitle class="pl-15">{{
-              alarm.body
-            }}</v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-content @click="alarmToggle()" class="alarmItem">
-            <v-list-item-title class="d-flex justify-center">
-              {{ alarmOn ? "알람 끄기" : "알람 켜기" }}
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-menu> -->
-    <div class="scheduleBar">
-      <p class="mb-0">
-        {{
-          todayList.length != 0
-            ? `[${todayList.customerName}] ${todayList.title}`
-            : ""
-        }}
-      </p>
-    </div>
-
     <Alarm></Alarm>
 
-    <v-btn elevation="0" color="transparent" rounded>
-      <v-badge bordered bottom color="red" dot offset-x="10" offset-y="10">
-        <v-avatar size="30" class="mx-2">
-          <v-img src="https://randomuser.me/api/portraits/men/85.jpg" />
-        </v-avatar>
-      </v-badge>
-      <span>{{ userId }}님</span>
-    </v-btn>
+    <v-menu
+      offset-y
+      v-model="menu"
+      :close-on-content-click="false"
+      location="end"
+    >
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          elevation="0"
+          color="transparent"
+          rounded
+          v-bind="attrs"
+          v-on="on"
+        >
+          <v-badge bordered bottom color="red" dot offset-x="10" offset-y="10">
+            <v-avatar size="30" class="mx-2">
+              <v-img src="https://randomuser.me/api/portraits/men/85.jpg" />
+            </v-avatar>
+          </v-badge>
+          <span>{{ userId }}님</span>
+        </v-btn>
+      </template>
+
+      <v-card width="250">
+        <v-list>
+          <v-list-item class="d-flex flex-column">
+            <v-card
+              elevation="0"
+              class="pa-0 mb-1"
+              width="230"
+              v-for="(item, index) in todayTotalList"
+              :key="index"
+            >
+              <v-card-text>
+                <v-row :link="true" :to="to_schedule">
+                  <v-col cols="1" class="pa-1 todayListBox mr-4"> </v-col>
+                  <v-col cols="10" class="pa-0"
+                    ><span>
+                      {{ `${item.customerName}의 ${item.title} 일정` }}</span
+                    ><br />
+                    <span style="font-size: 9px">{{
+                      `${item.start} ~ ${item.end}`
+                    }}</span></v-col
+                  >
+                </v-row>
+                <!--{{ `[${item.customerName}]${item.title}` }}-->
+              </v-card-text>
+            </v-card>
+          </v-list-item>
+        </v-list>
+        <v-divider></v-divider>
+        <v-list dense nav rounded>
+          <v-list-item
+            @click="mySettingDialog = true"
+            @mouseover="openTooltip()"
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-account-circle-outline</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>회원정보 변경</v-list-item-title>
+          </v-list-item>
+          <v-list-item
+            @click="userInfoDialog = true"
+            @mouseover="openTooltip()"
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-account-circle-outline</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>비밀번호 변경</v-list-item-title>
+          </v-list-item>
+          <!-- <v-list-item @click="logout" @mouseover="openTooltip()">
+        <v-btn block class="btn-gradient" dark v-if="!mini">
+          <v-icon>mdi-power</v-icon>
+          <span style="color:white">로그아웃</span>
+        </v-btn>
+      </v-list-item> -->
+
+          <!--비밀번호 변경 dialog-->
+          <SidebarUserInfo
+            :open="userInfoDialog"
+            @closeModal="close"
+            @log-out="logout"
+            @save-info="handlerSaveInfo"
+          ></SidebarUserInfo>
+
+          <SidebarMySetting
+            :open="mySettingDialog"
+            @closeModal="mySettingDialog = false"
+            @save-info="handlerSaveInfo"
+          >
+          </SidebarMySetting>
+        </v-list>
+      </v-card>
+    </v-menu>
   </v-app-bar>
 </template>
 
@@ -88,8 +119,6 @@ import SidebarUserInfo from "@/components/Sidebar/SidebarUserInfo.vue";
 import SidebarMySetting from "@/components/Sidebar/SidebarMySetting.vue";
 import { mapGetters, mapState } from "vuex";
 import Alarm from "../Sidebar/Alarm.vue";
-
-var interval;
 
 @Component({
   components: {
@@ -105,6 +134,8 @@ var interval;
 })
 export default class Sidebar extends Vue {
   @Ref() form: HTMLFormElement;
+  to_schedule?: string = "schedule";
+  menu: boolean = false;
   userId: string = "";
   mini: boolean = false;
   alarmOn: boolean = true;
@@ -115,7 +146,7 @@ export default class Sidebar extends Vue {
   to_notdev?: string = "notdev";
   items?: any[] = [];
   items_dev?: any[] = [];
-  dialog: boolean = false;
+
   password?: string = "";
   changePassword?: string = "";
   value?: boolean = false;
@@ -378,23 +409,11 @@ export default class Sidebar extends Vue {
     }
   }
 
-  async getTodayInfo() {
+  getTodayInfo() {
     this.todayTotalList = [];
     api.schedule.getTodayScheduleInfo().then((response) => {
       this.todayTotalList = response.data.responseData;
     });
-
-    return new Promise((resolve) => {
-      resolve(this.startSchedule());
-    });
-  }
-
-  changeToday() {
-    this.todayList = this.todayTotalList[this.i++ % this.todayTotalList.length];
-  }
-
-  startSchedule() {
-    interval = setInterval(this.changeToday, 3000);
   }
 
   @Watch("alarmList.length", { deep: true })
