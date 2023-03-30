@@ -10,19 +10,19 @@
               <v-col cols="10">
                 <v-row>
                   <v-col cols="2">
-                    <v-text-field label="수주번호" v-model="search_condition.orderInfoCode" dense></v-text-field>
+                    <v-text-field label="수주번호" v-model="search_condition.orderInfoCode" dense solo rounded></v-text-field>
                   </v-col>
 
                   <v-col cols="2">
-                    <v-text-field label="거래처명" v-model="search_condition.customerName" dense></v-text-field>
+                    <v-text-field label="거래처명" v-model="search_condition.customerName" dense solo rounded></v-text-field>
                   </v-col>
                   <v-col cols="2">
                     <v-menu ref="order_startDate" v-model="order_startDate" :close-on-content-click="false"
                       :return-value.sync="search_condition.order_startDate" transition="scale-transition" offset-y
                       min-width="auto">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-text-field v-model="search_condition.order_startDate" label="수주시작일" prepend-icon="mdi-calendar"
-                          readonly v-bind="attrs" v-on="on" dense></v-text-field>
+                        <v-text-field v-model="search_condition.order_startDate" label="수주시작일" readonly v-bind="attrs"
+                          v-on="on" dense solo rounded></v-text-field>
                       </template>
                       <v-date-picker v-model="search_condition.order_startDate" no-title scrollable locale="ko-KR"
                         :max="search_condition.order_endDate">
@@ -45,8 +45,8 @@
                       :return-value.sync="search_condition.order_endDate" transition="scale-transition" offset-y
                       min-width="auto">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-text-field v-model="search_condition.order_endDate" label="수주종료일" prepend-icon="mdi-calendar"
-                          readonly v-bind="attrs" v-on="on" dense></v-text-field>
+                        <v-text-field v-model="search_condition.order_endDate" label="수주종료일" solo rounded readonly
+                          v-bind="attrs" v-on="on" dense></v-text-field>
                       </template>
                       <v-date-picker v-model="search_condition.order_endDate" no-title scrollable locale="ko-KR"
                         :min="search_condition.order_startDate">
@@ -63,7 +63,7 @@
                     </v-menu>
                   </v-col>
                   <v-col cols="3">
-                    <v-text-field label="요청사항" v-model="search_condition.memo" dense></v-text-field>
+                    <v-text-field label="요청사항" solo rounded v-model="search_condition.memo" dense></v-text-field>
                   </v-col>
                 </v-row>
               </v-col>
