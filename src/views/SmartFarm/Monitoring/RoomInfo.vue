@@ -1,5 +1,5 @@
 <template>
-  <v-card class="ma-3 pb-2 card-shadow" max-width="515">
+  <v-card class="ma-3 pb-2 card-shadow">
     <v-app-bar color="transparent" dense elevation="0">
       <!-- <v-app-bar color="#C5E1A5" dense elevation="0"> -->
       <v-toolbar-title
@@ -8,6 +8,20 @@
       >
         {{ roomInfo_prop.facilityName }}
         <div>
+          <v-btn
+            color="black"
+            text
+            @click="
+              roomInfo_prop.facilityName == `육묘실`
+                ? openStreamModal1(roomInfo_prop)
+                : openStreamModal2(roomInfo_prop)
+            "
+          >
+            <!-- 바깥조회버튼눌리면 dialog오픈 ,  -->
+            <v-icon class="mr-1"> mdi-cctv </v-icon>
+
+            실시간 영상
+          </v-btn>
           <v-btn color="#21D18E" text @click="openDialog(roomInfo_prop)">
             <!-- 바깥조회버튼눌리면 dialog오픈 ,  -->
             <v-icon class="mr-1"> mdi-eye </v-icon>
@@ -26,90 +40,7 @@
         </div>
       </v-toolbar-title>
     </v-app-bar>
-    <!-- <v-card-text>
-      <v-row dense class="align-self-center">
-        <v-col cols="12">
-          <v-row no-gutters>
-            <v-col cols="12">
-              <b class="text-h6 font-weight-regular">대기 </b>
-              <span class="text-h6 font-weight-bold"
-                >온도 : {{ roomInfo_prop.atmosphere.temperature }} °C
-              </span>
-              <span class="text-h6 font-weight-bold"
-                >습도 : {{ roomInfo_prop.atmosphere.humidity }} %
-              </span>
-              <span class="text-h6 font-weight-bold"
-                >Co2 농도 : {{ roomInfo_prop.atmosphere.co2 }} %</span
-              >
-            </v-col>
-          </v-row>
-          <v-row no-gutters>
-            <v-col cols="12">
-              <b class="text-h6 font-weight-bold">양액 </b>
-              <span class="text-h6 font-weight-bold"
-                >EC : {{ roomInfo_prop.fertilizer.ec }}
-              </span>
-              <span class="text-h6 font-weight-bold"
-                >pH : {{ roomInfo_prop.fertilizer.ph }}
-              </span>
-            </v-col>
-          </v-row>
-          <v-row no-gutters>
-            <v-col cols="12">
-              <b class="text-h6 font-weight-bold">토양 </b>
-              <span class="text-h6 font-weight-bold"
-                >온도 : {{ roomInfo_prop.soil.temperature }}°C
-              </span>
-              <span class="text-h6 font-weight-bold"
-                >습도 : {{ roomInfo_prop.soil.temperature }}%
-              </span>
-              <span class="text-h6 font-weight-bold"
-                >EC : {{ roomInfo_prop.soil.ec }}
-              </span>
-              <span class="text-h6 font-weight-bold"
-                >pH : {{ roomInfo_prop.soil.ph }}
-              </span>
-            </v-col>
-          </v-row>
-          <v-row no-gutters>
-            <v-col cols="12">
-              <b class="text-h6 font-weight-bold">광원 </b>
-              <span class="text-h6 font-weight-bold"
-                >광도 : {{ roomInfo_prop.light.luminosity }}</span
-              >
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
-      <v-row dense class="text-center align-self-center">
-        <v-col
-          v-for="(equipData, index) in roomInfo_prop.equipment"
-          cols="4"
-          class="d-flex align-center"
-          :key="index"
-        >
-          <div
-            class="mr-1"
-            :class="{
-              on: equipData.currentStatus === ' ON', off: equipData.currentStatus==='OFF' , }"></div>
-  <b class="text-subtitle-1 font-weight-bold mr-1 text-truncate">{{
-    equipData.equipmentName
-    }}</b>
-  <EquipStatusChip :status="equipData.controlStatus"></EquipStatusChip>
-  </v-col>
-  </v-row>
-  <v-row class="pr-3" justify="end">
-    <v-btn color="green" text @click="openDialog(roomInfo_prop)">
-      <v-icon class="mr-1"> mdi-eye </v-icon>
 
-      조회
-    </v-btn>
-
-    <v-btn text class="pa-0 ma-0" color="primary" @click="goControllPage(roomInfo_prop)">
-      <v-icon class="mr-1"> mdi-cog-pause </v-icon>
-      <span class="subheading">제어</span></v-btn>
-  </v-row>
-  </v-card-text> -->
     <v-card-text>
       <div class="d-flex flex-column flex-nowrap justify-space-around">
         <!-- <v-col lg="8" md="9" sm="7" xs="12"> -->
@@ -170,14 +101,51 @@
         </v-row>
       </div>
     </v-card-text>
+    <v-dialog v-model="streamModal1" persistent max-width="1400">
+      <v-card>
+        <v-card-title class="headline">{{ streamModal1_title }}</v-card-title>
+        <v-card-text>
+          <img ref="img1" id="image1" />
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="error" @click="closeModal1()">닫기</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="streamModal2" persistent max-width="1400">
+      <v-card>
+        <v-card-title class="headline">{{ streamModal2_title }}</v-card-title>
+        <v-card-text>
+          <img ref="img2" id="image2" />
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="error" @click="closeModal2()">닫기</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 <script>
 import EquipStatusChip from "./EquipStatusChip.vue";
 import EnvStatusChip from "./EnvStatusChip.vue";
+import { io } from "socket.io-client";
+
 export default {
   name: "RoomInfo",
+  data() {
+    return {
+      streamModal1: false,
+      streamModal2: false,
+      streamModal1_title: "",
+      streamModal2_title: "",
+      socket: null,
+    };
+  },
   props: ["roomData"],
+
   components: {
     EquipStatusChip,
     EnvStatusChip,
@@ -187,12 +155,52 @@ export default {
       return this.roomData;
     },
   },
+  created() {
+    this.socket = io("http://192.168.0.61:3030");
+    console.log("socket", this.socket);
+  },
   methods: {
     goControllPage(data) {
       this.$emit("controllPage", data);
     },
     openDialog(data) {
       this.$emit("selectPage", data);
+    },
+    openStreamModal1(data) {
+      console.log("data", data, this.$refs.img1);
+      this.streamModal1_title = data.facilityName;
+
+      this.streamModal1 = true;
+
+      this.socket.emit("start1");
+      this.socket.on("image1", (image) => {
+        // console.log('data', data);
+        const img = document.getElementById("image1");
+        console.log("openStreamModal1", img);
+        img.src = `data:image/jpeg;base64,${image}`;
+      });
+    },
+    openStreamModal2(data) {
+      console.log("data", data, this.$refs.img2);
+      this.streamModal2_title = data.facilityName;
+
+      this.streamModal2 = true;
+      this.socket.emit("start2");
+      this.socket.on("image2", (image) => {
+        const img = document.getElementById("image2");
+        console.log("openStreamModal2", img);
+        img.src = `data:image/jpeg;base64,${image}`;
+      });
+    },
+    closeModal1() {
+      this.socket.emit("stop1");
+
+      this.streamModal1 = false;
+    },
+    closeModal2() {
+      this.socket.emit("stop2");
+
+      this.streamModal2 = false;
     },
   },
 };
