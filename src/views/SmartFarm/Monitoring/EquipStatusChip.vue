@@ -8,11 +8,9 @@
         off: equipData.currentStatus === 'OFF',
       }"
     ></div>
-    <b
-      class="text-subtitle-1 font-weight-bold text-truncate text-center"
-      style="width: 60px"
-      >{{ equipData.equipmentName }}</b
-    >
+    <span class="text-truncate text-center" style="width: 80px">{{
+      equipData.equipmentName
+    }}</span>
 
     <div class="d-flex align-center">
       <v-chip

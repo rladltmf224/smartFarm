@@ -41,7 +41,15 @@ export default {
       { text: "단위", value: "unit" },
       { text: "창고", value: "storageName" },
     ],
+    headers_product_detail_add: [
+      { text: "LOT", value: "itemLot" },
+      { text: "품목명", value: "itemName" },
+
+      { text: "수량", value: "count" },
+      { text: "출고수량", value: "releaseCount" },
+    ],
   },
+
   data: {
     search_dateType: [
       { name: "수정일", value: 1 },

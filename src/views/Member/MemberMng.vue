@@ -3,17 +3,21 @@
     <v-container fluid v-resize="onResize">
       <v-row>
         <!-- 부서/직원 검색 -->
-        <v-col cols="4">
-          <v-col>
-            <h4 class="searchbox-title">부서/직원 검색</h4>
-          </v-col>
-          <v-sheet color="#f5f5f5" :height="dept_height">
+        <v-col cols="4" class="mb-5">
+          <v-row>
+            <v-col align-self="center">
+              <span class="searchbox-title">부서/직원 검색</span>
+            </v-col>
+          </v-row>
+
+          <v-sheet class="card-shadow" color="#f5f5f5" :height="dept_height">
             <v-sheet class="mb-4 pa-2 blue-grey lighten-2">
               <v-text-field
                 v-model="searchTxt"
                 label="검색어를 입력해주세요."
                 dark
                 flat
+                dense
                 solo-inverted
                 hide-details
                 clearable
@@ -52,10 +56,11 @@
         <!-- 권한 설정 -->
         <v-col cols="8">
           <v-row>
-            <v-col cols="2">
-              <h4 class="searchbox-title">권한 설정</h4>
+            <v-col cols="2" align-self="center">
+              <span class="searchbox-title">권한 설정</span>
             </v-col>
-            <v-col class="text-right mb-2" offset="3" cols="7">
+            <v-spacer></v-spacer>
+            <v-col class="text-right mb-2" cols="10">
               <v-btn
                 v-if="inputType == ''"
                 color="primary"
@@ -184,12 +189,11 @@
               ref="roleList"
               :headers="headers_table"
               :items="rolesData"
-              :height="650"
+              :height="table_height"
               hide-default-footer
               fixed-header
               class="elevation-0"
               locale="ko-KR"
-              dense
             >
               <template #item="{ item }">
                 <tr>
@@ -256,6 +260,7 @@ export default class Member extends Vue {
   @Ref() form: HTMLFormElement;
   dept_height: number = 0;
   setting_height: number = 0;
+  table_height: number = 0;
   dialog3: boolean = false;
   new_dept_name: string = "";
   initiallyOpen: string[] = ["public"];
@@ -311,10 +316,16 @@ export default class Member extends Vue {
   }
 
   onResize() {
-    this.dept_height = window.innerHeight - 48 - 48 - 102;
+    this.dept_height = window.innerHeight - 48 - 48 - 70;
     this.setting_height = window.innerHeight - 48 - 68;
+    this.table_height = window.innerHeight - 320;
 
-    console.log("onResize", this.dept_height, this.setting_height);
+    console.log(
+      "onResize",
+      this.dept_height,
+      this.setting_height,
+      this.table_height
+    );
   }
 
   searchUsesr(e: { target: any }) {

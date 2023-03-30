@@ -12,13 +12,14 @@
             <v-col>
               <v-data-table
                 ref="rawGrid"
-                v-model="selected"
-                :headers="headers_raw_add"
-                :items="raw_detail_list"
+                v-model="selected_data"
+                :headers="headers_product_detail_add"
+                :items="product_detail_list_prop"
                 fixed-header
-                item-key="id"
+                item-key="materialId"
                 class="elevation-4"
                 @item-selected="addRawItem"
+                @toggle-select-all="totalAddRawItem"
                 multi-sort
                 show-select
                 dense
@@ -75,13 +76,19 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 export default class ReleaseProductItemModal extends Vue {
   txtSelectCount: number = 0;
   raw_detail_list: object[] = [];
-  selected: object[] = [];
+  selected_data: object[] = [];
 
   @Prop({ required: true }) open: boolean = false;
-  @Prop({ required: true }) itemData: any;
+  @Prop({ required: true }) product_detail_list: object[] = [];
+  @Prop({ required: true }) selected: object[] = [];
+  //@Prop({ required: true }) txtReleaseCount: number = 0;
 
-  get headers_raw_add() {
-    return cfg.header.headers_raw_add;
+  get headers_product_detail_add() {
+    return cfg.header.headers_product_detail_add;
+  }
+
+  get product_detail_list_prop() {
+    return this.product_detail_list;
   }
 
   get open_prop() {
@@ -91,12 +98,17 @@ export default class ReleaseProductItemModal extends Vue {
   set open_prop(val: any) {
     this.$emit("closeModal");
   }
+  openModal() {
+    this.selected_data = _.cloneDeep(this.selected);
+    let sum_data = _.cloneDeep(this.selected);
+    this.txtSelectCount = _.sumBy(sum_data, "count");
+  }
 
   addRawItem(item: any) {
     console.log("addRawItem", item, this.selected);
 
     let sumData = 0;
-    this.selected.forEach((el: any) => {
+    this.selected_data.forEach((el: any) => {
       sumData += parseInt(el.releaseCount);
     });
     if (item.value) {
@@ -110,10 +122,24 @@ export default class ReleaseProductItemModal extends Vue {
     this.txtSelectCount = sumData;
   }
 
+  totalAddRawItem(item: any) {
+    console.log("totalAddRawItem", item, this.selected_data);
+
+    if (!item.value) {
+      this.txtSelectCount = 0;
+    } else {
+      let sum_data = _.cloneDeep(item.items);
+
+      console.log(_.sumBy(sum_data, "count"));
+
+      this.txtSelectCount = _.sumBy(sum_data, "count");
+    }
+  }
+
   saveReleaseCount(item: any) {
-    item.releaseCount = parseInt(item.releaseCount);
+    item.count = parseInt(item.releaseCount);
     let sumData = 0;
-    this.selected.forEach((el: any) => {
+    this.selected_data.forEach((el: any) => {
       sumData += parseInt(el.releaseCount);
     });
     console.log("sumData", sumData);
@@ -124,7 +150,8 @@ export default class ReleaseProductItemModal extends Vue {
   }
 
   saveRawData() {
-    console.log("saveRawData", this.$refs.rawGrid);
+    console.log("saveRawData", this.selected_data, this.txtSelectCount);
+    this.$emit("saveData", this.selected_data, this.txtSelectCount);
 
     // this.item_list_modal.forEach((el) => {
     //   console.log(el, this.select_rawID);
@@ -138,6 +165,10 @@ export default class ReleaseProductItemModal extends Vue {
   }
 
   closeRawDetail() {
+    this.selected_data = [];
+    this.txtSelectCount = 0;
+    this.raw_detail_list = [];
+
     this.open_prop = false;
   }
 }

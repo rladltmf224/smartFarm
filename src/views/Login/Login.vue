@@ -87,7 +87,6 @@ export default class Login extends Vue {
   checkbox_ID: boolean = false;
   checkbox_IDPW: boolean = false;
   check_Type: string = "";
-  yes: boolean = false;
   login_check: boolean = false;
   username?: string = "" || this.$cookies.get("id");
 
