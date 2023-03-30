@@ -59,8 +59,8 @@
       <p class="mb-0">
         {{
           todayList.length != 0
-            ? `[${todayList.customerName}] ${todayList.title}`
-            : ""
+          ? `[${todayList.customerName}] ${todayList.title}`
+          : ""
         }}
       </p>
     </div>
@@ -70,7 +70,7 @@
     <v-btn elevation="0" color="transparent" rounded>
       <v-badge bordered bottom color="red" dot offset-x="10" offset-y="10">
         <v-avatar size="30" class="mx-2">
-          <v-img src="https://randomuser.me/api/portraits/men/85.jpg" />
+          <v-img src="@/assets/images/icon.png" />
         </v-avatar>
       </v-badge>
       <span>{{ userId }}님</span>
@@ -282,7 +282,7 @@ export default class Sidebar extends Vue {
   // }
 
   goHome(): void {
-    this.$router.push("/monitoring").catch(() => {});
+    this.$router.push("/monitoring").catch(() => { });
 
     return;
   }
