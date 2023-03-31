@@ -1,74 +1,69 @@
 <template>
   <div>
-    <v-container fluid>
+    <v-container fluid v-resize="onResize">
       <!-- 조회조건 -->
-      <v-row no-gutters>
-        <v-col class="ma-2" md="12">
-          <h4 class="searchbox-title">조회 조건</h4>
-          <v-card class="pa-3" height="80">
-            <v-row no-gutters class="d-flex align-center">
-              <v-col cols="10">
-                <v-row>
-                  <v-col cols="2">
-                    <v-text-field label="수주번호" v-model="search_condition.orderInfoCode" dense solo rounded></v-text-field>
-                  </v-col>
-
-                  <v-col cols="2">
-                    <v-text-field label="거래처명" v-model="search_condition.customerName" dense solo rounded></v-text-field>
-                  </v-col>
-                  <v-col cols="2">
-                    <v-menu ref="order_startDate" v-model="order_startDate" :close-on-content-click="false"
-                      :return-value.sync="search_condition.order_startDate" transition="scale-transition" offset-y
-                      min-width="auto">
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field v-model="search_condition.order_startDate" label="수주시작일" readonly v-bind="attrs"
-                          v-on="on" dense solo rounded></v-text-field>
-                      </template>
-                      <v-date-picker v-model="search_condition.order_startDate" no-title scrollable locale="ko-KR"
-                        :max="search_condition.order_endDate">
-                        <v-spacer></v-spacer>
-                        <v-btn text color="primary" @click="order_startDate = false">
-                          취소
-                        </v-btn>
-                        <v-btn text color="primary" @click="
-                          s_date_search_order(
-                            search_condition.order_startDate
-                          )
-                        ">
-                          확인
-                        </v-btn>
-                      </v-date-picker>
-                    </v-menu>
-                  </v-col>
-                  <v-col md="2">
-                    <v-menu ref="order_endDate" v-model="order_endDate" :close-on-content-click="false"
-                      :return-value.sync="search_condition.order_endDate" transition="scale-transition" offset-y
-                      min-width="auto">
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field v-model="search_condition.order_endDate" label="수주종료일" solo rounded readonly
-                          v-bind="attrs" v-on="on" dense></v-text-field>
-                      </template>
-                      <v-date-picker v-model="search_condition.order_endDate" no-title scrollable locale="ko-KR"
-                        :min="search_condition.order_startDate">
-                        <v-spacer></v-spacer>
-                        <v-btn text color="primary" @click="order_endDate = false">
-                          취소
-                        </v-btn>
-                        <v-btn text color="primary" @click="
-                          e_date_search_order(search_condition.order_endDate)
-                        ">
-                          확인
-                        </v-btn>
-                      </v-date-picker>
-                    </v-menu>
-                  </v-col>
-                  <v-col cols="3">
-                    <v-text-field label="요청사항" solo rounded v-model="search_condition.memo" dense></v-text-field>
-                  </v-col>
-                </v-row>
+      <v-row>
+        <v-col class="ma-2" cols="12">
+          <span class="searchbox-title">조회 조건</span>
+          <v-card class="pa-3" height="65">
+            <v-row dense>
+              <v-col cols="2">
+                <v-text-field label="수주번호" v-model="search_condition.orderInfoCode" dense solo rounded></v-text-field>
               </v-col>
-              <v-col class="text-right align-self-center" cols="2">
-                <v-btn color="primary" x-large @click="getOrderAccounts()">
+              <v-col cols="2">
+                <v-text-field label="거래처명" v-model="search_condition.customerName" dense solo rounded></v-text-field>
+              </v-col>
+              <v-col cols="2">
+                <v-menu ref="order_startDate" v-model="order_startDate" :close-on-content-click="false"
+                  :return-value.sync="search_condition.order_startDate" transition="scale-transition" offset-y
+                  min-width="auto">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field v-model="search_condition.order_startDate" label="수주시작일" readonly v-bind="attrs"
+                      v-on="on" dense solo rounded></v-text-field>
+                  </template>
+                  <v-date-picker v-model="search_condition.order_startDate" no-title scrollable locale="ko-KR"
+                    :max="search_condition.order_endDate">
+                    <v-spacer></v-spacer>
+                    <v-btn text color="primary" @click="order_startDate = false">
+                      취소
+                    </v-btn>
+                    <v-btn text color="primary" @click="
+                      s_date_search_order(
+                        search_condition.order_startDate
+                      )
+                    ">
+                      확인
+                    </v-btn>
+                  </v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-col md="2">
+                <v-menu ref="order_endDate" v-model="order_endDate" :close-on-content-click="false"
+                  :return-value.sync="search_condition.order_endDate" transition="scale-transition" offset-y
+                  min-width="auto">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field v-model="search_condition.order_endDate" label="수주종료일" solo rounded readonly
+                      v-bind="attrs" v-on="on" dense></v-text-field>
+                  </template>
+                  <v-date-picker v-model="search_condition.order_endDate" no-title scrollable locale="ko-KR"
+                    :min="search_condition.order_startDate">
+                    <v-spacer></v-spacer>
+                    <v-btn text color="primary" @click="order_endDate = false">
+                      취소
+                    </v-btn>
+                    <v-btn text color="primary" @click="
+                      e_date_search_order(search_condition.order_endDate)
+                    ">
+                      확인
+                    </v-btn>
+                  </v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-col cols="2">
+                <v-text-field label="요청사항" solo rounded v-model="search_condition.memo" dense></v-text-field>
+              </v-col> <v-spacer></v-spacer>
+              <v-col class="text-right" cols="2">
+                <v-btn color="primary" @click="getOrderAccounts" large elevation="0">
                   조회
                 </v-btn>
               </v-col>
@@ -76,24 +71,21 @@
           </v-card>
         </v-col>
       </v-row>
-
-      <!--  <Header></Header> -->
-
       <!-- 수주목록 -->
       <v-row no-gutters>
-        <v-col class="ma-2" md="12">
-          <v-row class="mb-1">
-            <v-col md="2">
-              <h4 class="searchbox-title">수주 목록</h4>
-            </v-col>
-            <v-col class="text-right" offset-md="7" md="3">
-              <v-btn small color="primary" @click="add()"><v-icon left> mdi-book-account </v-icon>수주 등록</v-btn>
+        <v-col class="ma-2" cols="12">
+          <v-row dense class="mb-2">
+            <v-col cols="2">
+              <span class="searchbox-title">수주 목록</span>
+            </v-col> <v-spacer></v-spacer>
+            <v-col class="text-right" cols="3">
+              <v-btn color="primary" @click="add" elevation="0"><v-icon left> mdi-book-account </v-icon>수주 등록</v-btn>
             </v-col>
           </v-row>
           <!-- 수주 목록 테이블 -->
           <v-card>
-            <v-data-table height="637" :headers="headers" :items="customer_list" :search="search" multi-sort fixed-header
-              dense :options.sync="options" :server-items-length="totalCount" :loading="loading"
+            <v-data-table :height="table_height" :headers="headers" :items="customer_list" :search="search" multi-sort
+              fixed-header dense :options.sync="options" :server-items-length="totalCount" :loading="loading"
               :items-per-page="itemsPerPage" :page.sync="page" @page-count="pageCount = $event" hide-default-footer>
               <!-- 상세수정 -->
               <template v-slot:item.edit="{ item }">
@@ -135,13 +127,7 @@
                 </div>
               </template>
             </v-data-table>
-            <!-- 페이지네이션 -->
-            <v-row class="py-3">
-              <v-col>
-                <v-pagination circle v-model="page" :length="pageCount"></v-pagination>
-              </v-col>
-            </v-row>
-          </v-card>
+          </v-card><v-pagination circle v-model="page" :length="pageCount"></v-pagination>
         </v-col>
       </v-row>
     </v-container>
@@ -179,6 +165,7 @@ export default class Customer extends Vue {
     memo: "", //메모
     details: [], //추가한 품목 목록
   };
+  table_height: number = 0;
   menu_orderDate: boolean = false; //수주일자 datepicker
   search_condition: any = {
     customerName: "",
@@ -237,6 +224,12 @@ export default class Customer extends Vue {
   onEditCustomerChange(val: object) {
     return val || this.closeModal_customer();
   }
+
+  mounted() {
+    this.onResize();
+  }
+
+
   @Watch("options", { deep: true })
   onOptionChange() {
     this.getOrderAccounts();
@@ -278,6 +271,10 @@ export default class Customer extends Vue {
           });
         }
       });
+  }
+  onResize() {
+    this.table_height = window.innerHeight - 48 - 129 - 44 - 44 - 20;
+    console.log("onResize", this.table_height);
   }
   editTableOrderInfo(item: any) {
     //수주 즉시 수정
