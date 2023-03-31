@@ -96,89 +96,81 @@
 		<v-dialog v-model="dialog" persistent max-width="1000px">
 			<v-card>
 				<v-card-title>
-					<span class="text-h5">신규테스트 등록</span>
+					<span>신규테스트 등록</span>
 				</v-card-title>
 				<v-card-text>
-					<v-container>
-						<v-row>
-							<v-col cols="10">
-								<v-text-field label="실험군 명" :rules="nameRules" hide-details="auto"
-									v-model="editedItem.testName"></v-text-field>
-							</v-col>
-							<v-col cols="2" class="d-flex align-center">
-								<v-menu v-model="menu" :close-on-content-click="false" :nudge-width="400" offset-x
-									max-height="600">
-									<template v-slot:activator="{ on, attrs }">
-										<v-btn color="white" @click="getDataSimple()" v-bind="attrs" v-on="on" small
-											v-show="editedIndex == -1">
-											불러오기
+					<v-row>
+						<v-col cols="5">
+							<v-text-field solo rounded dense label="실험군 명" :rules="nameRules" hide-details="auto"
+								v-model="editedItem.testName"></v-text-field>
+						</v-col>
+						<v-col cols="2">
+							<v-menu v-model="menu" :close-on-content-click="false" :nudge-width="400" offset-x
+								max-height="600">
+								<template v-slot:activator="{ on, attrs }">
+									<v-btn color="primary" @click="getDataSimple()" v-bind="attrs" v-on="on"
+										v-show="editedIndex == -1">
+										불러오기
+									</v-btn>
+								</template>
+								<v-card class="pa-3">
+									<v-data-table :headers="datas_header_simple" :items="datas_simple" dense
+										:items-per-page=100 item-key="name" class="elevation-1" :search="search"
+										hide-default-footer height="300">
+										<template v-slot:top>
+											<v-text-field v-model="search" label="실험명으로 검색" class="mx-4"></v-text-field>
+										</template>
+										<template v-slot:item.testName="{ item }">
+											<v-btn @click="cloneItem(item)" class="ma-2" outlined color="indigo">
+												{{ item.testName }}
+											</v-btn>
+										</template>
+
+									</v-data-table>
+									</v-list-item>
+									</v-list>
+									<v-divider></v-divider>
+									<v-card-actions>
+										<v-spacer></v-spacer>
+										<v-btn text @click="menu = false">
+											닫기
 										</v-btn>
-									</template>
+										<v-btn color="primary" text @click="menu = false">
+											선택
+										</v-btn>
+									</v-card-actions>
+								</v-card>
+							</v-menu>
+						</v-col>
+						<v-col cols="6">
+							<v-text-field v-model="editedItem.numSample" type="number" ref="input" label="개체수">
+							</v-text-field>
+						</v-col>
+						<v-col cols="6">
+							<v-text-field @input="numSampleNum()" min="1" v-model="editedItem.numTreatment" type="number"
+								label="처리구 수" hint="2~15개">
+							</v-text-field>
+						</v-col>
+						<v-col v-for="idx in Array.from({ length: editedItem.numTreatment }, (v, i) => i + 1)" :key="idx"
+							cols="12" sm="6" md="4">
 
-									<v-card class="pa-3">
-										<v-data-table :headers="datas_header_simple" :items="datas_simple" dense
-											:items-per-page=100 item-key="name" class="elevation-1" :search="search"
-											hide-default-footer height="300">
-											<template v-slot:top>
-												<v-text-field v-model="search" label="실험명으로 검색" class="mx-4"></v-text-field>
-											</template>
-											<template v-slot:item.testName="{ item }">
-												<v-btn @click="cloneItem(item)" class="ma-2" outlined color="indigo">
-													{{ item.testName }}
-												</v-btn>
-											</template>
+							<v-text-field solo rounded dense clearable :placeholder="idx + '번 처리구명'" hint="최대 50자"
+								v-model="nameArr[idx - 1]" type="text"> </v-text-field>
+						</v-col>
+						<v-col cols="12">
+							<v-text-field label="작성 날짜 개수*" type="number" min="1"
+								v-model="editedItem.numDay"></v-text-field>
+						</v-col>
+						<v-col cols="12">
+							<v-text-field dense rounded solo label="실험조건" v-model="editedItem.testCondition"></v-text-field>
+						</v-col>
+					</v-row>
 
-										</v-data-table>
-										</v-list-item>
-										</v-list>
-										<v-divider></v-divider>
-										<v-card-actions>
-											<v-spacer></v-spacer>
-											<v-btn text @click="menu = false">
-												닫기
-											</v-btn>
-											<v-btn color="primary" text @click="menu = false">
-												선택
-											</v-btn>
-										</v-card-actions>
-									</v-card>
-								</v-menu>
-							</v-col>
-							<v-col cols="6">
-								<v-text-field v-model="editedItem.numSample" type="number" ref="input" label="개체수">
-								</v-text-field>
-							</v-col>
-							<v-col cols="6">
-								<v-text-field @input="numSampleNum()" min="1" v-model="editedItem.numTreatment"
-									type="number" label="처리구 수" hint="2~15개">
-								</v-text-field>
-							</v-col>
-							<v-col v-for="idx in Array.from({ length: editedItem.numTreatment }, (v, i) => i + 1)"
-								:key="idx" cols="12" sm="6" md="4">
-
-								<v-text-field clearable :placeholder="idx + '번 처리구명'" hint="최대 50자"
-									v-model="nameArr[idx - 1]" type="text"> </v-text-field>
-							</v-col>
-							<v-col cols="12">
-								<v-text-field label="작성 날짜 개수*" type="number" min="1"
-									v-model="editedItem.numDay"></v-text-field>
-							</v-col>
-							<v-col cols="12">
-								<v-text-field label="실험조건" v-model="editedItem.testCondition"></v-text-field>
-							</v-col>
-						</v-row>
-					</v-container>
 				</v-card-text>
 				<v-card-actions>
 					<v-spacer></v-spacer>
-					<v-btn color="blue darken-1" text @click="dialogClose()">
-						닫기
-					</v-btn>
-					<v-btn color="blue darken-1" text @click="save()">
-						등록
-					</v-btn>
-
-
+					<v-btn color="primary" @click="save">저장</v-btn>
+					<v-btn color="error" @click="dialogClose">닫기</v-btn>
 				</v-card-actions>
 			</v-card>
 		</v-dialog>
