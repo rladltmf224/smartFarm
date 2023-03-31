@@ -12,23 +12,12 @@
 
     <Alarm></Alarm>
 
-    <v-menu
-      offset-y
-      v-model="menu"
-      :close-on-content-click="false"
-      location="end"
-    >
+    <v-menu offset-y v-model="menu" :close-on-content-click="false" location="end">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          elevation="0"
-          color="transparent"
-          rounded
-          v-bind="attrs"
-          v-on="on"
-        >
+        <v-btn elevation="0" color="transparent" rounded v-bind="attrs" v-on="on">
           <v-badge bordered bottom color="red" dot offset-x="10" offset-y="10">
             <v-avatar size="30" class="mx-2">
-              <v-img src="https://randomuser.me/api/portraits/men/85.jpg" />
+              <v-img src="@/assets/images/icon.png" />
             </v-avatar>
           </v-badge>
           <span>{{ userId }}님</span>
@@ -38,24 +27,15 @@
       <v-card width="250">
         <v-list>
           <v-list-item class="d-flex flex-column">
-            <v-card
-              elevation="0"
-              class="pa-0 mb-1"
-              width="230"
-              v-for="(item, index) in todayTotalList"
-              :key="index"
-            >
+            <v-card elevation="0" class="pa-0 mb-1" width="230" v-for="(item, index) in todayTotalList" :key="index">
               <v-card-text>
                 <v-row :link="true" :to="to_schedule">
                   <v-col cols="1" class="pa-1 todayListBox mr-4"> </v-col>
-                  <v-col cols="10" class="pa-0"
-                    ><span>
-                      {{ `${item.customerName}의 ${item.title} 일정` }}</span
-                    ><br />
+                  <v-col cols="10" class="pa-0"><span>
+                      {{ `${item.customerName}의 ${item.title} 일정` }}</span><br />
                     <span style="font-size: 9px">{{
                       `${item.start} ~ ${item.end}`
-                    }}</span></v-col
-                  >
+                    }}</span></v-col>
                 </v-row>
                 <!--{{ `[${item.customerName}]${item.title}` }}-->
               </v-card-text>
@@ -64,19 +44,13 @@
         </v-list>
         <v-divider></v-divider>
         <v-list dense nav rounded>
-          <v-list-item
-            @click="mySettingDialog = true"
-            @mouseover="openTooltip()"
-          >
+          <v-list-item @click="mySettingDialog = true" @mouseover="openTooltip()">
             <v-list-item-icon>
               <v-icon>mdi-account-circle-outline</v-icon>
             </v-list-item-icon>
             <v-list-item-title>회원정보 변경</v-list-item-title>
           </v-list-item>
-          <v-list-item
-            @click="userInfoDialog = true"
-            @mouseover="openTooltip()"
-          >
+          <v-list-item @click="userInfoDialog = true" @mouseover="openTooltip()">
             <v-list-item-icon>
               <v-icon>mdi-account-circle-outline</v-icon>
             </v-list-item-icon>
@@ -90,18 +64,10 @@
       </v-list-item> -->
 
           <!--비밀번호 변경 dialog-->
-          <SidebarUserInfo
-            :open="userInfoDialog"
-            @closeModal="close"
-            @log-out="logout"
-            @save-info="handlerSaveInfo"
-          ></SidebarUserInfo>
+          <SidebarUserInfo :open="userInfoDialog" @closeModal="close" @log-out="logout" @save-info="handlerSaveInfo">
+          </SidebarUserInfo>
 
-          <SidebarMySetting
-            :open="mySettingDialog"
-            @closeModal="mySettingDialog = false"
-            @save-info="handlerSaveInfo"
-          >
+          <SidebarMySetting :open="mySettingDialog" @closeModal="mySettingDialog = false" @save-info="handlerSaveInfo">
           </SidebarMySetting>
         </v-list>
       </v-card>
@@ -313,7 +279,7 @@ export default class Sidebar extends Vue {
   // }
 
   goHome(): void {
-    this.$router.push("/monitoring").catch(() => {});
+    this.$router.push("/monitoring").catch(() => { });
 
     return;
   }
