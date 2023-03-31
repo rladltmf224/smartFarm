@@ -1,83 +1,72 @@
 <template>
   <div>
     <v-container fluid v-resize="onResize">
-      <v-row class="">
-        <v-col class="ma-2" md="12">
-          <h4 class="searchbox-title">조회 조건</h4>
-          <v-card class="pa-3" height="80">
-            <v-row>
-              <v-col cols="12" class="">
-                <v-row class="">
-                  <v-col cols="2" class="d-flex align-center">
-                    <v-select :items="search_list2" label="구역항목" v-model="search_type_2" item-text="facilityName" solo
-                      rounded item-value="facilityId" @change="changeRoomData()" dense></v-select>
-                  </v-col>
-                  <v-col cols="2" class="d-flex align-center">
-                    <v-select :items="search_list1" label="제어항목" v-model="search_type_1" item-text="equipmentName" solo
-                      rounded item-value="equipmentId" :disabled="search_list1.length == 0" dense multiple></v-select>
-                  </v-col>
+      <v-row>
+        <v-col class="ma-2" cols="12">
+          <span class="searchbox-title">조회 조건</span>
+          <v-card class="card-shadow pa-3" height="65">
+            <v-row dense>
+              <v-col cols="2">
+                <v-select :items="search_list2" label="구역항목" v-model="search_type_2" item-text="facilityName" solo rounded
+                  item-value="facilityId" @change="changeRoomData()" dense></v-select>
+              </v-col>
+              <v-col cols="2">
+                <v-select :items="search_list1" label="제어항목" v-model="search_type_1" item-text="equipmentName" solo
+                  rounded item-value="equipmentId" :disabled="search_list1.length == 0" dense multiple></v-select>
+              </v-col>
+              <v-col cols="2">
+                <v-menu ref="menu1" v-model="menu1" :close-on-content-click="false" :return-value.sync="s_date"
+                  transition="scale-transition" offset-y min-width="290px">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field v-model="s_date" prepend-icon="mdi-calendar" readonly v-bind="attrs"
+                      v-on="on"></v-text-field>
+                  </template>
+                  <v-date-picker v-model="s_date" no-title scrollable :max="e_date">
+                    <v-spacer></v-spacer>
+                    <v-btn text color="primary" @click="menu1 = false">Cancel</v-btn>
+                    <v-btn text color="primary" @click="s_date_search(s_date)">OK</v-btn>
+                  </v-date-picker>
+                </v-menu>
 
-                  <v-col md="2" class="d-flex align-center">
-                    <!-- 시작일 -->
-
-                    <v-menu ref="menu1" v-model="menu1" :close-on-content-click="false" :return-value.sync="s_date"
-                      transition="scale-transition" offset-y min-width="290px">
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field v-model="s_date" prepend-icon="mdi-calendar" readonly v-bind="attrs"
-                          v-on="on"></v-text-field>
-                      </template>
-                      <v-date-picker v-model="s_date" no-title scrollable :max="e_date">
-                        <v-spacer></v-spacer>
-                        <v-btn text color="primary" @click="menu1 = false">Cancel</v-btn>
-                        <v-btn text color="primary" @click="s_date_search(s_date)">OK</v-btn>
-                      </v-date-picker>
-                    </v-menu>
-
-                    <!-- 시작일 -->
-                  </v-col>
-                  <!-- 종료일 -->
-                  <v-col md="2" class="d-flex align-center">
-                    <v-menu ref="menu2" v-model="menu2" :close-on-content-click="false" :return-value.sync="e_date"
-                      transition="scale-transition" offset-y min-width="290px">
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field v-model="e_date" prepend-icon="mdi-calendar" readonly v-bind="attrs"
-                          v-on="on"></v-text-field>
-                      </template>
-                      <v-date-picker v-model="e_date" no-title scrollable :min="s_date" :max="date">
-                        <v-spacer></v-spacer>
-                        <v-btn text color="primary" @click="menu2 = false">Cancel</v-btn>
-                        <v-btn text color="primary" @click="e_date_search(e_date)">OK</v-btn>
-                      </v-date-picker>
-                    </v-menu>
-                  </v-col>
-                  <v-spacer></v-spacer>
-                  <v-col cols="1">
-                    <v-col class="text-right d-flex align-center">
-                      <v-btn color="primary" @click="getHistory()">
-                        조회
-                      </v-btn>
-                    </v-col>
-                  </v-col>
-                </v-row>
+                <!-- 시작일 -->
+              </v-col>
+              <v-col cols="2">
+                <v-menu ref="menu2" v-model="menu2" :close-on-content-click="false" :return-value.sync="e_date"
+                  transition="scale-transition" offset-y min-width="290px">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field v-model="e_date" prepend-icon="mdi-calendar" readonly v-bind="attrs"
+                      v-on="on"></v-text-field>
+                  </template>
+                  <v-date-picker v-model="e_date" no-title scrollable :min="s_date" :max="date">
+                    <v-spacer></v-spacer>
+                    <v-btn text color="primary" @click="menu2 = false">Cancel</v-btn>
+                    <v-btn text color="primary" @click="e_date_search(e_date)">OK</v-btn>
+                  </v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-spacer></v-spacer>
+              <v-col class="text-right" cols="2">
+                <v-btn color="primary" @click="getHistory" large elevation="0">
+                  조회
+                </v-btn>
               </v-col>
             </v-row>
           </v-card>
         </v-col>
       </v-row>
-    </v-container>
-    <v-container fluid>
-      <v-row>
-        <v-col class="ma-2" md="12">
-          <v-row class="">
-            <v-col md="2">
-              <h4 class="searchbox-title">조회결과</h4>
+
+      <v-row no-gutters>
+        <v-col class="ma-2" cols="12">
+          <v-row dense class="mb-2">
+            <v-col cols="1" align-self="center">
+              <span class="searchbox-title">조회 결과</span>
             </v-col>
           </v-row>
 
           <v-card>
             <v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options"
               :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" hide-default-footer
-              @page-count="pageCount = $event" dense :height="table_height" multi-sort>
+              @page-count="pageCount = $event" :height="table_height" multi-sort>
               <!-- 버튼을 chip으로 표현 -->
               <template v-slot:item.before="{ item }">
                 <!-- 수정전 버튼만-->
@@ -130,15 +119,11 @@
                 </v-chip>
               </template>
             </v-data-table>
-            <div class="text-center pt-2">
-
-            </div>
-
-          </v-card>
+          </v-card> <v-pagination circle v-model="page" :length="pageCount"></v-pagination>
         </v-col>
       </v-row>
+      <!-- 거래처 생성 모달 -->
     </v-container>
-    <!-- 거래처 생성 모달 -->
   </div>
 </template>
 
@@ -153,7 +138,7 @@ export default {
       page: 1,
       totalData: 0, //총 데이타의 개수 백엔드에서받아서 교체할것임
       loading: false,
-      itemsPerPage: 18,
+      itemsPerPage: 12,
       pageCount: 10,
       options: {},
       datas_header: [

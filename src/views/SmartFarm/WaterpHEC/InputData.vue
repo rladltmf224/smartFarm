@@ -131,7 +131,7 @@
               <v-menu ref="DIA_menu1" v-model="DIA_menu1" :close-on-content-click="false" :return-value.sync="DIA_s_date"
                 transition="scale-transition" offset-y>
                 <template v-slot:activator="{ on, attrs }">
-                  <v-text-field solo dense rounded v-model="editedItem.inputDate" readonly v-bind="attrs" v-on="on"
+                  <v-text-field solo dense v-model="editedItem.inputDate" rounded readonly v-bind="attrs" v-on="on"
                     hide-details></v-text-field>
                 </template>
                 <v-date-picker v-model="editedItem.inputDate" no-title scrollable :max="DIA_e_date">
