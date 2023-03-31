@@ -1,22 +1,45 @@
 <template>
   <div>
-    <v-container fluid>
+    <v-container fluid v-resize="onResize">
       <v-row>
         <v-col class="ma-2" md="12">
-          <h4 class="searchbox-title">조회 조건</h4>
-          <v-card class="pa-3" height="90">
+          <span class="searchbox-title">조회 조건</span>
+          <v-card class="card-shadow pa-3" height="65">
             <v-row>
               <v-col cols="2">
-                <v-text-field v-model="search_bom.item" @keydown.enter="getBom" label="품목코드 or품목명"></v-text-field>
+                <v-text-field
+                  dense
+                  solo
+                  rounded
+                  elevation-0
+                  v-model="search_bom.item"
+                  @keydown.enter="getBom"
+                  label="품목코드 or품목명"
+                ></v-text-field>
               </v-col>
               <v-col cols="2">
-                <v-text-field v-model="search_bom.itemVersion" @keydown.enter="getBom" label="완제품 버전"></v-text-field>
+                <v-text-field
+                  dense
+                  solo
+                  rounded
+                  v-model="search_bom.itemVersion"
+                  @keydown.enter="getBom"
+                  label="완제품 버전"
+                ></v-text-field>
               </v-col>
               <v-col cols="2">
-                <v-text-field v-model="search_bom.option" @keydown.enter="getBom" label="완제품 규격 or 단위"></v-text-field>
+                <v-text-field
+                  dense
+                  solo
+                  rounded
+                  v-model="search_bom.option"
+                  @keydown.enter="getBom"
+                  label="완제품 규격 or 단위"
+                ></v-text-field>
               </v-col>
-              <v-col class="pt-5 text-right" offset="4" cols="2">
-                <v-btn color="primary" x-large @click="getBom">
+              <v-spacer></v-spacer>
+              <v-col class="text-right" cols="2">
+                <v-btn color="primary" large elevation="0" @click="getBom">
                   <v-icon left> mdi-magnify </v-icon>
                   조회
                 </v-btn>
@@ -25,16 +48,22 @@
           </v-card>
         </v-col>
       </v-row>
-    </v-container>
-    <v-container fluid>
-      <v-row>
-        <v-col class="ma-2" md="12">
-          <v-row class="mb-2">
-            <v-col md="2">
-              <h4 class="searchbox-title">BOM 목록</h4>
+
+      <v-row no-gutters>
+        <v-col class="ma-2" cols="12">
+          <v-row dense class="mb-2">
+            <v-col cols="1" align-self="center">
+              <span class="searchbox-title">BOM 목록</span>
             </v-col>
-            <v-col class="text-right" offset-md="3" md="7">
-              <v-btn small class="mr-3" fluid color="primary" @click="reverseItem">
+            <v-spacer></v-spacer>
+            <v-col class="text-right" cols="6">
+              <v-btn
+                small
+                class="mr-3"
+                fluid
+                color="primary"
+                @click="reverseItem"
+              >
                 역 전 개
               </v-btn>
               <v-btn small class="mr-3" fluid color="primary" @click="frontBom">
@@ -43,7 +72,13 @@
               <v-btn fluid small color="primary" @click="deleteBom">
                 선 택 삭 제
               </v-btn>
-              <v-btn fluid small class="ml-3 mr-1" color="primary" @click="saveBom">
+              <v-btn
+                fluid
+                small
+                class="ml-3 mr-1"
+                color="primary"
+                @click="saveBom"
+              >
                 신 규 등 록
               </v-btn>
             </v-col>
@@ -51,51 +86,112 @@
           <v-dialog width="1200px" v-model="interimStorage" persistent>
             <v-card height="620px">
               <v-card-title class="reverseRow">
-                <span class="text-h5 dialog-title font-weight-bold mb-15" v-show="dialog">역전개</span>
-                <span class="text-h5 dialog-title font-weight-bold mb-15" v-show="!dialog">정전개</span>
+                <span v-show="dialog">역전개</span>
+                <span v-show="!dialog">정전개</span>
               </v-card-title>
-              <v-data-table multi-sort fixed-header v-show="dialog" class="ml-2 mr-2 " height="500"
-                :headers="reverseItemHeader" :items="reverseTable" dense disable-pagination hide-default-footer>
-                <template v-slot:no-data>
-                  <h5>데이터가 없습니다.</h5>
+
+              <v-data-table
+                multi-sort
+                fixed-header
+                v-show="dialog"
+                class="mx-2 elevation-1"
+                height="500"
+                :headers="reverseItemHeader"
+                :items="reverseTable"
+                loading-text="서버에 요청중...."
+                no-data-text="데이터가 없습니다."
+                disable-pagination
+                hide-default-footer
+              >
+              </v-data-table>
+              <v-data-table
+                multi-sort
+                fixed-header
+                v-show="!dialog"
+                class="mx-2 elevation-1"
+                height="500"
+                :headers="frontBomHeader"
+                :items="frontTable"
+                disable-pagination
+                hide-default-footer
+                no-data-text="데이터가 없습니다."
+              >
+                <template v-slot:[`item.details`]="{ item }">
+                  <td class="detailTable">
+                    <v-data-table
+                      multi-sort
+                      fixed-header
+                      :headers="frontBomItemHeader"
+                      :items="item.details"
+                      disable-pagination
+                      no-data-text="데이터가 없습니다."
+                      hide-default-header
+                      hide-default-footer
+                    >
+                    </v-data-table>
+                  </td>
                 </template>
               </v-data-table>
-              <v-sheet>
-                <v-data-table multi-sort fixed-header v-show="!dialog" class="ml-2 mr-2 px-6" height="500"
-                  :headers="frontBomHeader" :items="frontTable" disable-pagination hide-default-footer dense>
-                  <template v-slot:[`item.details`]="{ item }">
-                    <td class="detailTable">
-                      <v-data-table multi-sort fixed-header :headers="frontBomItemHeader" :items="item.details" dense
-                        disable-pagination hide-default-header hide-default-footer>
-                      </v-data-table>
-                    </td>
-                  </template>
-                  <template v-slot:no-data>
-                    <h5>데이터가 없습니다.</h5>
-                  </template>
-                </v-data-table>
-              </v-sheet>
 
-              <v-btn small class="closeBtn float-right mr-2 mt-3" color="primary" text @click="interimStorage = false">
+              <v-btn
+                small
+                class="closeBtn float-right mr-2 mt-3"
+                color="primary"
+                text
+                @click="interimStorage = false"
+              >
                 닫기
               </v-btn>
             </v-card>
           </v-dialog>
           <v-card>
-            <v-data-table multi-sort fixed-header show-select item-key="itemId" height="600" v-model="bomSelected"
-              :headers="totalBomHeader" :items="totalBomTable" return-object dense :options.sync="bomListCfg.options"
-              :server-items-length="bomListCfg.totalCount" :loading="bomListCfg.loading"
-              :items-per-page="bomListCfg.itemsPerPage" :page.sync="bomListCfg.page"
-              @page-count="bomListCfg.pageCount = $event" @click:row="(item, slot) => slot.expand(!slot.isExpanded)"
-              @dblclick:row="dblclickRow" hide-default-footer>
+            <v-data-table
+              multi-sort
+              fixed-header
+              show-select
+              item-key="itemId"
+              :height="table_height"
+              v-model="bomSelected"
+              :headers="totalBomHeader"
+              :items="totalBomTable"
+              return-object
+              :options.sync="bomListCfg.options"
+              :server-items-length="bomListCfg.totalCount"
+              :items-per-page="bomListCfg.itemsPerPage"
+              :page.sync="bomListCfg.page"
+              @page-count="bomListCfg.pageCount = $event"
+              @click:row="(item, slot) => slot.expand(!slot.isExpanded)"
+              @dblclick:row="dblclickRow"
+              :loading="bomListCfg.loading"
+              loading-text="서버에 요청중...."
+              no-data-text="데이터가 없습니다."
+              hide-default-footer
+            >
               <template #expanded-item="{ headers, item }">
                 <td class="bomTreeTable" :colspan="headers.length">
-                  <v-data-table multi-sort class="second-tableBorder" v-model="selectedChild" :headers="headersChild"
-                    :items="item.details" dense @click:row="selectedItemData" @dblclick:row="dblclickRow" single-select
-                    return-object elevation="0" disable-pagination hide-default-footer>
+                  <v-data-table
+                    multi-sort
+                    class="second-tableBorder"
+                    v-model="selectedChild"
+                    :headers="headersChild"
+                    :items="item.details"
+                    @click:row="selectedItemData"
+                    @dblclick:row="dblclickRow"
+                    single-select
+                    return-object
+                    elevation="0"
+                    disable-pagination
+                    hide-default-footer
+                  >
                     <template v-slot:item.type="{ item }">
-                      <v-btn class="center mt-1 mb-1 childBtn" small :color="getTypeColor(item.type)" dark
-                        style="width: 100px" depressed>
+                      <v-btn
+                        class="center mt-1 mb-1 childBtn"
+                        small
+                        :color="getTypeColor(item.type)"
+                        dark
+                        style="width: 100px"
+                        depressed
+                      >
                         {{ item.type }}
                       </v-btn>
                     </template>
@@ -104,8 +200,14 @@
               </template>
 
               <template v-slot:item.type="{ item }">
-                <v-btn class="center mt-1 mb-1" small :color="getTypeColor(item.type)" dark style="width: 100px"
-                  depressed>
+                <v-btn
+                  class="center mt-1 mb-1"
+                  small
+                  :color="getTypeColor(item.type)"
+                  dark
+                  style="width: 100px"
+                  depressed
+                >
                   {{ item.type }}
                 </v-btn>
               </template>
@@ -118,15 +220,23 @@
                 <h5>데이터가 없습니다.</h5>
               </template>
             </v-data-table>
-            <v-col>
-              <v-pagination circle v-model="bomListCfg.page" :length="bomListCfg.pageCount"></v-pagination>
-            </v-col>
           </v-card>
+          <v-pagination
+            circle
+            v-model="bomListCfg.page"
+            :length="bomListCfg.pageCount"
+          ></v-pagination>
         </v-col>
       </v-row>
     </v-container>
     <!--BOM등록 Modal-->
-    <bom-modal :open="bomDialog" :change="change" :stepData="step" :editedBomData="editedBom" @closeModal="closeModal">
+    <bom-modal
+      :open="bomDialog"
+      :change="change"
+      :stepData="step"
+      :editedBomData="editedBom"
+      @closeModal="closeModal"
+    >
     </bom-modal>
   </div>
 </template>
@@ -144,6 +254,7 @@ import { Vue, Component, Watch } from "vue-property-decorator";
 })
 export default class Bom extends Vue {
   bomDialog: boolean = false; //Modal변수
+  table_height: number = 0;
   search_bom: {
     //페이징처리
     item: string;
@@ -153,14 +264,13 @@ export default class Bom extends Vue {
     sortBy: any;
     sortDesc: any;
   } = {
-
-      item: "",
-      itemVersion: "",
-      page: 1,
-      size: 0,
-      sortBy: [],
-      sortDesc: [true, false],
-    };
+    item: "",
+    itemVersion: "",
+    page: 1,
+    size: 0,
+    sortBy: [],
+    sortDesc: [true, false],
+  };
   bomListCfg: any = {}; //페이징변수
   editedBom: { item: object; details: any } = {
     //Modal로 전달되는 수정DATA
@@ -177,24 +287,6 @@ export default class Bom extends Vue {
   row: any = "";
   selectedChild: [{ itemId: number }] | [] = []; //BOM테이블 원자재 v-model
   step: number = 1; //step단계
-
-  /* 한번 더 체크하고 삭제할 변수
-  item: { itemId?: any } = {};
-  bom: object = {};
-  product: object = {};
-  totalItem: [] = [];
-  totalData: [] = [];
-
-  type bomOpt = {
-    options?: any;
-    page: any;
-    itemsPerPage: any;
-    sortBy?: any;
-    sortDesc?: any;
-    loading: boolean;
-    totalCount: number;
-  };
-  */
 
   get totalBomTable() {
     return this.bomlist;
@@ -236,7 +328,12 @@ export default class Bom extends Vue {
   }
 
   mounted() {
+    this.onResize();
     this.getBom();
+  }
+
+  onResize() {
+    this.table_height = window.innerHeight - 48 - 112 - 63 - 60 - 15;
   }
 
   created() {
