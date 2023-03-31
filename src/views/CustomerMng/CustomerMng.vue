@@ -10,9 +10,8 @@
                 <v-row dense>
                   <v-col cols="2">
                     <v-select :items="search_list1" label="선택" v-model="search_type_1" item-text="name" item-value="value"
-                      dense solo rounded elevation-0 hide-details="false"></v-select>
+                      dense solo rounded hide-details="false"></v-select>
                   </v-col>
-
                   <v-col cols="2">
                     <v-text-field label="검색어1" v-model="search_text_1" @keydown.enter="getCustomer" dense solo rounded
                       hide-details="false"></v-text-field>

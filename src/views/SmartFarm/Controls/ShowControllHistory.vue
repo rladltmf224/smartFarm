@@ -9,12 +9,12 @@
               <v-col cols="12" class="">
                 <v-row class="">
                   <v-col cols="2" class="d-flex align-center">
-                    <v-select :items="search_list2" label="구역항목" v-model="search_type_2" item-text="facilityName"
-                      item-value="facilityId" @change="changeRoomData()" dense></v-select>
+                    <v-select :items="search_list2" label="구역항목" v-model="search_type_2" item-text="facilityName" solo
+                      rounded item-value="facilityId" @change="changeRoomData()" dense></v-select>
                   </v-col>
                   <v-col cols="2" class="d-flex align-center">
-                    <v-select :items="search_list1" label="제어항목" v-model="search_type_1" item-text="equipmentName"
-                      item-value="equipmentId" :disabled="search_list1.length == 0" dense multiple></v-select>
+                    <v-select :items="search_list1" label="제어항목" v-model="search_type_1" item-text="equipmentName" solo
+                      rounded item-value="equipmentId" :disabled="search_list1.length == 0" dense multiple></v-select>
                   </v-col>
 
                   <v-col md="2" class="d-flex align-center">

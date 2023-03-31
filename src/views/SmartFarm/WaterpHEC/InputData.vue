@@ -8,7 +8,7 @@
             <v-row class="">
               <v-col cols="2" class="pl-12 d-flex align-center">
                 <v-select class="select pt-4" :items="search_list1" label="조회항목" v-model="search_type_1" item-text="name"
-                  item-value="value" dense></v-select>
+                  solo rounded item-value="value" dense></v-select>
               </v-col>
               <v-col md="4" class="pa-0 ma-0 d-flex align-center justify-center">
                 <v-menu ref="test_menu1" v-model="test_menu1" :close-on-content-click="false"
