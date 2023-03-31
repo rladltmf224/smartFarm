@@ -1,20 +1,20 @@
 <template>
   <div>
-    <v-container fluid>
+    <v-container fluid v-resize="onResize">
       <v-row>
         <v-col class="ma-2" md="12">
-          <h4 class="searchbox-title">조회 조건</h4>
-          <v-card class="pa-3" height="80">
-            <v-row class="">
-              <v-col cols="2" class="pl-12 d-flex align-center">
-                <v-select class="select pt-4" :items="search_list1" label="조회항목" v-model="search_type_1" item-text="name"
-                  solo rounded item-value="value" dense></v-select>
+          <span class="searchbox-title">조회 조건</span>
+          <v-card class="card-shadow pa-3" height="65">
+            <v-row dense>
+              <v-col cols="2">
+                <v-select class="select" :items="search_list1" label="조회항목" v-model="search_type_1" item-text="name" solo
+                  rounded item-value="value" dense></v-select>
               </v-col>
-              <v-col md="4" class="pa-0 ma-0 d-flex align-center justify-center">
+              <v-col cols="2">
                 <v-menu ref="test_menu1" v-model="test_menu1" :close-on-content-click="false"
                   :return-value.sync="test_date1" transition="scale-transition" offset-y min-width="auto">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field v-model="test_date1" label="시작일" prepend-icon="mdi-calendar" readonly v-bind="attrs"
+                    <v-text-field v-model="test_date1" label="시작일" solo dense rounded readonly v-bind="attrs"
                       v-on="on"></v-text-field>
                   </template>
                   <v-date-picker v-model="test_date1" no-title scrollable>
@@ -26,13 +26,12 @@
                       OK
                     </v-btn>
                   </v-date-picker>
-                </v-menu>
-                <!-- 시작일테스트 -->
-                <!-- 종료일테스트 -->
+                </v-menu></v-col>
+              <v-col cols="2">
                 <v-menu ref="test_menu2" v-model="test_menu2" :close-on-content-click="false"
                   :return-value.sync="test_date2" transition="scale-transition" offset-y min-width="auto">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field v-model="test_date2" label="종료일" prepend-icon="mdi-calendar" readonly v-bind="attrs"
+                    <v-text-field v-model="test_date2" solo rounded dense label="종료일" readonly v-bind="attrs"
                       v-on="on"></v-text-field>
                   </template>
                   <v-date-picker v-model="test_date2" no-title scrollable>
@@ -47,49 +46,48 @@
                 </v-menu>
                 <!-- 종료일테스트 -->
               </v-col>
-              <!-- 범위슬라이더 -->
-              <v-col class="pr-12 d-flex align-center mt-4" md="4">
-                <p class="px-4" style="font-size: 12px">양액pH</p>
+              <v-col cols="2" class="d-flex justify-center align-center">
+                <span>양액pH</span>
                 <v-range-slider v-model="range" step=".1" :max="max" thumb-label="always" :min="min" hide-details
                   class="align-center">
                   <template v-slot:prepend> </template>
                   <template v-slot:append> </template>
                 </v-range-slider>
-                <!-- 양액pH -->
-                <!-- 양액EC -->
-                <p class="px-4" style="font-size: 12px">양액EC</p>
-
+              </v-col>
+              <v-col cols="2" class="d-flex justify-center align-center">
+                <span>양액EC</span>
                 <v-range-slider v-model="EC_range" step=".1" thumb-label="always" :max="EC_max" :min="EC_min" hide-details
                   class="align-center">
                   <template v-slot:append> </template>
                 </v-range-slider>
               </v-col>
-              <!-- 범위슬라이더 -->
-              <!-- 조회버튼 -->
-              <v-col cols="1" class="d-flex justify-center align-center">
-                <v-btn color="primary" @click="getWaterHistory()"> 조회 </v-btn>
+              <v-spacer></v-spacer>
+              <v-col class="text-right" cols="2">
+                <v-btn color="primary" @click="getWaterHistory" large elevation="0">
+                  조회
+                </v-btn>
               </v-col>
             </v-row>
-            <!-- 조회버튼 -->
-            <!-- 여기row
-                 -->
           </v-card>
         </v-col>
       </v-row>
-    </v-container>
-    <v-container fluid>
-      <v-row class="text-right">
-        <v-col>
-          <v-btn color="primary" @click="editItem(defaultItem)">데이터 추가</v-btn>
-        </v-col>
+      <v-row dense>
+        <v-spacer></v-spacer>
       </v-row>
-
-      <v-row>
-        <v-col class="ma-2" md="12">
-          <v-card>
+      <v-row no-gutters>
+        <v-col class="ma-2" cols="12">
+          <v-row dense class="mb-2">
+            <v-col cols="1" align-self="center">
+              <span class="searchbox-title">조회 결과</span>
+            </v-col>
+            <v-spacer></v-spacer>
+            <v-col class="text-right" cols="3">
+              <v-btn color="primary" @click="editItem(defaultItem)" elevation="0">데이터 추가</v-btn>
+            </v-col>
+          </v-row><v-card>
             <v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options"
-              :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" dense hide-default-footer
-              multi-sort @page-count="pageCount = $event" height="620">
+              :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" hide-default-footer
+              multi-sort @page-count="pageCount = $event" :height="table_height">
               <!-- 버튼을 chip으로 표현 -->
               <template v-slot:item.inputDate="{ item }">
                 <!-- 수정전 버튼만-->
@@ -115,90 +113,64 @@
                   mdi-pencil
                 </v-icon>
               </template>
-              <!-- 수정 -->
-              <!-- 제어명칭 -->
             </v-data-table>
-            <v-col>
-              <v-pagination circle v-model="page" :length="pageCount"></v-pagination>
-            </v-col>
           </v-card>
-
+          <v-pagination circle v-model="page" :length="pageCount"></v-pagination>
         </v-col>
       </v-row>
     </v-container>
-    <!-- 거래처 생성 모달 -->
-    <v-dialog v-model="dialog" max-width="600px" persistent>
+
+    <v-dialog v-model="dialog" max-width="600px">
       <v-card>
+        <v-card-title>
+          <span>데이터 추가</span>
+        </v-card-title>
         <v-card-text>
-          <v-card-title>
-            <span class="text-h5">데이터 추가</span>
-          </v-card-title>
-          <v-container>
-            <!-- 상단 -->
-            <v-row class="d-flex justify-center">
-              <v-col cols="12" sm="6" md="6">
-                <v-menu ref="DIA_menu1" v-model="DIA_menu1" :close-on-content-click="false"
-                  :return-value.sync="DIA_s_date" transition="scale-transition" offset-y min-width="290px">
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field v-model="editedItem.inputDate" prepend-icon="mdi-calendar" readonly v-bind="attrs"
-                      v-on="on"></v-text-field>
-                  </template>
-                  <!-- 날짜 -->
-                  <!--                     v-model="DIA_s_date" -->
-                  <v-date-picker v-model="editedItem.inputDate" no-title scrollable :max="DIA_e_date">
-                    <v-spacer></v-spacer>
-                    <v-btn text color="primary" @click="DIA_menu1 = false">Cancel</v-btn>
-                    <v-btn text color="primary" @click="DIA_s_date_search(DIA_s_date)">OK</v-btn>
-                  </v-date-picker>
-                </v-menu>
-              </v-col>
-              <!-- 날짜 -->
-
-              <v-col cols="12" sm="2" md="4">
-                <v-select class="pa-0 pt-4" :items="search_list2" label="오전/오후" v-model="editedItem.division"
-                  item-text="name" item-value="value" dense></v-select>
-              </v-col>
-              <v-row>
-                <v-row class="d-flex justify-center">
-                  <v-col cols="12" sm="6" md="4">
-                    <!-- <v-text-field
-                      class=""
-                      v-model.number="editedItem.ph"
-                      label="양액pH(4~8사이)"
-                      type="number"
-                      @change="pH_Num_Check()"
-                    ></v-text-field> -->
-
-                    <v-text-field type="number" step="any" min="0" ref="input" label="양액pH(4~8사이)"
-                      :rules="[pH_numberRule]" v-model.number="editedItem.ph"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4" class="">
-                    <!-- <v-text-field
-                      v-model.number="editedItem.ec"
-                      label="양액EC(0.3~2.5사이)"
-                      type="number"
-                    ></v-text-field> -->
-
-                    <v-text-field type="number" step="any" min="0" ref="input" label="양액EC(0.3~2.5사이)"
-                      :rules="[EC_numberRule]" v-model.number="editedItem.ec"></v-text-field>
-                  </v-col>
-                </v-row>
-                <v-row class="d-flex justify-center">
-                  <v-col cols="12" class="d-flex justify-center" sm="12" md="6">
-                    <v-text-field maxlength="100" style="width: 300px" v-model="editedItem.memo"
-                      label="메모"></v-text-field> </v-col></v-row></v-row>
-            </v-row>
-            <!-- 상단 -->
-          </v-container>
+          <v-row dense>
+            <v-col>
+              <v-menu ref="DIA_menu1" v-model="DIA_menu1" :close-on-content-click="false" :return-value.sync="DIA_s_date"
+                transition="scale-transition" offset-y>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field solo dense rounded v-model="editedItem.inputDate" readonly v-bind="attrs" v-on="on"
+                    hide-details></v-text-field>
+                </template>
+                <v-date-picker v-model="editedItem.inputDate" no-title scrollable :max="DIA_e_date">
+                  <v-spacer></v-spacer>
+                  <v-btn text color="primary" @click="DIA_menu1 = false">Cancel</v-btn>
+                  <v-btn text color="primary" @click="DIA_s_date_search(DIA_s_date)">OK</v-btn>
+                </v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col>
+              <v-select :items="search_list2" label="오전/오후" v-model="editedItem.division" item-text="name" solo rounded
+                item-value="value" dense></v-select>
+            </v-col>
+          </v-row>
+          <v-row dense>
+            <v-col>
+              <v-text-field type="number" step="any" min="0" ref="input" label="양액pH(4~8사이)" :rules="[pH_numberRule]"
+                dense rounded solo v-model.number="editedItem.ph"></v-text-field>
+            </v-col>
+            <v-col>
+              <v-text-field type="number" step="any" min="0" ref="input" label="양액EC(0.3~2.5사이)" dense rounded solo
+                :rules="[EC_numberRule]" v-model.number="editedItem.ec"></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row dense>
+            <v-col>
+              <v-text-field v-model="editedItem.memo" label="메모" solo rounded dense></v-text-field>
+            </v-col>
+          </v-row>
         </v-card-text>
-
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="close"> Cancel </v-btn>
-
-          <v-btn color="blue darken-1" text @click="save"> Save </v-btn>
+          <v-btn color="primary" @click="save">저장</v-btn>
+          <v-btn color="error" @click="close">닫기</v-btn>
         </v-card-actions>
       </v-card>
+
+
+
     </v-dialog>
   </div>
 </template>
@@ -339,10 +311,12 @@ export default {
         inputDate: new Date().toISOString().substr(0, 10),
       },
       editedIndex: -1,
+      table_height: 0
     };
   },
   mounted() {
     this.BeforeWeeks();
+    this.onResize();
   },
   watch: {
     dialog(val) {
@@ -382,6 +356,10 @@ export default {
     // },
     // 시작일을 일주일전으로
     //스윗알러트
+    onResize() {
+      this.table_height = window.innerHeight - 48 - 129 - 44 - 44 - 70;
+      console.log("onResize", this.table_height);
+    },
     testSweet() {
       this.$swal({
         title: "이미 등록되어있는 날짜입니다.다른 날짜를 선택해주세요.",
@@ -568,14 +546,4 @@ export default {
   created() { },
 };
 </script>
-<style>
-.select {
-  max-width: 200px;
-}
-
-.v-card {
-  background-color: white;
-  box-shadow: 0 20px 27px 0 rgba(0, 0, 0, 0.05) !important;
-  border-radius: 10px;
-}
-</style>
+<style src="../SmartFarm.scss" lang="scss"></style>
