@@ -1,17 +1,6 @@
 <template>
   <v-app>
     <v-container fluid>
-      <!--   <v-row>
-        <v-col cols="12" class="d-flex ">
-          <v-chip-group multiple active-class=" primary--text pa-0 ma-0">
-            <v-chip v-for="(item, i) in selected" :key="i">
-              {{ item.testName }}
-            </v-chip>
-          </v-chip-group>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" @click="dialogOpen()">조회</v-btn>
-        </v-col>
-      </v-row> -->
       <v-card>
         <v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options" height="724"
           :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" hide-default-footer

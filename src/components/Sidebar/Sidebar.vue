@@ -1,24 +1,17 @@
 <template>
-  <v-navigation-drawer
-    app
-    clipped
-    permanent
-    color="white"
-    :mini-variant="mini"
-    class="py-4 border-radius-lg hover"
-  >
+  <v-navigation-drawer app clipped permanent color="white" :mini-variant="mini" class="py-4 border-radius-lg hover">
     <v-container class="px-0 text-h4 sidebar-main-text home" @click="goHome">
-      <v-list height="50" dense>
-        <v-list-item class="px-2">
-          <v-btn icon v-if="mini" @click="mini = !mini">
-            <v-icon>mdi-page-last </v-icon>
-          </v-btn>
-          <v-list-item-title></v-list-item-title>
-          <v-btn icon @click.stop="mini = !mini">
-            <v-icon>mdi-page-first</v-icon>
-          </v-btn>
-        </v-list-item>
-        <!-- <v-list-item class="px-2">
+      <v-list-item class="px-2">
+        <v-img v-if="!mini" style="width:130px" class="ml-12" src="@/assets/images/logo_green.png" />
+        <v-btn icon v-if="mini" @click="mini = !mini">
+          <v-icon>mdi-page-last </v-icon>
+        </v-btn>
+        <v-list-item-title></v-list-item-title>
+        <v-btn icon @click.stop="mini = !mini">
+          <v-icon>mdi-page-first</v-icon>
+        </v-btn>
+      </v-list-item>
+      <!-- <v-list-item class="px-2">
        
         </v-list-item> -->
       </v-list>
@@ -26,18 +19,8 @@
     <v-divider></v-divider>
     <font-awesome-icon :icon="['fas', 'angle-down']" />
 
-    <v-list
-      height="700"
-      style="overflow-y: auto; overflow-x: hidden; display: contents"
-      dense
-      nav
-    >
-      <v-list-item
-        class="pb-1 mx-2"
-        :link="true"
-        :to="to_home"
-        @click="selectedPage(subItem == null)"
-      >
+    <v-list height="700" style="overflow-y: auto; overflow-x: hidden; display: contents" dense nav>
+      <v-list-item class="pb-1 mx-2" :link="true" :to="to_home" @click="selectedPage(subItem == null)">
         <v-list-item-icon @mouseover="openTooltip(item)">
           <v-icon>mdi-monitor</v-icon>
         </v-list-item-icon>
@@ -49,44 +32,21 @@
         </v-list-item-icon>
         <v-list-item-title>일정관리</v-list-item-title>
       </v-list-item>
-      <v-list-group
-        v-for="(item, i) in items"
-        :key="i"
-        class="pb-1 mx-2"
-        active-class="active-group"
-        mandatory
-        @click="test(item)"
-      >
+      <v-list-group v-for="(item, i) in items" :key="i" class="pb-1 mx-2" active-class="active-group" mandatory
+        @click="test(item)">
         <template v-slot:activator>
-          <v-list-item-icon
-            class="border-radius-md mx-2 align-center"
-            style="height: 28px; width: 28px; padding: 6px"
-          >
+          <v-list-item-icon class="border-radius-md mx-2 align-center" style="height: 28px; width: 28px; padding: 6px">
             <v-icon v-text="item.icon" small @mouseover="openTooltip(item)">
             </v-icon>
           </v-list-item-icon>
           <v-list-item-content>
-            <v-list-item-title
-              class="ms-1 text-subtitle-1"
-              v-text="item.title"
-            ></v-list-item-title>
+            <v-list-item-title class="ms-1 text-subtitle-1" v-text="item.title"></v-list-item-title>
           </v-list-item-content>
         </template>
-        <v-list-item
-          v-for="subItem in item.subItems"
-          :key="subItem.title"
-          :to="subItem.to"
-          color="F3F4FD"
-          class="ps-10"
-          active-class="active-item-title"
-          active-color="red"
-          dense
-        >
+        <v-list-item v-for="subItem in item.subItems" :key="subItem.title" :to="subItem.to" color="F3F4FD" class="ps-10"
+          active-class="active-item-title" active-color="red" dense>
           <v-list-item-content @click="selectedPage(subItem)">
-            <v-list-item-title
-              color="#b5b4c7"
-              v-text="'•  ' + subItem.title"
-            ></v-list-item-title>
+            <v-list-item-title color="#b5b4c7" v-text="'•  ' + subItem.title"></v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list-group>
@@ -199,7 +159,7 @@ export default class Sidebar extends Vue {
       {
         title: "완제품관리",
         active: true,
-        icon: "mdi-stack-overflow",
+        icon: "mdi-sitemap-outline",
         role: "ROLE_operationManagement",
         use: "Y",
         sort: 5,
@@ -305,7 +265,7 @@ export default class Sidebar extends Vue {
   }
 
   goHome(): void {
-    this.$router.push("/monitoring").catch(() => {});
+    this.$router.push("/monitoring").catch(() => { });
 
     return;
   }
