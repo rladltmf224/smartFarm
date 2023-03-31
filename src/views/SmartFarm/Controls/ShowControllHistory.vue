@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container fluid>
+    <v-container fluid v-resize="onResize">
       <v-row class="">
         <v-col class="ma-2" md="12">
           <h4 class="searchbox-title">조회 조건</h4>
@@ -77,7 +77,7 @@
           <v-card>
             <v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options"
               :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" hide-default-footer
-              @page-count="pageCount = $event" dense :height="620" multi-sort>
+              @page-count="pageCount = $event" dense :height="table_height" multi-sort>
               <!-- 버튼을 chip으로 표현 -->
               <template v-slot:item.before="{ item }">
                 <!-- 수정전 버튼만-->
@@ -131,9 +131,7 @@
               </template>
             </v-data-table>
             <div class="text-center pt-2">
-              <v-col>
-                <v-pagination v-model="page" circle :length="pageCount"></v-pagination>
-              </v-col>
+
             </div>
 
           </v-card>
@@ -151,8 +149,7 @@ export default {
 
   data() {
     return {
-      //이슬이꺼
-      //테스트
+      table_height: 0,
       page: 1,
       totalData: 0, //총 데이타의 개수 백엔드에서받아서 교체할것임
       loading: false,
@@ -208,6 +205,7 @@ export default {
     });
   },
   mounted() {
+    this.onResize();
     this.BeforeWeeks();
     this.getHistory();
   },
@@ -230,6 +228,10 @@ export default {
         this.search_type_1 = [];
         this.search_list1 = res.data.responseData;
       });
+    },
+    onResize() {
+      this.table_height = window.innerHeight - 48 - 129 - 44 - 44 - 20;
+      console.log("onResize", this.table_height);
     },
     // 시작일을 일주일전으로
     BeforeWeeks() {
