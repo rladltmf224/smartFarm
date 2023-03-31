@@ -5,14 +5,14 @@
 				<v-col class="ma-2" md="12">
 					<h4 class="searchbox-title">조회 조건</h4>
 					<v-card class="pa-3" height="80">
-						<v-row>
+						<v-row dense>
 							<!-- 시작일 -->
 							<v-col cols="2">
 								<v-menu v-model="menu1" :close-on-content-click="false" :nudge-right="40"
 									transition="scale-transition" offset-y min-width="auto">
 									<template v-slot:activator="{ on, attrs }">
-										<v-text-field v-model="startDate" label="시작일" prepend-icon="mdi-calendar" readonly
-											v-bind="attrs" v-on="on"></v-text-field>
+										<v-text-field rounded solo v-model="startDate" label="시작일" readonly dense
+											hide-details="true" v-bind="attrs" v-on="on"></v-text-field>
 									</template>
 									<v-date-picker v-model="startDate" @input="menu1 = false" no-title></v-date-picker>
 								</v-menu>
@@ -22,8 +22,8 @@
 								<v-menu v-model="menu2" :close-on-content-click="false" :nudge-right="40"
 									transition="scale-transition" offset-y="offset-y" min-width="auto">
 									<template v-slot:activator="{ on, attrs }">
-										<v-text-field v-model="endDate" label="종료일" prepend-icon="mdi-calendar"
-											readonly="readonly" v-bind="attrs" v-on="on"></v-text-field>
+										<v-text-field v-model="endDate" label="종료일" solo rounded dense readonly="readonly"
+											hide-details="false " v-bind="attrs" v-on="on"></v-text-field>
 									</template>
 									<v-date-picker no-title v-model="endDate" @input="menu2 = false" :min="startDate"
 										:max="endDate"></v-date-picker>
@@ -31,7 +31,8 @@
 							</v-col>
 							<!-- 검색어 -->
 							<v-col cols="2">
-								<v-text-field label="검색어" v-model="keyword" append-icon="mdi-magnify"></v-text-field>
+								<v-text-field label="검색어" v-model="keyword" append-icon="mdi-magnify" dense solo
+									rounded></v-text-field>
 							</v-col>
 							<!-- 조회버튼 -->
 							<v-spacer></v-spacer>
@@ -457,4 +458,8 @@ export default class ShowTest extends Vue {
 
 </script>
 
-<style src="../SmartFarm.scss" lang="scss"></style>
+<style src="../SmartFarm.scss" lang="scss">
+.v-text-field__details {
+	display: none;
+}
+</style>
