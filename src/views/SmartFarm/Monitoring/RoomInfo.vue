@@ -156,7 +156,7 @@ export default {
     },
   },
   created() {
-    this.socket = io("http://192.168.0.61:3030");
+    this.socket = io("http://14.47.96.237:5100");
     console.log("socket", this.socket);
   },
   methods: {
@@ -167,7 +167,7 @@ export default {
       this.$emit("selectPage", data);
     },
     openStreamModal1(data) {
-      console.log("data", data, this.$refs.img1);
+      //console.log("data", data, this.$refs.img1);
       this.streamModal1_title = data.facilityName;
 
       this.streamModal1 = true;
@@ -181,7 +181,7 @@ export default {
       });
     },
     openStreamModal2(data) {
-      console.log("data", data, this.$refs.img2);
+      // console.log("data", data, this.$refs.img2);
       this.streamModal2_title = data.facilityName;
 
       this.streamModal2 = true;
