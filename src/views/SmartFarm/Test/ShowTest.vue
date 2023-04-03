@@ -283,7 +283,7 @@ export default class ShowTest extends Vue {
 	}
 
 	onResize() {
-		this.table_height = window.innerHeight - 300;
+		this.table_height = window.innerHeight - 301;
 		console.log("onResize", this.table_height);
 	}
 
