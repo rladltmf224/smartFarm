@@ -693,6 +693,7 @@ export default {
       outdoorHumidity: "",
       outdoorSensor: [
         //5.외부센서,측정값
+
         {
           sensorname: "일사량",
           value: "-",
@@ -718,13 +719,25 @@ export default {
           icon: "mdi-weather-windy",
         },
         {
-          sensorname: "온도",
+          sensorname: "온도(기상청)",
           value: "-",
           unit: "°C",
           icon: "mdi-thermometer-low",
         },
         {
-          sensorname: "습도",
+          sensorname: "습도(기상청)",
+          value: "-",
+          unit: "%",
+          icon: "mdi-water",
+        },
+        {
+          sensorname: "온도(센서)",
+          value: "-",
+          unit: "°C",
+          icon: "mdi-thermometer-low",
+        },
+        {
+          sensorname: "습도(센서)",
           value: "-",
           unit: "%",
           icon: "mdi-water",
@@ -815,12 +828,26 @@ export default {
       ws.send(JSON.stringify(item));
     };
     let vue_this = this;
+    let out_temp = vue_this.outdoorSensor[6].value;
+    let out_hum = vue_this.outdoorSensor[7].value;
     let obj;
     ws.onmessage = function (event) {
       if (event !== null && event !== undefined) {
         obj = JSON.parse(event.data);
         if (obj.api == "roomValue") {
           vue_this.cards = obj.data[0];
+
+          vue_this.outdoorSensor[6].value =
+            obj.externalData.temperature.toString();
+          vue_this.outdoorSensor[7].value =
+            obj.externalData.humidity.toString();
+          console.log(
+            "roomValue",
+            obj.externalData.temperature,
+            obj.externalData.humidity,
+            vue_this.outdoorSensor[6],
+            vue_this.outdoorSensor[7]
+          );
         }
       }
     };
