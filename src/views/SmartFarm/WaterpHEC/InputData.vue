@@ -123,7 +123,8 @@
     <v-dialog v-model="dialog" max-width="600px">
       <v-card>
         <v-card-title>
-          <span>데이터 추가</span>
+          <span v-if="this.editedIndex == -1">데이터 추가</span>
+          <span v-else>데이터 수정</span>
         </v-card-title>
         <v-card-text>
           <v-row dense>
@@ -164,13 +165,10 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" @click="save">저장</v-btn>
           <v-btn color="error" @click="close">닫기</v-btn>
+          <v-btn color="primary" @click="save">저장</v-btn>
         </v-card-actions>
       </v-card>
-
-
-
     </v-dialog>
   </div>
 </template>
@@ -436,6 +434,15 @@ export default {
         api.smartfarm
           .waterECpHRegister(item)
           .then((response) => {
+            this.$swal({
+              title: "저장되었습니다.",
+              icon: "success",
+              position: "top",
+              showCancelButton: false,
+              showConfirmButton: false,
+              toast: true,
+              timer: 1500,
+            });
             this.getWaterHistory();
           })
           .catch((error) => {
@@ -450,10 +457,17 @@ export default {
         // 수정api연결해야함.
         item.id = this.editedItem.id;
         api.smartfarm.waterECpHEdit(item).then((response) => {
+          this.$swal({
+            title: "저장되었습니다.",
+            icon: "success",
+            position: "top",
+            showCancelButton: false,
+            showConfirmButton: false,
+            toast: true,
+            timer: 1500,
+          });
           this.getWaterHistory();
         });
-
-        console.log("edit버젼입니다/");
       }
 
       this.close();
@@ -468,6 +482,7 @@ export default {
     editItem(item) {
       this.getAmPm();
       this.editedIndex = this.datas.indexOf(item);
+      console.log(this.editedIndex, '에딧티드인덱스에딧티드인덱스에딧티드인덱스')
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
