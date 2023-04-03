@@ -1,10 +1,10 @@
 <template>
 	<div>
-		<v-container>
+		<v-container fluid v-resize="onResize">
 			<v-row>
-				<v-col class="ma-2" md="12">
-					<h4 class="searchbox-title">조회 조건</h4>
-					<v-card class="pa-3" height="80">
+				<v-col class="ma-2" cols="12">
+					<span class="searchbox-title">조회 조건</span>
+					<v-card class="card-shadow pa-3" height="80">
 						<v-row dense>
 							<!-- 시작일 -->
 							<v-col cols="2">
@@ -45,47 +45,39 @@
 					</v-card>
 				</v-col>
 			</v-row>
-
-			<v-row class="text-right ">
-				<v-col class="mt-0  pt-2 pb-0 mb-0">
-					<v-btn color="primary" @click="dialogOpen">신규테스트 등록</v-btn>
-				</v-col>
-			</v-row>
-			<v-row class="">
-				<v-col class="ma-2 py-0 my-0   " md="12">
-					<v-col cols="3">
-					</v-col>
-
-					<v-card>
-						<v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options"
-							:server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" dense
-							height="620" hide-default-footer multi-sort @page-count="pageCount = $event">
-							<template v-slot:item.showmore="{ item }">
-								<v-icon @click="$router.push({ name: 'ShowTestForm', params: { id: item.growthReportId } })"
-									small>
-									mdi-magnify
-								</v-icon>
-							</template>
-							<template v-slot:item.load="{ item }">
-								<v-btn small fab icon class="ma-1" @click="editItem(item)">
-									<v-icon small>mdi-plus </v-icon></v-btn>
-							</template>
-							<template v-slot:item.delete="{ item }">
-								<v-icon @click="deleteItem(item)" small>
-									mdi-delete
-								</v-icon>
-							</template>
-							<!-- 수정 -->
-							<!-- 제어명칭 -->
-						</v-data-table>
-						<v-col>
-							<v-pagination circle v-model="page" :length="pageCount"></v-pagination>
+			<v-row no-gutters>
+				<v-col class="ma-2" cols="12">
+					<v-row dense class="mb-2">
+						<v-col class="text-right" cols="12">
+							<v-btn color="primary" @click="dialogOpen" elevation="0"><v-icon left> mdi-book-account
+								</v-icon>품목 추가</v-btn>
 						</v-col>
-					</v-card>
-
-
+					</v-row>
 				</v-col>
 			</v-row>
+			<v-card>
+				<v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options"
+					:server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading"
+					:height="table_height" hide-default-footer multi-sort @page-count="pageCount = $event">
+					<template v-slot:item.showmore="{ item }">
+						<v-icon @click="$router.push({ name: 'ShowTestForm', params: { id: item.growthReportId } })" small>
+							mdi-magnify
+						</v-icon>
+					</template>
+					<template v-slot:item.load="{ item }">
+						<v-btn small fab icon class="ma-1" @click="editItem(item)">
+							<v-icon small>mdi-plus </v-icon></v-btn>
+					</template>
+					<template v-slot:item.delete="{ item }">
+						<v-icon @click="deleteItem(item)" small>
+							mdi-delete
+						</v-icon>
+					</template>
+					<!-- 수정 -->
+					<!-- 제어명칭 -->
+				</v-data-table>
+			</v-card>
+			<v-pagination circle v-model="page" :length="pageCount"></v-pagination>
 			<div class="text-center">
 				<v-snackbar v-model="snackbar" :timeout="timeout">
 					{{ text }}
@@ -258,6 +250,7 @@ export default class ShowTest extends Vue {
 		numDay: 1,
 		treatmentNames: [],
 	};
+	table_height: number = 0;
 	nameArr: any = [];
 	defaultItem: any = {
 		testName: "",
@@ -284,9 +277,16 @@ export default class ShowTest extends Vue {
 	}
 
 	mounted() {
+		this.onResize();
 		this.twoMonthAgo();
 		this.getData();
 	}
+
+	onResize() {
+		this.table_height = window.innerHeight - 300;
+		console.log("onResize", this.table_height);
+	}
+
 
 	twoMonthAgo() {
 		var now = new Date();	// 현재 날짜 및 시간

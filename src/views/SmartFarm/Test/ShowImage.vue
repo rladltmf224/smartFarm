@@ -1,15 +1,18 @@
 <template>
-  <v-app>
-    <v-container fluid>
-      <v-card>
-        <v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options" height="724"
-          :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" hide-default-footer
-          v-model="selected" show-select item-key="growthReportId" @page-count="pageCount = $event" multi-sort>
-        </v-data-table>
-        <v-col>
-          <v-pagination circle v-model="page" :length="pageCount"></v-pagination>
+  <div>
+    <v-container fluid v-resize="onResize">
+      <v-row>
+        <v-col class="ma-2" cols="12">
+          <v-card>
+            <v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options"
+              :height="table_height" :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading"
+              hide-default-footer v-model="selected" show-select item-key="growthReportId"
+              @page-count="pageCount = $event" multi-sort>
+            </v-data-table>
+          </v-card>
         </v-col>
-      </v-card>
+      </v-row>
+      <v-pagination circle v-model="page" :length="pageCount"></v-pagination>
       <!-- 이미지갤러리 다이아로그 -->
       <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
         <v-card>
@@ -56,7 +59,7 @@
       </v-dialog>
     </v-container>
 
-  </v-app>
+  </div>
 </template>
 
 <script lang="ts">
@@ -76,6 +79,7 @@ import { timingSafeEqual } from "crypto";
 })
 export default class ShowImage extends Vue {
   selected: any = [];
+  table_height: number = 0;
   resImages: any = []; //서버에서 받은 이미지데이터들을 변수로저장
   sortImages: any = []; //이미지 정렬시 정렬된 데이터들,나중에 this.images에 넣을것임.
   images: any = []; //이미지 갤러리 데이터들
@@ -104,6 +108,7 @@ export default class ShowImage extends Vue {
   datas: any = [];
 
   mounted() {
+    this.onResize();
     this.getData();
   }
   @Watch('selected')
@@ -124,6 +129,12 @@ export default class ShowImage extends Vue {
     this.dialog = false
     this.images = []
   }
+
+  onResize() {
+    this.table_height = window.innerHeight - 148;
+    console.log("onResize", this.table_height);
+  }
+
 
   Sort(item: any) {  //이미지 갤러리 정렬 버튼 클릭 시
     this.sortImgValue = !this.sortImgValue
