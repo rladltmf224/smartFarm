@@ -1293,17 +1293,12 @@ export default class Schedule extends Vue {
       memo: "",
     },
     {
-      title: "접목",
+      title: "접목 & 활착",
       start: "",
       end: "",
       memo: "",
     },
-    {
-      title: "활착",
-      start: "",
-      end: "",
-      memo: "",
-    },
+
     {
       title: "2차육묘",
       start: "",
@@ -1338,17 +1333,12 @@ export default class Schedule extends Vue {
       memo: "",
     },
     {
-      title: "접목",
+      title: "접목 & 활착",
       start: "",
       end: "",
       memo: "",
     },
-    {
-      title: "활착",
-      start: "",
-      end: "",
-      memo: "",
-    },
+
     {
       title: "2차육묘",
       start: "",
