@@ -196,8 +196,11 @@
         <v-card-text>
           <v-row class="mx-2">
             <v-col cols="3" fluid>
+              <span>회사명</span>
               <v-autocomplete
+                solo
                 dense
+                hide-details="false"
                 class="highlightFont"
                 label="회사명"
                 v-model="scheduleData.customer"
@@ -246,16 +249,22 @@
             </v-col>
 
             <v-col cols="2" class="p-2">
+              <span>작물명</span>
               <v-text-field
                 dense
+                solo
+                hide-details="false"
                 class="highlightFont"
                 placeholder="* 작물명"
                 v-model="scheduleData.cropName"
               />
             </v-col>
             <v-col cols="2" class="p-2">
+              <span>품종명</span>
               <v-text-field
                 dense
+                solo
+                hide-details="false"
                 class="highlightFont"
                 placeholder="* 품종명"
                 v-model="scheduleData.varietyName"
@@ -263,6 +272,7 @@
             </v-col>
 
             <v-col cols="3" class="p-2">
+              <span>색상표</span>
               <v-text-field
                 dense
                 v-model="scheduleData.backgroundColor"
@@ -298,7 +308,7 @@
 
           <v-row
             v-for="(item, index) in titleList"
-            class="dateBox"
+            class="dateBox mt-5"
             :key="item.title"
           >
             <v-col cols="2" class="pa-0">
