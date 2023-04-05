@@ -125,7 +125,7 @@
 import cfg from "./config";
 import _ from "lodash";
 import * as api from "@/api/index.js";
-import { Vue, Component, Prop } from "vue-property-decorator";
+import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 
 @Component({
   filters: {
@@ -155,6 +155,11 @@ export default class WarehousingItemModal extends Vue {
 
   get headers_item() {
     return cfg.header.headers_item;
+  }
+
+  @Watch("itemInfo.itemId")
+  countCheck() {
+    this.itemInfo.count = 0;
   }
 
   getDefaultData() {
@@ -329,6 +334,7 @@ export default class WarehousingItemModal extends Vue {
   }
 
   getCutomerItem() {
+    this.itemInfo.count = 0;
     let reqData = {
       customerId: this.editedCustomer.customerId,
     };
