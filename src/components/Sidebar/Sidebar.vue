@@ -26,7 +26,7 @@
         </v-list-item-icon>
         <v-list-item-title>모니터링</v-list-item-title>
       </v-list-item>
-      <v-list-item class="pb-1 mx-2" :link="true" :to="to_schedule">
+      <v-list-item class="pb-1 mx-2" :link="true" :to="to_schedule" @click="putSchedule()">
         <v-list-item-icon @mouseover="openTooltip(item)">
           <v-icon>mdi mdi-calendar-month-outline</v-icon>
         </v-list-item-icon>
@@ -265,8 +265,8 @@ export default class Sidebar extends Vue {
   }
 
   goHome(): void {
+    this.$store.commit("setPageName", "모니터링");
     this.$router.push("/monitoring").catch(() => { });
-
     return;
   }
 
@@ -289,11 +289,20 @@ export default class Sidebar extends Vue {
       this.$store.commit("setPageName", "모니터링");
       let pageName = "모니터링";
       localStorage.setItem("setPageName", pageName);
-    } else {
+    } else if (subItem.title == '일정관리') {
+      this.$store.commit("setPageName", "일정관리");
+      let pageName = "일정관리";
+      localStorage.setItem("setPageName", pageName);
+    }
+    else {
       this.$store.commit("setPageName", subItem.title);
       let pageName = subItem.title;
       localStorage.setItem("setPageName", pageName);
     }
+  }
+
+  putSchedule() {
+    this.$store.commit("setPageName", "일정관리");
   }
 
   setPageName() {
