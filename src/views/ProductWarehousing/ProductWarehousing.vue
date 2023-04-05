@@ -7,12 +7,8 @@
           <v-card class="pa-3" height="60">
             <v-row>
               <v-col cols="2">
-                <v-text-field
-                  label="입고코드"
-                  v-model="search_condition.code"
-                  @keydown.enter="getCustomer"
-                  dense
-                ></v-text-field>
+                <v-text-field label="입고코드" v-model="search_condition.code" @keydown.enter="getCustomer"
+                  dense></v-text-field>
               </v-col>
 
               <v-col class="pt-2 text-right" offset="8" cols="2">
@@ -30,71 +26,37 @@
               <h4 class="searchbox-title">완제품 입고 목록</h4>
             </v-col>
             <v-col class="text-right" offset-md="7" md="3">
-              <v-btn class="ml-1" small color="primary" @click="editItem"
-                ><v-icon left> mdi-pencil-plus </v-icon>완제품 입고 추가</v-btn
-              >
+              <v-btn class="ml-1" small color="primary" @click="editItem"><v-icon left> mdi-pencil-plus </v-icon>완제품 입고
+                추가</v-btn>
             </v-col>
           </v-row>
           <v-card>
-            <v-data-table
-              height="286"
-              :headers="headers"
-              :items="statement_list"
-              item-key="id"
-              fixed-header
-              multi-sort
-              single-select
-              dense
-              @click:row="selectCustomer"
-              :options.sync="productListOption.options"
-              :server-items-length="productListOption.totalCount"
-              :loading="productListOption.loading"
-              :items-per-page="productListOption.itemsPerPage"
-              :page.sync="productListOption.page"
-              @page-count="productListOption.pageCount = $event"
-              hide-default-footer
-            >
+            <v-data-table height="286" :headers="headers" :items="statement_list" item-key="id" fixed-header multi-sort
+              single-select dense @click:row="selectCustomer" :options.sync="productListOption.options"
+              :server-items-length="productListOption.totalCount" :loading="productListOption.loading"
+              :items-per-page="productListOption.itemsPerPage" :page.sync="productListOption.page"
+              @page-count="productListOption.pageCount = $event" hide-default-footer>
               <template v-slot:item.code="{ item }">
-                <v-btn
-                  class="closeBtn text-left mt-1 mb-1"
-                  text
-                  small
-                  @click="selectHistory(item)"
-                >
+                <v-btn class="closeBtn text-left mt-1 mb-1" text small @click="selectHistory(item)">
                   {{ item.code }}
                 </v-btn>
               </template>
               <template v-slot:item.status="{ item }">
-                <v-btn
-                  class="text-left mt-1 mb-1"
-                  small
-                  :color="getStatusColor(item.status)"
-                  dark
-                  style="width: 100px"
-                  depressed
-                >
+                <v-btn class="text-left mt-1 mb-1" small :color="getStatusColor(item.status)" dark style="width: 100px"
+                  depressed>
                   <v-icon left> mdi-album </v-icon>
                   {{ item.status }}
                 </v-btn>
               </template>
               <template v-slot:item.edit="{ item }">
-                <v-btn
-                  v-if="item.status != '반품'"
-                  small
-                  @click="deleteItem_pop(item)"
-                  color="error"
-                >
+                <v-btn v-if="item.status != '반품'" small @click="deleteItem_pop(item)" color="error">
                   입고 취소
                 </v-btn>
               </template>
             </v-data-table>
             <v-col>
-              <v-pagination
-                circle
-                v-model="productListOption.page"
-                :length="productListOption.pageCount"
-              ></v-pagination
-            ></v-col>
+              <v-pagination circle v-model="productListOption.page"
+                :length="productListOption.pageCount"></v-pagination></v-col>
           </v-card>
         </v-col>
         <v-col class="ma-2" md="12">
@@ -104,23 +66,10 @@
             </v-col>
           </v-row>
           <v-card>
-            <v-data-table
-              height="300"
-              :headers="headers_detail"
-              :items="statement_detail_list"
-              item-key="barcode"
-              fixed-header
-              :items-per-page="5"
-              hide-default-footer
-              multi-sort
-              dense
-            >
+            <v-data-table height="300" :headers="headers_detail" :items="statement_detail_list" item-key="barcode"
+              fixed-header :items-per-page="5" hide-default-footer multi-sort dense>
               <template v-slot:item.lot="{ item }">
-                <v-btn
-                  class="text-left mt-1 mb-1"
-                  small
-                  @click="selectLotProduct(item)"
-                >
+                <v-btn class="text-left mt-1 mb-1" small @click="selectLotProduct(item)">
                   {{ item.lot }}
                 </v-btn>
               </template>
@@ -150,28 +99,17 @@
     </v-container>
 
     <!-- 생성 모달 -->
-    <ProductWarehousingItemModal
-      :open="edit_customer"
-      @closeModal="closeModal_customer"
-    >
+    <ProductWarehousingItemModal :open="edit_customer" @closeModal="closeModal_customer">
     </ProductWarehousingItemModal>
 
     <!-- 이력 모달 -->
-    <ProductWarehousingHistoryModal
-      :open="history_modal"
-      :item_history_modal="item_history_modal"
-      :history_modal_title="history_modal_title"
-      @closeModal="close_history_modal"
-    >
+    <ProductWarehousingHistoryModal :open="history_modal" :item_history_modal="item_history_modal"
+      :history_modal_title="history_modal_title" @closeModal="close_history_modal">
     </ProductWarehousingHistoryModal>
 
     <!-- 완제품 LOT 상세 모달 -->
-    <ProductWarehousingLotModal
-      :open="lot_modal"
-      :item_lot_modal="item_lot_modal"
-      :lot_modal_title="lot_modal_title"
-      @closeModal="close_lot_modal"
-    >
+    <ProductWarehousingLotModal :open="lot_modal" :item_lot_modal="item_lot_modal" :lot_modal_title="lot_modal_title"
+      @closeModal="close_lot_modal">
     </ProductWarehousingLotModal>
   </div>
 </template>

@@ -9,19 +9,9 @@
         <v-card-text>
           <v-row>
             <v-col>
-              <v-data-table
-                :headers="headers_item"
-                :items="joborder_list"
-                v-model="selected"
-                fixed-header
-                item-key="id"
-                class="elevation-4"
-                multi-sort
-                dense
-                single-select
-                @click:row="selectJobOrderDetailList"
-                :footer-props="footer_option"
-              ></v-data-table>
+              <v-data-table :headers="headers_item" :items="joborder_list" v-model="selected" fixed-header item-key="id"
+                class="elevation-4" multi-sort dense single-select @click:row="selectJobOrderDetailList"
+                :footer-props="footer_option"></v-data-table>
             </v-col>
           </v-row>
 
@@ -32,52 +22,28 @@
           </v-row>
           <v-row>
             <v-col>
-              <v-data-table
-                :headers="headers_item_detail"
-                :items="joborder_detail_list"
-                fixed-header
-                item-key="id"
-                class="elevation-4"
-                multi-sort
-                :footer-props="footer_option"
-                dense
-              >
+              <v-data-table :headers="headers_item_detail" :items="joborder_detail_list" fixed-header item-key="id"
+                class="elevation-4" multi-sort :footer-props="footer_option" dense>
                 <template v-slot:item.normalCount="props">
-                  <v-edit-dialog
-                    :return-value.sync="props.item.normalCount"
-                    @save="props.item = saveOrderCount(props.item)"
-                  >
+                  <v-edit-dialog :return-value.sync="props.item.normalCount"
+                    @save="props.item = saveOrderCount(props.item)">
                     {{ props.item.normalCount | comma }}
                     <template v-slot:input>
-                      <v-text-field
-                        v-model="props.item.normalCount"
-                        label="Edit"
-                        props.
-                        single-line
-                        type="text"
+                      <v-text-field v-model="props.item.normalCount" label="Edit" props. single-line type="text"
                         maxlength="10"
-                        oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"
-                      ></v-text-field>
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"></v-text-field>
                     </template>
                   </v-edit-dialog>
                 </template>
 
                 <template v-slot:item.boxpercount="props">
-                  <v-edit-dialog
-                    :return-value.sync="props.item.boxpercount"
-                    @save="props.item = saveBOXperCount(props.item)"
-                  >
+                  <v-edit-dialog :return-value.sync="props.item.boxpercount"
+                    @save="props.item = saveBOXperCount(props.item)">
                     {{ props.item.boxpercount | comma }}
                     <template v-slot:input>
-                      <v-text-field
-                        v-model="props.item.boxpercount"
-                        label="Edit"
-                        props.
-                        single-line
-                        type="text"
+                      <v-text-field v-model="props.item.boxpercount" label="Edit" props. single-line type="text"
                         maxlength="10"
-                        oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"
-                      ></v-text-field>
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"></v-text-field>
                     </template>
                   </v-edit-dialog>
                 </template>
@@ -86,15 +52,9 @@
                   <v-edit-dialog :return-value.sync="props.item.boxcount">
                     {{ props.item.boxcount | comma }}
                     <template v-slot:input>
-                      <v-text-field
-                        v-model="props.item.boxcount"
-                        label="Edit"
-                        props.
-                        single-line
-                        type="text"
+                      <v-text-field v-model="props.item.boxcount" label="Edit" props. single-line type="text"
                         maxlength="10"
-                        oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"
-                      ></v-text-field>
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"></v-text-field>
                     </template>
                   </v-edit-dialog>
                 </template>
@@ -104,36 +64,20 @@
                 </template>
 
                 <template v-slot:item.storageId="props">
-                  <v-select
-                    class="select_warehousing"
-                    :items="storage_list"
-                    item-text="name"
-                    item-value="id"
-                    v-model="props.item.storageId"
-                    dense
-                  ></v-select>
+                  <v-select class="select_warehousing" :items="storage_list" item-text="name" item-value="id"
+                    v-model="props.item.storageId" dense></v-select>
                 </template>
                 <template v-slot:item.storageLocationId="props">
-                  <v-select
-                    class="select_warehousing"
-                    :items="selectStorageLocation(props)"
-                    item-text="area"
-                    item-value="id"
-                    v-model="props.item.storageLocationId"
-                    :disabled="props.item.storageId == 0"
-                    dense
-                  ></v-select>
+                  <v-select class="select_warehousing" :items="selectStorageLocation(props)" item-text="area"
+                    item-value="id" v-model="props.item.storageLocationId" :disabled="props.item.storageId == 0"
+                    dense></v-select>
                 </template>
 
                 <template v-slot:item.memo="props">
                   <v-edit-dialog :return-value.sync="props.item.memo">
                     {{ props.item.memo }}
                     <template v-slot:input>
-                      <v-text-field
-                        v-model="props.item.memo"
-                        single-line
-                        counter
-                      ></v-text-field>
+                      <v-text-field v-model="props.item.memo" single-line counter></v-text-field>
                     </template>
                   </v-edit-dialog>
                 </template>
@@ -184,9 +128,9 @@ export default class ProductWarehousingItemModal extends Vue {
     itemsPerPageAllText: string;
     itemsPerPageOptions: number[];
   } = {
-    itemsPerPageAllText: "ALL",
-    itemsPerPageOptions: [10, 20, 50, -1],
-  };
+      itemsPerPageAllText: "ALL",
+      itemsPerPageOptions: [10, 20, 50, -1],
+    };
 
   @Prop({ required: true }) open: boolean;
 
@@ -345,10 +289,20 @@ export default class ProductWarehousingItemModal extends Vue {
         console.log("createCustomerItem", response);
         if (response.status == 200) {
           this.closeModal_customer();
+          this.$swal({
+            title: "저장되었습니다.",
+            icon: "success",
+            position: "top",
+            showCancelButton: false,
+            showConfirmButton: false,
+            toast: true,
+            timer: 1500,
+          });
           //this.getCustomer();
         }
       })
       .catch((error) => {
+        this.$swal("경고", "", "error");
         console.log(error);
       });
     this.closeModal_customer();
@@ -356,7 +310,7 @@ export default class ProductWarehousingItemModal extends Vue {
 
   saveBOXperCount(item: any) {
     if (parseInt(item.normalCount) < parseInt(item.boxpercount)) {
-      this.$swal("경고", "박스당수량을 다시 입력해주세요!", "error");
+      this.$swal("경고", "원자재 출고 절차 진행을 먼저 해주세요!", "error");
       return item;
     }
     item.boxcount = parseInt(item.normalCount) / parseInt(item.boxpercount);
