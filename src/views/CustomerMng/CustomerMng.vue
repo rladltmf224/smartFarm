@@ -9,67 +9,167 @@
               <v-col cols="10">
                 <v-row dense>
                   <v-col cols="2">
-                    <v-select :items="search_list1" label="선택" v-model="search_type_1" item-text="name" item-value="value"
-                      dense solo rounded hide-details="false"></v-select>
+                    <v-select
+                      :items="search_list1"
+                      label="선택"
+                      v-model="search_type_1"
+                      item-text="name"
+                      item-value="value"
+                      dense
+                      solo
+                      rounded
+                      hide-details="false"
+                    ></v-select>
                   </v-col>
                   <v-col cols="2">
-                    <v-text-field label="검색어1" v-model="search_text_1" @keydown.enter="getCustomer" dense solo rounded
-                      hide-details="false"></v-text-field>
+                    <v-text-field
+                      label="검색어1"
+                      v-model="search_text_1"
+                      @keydown.enter="getCustomer"
+                      dense
+                      solo
+                      rounded
+                      hide-details="false"
+                    ></v-text-field>
                   </v-col>
                   <v-col cols="2">
-                    <v-select :items="search_list2" label="선택" v-model="search_type_2" item-text="name" item-value="value"
-                      dense solo rounded hide-details="false"></v-select>
+                    <v-select
+                      :items="search_list2"
+                      label="선택"
+                      v-model="search_type_2"
+                      item-text="name"
+                      item-value="value"
+                      dense
+                      solo
+                      rounded
+                      hide-details="false"
+                    ></v-select>
                   </v-col>
 
                   <v-col cols="2">
-                    <v-text-field label="검색어2" v-model="search_text_2" @keydown.enter="getCustomer" dense solo rounded
-                      hide-details="false"></v-text-field>
+                    <v-text-field
+                      label="검색어2"
+                      v-model="search_text_2"
+                      @keydown.enter="getCustomer"
+                      dense
+                      solo
+                      rounded
+                      hide-details="false"
+                    ></v-text-field>
                   </v-col>
                   <v-col cols="2">
-                    <v-select :items="customer_type" label="거래처 유형" v-model="search_condition.type" item-text="name"
-                      item-value="value" @change="getCustomer" dense solo rounded hide-details="false"></v-select>
+                    <v-select
+                      :items="customer_type"
+                      label="거래처 유형"
+                      v-model="search_condition.type"
+                      item-text="name"
+                      item-value="value"
+                      @change="getCustomer"
+                      dense
+                      solo
+                      rounded
+                      hide-details="false"
+                    ></v-select>
                   </v-col>
                   <v-col cols="2">
-                    <v-select :items="search_list3" label="사용여부" v-model="search_condition.isValid" item-text="name"
-                      item-value="value" @change="getCustomer" dense solo rounded hide-details="false"></v-select>
+                    <v-select
+                      :items="search_list3"
+                      label="사용여부"
+                      v-model="search_condition.isValid"
+                      item-text="name"
+                      item-value="value"
+                      @change="getCustomer"
+                      dense
+                      solo
+                      rounded
+                      hide-details="false"
+                    ></v-select>
                   </v-col>
                 </v-row>
                 <v-row dense>
                   <v-col cols="2">
-                    <v-menu ref="startDate" v-model="startDate" :close-on-content-click="false"
-                      :return-value.sync="search_condition.startDate" transition="scale-transition" offset-y
-                      min-width="auto">
+                    <v-menu
+                      ref="startDate"
+                      v-model="startDate"
+                      :close-on-content-click="false"
+                      :return-value.sync="search_condition.startDate"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
                       <template v-slot:activator="{ on, attrs }">
-                        <v-text-field v-model="search_condition.startDate" label="시작일" readonly v-bind="attrs" v-on="on"
-                          dense solo rounded hide-details="false"></v-text-field>
+                        <v-text-field
+                          v-model="search_condition.startDate"
+                          label="시작일"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                          dense
+                          solo
+                          rounded
+                          hide-details="false"
+                        ></v-text-field>
                       </template>
-                      <v-date-picker v-model="search_condition.startDate" no-title scrollable locale="ko-KR"
-                        :max="search_condition.endDate">
+                      <v-date-picker
+                        v-model="search_condition.startDate"
+                        no-title
+                        scrollable
+                        locale="ko-KR"
+                        :max="search_condition.endDate"
+                      >
                         <v-spacer></v-spacer>
                         <v-btn text color="primary" @click="startDate = false">
                           취소
                         </v-btn>
-                        <v-btn text color="primary" @click="s_date_search(search_condition.startDate)">
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="s_date_search(search_condition.startDate)"
+                        >
                           확인
                         </v-btn>
                       </v-date-picker>
                     </v-menu>
                   </v-col>
                   <v-col cols="2">
-                    <v-menu ref="endDate" v-model="endDate" :close-on-content-click="false"
-                      :return-value.sync="search_condition.endDate" transition="scale-transition" offset-y
-                      min-width="auto">
+                    <v-menu
+                      ref="endDate"
+                      v-model="endDate"
+                      :close-on-content-click="false"
+                      :return-value.sync="search_condition.endDate"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
                       <template v-slot:activator="{ on, attrs }">
-                        <v-text-field v-model="search_condition.endDate" label="종료일" readonly v-bind="attrs" v-on="on"
-                          dense solo rounded hide-details="false"></v-text-field>
+                        <v-text-field
+                          v-model="search_condition.endDate"
+                          label="종료일"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                          dense
+                          solo
+                          rounded
+                          hide-details="false"
+                        ></v-text-field>
                       </template>
-                      <v-date-picker v-model="search_condition.endDate" no-title scrollable locale="ko-KR"
-                        :min="search_condition.startDate">
+                      <v-date-picker
+                        v-model="search_condition.endDate"
+                        no-title
+                        scrollable
+                        locale="ko-KR"
+                        :min="search_condition.startDate"
+                      >
                         <v-spacer></v-spacer>
                         <v-btn text color="primary" @click="endDate = false">
                           취소
                         </v-btn>
-                        <v-btn text color="primary" @click="e_date_search(search_condition.endDate)">
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="e_date_search(search_condition.endDate)"
+                        >
                           확인
                         </v-btn>
                       </v-date-picker>
@@ -99,36 +199,64 @@
             </v-col>
             <v-spacer></v-spacer>
             <v-col class="text-right" cols="4">
-              <v-btn elevation="0" color="primary" @click="(customerDialog = true), (customerDialog_type = true)"><v-icon
-                  left> mdi-book-account </v-icon>거래처 추가</v-btn>
+              <v-btn
+                elevation="0"
+                color="primary"
+                @click="(customerDialog = true), (customerDialog_type = true)"
+                ><v-icon left> mdi-book-account </v-icon>거래처 추가</v-btn
+              >
               <!-- <v-btn class="ml-4" small color="primary"
                     ><v-icon left> mdi-microsoft-excel </v-icon>엑셀다운</v-btn
                   > -->
             </v-col>
           </v-row>
           <v-card>
-            <v-data-table :height="table_height" :headers="headers" :items="customer_list" item-key="barcode"
-              :search="search" multi-sort fixed-header :options.sync="customerOption.options"
-              :server-items-length="customerOption.totalCount" :loading="customerOption.loading"
-              :items-per-page="customerOption.itemsPerPage" :page.sync="customerOption.page"
-              @page-count="customerOption.pageCount = $event" hide-default-footer>
+            <v-data-table
+              :height="table_height"
+              :headers="headers"
+              :items="customer_list"
+              item-key="barcode"
+              :search="search"
+              multi-sort
+              fixed-header
+              :options.sync="customerOption.options"
+              :server-items-length="customerOption.totalCount"
+              :loading="customerOption.loading"
+              :items-per-page="customerOption.itemsPerPage"
+              :page.sync="customerOption.page"
+              @page-count="customerOption.pageCount = $event"
+              hide-default-footer
+            >
               <template v-slot:item.contactPoint="props">
                 {{ props.item.contactPoint | PhoneMask }}
               </template>
               <template v-slot:item.edit="{ item }">
-                <v-icon small class="mr-2" @click="editItem(item, (customerDialog_type = false))">
+                <v-icon
+                  small
+                  class="mr-2"
+                  @click="editItem(item, (customerDialog_type = false))"
+                >
                   mdi-pencil
                 </v-icon>
               </template>
             </v-data-table>
           </v-card>
-          <v-pagination circle v-model="customerOption.page" :length="customerOption.pageCount"></v-pagination>
+          <v-pagination
+            circle
+            v-model="customerOption.page"
+            :length="customerOption.pageCount"
+          ></v-pagination>
         </v-col>
       </v-row>
     </v-container>
     <!-- 거래처 생성 모달 -->
-    <CustomerModal :open="customerDialog" :editedIndex="customerDialog_type" :editedCustomerData="editedCustomer"
-      @closeModal="closeModal" @save-customer="handlerSaveModal">
+    <CustomerModal
+      :open="customerDialog"
+      :editedIndex="customerDialog_type"
+      :editedCustomerData="editedCustomer"
+      @closeModal="closeModal"
+      @save-customer="handlerSaveModal"
+    >
     </CustomerModal>
   </div>
 </template>
@@ -189,7 +317,7 @@ export default class Customer extends Vue {
     emailAddress: "", //이메일
     telephone: "", //거래처 전화번호
     faxNumber: "", //팩스 번호
-    isValid: "", //사용 여부
+    isValid: "사용", //사용 여부
     memo: "", //비고
   };
   search_list1: object[] = [];
@@ -223,7 +351,7 @@ export default class Customer extends Vue {
 
   mounted() {
     console.log(util);
-    this.getCustomer();
+    //this.getCustomer();
 
     this.onResize();
   }
