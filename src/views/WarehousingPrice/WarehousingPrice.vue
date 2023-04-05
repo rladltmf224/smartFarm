@@ -475,18 +475,27 @@ export default class WarehousingPrice extends Vue {
           if (item.itemPriceId == undefined) {
             this.statement_detail_list.splice(deleteIndex, 1);
           } else {
-            // let reqDate = {
-            //   itemPriceId: item.itemPriceId,
-            // };
-            // api.warehousingPrice
-            //   .deleteWarehousingItemData(reqDate)
-            //   .then((response) => {
-            //     console.log("deleteWarehousingList", response);
-            //     this.statement_detail_list.splice(deleteIndex, 1);
-            //   })
-            //   .catch((error) => {
-            //     console.log(error);
-            //   });
+            let reqDate = {
+              itemPriceId: item.itemPriceId,
+            };
+            api.warehousingPrice
+              .deleteWarehousingItemData(reqDate)
+              .then((response) => {
+                console.log("deleteWarehousingList", response);
+                this.statement_detail_list.splice(deleteIndex, 1);
+                this.$swal({
+                  title: "품목이 삭제되었습니다.",
+                  icon: "success",
+                  position: "top",
+                  showCancelButton: false,
+                  showConfirmButton: false,
+                  toast: true,
+                  timer: 1500,
+                });
+              })
+              .catch((error) => {
+                console.log(error);
+              });
           }
         }
       });

@@ -404,7 +404,7 @@ export default {
       let reqData = {
         facilityId: this.facilityData.facilityId,
         page: page,
-        size: itemsPerPage,
+        size: 11,
         sortBy: sortBy,
         sortDesc: sortDesc,
         startDate: this.search_condition.startDate,

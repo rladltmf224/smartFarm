@@ -18,7 +18,7 @@ export default {
   postWarehousingItemRegiData: (params) =>
     AuthAPI.post("/api/item/price", JSON.stringify(params)),
   deleteWarehousingItemData: (params) =>
-    AuthAPI.post("/api/item/price", {
+    AuthAPI.delete("/api/item/price", {
       headers: { "Content-Type": "application/json" },
       params: params,
     }),
