@@ -10,64 +10,35 @@
         <v-card-text>
           <v-row no-gutters>
             <v-col cols="3" align-self="center">
-              <v-text-field
-                label="code"
-                v-model="itemData.code"
-                disabled
-              ></v-text-field>
+              <v-text-field label="code" v-model="itemData.code" disabled></v-text-field>
             </v-col>
             <v-col cols="3" align-self="center">
-              <v-text-field
-                label="버전"
-                v-model="itemData.version"
-              ></v-text-field>
+              <v-text-field label="버전" v-model="itemData.version"></v-text-field>
             </v-col>
             <v-col cols="6" align-self="center">
-              <v-text-field
-                label="품목명"
-                v-model="itemData.name"
-              ></v-text-field>
+              <v-text-field label="품목명" v-model="itemData.name"></v-text-field>
             </v-col>
           </v-row>
           <v-row>
             <v-col cols="4" align-self="center">
-              <v-text-field
-                label="규격"
-                v-model="itemData.standard"
-              ></v-text-field>
+              <v-text-field label="규격" v-model="itemData.standard"></v-text-field>
             </v-col>
             <v-col cols="4" align-self="center">
               <v-text-field label="unit" v-model="itemData.unit"></v-text-field>
             </v-col>
             <v-col cols="4" align-self="center">
-              <v-select
-                :items="items_type"
-                label="타입"
-                v-model="itemData.type"
-                item-text="name"
-                item-value="name"
-              ></v-select>
+              <v-select :items="items_type" label="타입" v-model="itemData.type" item-text="name"
+                item-value="name"></v-select>
             </v-col>
           </v-row>
           <v-row>
             <v-col cols="6" align-self="center">
-              <v-select
-                :items="storageData"
-                label="지정창고"
-                :value="itemData.storageId"
-                item-text="name"
-                item-value="id"
-                @change="getLocation"
-              ></v-select>
+              <v-select :items="storageData" label="지정창고" :value="itemData.storageId" item-text="name" item-value="id"
+                @change="getLocation"></v-select>
             </v-col>
             <v-col cols="6" align-self="center">
-              <v-select
-                :items="locationData"
-                label="지정구역"
-                :value="itemData.storageLocationId"
-                item-text="area"
-                item-value="storageLocationId"
-              ></v-select>
+              <v-select :items="locationData" label="지정구역" :value="itemData.storageLocationId" item-text="area"
+                item-value="storageLocationId"></v-select>
             </v-col>
           </v-row>
         </v-card-text>
