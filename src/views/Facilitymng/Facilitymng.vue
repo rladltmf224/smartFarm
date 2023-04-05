@@ -3,15 +3,26 @@
     <v-container fluid>
       <v-row>
         <v-col class="ma-2" md="12">
-          <h4 class="searchbox-title">조회 조건</h4>
-          <v-card class="pa-3" height="90">
+          <span class="searchbox-title">조회 조건</span>
+          <v-card class="card-shadow pa-3" height="65">
             <v-row>
               <v-col cols="2">
-                <v-text-field label="시설명" v-model="search_condition.name"></v-text-field>
+                <v-text-field
+                  dense
+                  solo
+                  rounded
+                  elevation-0
+                  label="시설명"
+                  v-model="search_condition.name"
+                ></v-text-field>
               </v-col>
 
-              <v-col class="pt-5 text-right" offset="8" cols="2">
-                <v-btn color="primary" x-large> 조회 </v-btn>
+              <v-spacer></v-spacer>
+              <v-col class="text-right" cols="2">
+                <v-btn color="primary" large elevation="0">
+                  <v-icon left> mdi-magnify </v-icon>
+                  조회
+                </v-btn>
               </v-col>
             </v-row>
           </v-card>
@@ -19,17 +30,18 @@
       </v-row>
     </v-container>
     <v-container fluid>
-      <v-row>
+      <v-row no-gutters>
         <v-col class="ma-2" md="12">
           <v-row>
             <v-col cols="6">
               <v-row class="mb-2">
                 <v-col cols="9">
-                  <h4 class="searchbox-title">시설 목록</h4>
+                  <span class="searchbox-title">시설 목록</span>
                 </v-col>
                 <v-col cols="3" class="text-right">
-                  <v-btn @click="openModal_facility" small color="primary"><v-icon left> mdi-book-account </v-icon>시설
-                    추가</v-btn>
+                  <v-btn @click="openModal_facility" small color="primary"
+                    ><v-icon left> mdi-book-account </v-icon>시설 추가</v-btn
+                  >
 
                   <!-- 시설 등록 -->
                   <v-dialog v-model="facility_modal" max-width="500px">
@@ -40,7 +52,13 @@
                       </v-card-title>
                       <v-card-text>
                         <v-col align-self="center">
-                          <v-text-field label="시설명" v-model="facilityName"></v-text-field>
+                          <span>시설명</span>
+                          <v-text-field
+                            solo
+                            hide-details="false"
+                            label="시설명"
+                            v-model="facilityName"
+                          ></v-text-field>
                         </v-col>
                       </v-card-text>
                       <v-card-actions>
@@ -49,7 +67,11 @@
                             저장
                           </v-btn>
 
-                          <v-btn color="primary" text @click="closeModal_facility">
+                          <v-btn
+                            color="primary"
+                            text
+                            @click="closeModal_facility"
+                          >
                             닫기
                           </v-btn>
                         </v-col>
@@ -59,9 +81,19 @@
                 </v-col>
               </v-row>
               <v-card>
-                <v-data-table multi-sort fixed-header height="630" :headers="headers" v-model="facilityTable"
-                  :items="facilityList" item-key="facilityId" dense single-select @click:row="selectFacility"
-                  hide-default-footer>
+                <v-data-table
+                  multi-sort
+                  fixed-header
+                  :height="table_height"
+                  :headers="headers"
+                  v-model="facilityTable"
+                  :items="facilityList"
+                  item-key="facilityId"
+                  dense
+                  single-select
+                  @click:row="selectFacility"
+                  hide-default-footer
+                >
                   <template v-slot:item.edit="{ item }">
                     <v-icon small class="mr-2" @click="editFacility(item)">
                       mdi-pencil
@@ -76,40 +108,75 @@
             <v-col cols="6">
               <v-row class="mb-2">
                 <v-col cols="6">
-                  <h4 class="searchbox-title">시설 구역 목록</h4>
+                  <span class="searchbox-title">시설 구역 목록</span>
                 </v-col>
                 <v-col cols="6" class="text-right pl-2">
-                  <v-btn class="text-right ml-2" small color="primary" @click="saveLocation"><v-icon
-                      small>mdi-content-save-check</v-icon> 구역 저장
+                  <v-btn
+                    class="text-right ml-2"
+                    small
+                    color="primary"
+                    @click="saveLocation"
+                    ><v-icon small>mdi-content-save-check</v-icon> 구역 저장
                   </v-btn>
-                  <v-btn class="text-right ml-2" small color="primary" @click="addLocation"><v-icon small>mdi-plus
-                    </v-icon> 구역 추가
+                  <v-btn
+                    class="text-right ml-2"
+                    small
+                    color="primary"
+                    @click="addLocation"
+                    ><v-icon small>mdi-plus </v-icon> 구역 추가
                   </v-btn>
-                  <v-btn class="text-right ml-2" small color="primary" @click="deleteLocation"><v-icon small>mdi-minus
-                    </v-icon> 구역 삭제
+                  <v-btn
+                    class="text-right ml-2"
+                    small
+                    color="primary"
+                    @click="deleteLocation"
+                    ><v-icon small>mdi-minus </v-icon> 구역 삭제
                   </v-btn>
                 </v-col>
               </v-row>
               <v-card>
-                <v-data-table dense fixed-header multi-sort height="630" v-model="locationTable"
-                  :headers="Locationheaders" :items="locationList" item-key="code" show-select :expanded.sync="expanded"
-                  hide-default-footer>
+                <v-data-table
+                  dense
+                  fixed-header
+                  multi-sort
+                  :height="table_height"
+                  v-model="locationTable"
+                  :headers="Locationheaders"
+                  :items="locationList"
+                  item-key="code"
+                  show-select
+                  :expanded.sync="expanded"
+                  hide-default-footer
+                >
                   <template v-slot:item.name="props">
                     <v-edit-dialog :return-value.sync="props.item.name">
                       {{ props.item.name }}
                       <template v-slot:input>
-                        <v-text-field v-model="props.item.name" placeholder="* 구역명" single-line counter
-                          dense></v-text-field>
+                        <v-text-field
+                          v-model="props.item.name"
+                          placeholder="* 구역명"
+                          single-line
+                          counter
+                          dense
+                        ></v-text-field>
                       </template>
                     </v-edit-dialog>
                   </template>
 
                   <template v-slot:item.memo="props">
-                    <v-edit-dialog :return-value.sync="props.item.memo" v-show="props.item.jobOrderId != null">
+                    <v-edit-dialog
+                      :return-value.sync="props.item.memo"
+                      v-show="props.item.jobOrderId != null"
+                    >
                       {{ props.item.memo }}
                       <template v-slot:input>
-                        <v-text-field v-model="props.item.memo" placeholder="* 비고" single-line counter
-                          dense></v-text-field>
+                        <v-text-field
+                          v-model="props.item.memo"
+                          placeholder="* 비고"
+                          single-line
+                          counter
+                          dense
+                        ></v-text-field>
                       </template>
                     </v-edit-dialog>
                   </template>
@@ -139,8 +206,14 @@
                 </template>-->
 
                   <template v-slot:item.jobOrderId="{ item }">
-                    <v-btn class="center mt-1 mb-1 childBtn" small :color="getColor(item.jobOrderId)" dark
-                      style="width: 100px" depressed>
+                    <v-btn
+                      class="center mt-1 mb-1 childBtn"
+                      small
+                      :color="getColor(item.jobOrderId)"
+                      dark
+                      style="width: 100px"
+                      depressed
+                    >
                       {{ item.jobOrderId == null ? "사용가능" : "사용중" }}
                     </v-btn>
                   </template>
@@ -150,7 +223,6 @@
                   </template>
                 </v-data-table>
               </v-card>
-
             </v-col>
           </v-row>
         </v-col>
@@ -168,6 +240,7 @@ import { Vue, Component, Watch } from "vue-property-decorator";
 
 @Component
 export default class Facilitymng extends Vue {
+  table_height: number = 0;
   tempIdx: number = -1; //저장 전의 임의의 데이터
   storageListCfg: any = {}; //시설 페이징
   locationListCfg: any = {}; //구역 페이징
@@ -217,6 +290,12 @@ export default class Facilitymng extends Vue {
 
   mounted() {
     this.getFacilityData();
+    this.onResize();
+  }
+
+  onResize() {
+    this.table_height = window.innerHeight - 48 - 112 - 52 - 54 - 40;
+    console.log("onResize", this.table_height);
   }
 
   @Watch("facilityTable")
