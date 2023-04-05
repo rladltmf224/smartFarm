@@ -317,7 +317,7 @@ export default class Customer extends Vue {
     emailAddress: "", //이메일
     telephone: "", //거래처 전화번호
     faxNumber: "", //팩스 번호
-    isValid: "", //사용 여부
+    isValid: "사용", //사용 여부
     memo: "", //비고
   };
   search_list1: object[] = [];
@@ -351,7 +351,7 @@ export default class Customer extends Vue {
 
   mounted() {
     console.log(util);
-    this.getCustomer();
+    //this.getCustomer();
 
     this.onResize();
   }
