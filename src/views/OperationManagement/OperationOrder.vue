@@ -1,194 +1,111 @@
 <template>
   <div>
-    <v-container fluid>
+    <v-container fluid v-resize="onResize">
       <v-row>
-        <v-col class="ma-2" md="12">
-          <h4 class="searchbox-title">조회 조건</h4>
-          <v-card class="pa-3" height="120">
-            <v-row>
-              <v-col cols="10">
-                <v-row class="pa-0 mt-1 searchRow">
-                  <v-col cols="2" class="pt-0">
-                    <v-text-field
-                      dense
-                      label="작업지시서"
-                      v-model="searchJobOrder"
-                      return-object
-                      @keydown.enter="getSearch"
-                      required
-                    ></v-text-field>
-                  </v-col>
-
-                  <v-col cols="2" class="pt-0">
-                    <v-autocomplete
-                      dense
-                      label="거래처"
-                      class="pl-3"
-                      v-model="searchCustomer"
-                      :items="searchCustomerData"
-                      @change="getSearch"
-                      item-value="id"
-                      item-text="name"
-                      return-object
-                      required
-                    ></v-autocomplete>
-                  </v-col>
-
-                  <v-col cols="2" class="pt-0">
-                    <v-autocomplete
-                      dense
-                      label="부서"
-                      class="pl-3"
-                      @change="getSearch"
-                      v-model="searchDepartment"
-                      :items="searchDepartmentData"
-                      item-text="departmentName"
-                      item-value="departmentId"
-                      return-object
-                    ></v-autocomplete>
-                  </v-col>
-                  <v-col cols="2" class="pt-0">
-                    <v-autocomplete
-                      dense
-                      class="pl-3"
-                      v-model="searchCrew"
-                      :items="searchCrewData"
-                      @change="getSearch"
-                      item-text="chargeName"
-                      label="담당자"
-                      return-object
-                    ></v-autocomplete>
-                  </v-col>
-                  <v-col cols="2" class="pt-0">
-                    <v-menu
-                      dense
-                      ref="startDate"
-                      v-model="menu_start_date"
-                      :close-on-content-click="false"
-                      :return-value.sync="startDate"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          dense
-                          v-model="startDate"
-                          label="시작일"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="startDate"
-                        no-title
-                        scrollable
-                        locale="ko-KR"
-                        :max="endDate"
-                      >
-                        <v-spacer></v-spacer>
-                        <v-btn text color="primary" @click="menu = false">
-                          취소
-                        </v-btn>
-                        <v-btn
-                          text
-                          color="primary"
-                          @click="s_date_search(startDate)"
-                        >
-                          확인
-                        </v-btn>
-                      </v-date-picker>
-                    </v-menu>
-                  </v-col>
-                  <v-col cols="2" class="pt-0">
-                    <v-menu
-                      dense
-                      ref="endDate"
-                      v-model="menu_end_date"
-                      :close-on-content-click="false"
-                      :return-value.sync="endDate"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          dense
-                          v-model="endDate"
-                          label="종료일"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="endDate"
-                        no-title
-                        scrollable
-                        locale="ko-KR"
-                        :min="startDate"
-                      >
-                        <v-spacer></v-spacer>
-                        <v-btn
-                          text
-                          color="primary"
-                          @click="menu_end_date = false"
-                        >
-                          취소
-                        </v-btn>
-                        <v-btn
-                          text
-                          color="primary"
-                          @click="e_date_search(endDate)"
-                        >
-                          확인
-                        </v-btn>
-                      </v-date-picker>
-                    </v-menu>
-                  </v-col>
-                </v-row>
-                <v-row dense>
-                  <v-col cols="10" class="pt-0">
-                    <v-radio-group
-                      dense
-                      v-model="row"
-                      row
-                      class="statusBox"
-                      @change="getSearch"
-                    >
-                      진행 상태 :
-                      <v-radio class="pl-5" label="전체" value=""> </v-radio>
-                      <v-radio class="pl-5" label="대기" value="대기">
-                      </v-radio>
-                      <v-radio label="작업 진행중" value="작업 진행중">
-                      </v-radio>
-                      <v-radio label="생산 완료" value="생산 완료"> </v-radio>
-                      <v-radio label="작업 종료" value="작업 종료"> </v-radio>
-                    </v-radio-group>
-                  </v-col>
-                </v-row>
+        <v-col class="ma-2" cols="12">
+          <span class="searchbox-title">조회 조건</span>
+          <v-card class="card-shadow pa-3" height="120">
+            <v-row dense class="d-flex align-center">
+              <v-col cols="2">
+                <v-text-field solo rounded dense hide-details="false" label="작업지시서명" v-model="searchJobOrder"
+                  return-object @keydown.enter="getSearch" required></v-text-field>
               </v-col>
-              <v-col class="pt-5 text-right" cols="2">
+              <v-col cols="1">
+                <v-autocomplete solo rounded hide-details="false" dense label="거래처" class="pl-3" v-model="searchCustomer"
+                  :items="searchCustomerData" @change="getSearch" item-value="id" item-text="name" return-object
+                  required></v-autocomplete>
+              </v-col>
+              <v-col cols="1">
+                <v-autocomplete solo rounded hide-details="false" dense label="부서" class="pl-3" @change="getSearch"
+                  v-model="searchDepartment" :items="searchDepartmentData" item-text="departmentName"
+                  item-value="departmentId" return-object></v-autocomplete>
+              </v-col>
+              <v-col cols="1">
+                <v-autocomplete solo rounded hide-details="false" dense class="pl-3" v-model="searchCrew"
+                  :items="searchCrewData" @change="getSearch" item-text="chargeName" label="담당자"
+                  return-object></v-autocomplete>
+              </v-col>
+              <v-col cols="2">
+                <v-menu dense ref="startDate" v-model="menu_start_date" :close-on-content-click="false"
+                  :return-value.sync="startDate" transition="scale-transition" offset-y min-width="auto">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field hide-details="false" dense v-model="startDate" solo rounded label="시작일" readonly
+                      v-bind="attrs" v-on="on"></v-text-field>
+                  </template>
+                  <v-date-picker v-model="startDate" no-title scrollable locale="ko-KR" :max="endDate">
+                    <v-spacer></v-spacer>
+                    <v-btn text color="primary" @click="menu = false">
+                      취소
+                    </v-btn>
+                    <v-btn text color="primary" @click="s_date_search(startDate)">
+                      확인
+                    </v-btn>
+                  </v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-col cols="2">
+                <v-menu dense ref="endDate" v-model="menu_end_date" :close-on-content-click="false"
+                  :return-value.sync="endDate" transition="scale-transition" offset-y min-width="auto">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field hide-details="false" rounded solo dense v-model="endDate" label="종료일" readonly
+                      v-bind="attrs" v-on="on"></v-text-field>
+                  </template>
+                  <v-date-picker v-model="endDate" no-title scrollable locale="ko-KR" :min="startDate">
+                    <v-spacer></v-spacer>
+                    <v-btn text color="primary" @click="menu_end_date = false">
+                      취소
+                    </v-btn>
+                    <v-btn text color="primary" @click="e_date_search(endDate)">
+                      확인
+                    </v-btn>
+                  </v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-row dense>
+                <v-col cols="6">
+
+                  <v-radio-group dense v-model="row" row @change="getSearch">
+                    진행 상태 :
+                    <v-radio class="pl-5" label="전체" value=""> </v-radio>
+                    <v-radio class="pl-5" label="대기" value="대기">
+                    </v-radio>
+                    <v-radio label="작업 진행중" value="작업 진행중">
+                    </v-radio>
+                    <v-radio label="생산 완료" value="생산 완료"> </v-radio>
+                    <v-radio label="작업 종료" value="작업 종료"> </v-radio>
+                  </v-radio-group>
+                </v-col>
+                <v-spacer></v-spacer>
                 <v-btn color="primary" x-large @click="getSearch">
                   <v-icon left> mdi-magnify </v-icon>
                   조회
                 </v-btn>
-              </v-col>
+                <!-- <v-col class=" text-right">
+                  <v-btn color="primary" x-large @click="getSearch">
+                    <v-icon left> mdi-magnify </v-icon>
+                    조회
+                  </v-btn>
+                </v-col> -->
+
+              </v-row>
+              <!--  <v-btn color="primary" x-large @click="getSearch">
+                <v-icon left> mdi-magnify </v-icon>
+                조회
+              </v-btn> -->
             </v-row>
+
           </v-card>
         </v-col>
       </v-row>
     </v-container>
 
     <v-container fluid>
+
       <v-row class="orderTableRow">
         <v-col class="ma-2" md="12">
           <v-row class="mb-2">
             <v-col md="2">
-              <h4 class="searchbox-title">작업지시서 목록</h4>
+              <span class="searchbox-title">작업지시서 목록</span>
             </v-col>
             <v-col class="text-right" offset-md="3" md="7">
               <!-- <v-btn small class="mr-1" color="primary" @click="totalDelete">
@@ -200,34 +117,14 @@
             </v-col>
           </v-row>
           <v-card>
-            <v-data-table
-              multi-sort
-              fixed-header
-              class="mt-1"
-              height="470"
-              v-model="toatalselected"
-              :headers="headers"
-              :items="totalTable"
-              @click:row="dataDetail"
-              dense
-              :options.sync="orderListCfg.options"
-              :server-items-length="orderListCfg.totalCount"
-              :loading="orderListCfg.loading"
-              :items-per-page="orderListCfg.itemsPerPage"
-              :page.sync="orderListCfg.page"
-              @page-count="orderListCfg.pageCount = $event"
-              hide-default-footer
-              no-data-text="데이터가 없습니다."
-            >
+            <v-data-table multi-sort fixed-header class="mt-1" height="300" v-model="toatalselected" :headers="headers"
+              :items="totalTable" @click:row="dataDetail" dense :options.sync="orderListCfg.options"
+              :server-items-length="orderListCfg.totalCount" :loading="orderListCfg.loading"
+              :items-per-page="orderListCfg.itemsPerPage" :page.sync="orderListCfg.page"
+              @page-count="orderListCfg.pageCount = $event" hide-default-footer no-data-text="데이터가 없습니다.">
               <template v-slot:item.status="{ item }">
-                <v-btn
-                  class="text-left mt-1 mb-1"
-                  small
-                  :color="getStatusColor(item.status)"
-                  dark
-                  style="width: 100px"
-                  depressed
-                >
+                <v-btn class="text-left mt-1 mb-1" small :color="getStatusColor(item.status)" dark style="width: 100px"
+                  depressed>
                   <v-icon left> mdi-album </v-icon>
                   {{ getStatusCode(item.status) }}
                 </v-btn>
@@ -236,44 +133,23 @@
                 {{ item.deadline }}
               </template>
               <template v-slot:[`item.edit`]="{ item }">
-                <v-icon
-                  v-show="item.status == '대기' || item.status == '생산전'"
-                  small
-                  class="mr-1"
-                  @click="changeData(item)"
-                >
+                <v-icon v-show="item.status == '대기' || item.status == '생산전'" small class="mr-1" @click="changeData(item)">
                   mdi-pencil
                 </v-icon>
-                <v-icon
-                  v-show="item.status == '대기' || item.status == '생산전'"
-                  small
-                  @click="deleteData(item)"
-                >
+                <v-icon v-show="item.status == '대기' || item.status == '생산전'" small @click="deleteData(item)">
                   mdi-delete
                 </v-icon>
               </template>
 
               <template v-slot:[`item.changeOrder`]="{ item }">
-                <v-btn
-                  v-show="item.status !== 'DONE'"
-                  text
-                  small
-                  fluid
-                  color="primary"
-                  class="mr-1 editBtn"
-                  :value="getStatusCodeNext(item.status).code"
-                  @click="start(item, getStatusCodeNext(item.status).code)"
-                >
+                <v-btn v-show="item.status !== 'DONE'" text small fluid color="primary" class="mr-1 editBtn"
+                  :value="getStatusCodeNext(item.status).code" @click="start(item, getStatusCodeNext(item.status).code)">
                   {{ getStatusCodeNext(item.status).name }}
                 </v-btn>
               </template>
             </v-data-table>
             <v-col>
-              <v-pagination
-                circle
-                v-model="orderListCfg.page"
-                :length="orderListCfg.pageCount"
-              ></v-pagination>
+              <v-pagination circle v-model="orderListCfg.page" :length="orderListCfg.pageCount"></v-pagination>
             </v-col>
           </v-card>
         </v-col>
@@ -284,31 +160,15 @@
         <v-col class="ma-2" md="12">
           <v-row class="mb-2">
             <v-col md="2">
-              <h4 class="searchbox-title">작업지시서 상세목록</h4>
+              <span class="searchbox-title">작업지시서 상세목록</span>
             </v-col>
           </v-row>
           <v-card>
-            <v-data-table
-              multi-sort
-              class="detailFont"
-              fixed-header
-              :headers="headersDetail"
-              height="69"
-              :items="datatable"
-              item-key="index"
-              dense
-              disable-pagination
-              hide-default-footer
-            >
+            <v-data-table multi-sort class="detailFont" fixed-header :headers="headersDetail" height="200"
+              :items="datatable" item-key="index" dense disable-pagination hide-default-footer>
               <template v-slot:item.status="{ item }">
-                <v-btn
-                  class="text-left mt-1 mb-1"
-                  small
-                  :color="getStatusColor(item.status)"
-                  dark
-                  style="width: 100px"
-                  depressed
-                >
+                <v-btn class="text-left mt-1 mb-1" small :color="getStatusColor(item.status)" dark style="width: 100px"
+                  depressed>
                   <v-icon left> mdi-album </v-icon>
                   {{ item.status }}
                 </v-btn>
@@ -316,15 +176,8 @@
 
               <template v-slot:item.details="{ item }">
                 <td :colspan="1" class="treeTable">
-                  <v-data-table
-                    multi-sort
-                    :headers="totalItem"
-                    :items="item.details"
-                    dense
-                    disable-pagination
-                    hide-default-footer
-                    hide-default-header
-                  >
+                  <v-data-table multi-sort :headers="totalItem" :items="item.details" dense disable-pagination
+                    hide-default-footer hide-default-header>
                   </v-data-table>
                 </td>
               </template>
@@ -341,12 +194,8 @@
       </v-row>
     </v-container>
     <!--작업지시서 등록 모달-->
-    <order-modal
-      :open="orderDialog"
-      :change="change"
-      :editedCustomerData="editedOrder"
-      @closeModal="closeModal"
-    ></order-modal>
+    <order-modal :open="orderDialog" :change="change" :editedCustomerData="editedOrder"
+      @closeModal="closeModal"></order-modal>
   </div>
 </template>
 
