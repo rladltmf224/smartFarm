@@ -15,8 +15,8 @@
                   @change="getCustomer" dense solo rounded></v-select>
               </v-col>
               <v-col cols="2">
-                <v-text-field label="규격 or 단위" v-model="search_condition.option" @keydown.enter="getCustomer" dense solo
-                  rounded></v-text-field>
+                <v-text-field label="규격 or 단위" solo rounded v-model="search_condition.option" @keydown.enter="getCustomer"
+                  dense solon rounded></v-text-field>
               </v-col>
               <!-- <v-col cols="1">
                 <v-text-field
@@ -509,11 +509,17 @@ export default class Item extends Vue {
     let reqData: any = {
       itemId: this.selectItemID,
     };
+
+    console.log('mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm', reqData)
+
+
     api.process
       .getProcessListbyItem(reqData)
       .then((res) => {
         console.log("getProcessListbyItem", res);
-        this.processList = res.data.responseData;
+        console.log('mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm11111', this.processList)
+        //this.processList = res.data.responseData;
+        console.log('mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm22222', this.processList)
       })
       .catch((err) => {
         console.log("err", err);
