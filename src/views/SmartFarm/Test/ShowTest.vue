@@ -45,39 +45,53 @@
 					</v-card>
 				</v-col>
 			</v-row>
+
+
+
+
+
+
 			<v-row no-gutters>
 				<v-col class="ma-2" cols="12">
 					<v-row dense class="mb-2">
-						<v-col class="text-right" cols="12">
+						<v-col cols="1" align-self="center">
+							<span class="searchbox-title">실험 목록</span>
+						</v-col>
+						<v-spacer></v-spacer>
+						<v-col class="text-right" cols="3">
 							<v-btn color="primary" @click="dialogOpen" elevation="0"><v-icon left> mdi-book-account
-								</v-icon>품목 추가</v-btn>
+								</v-icon>실험
+								추가</v-btn>
 						</v-col>
 					</v-row>
+					<v-card>
+						<v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options"
+							:server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading"
+							:height="table_height" hide-default-footer multi-sort @page-count="pageCount = $event">
+							<template v-slot:item.showmore="{ item }">
+								<v-icon @click="$router.push({ name: 'ShowTestForm', params: { id: item.growthReportId } })"
+									small>
+									mdi-magnify
+								</v-icon>
+							</template>
+							<template v-slot:item.load="{ item }">
+								<v-btn small fab icon class="ma-1" @click="editItem(item)">
+									<v-icon small>mdi-plus </v-icon></v-btn>
+							</template>
+							<template v-slot:item.delete="{ item }">
+								<v-icon @click="deleteItem(item)" small>
+									mdi-delete
+								</v-icon>
+							</template>
+							<!-- 수정 -->
+							<!-- 제어명칭 -->
+						</v-data-table>
+					</v-card>
+					<v-pagination circle v-model="page" :length="pageCount"></v-pagination>
 				</v-col>
 			</v-row>
-			<v-card>
-				<v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options"
-					:server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading"
-					:height="table_height" hide-default-footer multi-sort @page-count="pageCount = $event">
-					<template v-slot:item.showmore="{ item }">
-						<v-icon @click="$router.push({ name: 'ShowTestForm', params: { id: item.growthReportId } })" small>
-							mdi-magnify
-						</v-icon>
-					</template>
-					<template v-slot:item.load="{ item }">
-						<v-btn small fab icon class="ma-1" @click="editItem(item)">
-							<v-icon small>mdi-plus </v-icon></v-btn>
-					</template>
-					<template v-slot:item.delete="{ item }">
-						<v-icon @click="deleteItem(item)" small>
-							mdi-delete
-						</v-icon>
-					</template>
-					<!-- 수정 -->
-					<!-- 제어명칭 -->
-				</v-data-table>
-			</v-card>
-			<v-pagination circle v-model="page" :length="pageCount"></v-pagination>
+
+
 			<div class="text-center">
 				<v-snackbar v-model="snackbar" :timeout="timeout">
 					{{ text }}
