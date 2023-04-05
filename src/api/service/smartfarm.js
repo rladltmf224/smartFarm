@@ -128,7 +128,7 @@ export default {
       params: params,
     }),
   getImgList: (params) =>
-    AuthAPI.get("/api/capture/list", {
-      params: params,
+    AuthAPI.post("/api/capture/list", JSON.stringify(params), {
+      headers: { "Content-Type": "application/json" },
     }),
 };

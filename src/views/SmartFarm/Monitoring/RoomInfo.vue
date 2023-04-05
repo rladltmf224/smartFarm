@@ -136,7 +136,10 @@
     <!-- 생육조사 갤러리 -->
     <v-dialog v-model="imgAlbumModal" persistent max-width="1400">
       <v-card>
-        <v-card-title class="headline">{{ imgList_title }}</v-card-title>
+        <v-card-title class="headline"
+          ><span>{{ imgList_title }} </span> <v-spacer></v-spacer>
+          <v-btn color="error" @click="closeImgAlbum">닫기</v-btn></v-card-title
+        >
         <v-card-text>
           <v-row>
             <v-col cols="12">
@@ -230,37 +233,40 @@
                   </v-menu>
                 </v-col>
                 <v-col cols="2" align-self="end">
-                  <v-btn color="success" large>조회</v-btn>
+                  <v-btn color="success" large @click="getImgList" elevation="0"
+                    >조회</v-btn
+                  >
                 </v-col>
               </v-row>
             </v-col>
             <v-col cols="4">
-              <v-card>
+              <v-card class="card-shadow">
                 <v-data-table
                   :headers="headers_img"
                   :items="imgList"
                   item-key="id"
                   single-select
-                  height="620"
+                  height="610"
                   fixed-header
                   @click:row="getImgDetail"
-                  :options.sync="customerOption.options"
-                  :server-items-length="customerOption.totalCount"
-                  :loading="customerOption.loading"
-                  :items-per-page="customerOption.itemsPerPage"
-                  :page.sync="customerOption.page"
-                  @page-count="customerOption.pageCount = $event"
+                  :options.sync="imgOption.options"
+                  :server-items-length="imgOption.totalCount"
+                  :loading="imgOption.loading"
+                  :items-per-page="imgOption.itemsPerPage"
+                  :page.sync="imgOption.page"
+                  @page-count="imgOption.pageCount = $event"
+                  hide-default-footer
                 >
                 </v-data-table>
               </v-card>
               <v-pagination
                 circle
-                v-model="customerOption.page"
-                :length="customerOption.pageCount"
+                v-model="imgOption.page"
+                :length="imgOption.pageCount"
               ></v-pagination>
             </v-col>
             <v-col cols="8">
-              <v-card height="620">
+              <v-card height="610" class="card-shadow">
                 <v-card-title>
                   <span>{{ selectImgData.filename }}</span>
                 </v-card-title>
@@ -280,7 +286,7 @@
                         <img
                           class="img-align"
                           :src="selectImgData.url"
-                          width="340"
+                          width="280"
                         />
                       </v-col>
                       <v-col cols="12">
@@ -300,7 +306,6 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="error" @click="closeImgAlbum">닫기</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -329,8 +334,8 @@ export default {
       selectImgData: "",
       imgList_title: "",
       search_condition: {
-        startDate: "",
-        endDate: "",
+        startDate: new Date().toISOString().substr(0, 10),
+        endDate: new Date().toISOString().substr(0, 10),
         page: "",
         size: "",
         sortBy: "",
@@ -356,17 +361,17 @@ export default {
     },
   },
   watch: {
-    "customerOption.options": {
-      deep: true,
+    "imgOption.options": {
       handler() {
         this.getImgList();
       },
+      deep: true,
     },
   },
   created() {
     // this.socket = io("http://14.47.96.237:5100");
     console.log("socket", this.socket);
-    this.customerOption = Object.assign({}, gridCfg);
+    this.imgOption = Object.assign({}, gridCfg);
   },
   methods: {
     s_date_search(v) {
@@ -391,16 +396,27 @@ export default {
     openImgAlbum(data) {
       this.imgAlbumModal = true;
       this.facilityData = data;
+
       this.getImgList();
     },
     getImgList() {
+      const { page, itemsPerPage, sortBy, sortDesc } = this.imgOption.options;
       let reqData = {
         facilityId: this.facilityData.facilityId,
+        page: page,
+        size: itemsPerPage,
+        sortBy: sortBy,
+        sortDesc: sortDesc,
+        startDate: this.search_condition.startDate,
+        endDate: this.search_condition.endDate,
       };
+      this.imgOption.loading = true;
       this.imgList_title = this.facilityData.facilityName;
       api.smartfarm.getImgList(reqData).then((res) => {
         console.log("res", res);
         this.imgList = res.data.responseData;
+        this.imgOption.totalCount = res.data.totalCount;
+        this.imgOption.loading = false;
       });
     },
     closeImgAlbum() {

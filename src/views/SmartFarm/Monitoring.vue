@@ -1208,8 +1208,7 @@ export default {
       ws.send(JSON.stringify(item));
     };
     let vue_this = this;
-    let out_temp = vue_this.outdoorSensor[6].value;
-    let out_hum = vue_this.outdoorSensor[7].value;
+
     let obj;
     ws.onmessage = function (event) {
       if (event !== null && event !== undefined) {
@@ -1251,71 +1250,7 @@ export default {
           }
         });
     },
-    /*   updateControlHistory(reqData) {
-        api.smartfarm.getlatestControl(reqData).then((res) => {
-          let record = res.data.responseData;
-          this.latestRecord =
-            "최신 제어 이력 : " +
-            record["createdDate"] +
-            " [" +
-            record["targetValue"] +
-            "] " +
-            record["equipmentName"];
-          if (
-            record["targetValue"] == "자동제어" ||
-            record["targetValue"] == "수동제어"
-          ) {
-            this.latestRecord +=
-              " " + record["statusBefore"] + " → " + record["statusAfter"];
-          }
-  
-          this.latestRecord += " by " + record["createdId"];
-          if (record["memo"]) this.latestRecord += " (" + record["memo"] + ")";
-          if (record["targetValue"] == "설정변경") {
-            let beforeRecord = "";
-            let afterRecord = "";
-            record["details"].forEach((detail) => {
-              if (
-                detail["startTimeBefore"] ||
-                detail["endTimeBefore"] ||
-                detail["minValueBefore"] ||
-                detail["maxValueBefore"]
-              ) {
-                if (beforeRecord == "") beforeRecord += "<br>[Before] ";
-                else beforeRecord += " / ";
-                beforeRecord +=
-                  detail["startTimeBefore"] +
-                  "~" +
-                  detail["endTimeBefore"] +
-                  "  " +
-                  detail["minValueBefore"];
-                if (detail["minValueBefore"] != detail["maxValueBefore"]) {
-                  beforeRecord += "~" + detail["maxValueBefore"];
-                }
-              }
-              if (
-                detail["startTimeAfter"] ||
-                detail["endTimeAfter"] ||
-                detail["minValueAfter"] ||
-                detail["maxValueAfter"]
-              ) {
-                if (afterRecord == "") afterRecord += "<br>[After] ";
-                else afterRecord += " / ";
-                afterRecord +=
-                  detail["startTimeAfter"] +
-                  "~" +
-                  detail["endTimeAfter"] +
-                  "  " +
-                  detail["minValueAfter"];
-                if (detail["minValueAfter"] != detail["maxValueAfter"]) {
-                  afterRecord += "~" + detail["maxValueAfter"];
-                }
-              }
-            });
-            this.latestRecord += beforeRecord + afterRecord;
-          }
-        });
-      }, */
+
     async updateControlHistory(reqData) {
       try {
         const latestControl = await api.smartfarm.getlatestControl(reqData);
