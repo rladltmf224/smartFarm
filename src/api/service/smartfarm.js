@@ -127,4 +127,8 @@ export default {
     AuthAPI.get("/api/equipment/history/recent", {
       params: params,
     }),
+  getImgList: (params) =>
+    AuthAPI.post("/api/capture/list", JSON.stringify(params), {
+      headers: { "Content-Type": "application/json" },
+    }),
 };
