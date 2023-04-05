@@ -137,7 +137,7 @@
                       @change="getProcessList"
                     ></v-autocomplete>
                   </v-col>
-                  <v-col cols="3">
+                  <!-- <v-col cols="3">
                     <v-select
                       label="공정설정"
                       :items="processList"
@@ -148,7 +148,7 @@
                       :disabled="processList.length == 0"
                       dense
                     ></v-select>
-                  </v-col>
+                  </v-col> -->
                   <v-col cols="2">
                     <v-text-field
                       v-model="orderData.itemCount"
@@ -588,7 +588,7 @@ export default class OperationOrderModal extends Vue {
           this.orderData.department = res.data.responseData.departmentId;
           this.orderData.departmentchargeId = res.data.responseData.accountId;
           this.orderData.selectItem = res.data.responseData.itemId;
-          this.orderData.selectProcess = res.data.responseData.processId;
+          // this.orderData.selectProcess = res.data.responseData.processId;
           this.orderData.itemCount = res.data.responseData.totalCount;
           this.orderData.selectObject = res.data.responseData.type;
           this.orderData.deadline = res.data.responseData.deadline;
@@ -777,7 +777,7 @@ export default class OperationOrderModal extends Vue {
       accountId: this.orderData.departmentchargeId,
       customerId: this.orderData.customer,
       itemId: this.orderData.selectItem,
-      processId: this.orderData.selectProcess,
+      // processId: this.orderData.selectProcess,
       orderInfoDetailId: 1,
       totalCount: this.orderData.itemCount,
       type: this.orderData.selectObject,

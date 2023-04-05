@@ -11,7 +11,8 @@ export default new Vuetify({
         secondary: "#4CAF50",
         accent: "#1976d2", //강조되는 색
         error: "#ff5252",
-        blue: "#2196F3",
+        blue: "#477EFF",
+        //#477EFF
       },
     },
   },

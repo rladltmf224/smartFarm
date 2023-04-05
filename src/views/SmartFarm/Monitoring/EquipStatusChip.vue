@@ -15,9 +15,9 @@
     <div class="d-flex align-center">
       <v-chip
         v-if="equipData.controlStatus === 'AUTO'"
-        color="primary"
+        color="blue"
         small
-        style="width: 60px"
+        style="width: 60px; color: white"
         class="d-flex justify-center"
       >
         AUTO
