@@ -69,7 +69,11 @@
       </v-card>
     </div>
 
-    <div class="totalBox" v-show="this.selectedTabs == '달력'">
+    <div
+      class="totalBox"
+      v-show="this.selectedTabs == '달력'"
+      :height="calendar_height"
+    >
       <div class="filterBox">
         <v-btn-toggle
           v-model="toggle"
@@ -616,10 +620,9 @@
                   <v-col cols="6">
                     <span><strong>종료일 : </strong></span>
                     <span v-show="!update">{{
-                      this.detailEvent == "" ||
-                      this.detailEvent[0].cropName.start == ""
+                      this.detailEvent == "" || this.detailEvent[0].end == ""
                         ? "종료일없음"
-                        : `${this.detailEvent[0].start}`
+                        : `${this.detailEvent[0].end}`
                     }}</span>
                     <span v-show="update">
                       <v-menu
@@ -678,7 +681,7 @@
                     <span><strong>품종 : </strong></span>
                     <span>{{
                       this.detailEvent == "" ||
-                      this.detailEvent[0].cropName.varietyName == ""
+                      this.detailEvent[0].varietyName == ""
                         ? "품종없음"
                         : `${this.detailEvent[0].varietyName}`
                     }}</span>
@@ -1362,6 +1365,7 @@ export default class Schedule extends Vue {
   };
   x: number = 0;
   y: number = 0;
+  calendar_height: number = 0;
   historyId: number = 0;
   historyDetailId: number = 0;
   historyMessage: string = "";
@@ -1535,6 +1539,11 @@ export default class Schedule extends Vue {
     this.setDateRangeText();
     this.getCustomer();
     this.getSchedule("");
+    this.onResize();
+  }
+
+  onResize() {
+    this.calendar_height = window.innerHeight - 48 - 48 - 10;
   }
 
   resetZoom() {
