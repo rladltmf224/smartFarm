@@ -1,153 +1,90 @@
 <template>
-  <div class="warehousing">
+  <div>
     <v-container fluid>
-      <v-row no-gutters>
-        <v-col class="ma-2" md="12">
-          <h4 class="searchbox-title">조회 조건</h4>
-          <v-sheet class="pa-3" color="#F6F8F9" height="70" elevation="2">
-            <v-row no-gutters>
-              <v-col md="2">
-                <v-menu
-                  ref="startDate"
-                  v-model="startDate"
-                  :close-on-content-click="false"
-                  :return-value.sync="search_condition.startDate"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="auto"
-                >
+      <v-row>
+        <v-col class="ma-2" cols="12">
+          <span class="searchbox-title">조회 조건</span>
+          <v-card class="card-shadow pa-3" height="65">
+            <v-row dense>
+              <v-col cols="2">
+                <v-menu ref="startDate" v-model="startDate" :close-on-content-click="false"
+                  :return-value.sync="search_condition.startDate" transition="scale-transition" offset-y min-width="auto">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="search_condition.startDate"
-                      label="시작일"
-                      prepend-icon="mdi-calendar"
-                      readonly
-                      v-bind="attrs"
-                      v-on="on"
-                      dense
-                    ></v-text-field>
+                    <v-text-field v-model="search_condition.startDate" label="시작일" prepend-icon="mdi-calendar" readonly
+                      v-bind="attrs" v-on="on" dense></v-text-field>
                   </template>
-                  <v-date-picker
-                    v-model="search_condition.startDate"
-                    no-title
-                    scrollable
-                    locale="ko-KR"
-                    :max="search_condition.endDate"
-                  >
+                  <v-date-picker v-model="search_condition.startDate" no-title scrollable locale="ko-KR"
+                    :max="search_condition.endDate">
                     <v-spacer></v-spacer>
                     <v-btn text color="primary" @click="startDate = false">
                       취소
                     </v-btn>
-                    <v-btn
-                      text
-                      color="primary"
-                      @click="s_date_search(search_condition.startDate)"
-                    >
+                    <v-btn text color="primary" @click="s_date_search(search_condition.startDate)">
                       확인
                     </v-btn>
                   </v-date-picker>
                 </v-menu>
               </v-col>
               <v-col md="2">
-                <v-menu
-                  ref="endDate"
-                  v-model="endDate"
-                  :close-on-content-click="false"
-                  :return-value.sync="search_condition.endDate"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="auto"
-                >
+                <v-menu ref="endDate" v-model="endDate" :close-on-content-click="false"
+                  :return-value.sync="search_condition.endDate" transition="scale-transition" offset-y min-width="auto">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="search_condition.endDate"
-                      label="종료일"
-                      prepend-icon="mdi-calendar"
-                      readonly
-                      v-bind="attrs"
-                      v-on="on"
-                      dense
-                    ></v-text-field>
+                    <v-text-field v-model="search_condition.endDate" label="종료일" prepend-icon="mdi-calendar" readonly
+                      v-bind="attrs" v-on="on" dense></v-text-field>
                   </template>
-                  <v-date-picker
-                    v-model="search_condition.endDate"
-                    no-title
-                    scrollable
-                    locale="ko-KR"
-                    :min="search_condition.startDate"
-                  >
+                  <v-date-picker v-model="search_condition.endDate" no-title scrollable locale="ko-KR"
+                    :min="search_condition.startDate">
                     <v-spacer></v-spacer>
                     <v-btn text color="primary" @click="endDate = false">
                       취소
                     </v-btn>
-                    <v-btn
-                      text
-                      color="primary"
-                      @click="e_date_search(search_condition.endDate)"
-                    >
+                    <v-btn text color="primary" @click="e_date_search(search_condition.endDate)">
                       확인
                     </v-btn>
                   </v-date-picker>
                 </v-menu>
               </v-col>
+              <v-spacer></v-spacer>
               <v-col class="text-right" cols="2">
-                <v-btn color="primary" @click="getData()">
-                  <v-icon left> mdi-magnify </v-icon>
+                <v-btn color="primary" @click="getData()" large elevation="0">
                   조회
                 </v-btn>
               </v-col>
             </v-row>
-          </v-sheet>
+          </v-card>
         </v-col>
       </v-row>
+
+
       <v-row no-gutters>
-        <v-col class="ma-2" md="12">
-          <v-row no-gutters class="mb-2">
-            <v-col md="2">
-              <h4 class="searchbox-title">알람 이력</h4>
+        <v-col class="ma-2" cols="12">
+          <v-row dense class="mb-2">
+            <v-col cols="1" align-self="center">
+              <span class="searchbox-title">알람 이력</span>
             </v-col>
           </v-row>
-
-          <v-data-table
-            height="500"
-            :headers="headers"
-            :items="table_data"
-            item-key="id"
-            class="elevation-4"
-            fixed-header
-            multi-sort
-            single-select
-            dense
-            :options.sync="options.options"
-            :server-items-length="options.totalCount"
-            :loading="options.loading"
-            :items-per-page="options.itemsPerPage"
-            :page.sync="options.page"
-            @page-count="options.pageCount = $event"
-            hide-default-footer
-          >
-            <template v-slot:item.value="{ item }">
-              <span v-html="item.value"></span>
-            </template>
-            <template v-slot:item.type="{ item }">
-              <v-chip
-                class="mr-3"
-                :color="item.type == 'caution' ? 'warning' : 'error'"
-              >
-                {{ item.type == "caution" ? "주의" : "경고" }}
-              </v-chip>
-            </template>
-            <template v-slot:item.checkedDate="{ item }">
-              <span v-if="item.checkedDate" v-html="item.checkedDate"></span>
-              <v-btn v-else color="primary" @click="check(item.id)">
-                조치
-              </v-btn>
-            </template>
-          </v-data-table>
-          <!-- <v-pagination
-            v-model="options.page"
-            :length="options.pageCount"
-          ></v-pagination> -->
+          <v-card>
+            <v-data-table height="680" :headers="headers" :items="table_data" item-key="id" fixed-header multi-sort
+              single-select dense :options.sync="options.options" :server-items-length="options.totalCount"
+              :loading="options.loading" :items-per-page="options.itemsPerPage" :page.sync="options.page"
+              @page-count="options.pageCount = $event" hide-default-footer>
+              <template v-slot:item.value="{ item }">
+                <span v-html="item.value"></span>
+              </template>
+              <template v-slot:item.type="{ item }">
+                <v-chip class="mr-3" :color="item.type == 'caution' ? 'warning' : 'error'">
+                  {{ item.type == "caution" ? "주의" : "경고" }}
+                </v-chip>
+              </template>
+              <template v-slot:item.checkedDate="{ item }">
+                <span v-if="item.checkedDate" v-html="item.checkedDate"></span>
+                <v-btn v-else color="primary" @click="check(item.id)">
+                  조치
+                </v-btn>
+              </template>
+            </v-data-table>
+          </v-card>
+          <v-pagination circle v-model="options.page" :length="options.pageCount"></v-pagination>
         </v-col>
       </v-row>
     </v-container>
