@@ -127,4 +127,8 @@ export default {
     AuthAPI.get("/api/equipment/history/recent", {
       params: params,
     }),
+  getImgList: (params) =>
+    AuthAPI.get("/api/capture/list", {
+      params: params,
+    }),
 };
