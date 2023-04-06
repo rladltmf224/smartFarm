@@ -279,7 +279,7 @@ export default class Alarm extends Vue {
 
   connectAlarm() {
     this.socketAlarm = new ReconnectingWebSocket(
-      "ws://192.168.0.129:8080/alarm?token=Bearer " +
+      "ws://192.168.0.193:8081/alarm?token=Bearer " +
         this.$cookies.get("accessToken"),
       [],
 
@@ -299,9 +299,9 @@ export default class Alarm extends Vue {
     this.socketAlarm.onopen = () => {
       console.log("socketAlarm : onopen");
     };
-    this.socketAlarm.onmessage = ({ message }: any) => {
-      console.log("socketAlarm : onmessage", message);
-      let data = JSON.parse(message);
+    this.socketAlarm.onmessage = (message: any) => {
+      console.log("socketAlarm : onmessage", message.data);
+      let data = JSON.parse(message.data);
 
       // 신규 알람 발생
       if (Object.keys(data).includes("createdDate")) {
@@ -340,45 +340,45 @@ export default class Alarm extends Vue {
       })
       .then((result) => {
         if (result.isConfirmed) {
-          // api.alarm
-          //   .alarmCheck({ id: alarm.id })
-          //   .then((response) => {
-          //     console.log(response);
-          //     this.alarmList = _.reject(this.alarmList, alarm);
-          //     this.$swal({
-          //       title: "조치 완료",
-          //       icon: "success",
-          //       position: "top",
-          //       showCancelButton: false,
-          //       showConfirmButton: false,
-          //       toast: true,
-          //       timer: 1500,
-          //     });
-          //   })
-          //   .catch((error) => {
-          //     console.log(error);
-          //     this.$swal({
-          //       title: "실패",
-          //       icon: "error",
-          //       position: "top",
-          //       showCancelButton: false,
-          //       showConfirmButton: false,
-          //       toast: true,
-          //       timer: 1500,
-          //     });
-          //   });
+          api.alarm
+            .alarmCheck({ id: alarm.id })
+            .then((response) => {
+              console.log(response);
+              this.alarmList = _.reject(this.alarmList, alarm);
+              this.$swal({
+                title: "조치 완료",
+                icon: "success",
+                position: "top",
+                showCancelButton: false,
+                showConfirmButton: false,
+                toast: true,
+                timer: 1500,
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+              this.$swal({
+                title: "실패",
+                icon: "error",
+                position: "top",
+                showCancelButton: false,
+                showConfirmButton: false,
+                toast: true,
+                timer: 1500,
+              });
+            });
 
           // 테스트
-          this.alarmList = _.reject(this.alarmList, alarm);
-          this.$swal({
-            title: "조치 완료",
-            icon: "success",
-            position: "top",
-            showCancelButton: false,
-            showConfirmButton: false,
-            toast: true,
-            timer: 1500,
-          });
+          // this.alarmList = _.reject(this.alarmList, alarm);
+          // this.$swal({
+          //   title: "조치 완료",
+          //   icon: "success",
+          //   position: "top",
+          //   showCancelButton: false,
+          //   showConfirmButton: false,
+          //   toast: true,
+          //   timer: 1500,
+          // });
         }
       });
   }
