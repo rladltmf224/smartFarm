@@ -279,7 +279,7 @@ export default class Alarm extends Vue {
 
   connectAlarm() {
     this.socketAlarm = new ReconnectingWebSocket(
-      "ws://192.168.0.193:8081/alarm?token=Bearer " +
+      "ws://14.47.96.237:8081/alarm?token=Bearer " +
         this.$cookies.get("accessToken"),
       [],
 
