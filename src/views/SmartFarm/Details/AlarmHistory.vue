@@ -54,8 +54,6 @@
           </v-card>
         </v-col>
       </v-row>
-
-
       <v-row no-gutters>
         <v-col class="ma-2" cols="12">
           <v-row dense class="mb-2">
@@ -151,6 +149,7 @@ export default class AlarmHistory extends Vue {
         endDate: this.search_condition.endDate,
       })
       .then((response) => {
+        console.log('조회후 데이터', response)
         this.alarmList = _.map(response.data.data.content, "alarmProcess");
         this.table_data = _.uniqBy(this.alarmList, "id");
         for (let i = 0; i < this.table_data.length; i++) {
