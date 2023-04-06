@@ -7,38 +7,84 @@
           <v-card class="card-shadow pa-3" height="65">
             <v-row dense>
               <v-col cols="2">
-                <v-menu ref="startDate" v-model="startDate" :close-on-content-click="false"
-                  :return-value.sync="search_condition.startDate" transition="scale-transition" offset-y min-width="auto">
+                <v-menu
+                  ref="startDate"
+                  v-model="startDate"
+                  :close-on-content-click="false"
+                  :return-value.sync="search_condition.startDate"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field v-model="search_condition.startDate" label="시작일" prepend-icon="mdi-calendar" readonly
-                      v-bind="attrs" v-on="on" dense></v-text-field>
+                    <v-text-field
+                      v-model="search_condition.startDate"
+                      label="시작일"
+                      prepend-icon="mdi-calendar"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                      dense
+                    ></v-text-field>
                   </template>
-                  <v-date-picker v-model="search_condition.startDate" no-title scrollable locale="ko-KR"
-                    :max="search_condition.endDate">
+                  <v-date-picker
+                    v-model="search_condition.startDate"
+                    no-title
+                    scrollable
+                    locale="ko-KR"
+                    :max="search_condition.endDate"
+                  >
                     <v-spacer></v-spacer>
                     <v-btn text color="primary" @click="startDate = false">
                       취소
                     </v-btn>
-                    <v-btn text color="primary" @click="s_date_search(search_condition.startDate)">
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="s_date_search(search_condition.startDate)"
+                    >
                       확인
                     </v-btn>
                   </v-date-picker>
                 </v-menu>
               </v-col>
               <v-col md="2">
-                <v-menu ref="endDate" v-model="endDate" :close-on-content-click="false"
-                  :return-value.sync="search_condition.endDate" transition="scale-transition" offset-y min-width="auto">
+                <v-menu
+                  ref="endDate"
+                  v-model="endDate"
+                  :close-on-content-click="false"
+                  :return-value.sync="search_condition.endDate"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field v-model="search_condition.endDate" label="종료일" prepend-icon="mdi-calendar" readonly
-                      v-bind="attrs" v-on="on" dense></v-text-field>
+                    <v-text-field
+                      v-model="search_condition.endDate"
+                      label="종료일"
+                      prepend-icon="mdi-calendar"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                      dense
+                    ></v-text-field>
                   </template>
-                  <v-date-picker v-model="search_condition.endDate" no-title scrollable locale="ko-KR"
-                    :min="search_condition.startDate">
+                  <v-date-picker
+                    v-model="search_condition.endDate"
+                    no-title
+                    scrollable
+                    locale="ko-KR"
+                    :min="search_condition.startDate"
+                  >
                     <v-spacer></v-spacer>
                     <v-btn text color="primary" @click="endDate = false">
                       취소
                     </v-btn>
-                    <v-btn text color="primary" @click="e_date_search(search_condition.endDate)">
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="e_date_search(search_condition.endDate)"
+                    >
                       확인
                     </v-btn>
                   </v-date-picker>
@@ -62,15 +108,31 @@
             </v-col>
           </v-row>
           <v-card>
-            <v-data-table height="680" :headers="headers" :items="table_data" item-key="id" fixed-header multi-sort
-              single-select dense :options.sync="options.options" :server-items-length="options.totalCount"
-              :loading="options.loading" :items-per-page="options.itemsPerPage" :page.sync="options.page"
-              @page-count="options.pageCount = $event" hide-default-footer>
+            <v-data-table
+              height="680"
+              :headers="headers"
+              :items="table_data"
+              item-key="id"
+              fixed-header
+              multi-sort
+              single-select
+              dense
+              :options.sync="options.options"
+              :server-items-length="options.totalCount"
+              :loading="options.loading"
+              :items-per-page="options.itemsPerPage"
+              :page.sync="options.page"
+              @page-count="options.pageCount = $event"
+              hide-default-footer
+            >
               <template v-slot:item.value="{ item }">
                 <span v-html="item.value"></span>
               </template>
               <template v-slot:item.type="{ item }">
-                <v-chip class="mr-3" :color="item.type == 'caution' ? 'warning' : 'error'">
+                <v-chip
+                  class="mr-3"
+                  :color="item.type == 'caution' ? 'warning' : 'error'"
+                >
                   {{ item.type == "caution" ? "주의" : "경고" }}
                 </v-chip>
               </template>
@@ -82,7 +144,11 @@
               </template>
             </v-data-table>
           </v-card>
-          <v-pagination circle v-model="options.page" :length="options.pageCount"></v-pagination>
+          <v-pagination
+            circle
+            v-model="options.page"
+            :length="options.pageCount"
+          ></v-pagination>
         </v-col>
       </v-row>
     </v-container>
@@ -103,8 +169,8 @@ export default class AlarmHistory extends Vue {
   startDate: boolean = false;
   endDate: boolean = false;
   search_condition: any = {
-    startDate: "2023-02-28",
-    endDate: "2023-02-28",
+    startDate: new Date().toISOString().split("T")[0],
+    endDate: new Date().toISOString().split("T")[0],
   };
   headers: any[] = [
     { text: "발생일시", value: "createdDate" },
@@ -142,14 +208,17 @@ export default class AlarmHistory extends Vue {
     endEL.save(v);
   }
   getData() {
+    let local: any = localStorage.getItem("userId");
+    let userId = JSON.parse(local) || "";
     api.alarm
       .alarmList({
-        userId: "dikang",
+        userId: userId,
         startDate: this.search_condition.startDate,
         endDate: this.search_condition.endDate,
+        getAll: true,
       })
       .then((response) => {
-        console.log('조회후 데이터', response)
+        console.log("조회후 데이터", response);
         this.alarmList = _.map(response.data.data.content, "alarmProcess");
         this.table_data = _.uniqBy(this.alarmList, "id");
         for (let i = 0; i < this.table_data.length; i++) {
