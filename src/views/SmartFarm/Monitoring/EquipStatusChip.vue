@@ -8,9 +8,13 @@
         off: equipData.currentStatus === 'OFF',
       }"
     ></div>
-    <span class="text-truncate text-center" style="width: 80px">{{
-      equipData.equipmentName
-    }}</span>
+
+    <span class="text-truncate text-center" style="width: 80px"
+      >{{ equipData.equipmentName }}
+
+      {{ equipData.currentMode }}
+    </span>
+    <!-- <span v-if="equipData.currentMode != null"></span> -->
 
     <div class="d-flex align-center">
       <v-chip
