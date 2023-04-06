@@ -372,6 +372,7 @@ export default {
     // this.socket = io("http://14.47.96.237:5100");
     console.log("socket", this.socket);
     this.imgOption = Object.assign({}, gridCfg);
+    this.imgOption.options.itemsPerPage = 11;
   },
   methods: {
     s_date_search(v) {
