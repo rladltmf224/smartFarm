@@ -1,22 +1,25 @@
 <template>
   <div class="warehousing">
-    <v-container fluid>
-      <v-row dense>
+    <v-container fluid v-resize="onResize">
+      <v-row>
         <v-col class="ma-2" md="12">
-          <h4 class="searchbox-title">조회 조건</h4>
-          <v-card class="pa-3" height="60">
+          <span class="searchbox-title">조회 조건</span>
+          <v-card class="card-shadow pa-3" height="65">
             <v-row>
               <v-col cols="2">
                 <v-text-field
+                  dense
+                  solo
+                  rounded
+                  elevation-0
                   label="입고코드"
                   v-model="search_condition.code"
                   @keydown.enter="getCustomer"
-                  dense
                 ></v-text-field>
               </v-col>
-
-              <v-col class="pt-2 text-right" offset="8" cols="2">
-                <v-btn color="primary" large @click="getCustomer">
+              <v-spacer></v-spacer>
+              <v-col class="text-right" cols="2">
+                <v-btn color="primary" large elevation="0" @click="getCustomer">
                   <v-icon left> mdi-magnify </v-icon>
                   조회
                 </v-btn>
@@ -24,20 +27,24 @@
             </v-row>
           </v-card>
         </v-col>
-        <v-col class="ma-2" md="12">
-          <v-row class="mb-2">
-            <v-col md="2">
-              <h4 class="searchbox-title">입고 목록</h4>
+      </v-row>
+      <v-row no-gutters>
+        <v-col class="ma-2" cols="12">
+          <v-row dense class="mb-2">
+            <v-col cols="2" align-self="center">
+              <span class="searchbox-title">입고 목록</span>
             </v-col>
-            <v-col class="text-right" offset-md="7" md="3">
-              <v-btn class="ml-1" small color="primary" @click="editItem"
+            <v-spacer></v-spacer>
+            <v-col class="text-right" cols="4">
+              <v-btn elevation="0" color="primary" @click="editItem"
                 ><v-icon left> mdi-pencil-plus </v-icon>입고 추가</v-btn
               >
             </v-col>
           </v-row>
+
           <v-card>
             <v-data-table
-              height="286"
+              :height="table_height"
               :headers="headers"
               :items="statement_list"
               item-key="id"
@@ -106,7 +113,7 @@
           </v-row>
           <v-card>
             <v-data-table
-              height="300"
+              :height="table_height"
               :headers="headers_detail"
               :items="statement_detail_list"
               fixed-header
@@ -179,6 +186,7 @@ import { Vue, Component, Watch } from "vue-property-decorator";
   },
 })
 export default class WarehousingMng extends Vue {
+  table_height: number = 0;
   edit_customer: boolean = false;
   history_modal: boolean = false;
   history_modal_title: string = "";
@@ -217,6 +225,11 @@ export default class WarehousingMng extends Vue {
 
   mounted() {
     this.getCustomer();
+    this.onResize();
+  }
+
+  onResize() {
+    this.table_height = window.innerHeight - 48 - 97 - 400 - 100 - 15;
   }
 
   closeModal_history() {
