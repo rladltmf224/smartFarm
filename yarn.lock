@@ -981,6 +981,21 @@
   resolved "https://registry.npmjs.org/@colors/colors/-/colors-1.5.0.tgz"
   integrity sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==
 
+"@cycjimmy/awesome-js-funcs@^1.0.1":
+  version "1.1.1"
+  resolved "https://registry.npmjs.org/@cycjimmy/awesome-js-funcs/-/awesome-js-funcs-1.1.1.tgz"
+  integrity sha512-3e9BFAW8SWZ69frWE9a/QkKWM1+rcqiDsVwr1e0eVqVt5Fet1JtpMD4A+reCb6PUBCvFiSVrHDtDyB+Rxoxm0Q==
+
+"@cycjimmy/jsmpeg-player@^6.0.5":
+  version "6.0.5"
+  resolved "https://registry.npmjs.org/@cycjimmy/jsmpeg-player/-/jsmpeg-player-6.0.5.tgz"
+  integrity sha512-bVNHQ7VN9ecKT5AI/6RC7zpW/y4ca68a9txeR5Wiin+jKpUn/7buMe+5NPub89A8NNeNnKPQfrD2+c76ch36mA==
+
+"@cycjimmy/sass-lib@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.npmjs.org/@cycjimmy/sass-lib/-/sass-lib-0.1.0.tgz"
+  integrity sha512-Oli6KvYFIpvRxrD8ntfETMi+YtRQEgrZkFv6JPs9PING/B1kr8AhBNbcw9MklA2HapSX70/3dn3BmsVfLBzEjg==
+
 "@eslint-community/eslint-utils@^4.2.0":
   version "4.4.0"
   resolved "https://registry.npmmirror.com/@eslint-community/eslint-utils/-/eslint-utils-4.4.0.tgz"
@@ -1333,9 +1348,9 @@
     "@hapi/hoek" "^9.0.0"
 
 "@sideway/formula@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.npmjs.org/@sideway/formula/-/formula-3.0.0.tgz"
-  integrity sha512-vHe7wZ4NOXVfkoRb8T5otiENVlT7a3IAiw7H5M2+GO+9CDgcVUUsX1zalAztCmwyOr2RUTGJdgB+ZvSVqmdHmg==
+  version "3.0.1"
+  resolved "https://registry.npmjs.org/@sideway/formula/-/formula-3.0.1.tgz"
+  integrity sha512-/poHZJJVjx3L+zVD6g9KgHfYnb443oi7wLu/XKojDviHy6HOEOA6z1Trk5aR1dGcmPenJEgb2sK2I80LeS3MIg==
 
 "@sideway/pinpoint@^2.0.0":
   version "2.0.0"
@@ -1344,7 +1359,7 @@
 
 "@socket.io/component-emitter@~3.1.0":
   version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@socket.io/component-emitter/-/component-emitter-3.1.0.tgz#96116f2a912e0c02817345b3c10751069920d553"
+  resolved "https://registry.npmjs.org/@socket.io/component-emitter/-/component-emitter-3.1.0.tgz"
   integrity sha512-+9jVqKhRSpsc591z5vX+X5Yyw+he/HCB4iQ/RYxw35CEPaY1gnsNE43nf9n9AaYjAQrTiI/mOwKUKdUs9vf7Xg==
 
 "@soda/friendly-errors-webpack-plugin@^1.8.0":
@@ -3396,7 +3411,7 @@ core-js-compat@^3.25.1, core-js-compat@^3.8.3:
   dependencies:
     browserslist "^4.21.4"
 
-core-js@^3.0.1, core-js@^3.8.3:
+core-js@^3.0.1, core-js@^3.24.1, core-js@^3.8.3:
   version "3.26.1"
   resolved "https://registry.npmjs.org/core-js/-/core-js-3.26.1.tgz"
   integrity sha512-21491RRQVzUn0GGM9Z1Jrpr6PNPxPi+Za8OM9q4tksTSnlbXXGKK1nXNg/QvwFYettXvSX6zWKCtHHfjN4puyA==
@@ -4060,7 +4075,7 @@ engine.io-client@~3.5.0:
 
 engine.io-client@~6.4.0:
   version "6.4.0"
-  resolved "https://registry.yarnpkg.com/engine.io-client/-/engine.io-client-6.4.0.tgz#88cd3082609ca86d7d3c12f0e746d12db4f47c91"
+  resolved "https://registry.npmjs.org/engine.io-client/-/engine.io-client-6.4.0.tgz"
   integrity sha512-GyKPDyoEha+XZ7iEqam49vz6auPnNJ9ZBfy89f+rMMas8AuiMWOZ9PVzu8xb9ZC6rafUqiGHSCfu22ih66E+1g==
   dependencies:
     "@socket.io/component-emitter" "~3.1.0"
@@ -4082,7 +4097,7 @@ engine.io-parser@~2.2.0:
 
 engine.io-parser@~5.0.3:
   version "5.0.6"
-  resolved "https://registry.yarnpkg.com/engine.io-parser/-/engine.io-parser-5.0.6.tgz#7811244af173e157295dec9b2718dfe42a64ef45"
+  resolved "https://registry.npmjs.org/engine.io-parser/-/engine.io-parser-5.0.6.tgz"
   integrity sha512-tjuoZDMAdEhVnSFleYPCtdL2GXwVTGtNjoeJd9IhIG3C1xs9uwxqRNEu5WpnDZCaozwVlK/nuQhpodhXSIMaxw==
 
 enhanced-resolve@^5.0.0, enhanced-resolve@^5.10.0:
@@ -4733,9 +4748,9 @@ find-up@^4.0.0, find-up@^4.1.0:
     path-exists "^4.0.0"
 
 firebase-tools@^11.22.0:
-  version "11.25.2"
-  resolved "https://registry.npmmirror.com/firebase-tools/-/firebase-tools-11.25.2.tgz"
-  integrity sha512-rKMLosFFlbrBsia11eN8EN6GL3+eOxtq75dbkMOMTUrsckAYgz+JTSoLL+WLksh+eG1aklEtE4K5n1lbmTGzRg==
+  version "11.25.3"
+  resolved "https://registry.npmjs.org/firebase-tools/-/firebase-tools-11.25.3.tgz"
+  integrity sha512-gcM7O9mjhDs8UjtAJjHxUuSX2ZHufXJU7+GheXTlZVA+Uj5RRoAt6AU/FmtcqQtfhr2TNwADebgiVFzVlkLoUg==
   dependencies:
     "@google-cloud/pubsub" "^3.0.1"
     abort-controller "^3.0.0"
@@ -6083,6 +6098,19 @@ jsesc@~0.5.0:
   resolved "https://registry.npmjs.org/jsesc/-/jsesc-0.5.0.tgz"
   integrity sha512-uZz5UnB7u4T9LvwmFqXii7pZSouaRPorGs5who1Ip7VO0wxanFvBL7GkM6dTHlgX+jhBApRetaWpnDabOeTcnA==
 
+jsmpeg-player@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.npmjs.org/jsmpeg-player/-/jsmpeg-player-3.0.3.tgz"
+  integrity sha512-23lQWpf9lWOVCibVevQRqRXKex++QTB/JPcJCdCGf3AzdcJVB7L4io5EXfST80RMOGt9p1dcAvJDOKhqOUYl+Q==
+  dependencies:
+    "@cycjimmy/awesome-js-funcs" "^1.0.1"
+    "@cycjimmy/sass-lib" "^0.1.0"
+
+jsmpeg@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmjs.org/jsmpeg/-/jsmpeg-1.0.0.tgz"
+  integrity sha512-wlBKWVJ93NRJaCfrJ1KAgpMvZBLzpZxH3wnC1Yj7DudMDa/5hHeL1HfvW48ndR8GlI4irrqCXuOGhgayP9EbHw==
+
 json-bigint@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/json-bigint/-/json-bigint-1.0.0.tgz"
@@ -6138,16 +6166,16 @@ json-stringify-safe@~5.0.1:
   integrity sha1-Epai1Y/UXxmg9s4B1lcB4sc1tus=
 
 json5@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/json5/-/json5-1.0.1.tgz"
-  integrity sha512-aKS4WQjPenRxiQsC93MNfjx+nbF4PAdYzmd/1JIj8HYzqfbu86beTuNgXDzPknWk0n0uARlyewZo4s++ES36Ow==
+  version "1.0.2"
+  resolved "https://registry.npmjs.org/json5/-/json5-1.0.2.tgz"
+  integrity sha512-g1MWMLBiz8FKi1e4w0UyVL3w+iJceWAFBAaBnnGKOpNa5f8TLktkbre1+s6oICydWAm+HRUGTmI+//xv2hvXYA==
   dependencies:
     minimist "^1.2.0"
 
 json5@^2.1.2, json5@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.npmjs.org/json5/-/json5-2.2.1.tgz"
-  integrity sha512-1hqLFMSrGHRHxav9q9gNjJ5EXznIxGVO09xQRrwplcS8qs28pZ8s8hupZAmqDwZUmVZ2Qb2jnyPOWcDH8m8dlA==
+  version "2.2.3"
+  resolved "https://registry.npmjs.org/json5/-/json5-2.2.3.tgz"
+  integrity sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==
 
 jsonfile@^4.0.0:
   version "4.0.0"
@@ -8540,7 +8568,7 @@ socket.io-client@^2.1.1:
 
 socket.io-client@^4.6.1:
   version "4.6.1"
-  resolved "https://registry.yarnpkg.com/socket.io-client/-/socket.io-client-4.6.1.tgz#80d97d5eb0feca448a0fb6d69a7b222d3d547eab"
+  resolved "https://registry.npmjs.org/socket.io-client/-/socket.io-client-4.6.1.tgz"
   integrity sha512-5UswCV6hpaRsNg5kkEHVcbBIXEYoVbMQaHJBXJCyEQ+CiFPV1NIOY0XOFWG4XR4GZcB8Kn6AsRs/9cy9TbqVMQ==
   dependencies:
     "@socket.io/component-emitter" "~3.1.0"
@@ -8559,7 +8587,7 @@ socket.io-parser@~3.3.0:
 
 socket.io-parser@~4.2.1:
   version "4.2.2"
-  resolved "https://registry.yarnpkg.com/socket.io-parser/-/socket.io-parser-4.2.2.tgz#1dd384019e25b7a3d374877f492ab34f2ad0d206"
+  resolved "https://registry.npmjs.org/socket.io-parser/-/socket.io-parser-4.2.2.tgz"
   integrity sha512-DJtziuKypFkMMHCm2uIshOYC7QaylbtzQwiMYDuCKy3OPkjLzu4B2vAhTlqipRHHzrI0NJeBAizTK7X+6m1jVw==
   dependencies:
     "@socket.io/component-emitter" "~3.1.0"
@@ -9531,6 +9559,13 @@ vue-hot-reload-api@^2.3.0:
   resolved "https://registry.npmjs.org/vue-hot-reload-api/-/vue-hot-reload-api-2.3.4.tgz"
   integrity sha512-BXq3jwIagosjgNVae6tkHzzIk6a8MHFtzAdwhnV5VlvPTFxDCvIttgSiHWjdGoTJvXtmRu5HacExfdarRcFhog==
 
+vue-jsmpeg-player@^1.1.0-beta:
+  version "1.1.0-beta"
+  resolved "https://registry.npmjs.org/vue-jsmpeg-player/-/vue-jsmpeg-player-1.1.0-beta.tgz"
+  integrity sha512-KgMDn8Om2xb1nk5t2SU/2lqvhmpe6YQvBYHanriMxd1zo7alK8jM8dSb0reaGKR9/RRr+UECIFbOqk0tCKNDPA==
+  dependencies:
+    core-js "^3.24.1"
+
 vue-jwt-decode@^0.1.0:
   version "0.1.0"
   resolved "https://registry.npmjs.org/vue-jwt-decode/-/vue-jwt-decode-0.1.0.tgz"
@@ -9758,9 +9793,9 @@ webpack-virtual-modules@^0.4.2:
   integrity sha512-5tyDlKLqPfMqjT3Q9TAqf2YqjwmnUleZwzJi1A5qXnlBCdj2AtOJ6wAWdglTIDOPgOiOrXeBeFcsQ8+aGQ6QbA==
 
 webpack@^5.54.0:
-  version "5.75.0"
-  resolved "https://registry.npmjs.org/webpack/-/webpack-5.75.0.tgz"
-  integrity sha512-piaIaoVJlqMsPtX/+3KTTO6jfvrSYgauFVdt8cr9LTHKmcq/AMd4mhzsiP7ZF/PGRNPGA8336jldh9l2Kt2ogQ==
+  version "5.78.0"
+  resolved "https://registry.npmjs.org/webpack/-/webpack-5.78.0.tgz"
+  integrity sha512-gT5DP72KInmE/3azEaQrISjTvLYlSM0j1Ezhht/KLVkrqtv10JoP/RXhwmX/frrutOPuSq3o5Vq0ehR/4Vmd1g==
   dependencies:
     "@types/eslint-scope" "^3.7.3"
     "@types/estree" "^0.0.51"
@@ -10009,7 +10044,7 @@ xmlhttprequest-ssl@~1.6.2:
 
 xmlhttprequest-ssl@~2.0.0:
   version "2.0.0"
-  resolved "https://registry.yarnpkg.com/xmlhttprequest-ssl/-/xmlhttprequest-ssl-2.0.0.tgz#91360c86b914e67f44dce769180027c0da618c67"
+  resolved "https://registry.npmjs.org/xmlhttprequest-ssl/-/xmlhttprequest-ssl-2.0.0.tgz"
   integrity sha512-QKxVRxiRACQcVuQEYFsI1hhkrMlrXHPegbbd1yn9UHOmRxY+si12nQYzri3vbzt8VdTTRviqcKxcyllFas5z2A==
 
 xregexp@2.0.0:
