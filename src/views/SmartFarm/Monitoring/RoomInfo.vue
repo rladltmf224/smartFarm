@@ -17,7 +17,6 @@
           <v-btn
             color="black"
             text
-            disabled
             @click="
               roomInfo_prop.facilityName == `육묘실`
                 ? openStreamModal1(roomInfo_prop)
@@ -61,10 +60,7 @@
               title="대기 습도"
               :value="roomInfo_prop.atmosphere.humidity + '%'"
             ></EnvStatusChip>
-            <EnvStatusChip
-              title="대기 농도"
-              :value="roomInfo_prop.atmosphere.co2 + '%'"
-            ></EnvStatusChip>
+
             <EnvStatusChip
               title="양액 EC"
               :value="roomInfo_prop.fertilizer.ec"
@@ -89,10 +85,6 @@
               title="토양 pH"
               :value="roomInfo_prop.soil.ph"
             ></EnvStatusChip>
-            <EnvStatusChip
-              title="광원 광도"
-              :value="roomInfo_prop.light.luminosity"
-            ></EnvStatusChip>
           </v-row>
         </div>
 
@@ -112,7 +104,7 @@
       <v-card>
         <v-card-title class="headline">{{ streamModal1_title }}</v-card-title>
         <v-card-text>
-          <img ref="img1" id="image1" />
+          <canvas id="image1"> </canvas>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -125,7 +117,7 @@
       <v-card>
         <v-card-title class="headline">{{ streamModal2_title }}</v-card-title>
         <v-card-text>
-          <img ref="img2" id="image2" />
+          <canvas id="image2"> </canvas>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -144,7 +136,8 @@
           <v-row>
             <v-col cols="12">
               <v-row>
-                <v-col cols="2">
+                <v-col cols="2"
+                  >``
                   <v-menu
                     ref="startDate"
                     v-model="startDate"
@@ -311,6 +304,7 @@
     </v-dialog>
   </v-card>
 </template>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsmpeg/0.1/jsmpg.js"></script>
 <script>
 import EquipStatusChip from "./EquipStatusChip.vue";
 import EnvStatusChip from "./EnvStatusChip.vue";
@@ -318,6 +312,8 @@ import { gridCfg } from "@/util/config";
 import { io } from "socket.io-client";
 import * as api from "@/api";
 import cfg from "./config";
+//import JSMpeg from "@cycjimmy/jsmpeg-player";
+// import { jsmpeg } from "jsmpeg";
 
 export default {
   name: "RoomInfo",
@@ -344,6 +340,10 @@ export default {
       startDate: false,
       endDate: false,
       imgOption: {},
+      stream1: null,
+      stream2: null,
+      socket1: null,
+      socket2: null,
     };
   },
   props: ["roomData"],
@@ -398,7 +398,7 @@ export default {
       this.imgAlbumModal = true;
       this.facilityData = data;
 
-      this.getImgList();
+      //this.getImgList();
     },
     getImgList() {
       const { page, itemsPerPage, sortBy, sortDesc } = this.imgOption.options;
@@ -437,36 +437,35 @@ export default {
 
       this.streamModal1 = true;
 
-      this.socket.emit("start1");
-      this.socket.on("image1", (image) => {
-        // console.log('data', data);
-        const img = document.getElementById("image1");
-        console.log("openStreamModal1", img);
-        img.src = `data:image/jpeg;base64,${image}`;
+      let canvas1 = document.querySelector("#image1");
+      this.socket1 = new WebSocket("ws://192.168.0.61:9998");
+      this.stream1 = new jsmpeg(this.socket1, {
+        canvas: canvas1,
       });
+      console.log("stream1", this.stream1, this.socket1);
     },
     openStreamModal2(data) {
       // console.log("data", data, this.$refs.img2);
       this.streamModal2_title = data.facilityName;
 
       this.streamModal2 = true;
-      this.socket.emit("start2");
-      this.socket.on("image2", (image) => {
-        const img = document.getElementById("image2");
-        console.log("openStreamModal2", img);
-        img.src = `data:image/jpeg;base64,${image}`;
+
+      let canvas2 = document.querySelector("#image2");
+
+      this.socket2 = new WebSocket("ws://192.168.0.61:9997");
+      this.stream2 = new jsmpeg(this.socket2, {
+        canvas: canvas2,
       });
+      console.log("stream2", this.stream2, this.socket2);
     },
     closeModal1() {
-      this.socket.emit("stop1");
-
       this.streamModal1 = false;
+      this.socket1.close();
     },
 
     closeModal2() {
-      this.socket.emit("stop2");
-
       this.streamModal2 = false;
+      this.socket2.close();
     },
   },
 };

@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 생성 모달 -->
-    <v-dialog v-model="openModal" max-width="600px">
+    <v-dialog persistent v-model="openModal" max-width="600px">
       <v-card class="box-radius">
         <v-card-title>
           <span>{{ editedType ? "품목 생성" : "품목 수정" }}</span>
@@ -11,43 +11,90 @@
           <v-row dense>
             <v-col cols="3" align-self="center" v-if="!editedType">
               <span>code</span>
-              <v-text-field v-model="itemData.code" disabled solo hide-details="false"
-                class="text-box-style"></v-text-field>
+              <v-text-field
+                v-model="itemData.code"
+                disabled
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-text-field>
             </v-col>
             <v-col cols="3" align-self="center">
               <span>버전</span>
-              <v-text-field v-model="itemData.version" hide-details="false" class="text-box-style" solo></v-text-field>
+              <v-text-field
+                v-model="itemData.version"
+                hide-details="false"
+                class="text-box-style"
+                solo
+              ></v-text-field>
             </v-col>
             <v-col cols="6" align-self="center">
               <span>품목명</span>
-              <v-text-field v-model="itemData.name" solo hide-details="false" class="text-box-style"></v-text-field>
+              <v-text-field
+                v-model="itemData.name"
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-text-field>
             </v-col>
           </v-row>
           <v-row dense>
             <v-col cols="4" align-self="center">
               <span>규격</span>
-              <v-text-field v-model="itemData.standard" solo hide-details="false" class="text-box-style"></v-text-field>
+              <v-text-field
+                v-model="itemData.standard"
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-text-field>
             </v-col>
             <v-col cols="4" align-self="center">
               <span>unit</span>
-              <v-text-field v-model="itemData.unit" solo hide-details="false" class="text-box-style"></v-text-field>
+              <v-text-field
+                v-model="itemData.unit"
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-text-field>
             </v-col>
             <v-col cols="4" align-self="center">
               <span>타입</span>
-              <v-select :items="items_type" v-model="itemData.type" item-text="name" item-value="name" solo
-                hide-details="false" class="text-box-style"></v-select>
+              <v-select
+                :items="items_type"
+                v-model="itemData.type"
+                item-text="name"
+                item-value="name"
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-select>
             </v-col>
           </v-row>
           <v-row dense>
             <v-col cols="6" align-self="center">
               <span>지정창고</span>
-              <v-select :items="storageData" v-model="itemData.storageId" item-text="name" item-value="id"
-                @change="getLocation" solo hide-details="false" class="text-box-style"></v-select>
+              <v-select
+                :items="storageData"
+                v-model="itemData.storageId"
+                item-text="name"
+                item-value="id"
+                @change="getLocation"
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-select>
             </v-col>
             <v-col cols="6" align-self="center">
               <span>지정구역</span>
-              <v-select :items="locationData" v-model="itemData.storageLocationId" item-text="area"
-                item-value="storageLocationId" solo hide-details="false" class="text-box-style"></v-select>
+              <v-select
+                :items="locationData"
+                v-model="itemData.storageLocationId"
+                item-text="area"
+                item-value="storageLocationId"
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-select>
             </v-col>
           </v-row>
         </v-card-text>
