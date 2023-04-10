@@ -9,28 +9,76 @@
         <v-card-text>
           <v-row>
             <v-col cols="2" align-self="center">
-              <v-select :items="customer_list" item-text="name" item-value="id" label="거래처"
-                v-model="editedCustomer.customerId" dense></v-select>
+              <span>거래처</span>
+              <v-select
+                :items="customer_list"
+                item-text="name"
+                item-value="id"
+                label="거래처"
+                v-model="editedCustomer.customerId"
+                dense
+                solo
+                hide-details="false"
+              ></v-select>
             </v-col>
             <v-col cols="2" align-self="center">
-              <v-text-field v-model="editedCustomer.requester" label="요청자" dense></v-text-field>
+              <span>요청자</span>
+              <v-text-field
+                v-model="editedCustomer.requester"
+                label="요청자"
+                dense
+                solo
+                hide-details="false"
+              ></v-text-field>
             </v-col>
             <v-col cols="3" align-self="center">
-              <v-text-field v-model="editedCustomer.requesterContact" label="요청자 연락처" dense></v-text-field>
+              <span>요청자 연락처</span>
+              <v-text-field
+                v-model="editedCustomer.requesterContact"
+                label="요청자 연락처"
+                dense
+                solo
+                hide-details="false"
+              ></v-text-field>
             </v-col>
             <v-col md="2">
-              <v-menu ref="deadDate" v-model="deadDate" :close-on-content-click="false"
-                :return-value.sync="editedCustomer.deadline" transition="scale-transition" offset-y min-width="auto">
+              <span>마감일</span>
+              <v-menu
+                ref="deadDate"
+                v-model="deadDate"
+                :close-on-content-click="false"
+                :return-value.sync="editedCustomer.deadline"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
                 <template v-slot:activator="{ on, attrs }">
-                  <v-text-field v-model="editedCustomer.deadline" label="마감일" prepend-icon="mdi-calendar" readonly
-                    v-bind="attrs" v-on="on" dense></v-text-field>
+                  <v-text-field
+                    v-model="editedCustomer.deadline"
+                    label="마감일"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    dense
+                    solo
+                    hide-details="false"
+                  ></v-text-field>
                 </template>
-                <v-date-picker v-model="editedCustomer.deadline" no-title scrollable locale="ko-KR">
+                <v-date-picker
+                  v-model="editedCustomer.deadline"
+                  no-title
+                  scrollable
+                  locale="ko-KR"
+                >
                   <v-spacer></v-spacer>
                   <v-btn text color="primary" @click="deadDate = false">
                     취소
                   </v-btn>
-                  <v-btn text color="primary" @click="dead_date_search(editedCustomer.deadline)">
+                  <v-btn
+                    text
+                    color="primary"
+                    @click="dead_date_search(editedCustomer.deadline)"
+                  >
                     확인
                   </v-btn>
                 </v-date-picker>
@@ -40,7 +88,7 @@
           <v-row> </v-row>
           <v-row>
             <v-col cols="6">
-              <h4>상세 품목</h4>
+              <span>상세 품목</span>
             </v-col>
             <v-col offset="4" cols="1" align-self="center" class="text-right">
               <v-btn color="primary" @click="openItemModal"> 품목 추가 </v-btn>
@@ -48,8 +96,16 @@
           </v-row>
           <v-row>
             <v-col>
-              <v-data-table height="300" :headers="headers_item" :items="item_list_modal" fixed-header item-key="barcode"
-                class="elevation-4" multi-sort dense>
+              <v-data-table
+                height="300"
+                :headers="headers_item"
+                :items="item_list_modal"
+                fixed-header
+                item-key="barcode"
+                class="elevation-4"
+                multi-sort
+                dense
+              >
                 <template v-slot:item.count="props">
                   {{ props.item.count | comma }}
                 </template>
@@ -80,10 +136,20 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <ReleaseProductItemModal :open="item_modal" @addItem="addItem" @closeModal="closeItemModal">
+    <ReleaseProductItemModal
+      :open="item_modal"
+      @addItem="addItem"
+      @closeModal="closeItemModal"
+    >
     </ReleaseProductItemModal>
-    <ReleaseProductModal :open="add_rawModal" :product_detail_list="product_detail_list" :selected="selected"
-      @addRaw="addRaw" @closeModal="closeRawDetail" @saveData="saveSelectedItem"></ReleaseProductModal>
+    <ReleaseProductModal
+      :open="add_rawModal"
+      :product_detail_list="product_detail_list"
+      :selected="selected"
+      @addRaw="addRaw"
+      @closeModal="closeRawDetail"
+      @saveData="saveSelectedItem"
+    ></ReleaseProductModal>
   </div>
 </template>
 <script lang="ts">
@@ -149,7 +215,7 @@ export default class ReleaseProductAddModal extends Vue {
     this.item_modal = false;
   }
 
-  addRaw() { }
+  addRaw() {}
 
   saveSelectedItem(item: object[], count: number) {
     console.log("saveSelectedItem", item, count);
