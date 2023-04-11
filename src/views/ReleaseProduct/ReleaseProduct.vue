@@ -1,17 +1,20 @@
 <template>
   <div class="warehousing">
-    <v-container fluid>
+    <v-container fluid v-resize="onResize">
       <v-row>
         <v-col class="ma-2" md="12">
-          <h4 class="searchbox-title">조회 조건</h4>
-          <v-card class="pa-3" height="90">
+          <span>조회 조건</span>
+          <v-card class="card-shadow pa-3" height="65">
             <v-row>
-              <v-col cols="2">
+              <v-col cols="1">
                 <v-text-field
                   label="code"
                   v-model="search_condition.code"
                   @keydown.enter="getCustomer"
                   dense
+                  solo
+                  rounded
+                  elevation-0
                 ></v-text-field>
               </v-col>
 
@@ -21,6 +24,9 @@
                   v-model="search_condition.customer"
                   @keydown.enter="getCustomer"
                   dense
+                  solo
+                  rounded
+                  elevation-0
                 ></v-text-field>
               </v-col>
               <v-col cols="2">
@@ -29,6 +35,9 @@
                   v-model="search_condition.requester"
                   @keydown.enter="getCustomer"
                   dense
+                  solo
+                  rounded
+                  elevation-0
                 ></v-text-field>
               </v-col>
 
@@ -40,6 +49,9 @@
                   item-text="name"
                   item-value="value"
                   dense
+                  solo
+                  rounded
+                  elevation-0
                 ></v-select>
               </v-col>
 
@@ -57,11 +69,13 @@
                     <v-text-field
                       v-model="search_condition.startDate"
                       label="시작일"
-                      prepend-icon="mdi-calendar"
                       readonly
                       v-bind="attrs"
                       v-on="on"
                       dense
+                      solo
+                      rounded
+                      elevation-0
                     ></v-text-field>
                   </template>
                   <v-date-picker
@@ -99,11 +113,13 @@
                     <v-text-field
                       v-model="search_condition.endDate"
                       label="종료일"
-                      prepend-icon="mdi-calendar"
                       readonly
                       v-bind="attrs"
                       v-on="on"
                       dense
+                      solo
+                      rounded
+                      elevation-0
                     ></v-text-field>
                   </template>
                   <v-date-picker
@@ -128,8 +144,9 @@
                 </v-menu>
               </v-col>
 
-              <v-col class="pt-5 text-right" cols="1">
-                <v-btn color="primary" x-large @click="getCustomer">
+              <v-spacer></v-spacer>
+              <v-col class="text-right" cols="2">
+                <v-btn color="primary" large elevation="0" @click="getCustomer">
                   조회
                 </v-btn>
               </v-col>
@@ -137,23 +154,23 @@
           </v-card>
         </v-col>
       </v-row>
-    </v-container>
-    <v-container fluid>
-      <v-row>
+
+      <v-row no-gutters>
         <v-col class="ma-2" md="12">
           <v-row class="mb-2">
-            <v-col md="2">
-              <h4 class="searchbox-title">출고요청 목록</h4>
+            <v-col md="2" align-self="center">
+              <span>출고요청 목록</span>
             </v-col>
-            <v-col class="text-right" offset-md="7" md="3">
-              <v-btn class="ml-1" small color="primary" @click="editItem"
+            <v-spacer></v-spacer>
+            <v-col class="text-right" cols="4">
+              <v-btn elevation="0" color="primary" @click="editItem"
                 ><v-icon left> mdi-book-account </v-icon>출하 추가</v-btn
               >
             </v-col>
           </v-row>
           <v-card>
             <v-data-table
-              height="280"
+              :height="table_height"
               :headers="headers"
               fixed-header
               :items="statement_list"
@@ -209,23 +226,20 @@
                 </v-btn>
               </template>
             </v-data-table>
-            <v-col>
-              <v-pagination
-                circle
-                v-model="productOption.page"
-                :length="productOption.pageCount"
-              ></v-pagination>
-            </v-col>
           </v-card>
+          <v-pagination
+            circle
+            v-model="productOption.page"
+            :length="productOption.pageCount"
+          ></v-pagination>
         </v-col>
       </v-row>
-    </v-container>
-    <v-container fluid>
+
       <v-row>
         <v-col class="ma-2" md="12">
-          <v-row class="mb-2">
-            <v-col md="2">
-              <h4 class="searchbox-title">출고 상세(원자재)</h4>
+          <v-row dense class="mb-2">
+            <v-col cols="2" align-self="center">
+              <span>출고 상세(원자재)</span>
             </v-col>
           </v-row>
           <v-card>
@@ -385,6 +399,7 @@ import { Component, Vue, Watch } from "vue-property-decorator";
   },
 })
 export default class ReleaseProduct extends Vue {
+  table_height: number = 0;
   max25chars: any = (v: any) => v.length <= 25 || "Input too long!";
   deadDate: boolean = false;
   startDate: boolean = false;
@@ -429,6 +444,13 @@ export default class ReleaseProduct extends Vue {
     this.search_dateType = cfg.data.search_dateType;
     this.search_textType = cfg.data.search_textType;
     this.productOption = Object.assign({}, gridCfg);
+  }
+  mounted() {
+    this.onResize();
+  }
+
+  onResize() {
+    this.table_height = window.innerHeight - 48 - 120 - 250 - 200 - 15;
   }
 
   dead_date_search(v: any) {

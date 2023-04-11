@@ -1,18 +1,19 @@
 <template>
-  <div class="warehousing">
+  <div class="warehousing" fluid v-resize="onResize">
     <v-container fluid>
-      <v-row>
+      <v-row no-gutters>
         <v-col class="ma-2" md="12">
-          <h4 class="searchbox-title">조회 조건</h4>
-          <v-card class="pa-3" height="140">
-            <v-row>
+          <span>조회 조건</span>
+          <v-card class="pa-3" height="110">
+            <v-row no-gutters>
               <v-col cols="10">
-                <v-row>
+                <v-row dense>
                   <v-col cols="3">
                     <v-text-field
                       label="작업지시서명 or 코드"
                       v-model="search_condition.jobOrder"
                       @keydown.enter="getCustomer"
+                      hide-details="false"
                       dense
                       solo
                       rounded
@@ -23,7 +24,10 @@
                       label="거래처명 or 코드"
                       v-model="search_condition.customer"
                       @keydown.enter="getCustomer"
+                      hide-details="false"
                       dense
+                      solo
+                      rounded
                     ></v-text-field>
                   </v-col>
                   <v-col cols="2">
@@ -31,7 +35,10 @@
                       label="작업지시서 담당자"
                       v-model="search_condition.jobOrderManager"
                       @keydown.enter="getCustomer"
+                      hide-details="false"
                       dense
+                      solo
+                      rounded
                     ></v-text-field>
                   </v-col>
                   <v-col cols="2">
@@ -42,6 +49,9 @@
                       item-text="name"
                       item-value="value"
                       dense
+                      solo
+                      rounded
+                      hide-details="false"
                     ></v-select>
                   </v-col>
                   <v-col cols="3">
@@ -50,10 +60,13 @@
                       v-model="search_condition.jobOrderMemo"
                       @keydown.enter="getCustomer"
                       dense
+                      solo
+                      rounded
+                      hide-details="false"
                     ></v-text-field>
                   </v-col>
                 </v-row>
-                <v-row>
+                <v-row dense>
                   <v-col cols="2">
                     <v-select
                       :items="search_dateType"
@@ -62,6 +75,8 @@
                       item-text="name"
                       item-value="value"
                       dense
+                      solo
+                      rounded
                     ></v-select>
                   </v-col>
                   <v-col md="2">
@@ -78,11 +93,13 @@
                         <v-text-field
                           v-model="search_condition.startDate"
                           label="시작일"
-                          prepend-icon="mdi-calendar"
                           readonly
                           v-bind="attrs"
                           v-on="on"
                           dense
+                          solo
+                          rounded
+                          hide-details="false"
                         ></v-text-field>
                       </template>
                       <v-date-picker
@@ -120,11 +137,13 @@
                         <v-text-field
                           v-model="search_condition.endDate"
                           label="종료일"
-                          prepend-icon="mdi-calendar"
                           readonly
                           v-bind="attrs"
                           v-on="on"
                           dense
+                          solo
+                          rounded
+                          hide-details="false"
                         ></v-text-field>
                       </template>
                       <v-date-picker
@@ -155,6 +174,8 @@
                       v-model="search_condition.releaseCode"
                       @keydown.enter="getCustomer"
                       dense
+                      solo
+                      rounded
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -169,20 +190,21 @@
             </v-row>
           </v-card>
         </v-col>
-        <v-col class="ma-2 mt-0" md="12">
-          <v-row class="mb-1">
-            <v-col md="2">
-              <h4 class="searchbox-title">출고 목록</h4>
+        <v-col class="ma-2" md="12">
+          <v-row class="mb-2">
+            <v-col md="2" align-self="center">
+              <span>출고 목록</span>
             </v-col>
-            <v-col class="text-right" offset-md="7" md="3">
-              <v-btn class="ml-1" small color="primary" @click="editItem"
+            <v-spacer></v-spacer>
+            <v-col class="text-right" cols="4">
+              <v-btn color="primary" @click="editItem"
                 ><v-icon left> mdi-book-account </v-icon>출고 요청</v-btn
               >
             </v-col>
           </v-row>
           <v-card>
             <v-data-table
-              height="315"
+              :height="table_height"
               :headers="headers"
               :items="statement_list"
               item-key="jobOrderId"
@@ -406,6 +428,7 @@ import { Component, Vue, Watch } from "vue-property-decorator";
   },
 })
 export default class ReleaseOrder extends Vue {
+  table_height: number = 0;
   startDate: boolean = false;
   endDate: boolean = false;
   releaseOrderOption: any = {};
@@ -462,6 +485,15 @@ export default class ReleaseOrder extends Vue {
   @Watch("releaseOrderOption.options", { deep: true })
   onReleaseOrderOption() {
     this.getCustomer();
+  }
+
+  mounted() {
+    this.onResize();
+  }
+
+  onResize() {
+    this.table_height = window.innerHeight - 48 - 134 - 200 - 200 - 35;
+    console.log("onResize", this.table_height);
   }
 
   created() {

@@ -7,16 +7,39 @@
           <v-card class="card-shadow pa-3" height="65">
             <v-row dense>
               <v-col cols="2">
-                <v-text-field label="코드 or 이름" v-model="search_condition.item" @keydown.enter="getCustomer" dense solo
-                  rounded elevation-0></v-text-field>
+                <v-text-field
+                  label="코드 or 이름"
+                  v-model="search_condition.item"
+                  @keydown.enter="getCustomer"
+                  dense
+                  solo
+                  rounded
+                  elevation-0
+                ></v-text-field>
               </v-col>
               <v-col cols="2">
-                <v-select label="타입" v-model="search_condition.type" :items="items_type_list" item-text="name"
-                  @change="getCustomer" dense solo rounded></v-select>
+                <v-select
+                  label="타입"
+                  v-model="search_condition.type"
+                  :items="items_type_list"
+                  item-text="name"
+                  @change="getCustomer"
+                  dense
+                  solo
+                  rounded
+                ></v-select>
               </v-col>
               <v-col cols="2">
-                <v-text-field label="규격 or 단위" solo rounded v-model="search_condition.option" @keydown.enter="getCustomer"
-                  dense solon rounded></v-text-field>
+                <v-text-field
+                  label="규격 or 단위"
+                  solo
+                  rounded
+                  v-model="search_condition.option"
+                  @keydown.enter="getCustomer"
+                  dense
+                  solon
+                  rounded
+                ></v-text-field>
               </v-col>
               <!-- <v-col cols="1">
                 <v-text-field
@@ -40,10 +63,6 @@
         </v-col>
       </v-row>
 
-
-
-
-
       <v-row no-gutters>
         <v-col class="ma-2" cols="12">
           <v-row dense class="mb-2">
@@ -53,18 +72,33 @@
             <v-spacer></v-spacer>
 
             <v-col class="text-right" cols="3">
-              <v-btn color="primary" @click="openModal" elevation="0"><v-icon left> mdi-book-account </v-icon>품목
-                추가</v-btn>
+              <v-btn color="primary" @click="openModal" elevation="0"
+                ><v-icon left> mdi-book-account </v-icon>품목 추가</v-btn
+              >
             </v-col>
           </v-row>
-            <v-card>
-            <v-data-table :height="table_height" :headers="headers" :items="customer_list" fixed-header multi-sort
-              @click:row="selectCustomer" :options.sync="itemListCfg.options"
-              :server-items-length="itemListCfg.totalCount" :loading="itemListCfg.loading"
-              :items-per-page="itemListCfg.itemsPerPage" :page.sync="itemListCfg.page"
-              @page-count="itemListCfg.pageCount = $event" hide-default-footer>
+          <v-card>
+            <v-data-table
+              :height="table_height"
+              :headers="headers"
+              :items="customer_list"
+              fixed-header
+              multi-sort
+              @click:row="selectCustomer"
+              :options.sync="itemListCfg.options"
+              :server-items-length="itemListCfg.totalCount"
+              :loading="itemListCfg.loading"
+              :items-per-page="itemListCfg.itemsPerPage"
+              :page.sync="itemListCfg.page"
+              @page-count="itemListCfg.pageCount = $event"
+              hide-default-footer
+            >
               <template v-slot:[`item.edit`]="{ item }">
-                <v-icon small class="mr-2" @click="editItem(item, (itemDialog_type = false))">
+                <v-icon
+                  small
+                  class="mr-2"
+                  @click="editItem(item, (itemDialog_type = false))"
+                >
                   mdi-pencil
                 </v-icon>
                 <v-icon small @click="deleteItem_pop(item)">
@@ -72,21 +106,43 @@
                 </v-icon>
               </template>
               <template v-slot:[`item.process`]="{ item }">
-                <v-btn v-show="item.type == '완제품'" color="primary" @click="openProcessModal(item)"
-                  elevation="0">공정관리</v-btn>
+                <v-btn
+                  v-show="item.type == '완제품'"
+                  color="primary"
+                  @click="openProcessModal(item)"
+                  elevation="0"
+                  >공정관리</v-btn
+                >
               </template>
             </v-data-table>
           </v-card>
-          <v-pagination circle v-model="itemListCfg.page" :length="itemListCfg.pageCount"></v-pagination>
+          <v-pagination
+            circle
+            v-model="itemListCfg.page"
+            :length="itemListCfg.pageCount"
+          ></v-pagination>
         </v-col>
       </v-row>
     </v-container>
     <!-- 거래처 생성 모달 -->
-    <ItemModal :open="itemDialog" :editedIndex="itemDialog_type" :editedData="editedCustomer" :storageData="storage_data"
-      :locationData="location_data" @changeStorage="getLocation" @closeModal="closeModal" @save-data="handlerSaveData">
+    <ItemModal
+      :open="itemDialog"
+      :editedIndex="itemDialog_type"
+      :editedData="editedCustomer"
+      :storageData="storage_data"
+      :locationData="location_data"
+      @changeStorage="getLocation"
+      @closeModal="closeModal"
+      @save-data="handlerSaveData"
+    >
     </ItemModal>
     <!-- 공정관리 모달 -->
-    <v-dialog v-model="processDialog" persistent max-width="1500px" transition="dialog-transition">
+    <v-dialog
+      v-model="processDialog"
+      persistent
+      max-width="1500px"
+      transition="dialog-transition"
+    >
       <v-card>
         <v-card-title primary-title>
           <span>공정관리</span>
@@ -96,9 +152,18 @@
         <v-card-text>
           <v-row>
             <v-col cols="5">
-              <v-data-table :headers="headers_process" :items="processList" height="500" hide-default-footer
-                class="elevation-1" item-key="processId" fixed-header single-select v-model="selectedProcess"
-                @click:row="getProcessDetail">
+              <v-data-table
+                :headers="headers_process"
+                :items="processList"
+                height="500"
+                hide-default-footer
+                class="elevation-1"
+                item-key="processId"
+                fixed-header
+                single-select
+                v-model="selectedProcess"
+                @click:row="getProcessDetail"
+              >
                 <template v-slot:[`item.delete`]="{ item }">
                   <v-icon small @click="deleteProcess(item)">
                     mdi-delete
@@ -110,9 +175,18 @@
               </v-data-table>
             </v-col>
             <v-col cols="7">
-              <v-data-table :headers="headers_processDetail" :items="processDetailList"
-                :items-per-page="processDetailList.length" fixed-header height="500" :loading="processDetail_loading"
-                loading-text="서버에 요청중...." no-data-text="데이터가 없습니다." hide-default-footer class="elevation-1">
+              <v-data-table
+                :headers="headers_processDetail"
+                :items="processDetailList"
+                :items-per-page="processDetailList.length"
+                fixed-header
+                height="500"
+                :loading="processDetail_loading"
+                loading-text="서버에 요청중...."
+                no-data-text="데이터가 없습니다."
+                hide-default-footer
+                class="elevation-1"
+              >
               </v-data-table>
             </v-col>
           </v-row>
@@ -123,7 +197,12 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="ProcessAddDialog" persistent max-width="450px" transition="dialog-transition">
+    <v-dialog
+      v-model="ProcessAddDialog"
+      persistent
+      max-width="450px"
+      transition="dialog-transition"
+    >
       <v-card>
         <v-card-title>
           <span>공정추가</span>
@@ -134,7 +213,11 @@
               <v-list-item-content>공정명</v-list-item-content>
             </v-col>
             <v-col cols="5">
-              <v-text-field dense clearable v-model="processData.name"></v-text-field>
+              <v-text-field
+                dense
+                clearable
+                v-model="processData.name"
+              ></v-text-field>
             </v-col>
           </v-row>
           <v-row dense>
@@ -142,7 +225,14 @@
               <v-list-item-content>버전</v-list-item-content>
             </v-col>
             <v-col cols="2">
-              <v-text-field dense type="number" step="0.1" min="1.0" v-model="processData.verson" reverse></v-text-field>
+              <v-text-field
+                dense
+                type="number"
+                step="0.1"
+                min="1.0"
+                v-model="processData.verson"
+                reverse
+              ></v-text-field>
             </v-col>
           </v-row>
           <v-row dense>
@@ -150,8 +240,13 @@
               <v-list-item-content>EXCEL</v-list-item-content>
             </v-col>
             <v-col cols="8">
-              <v-file-input ref="uploadProcess" dense accept="xlsx/*" label="공정파일"
-                v-model="processData.file"></v-file-input>
+              <v-file-input
+                ref="uploadProcess"
+                dense
+                accept="xlsx/*"
+                label="공정파일"
+                v-model="processData.file"
+              ></v-file-input>
             </v-col>
           </v-row>
         </v-card-text>
@@ -225,9 +320,6 @@ export default class Item extends Vue {
   //customer_list: object[] = [];
   customer_list: Array<string> = [];
 
-
-
-
   search_condition: any = {
     item: "",
     type: "",
@@ -252,6 +344,7 @@ export default class Item extends Vue {
     this.itemListCfg = Object.assign({}, gridCfg);
     this.items_type_list = Object.assign([], cfg.data.items_type_list);
     this.items_type = Object.assign([], cfg.data.items_type);
+    this.itemListCfg.options.itemsPerPage = 11;
   }
 
   mounted() {
@@ -510,16 +603,15 @@ export default class Item extends Vue {
       itemId: this.selectItemID,
     };
 
-    console.log('mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm', reqData)
-
+    console.log("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm", reqData);
 
     api.process
       .getProcessListbyItem(reqData)
       .then((res) => {
         console.log("getProcessListbyItem", res);
-        console.log('mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm11111', this.processList)
+        console.log("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm11111", this.processList);
         //this.processList = res.data.responseData;
-        console.log('mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm22222', this.processList)
+        console.log("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm22222", this.processList);
       })
       .catch((err) => {
         console.log("err", err);
