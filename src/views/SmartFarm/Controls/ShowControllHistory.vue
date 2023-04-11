@@ -148,7 +148,6 @@ export default {
           value: "equipmentName",
         },
         { text: "제어명칭", value: "targetValue" },
-
         { text: "수정전", value: "before" },
         { text: "수정후", value: "after" },
         { text: "수정시간", value: "createdDate" },

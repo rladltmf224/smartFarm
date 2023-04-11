@@ -15,6 +15,7 @@ module.exports = defineConfig({
         //target: "http://192.168.0.84:8080", // 박설 연구원
         //target: "http://192.168.0.18:8080", // 노현종 선임
         //target: "http://192.168.0.126:9090", // 정호윤 연구원
+        //target: "http://192.168.0.193:8081", // 대일책임님
         changeOrigin: true,
       },
     },

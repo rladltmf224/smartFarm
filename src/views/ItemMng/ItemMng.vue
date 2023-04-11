@@ -57,7 +57,7 @@
                 추가</v-btn>
             </v-col>
           </v-row>
-          <v-card>
+            <v-card>
             <v-data-table :height="table_height" :headers="headers" :items="customer_list" fixed-header multi-sort
               @click:row="selectCustomer" :options.sync="itemListCfg.options"
               :server-items-length="itemListCfg.totalCount" :loading="itemListCfg.loading"
