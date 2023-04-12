@@ -51,7 +51,6 @@
               multi-sort
               single-select
               fixed-header
-              dense
               disable-items-per-page
               @click:row="selectCustomer"
               :options.sync="warehousingListCfg.options"
@@ -61,6 +60,8 @@
               :page.sync="warehousingListCfg.page"
               @page-count="warehousingListCfg.pageCount = $event"
               hide-default-footer
+              loading-text="서버에 요청중...."
+              no-data-text="데이터가 없습니다."
             >
               <template v-slot:item.code="{ item }">
                 <v-btn
@@ -96,14 +97,12 @@
                 </v-btn>
               </template>
             </v-data-table>
-            <v-col>
-              <v-pagination
-                circle
-                v-model="warehousingListCfg.page"
-                :length="warehousingListCfg.pageCount"
-              ></v-pagination>
-            </v-col>
           </v-card>
+          <v-pagination
+            circle
+            v-model="warehousingListCfg.page"
+            :length="warehousingListCfg.pageCount"
+          ></v-pagination>
         </v-col>
         <v-col class="ma-2" md="12">
           <v-row dense class="mb-2">
@@ -120,7 +119,7 @@
               item-key="barcode"
               multi-sort
               hide-default-footer
-              dense
+              no-data-text="데이터가 없습니다."
             >
               <template v-slot:item.orderCount="props">
                 {{ props.item.orderCount | comma }}

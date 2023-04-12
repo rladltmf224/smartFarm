@@ -93,6 +93,7 @@
                   single-select
                   @click:row="selectFacility"
                   hide-default-footer
+                  no-data-text="데이터가 없습니다."
                 >
                   <template v-slot:item.edit="{ item }">
                     <v-icon small class="mr-2" @click="editFacility(item)">
@@ -147,6 +148,7 @@
                   show-select
                   :expanded.sync="expanded"
                   hide-default-footer
+                  no-data-text="데이터가 없습니다."
                 >
                   <template v-slot:item.name="props">
                     <v-edit-dialog :return-value.sync="props.item.name">
@@ -216,10 +218,6 @@
                     >
                       {{ item.jobOrderId == null ? "사용가능" : "사용중" }}
                     </v-btn>
-                  </template>
-
-                  <template v-slot:no-data>
-                    <h5>데이터가 없습니다.</h5>
                   </template>
                 </v-data-table>
               </v-card>

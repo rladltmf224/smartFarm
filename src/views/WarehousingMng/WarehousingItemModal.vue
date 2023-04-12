@@ -74,6 +74,7 @@
                 show-expand
                 multi-sort
                 dense
+                no-data-text="데이터가 없습니다."
               >
                 <template v-slot:item.orderCount="props">
                   <v-edit-dialog

@@ -62,6 +62,8 @@
               :page.sync="productListOption.page"
               @page-count="productListOption.pageCount = $event"
               hide-default-footer
+              loading-text="서버에 요청중...."
+              no-data-text="데이터가 없습니다."
             >
               <template v-slot:item.code="{ item }">
                 <v-btn
@@ -97,14 +99,12 @@
                 </v-btn>
               </template>
             </v-data-table>
-            <v-col>
-              <v-pagination
-                circle
-                v-model="productListOption.page"
-                :length="productListOption.pageCount"
-              ></v-pagination
-            ></v-col>
           </v-card>
+          <v-pagination
+            circle
+            v-model="productListOption.page"
+            :length="productListOption.pageCount"
+          ></v-pagination>
         </v-col>
         <v-col class="ma-2" md="12">
           <v-row dense class="mb-2">
@@ -123,6 +123,7 @@
               hide-default-footer
               multi-sort
               dense
+              no-data-text="데이터가 없습니다."
             >
               <template v-slot:item.lot="{ item }">
                 <v-btn

@@ -184,6 +184,8 @@
               :page.sync="productOption.page"
               @page-count="productOption.pageCount = $event"
               hide-default-footer
+              loading-text="서버에 요청중...."
+              no-data-text="데이터가 없습니다."
             >
               <template v-slot:[`item.status`]="{ item }">
                 <v-btn
@@ -251,6 +253,7 @@
               item-key="barcode"
               hide-default-footer
               multi-sort
+              no-data-text="데이터가 없습니다."
             >
               <template v-slot:[`item.count`]="props">
                 <v-edit-dialog :return-value.sync="props.item.count">
