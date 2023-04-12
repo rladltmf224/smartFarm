@@ -62,6 +62,8 @@
                   :page.sync="storageListCfg.page"
                   @page-count="storageListCfg.pageCount = $event"
                   hide-default-footer
+                  loading-text="서버에 요청중...."
+                  no-data-text="데이터가 없습니다."
                 >
                   <template v-slot:item.edit="{ item }">
                     <v-icon small class="mr-2" @click="editItem(item)">
@@ -141,6 +143,8 @@
                   :page.sync="locationListCfg.page"
                   @page-count="locationListCfg.pageCount = $event"
                   hide-default-footer
+                  loading-text="서버에 요청중...."
+                  no-data-text="데이터가 없습니다."
                 >
                   <template v-slot:item.storageArea="props">
                     <v-text-field

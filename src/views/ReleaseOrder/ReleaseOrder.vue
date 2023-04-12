@@ -220,6 +220,8 @@
               :page.sync="releaseOrderOption.page"
               @page-count="releaseOrderOption.pageCount = $event"
               hide-default-footer
+              loading-text="서버에 요청중...."
+              no-data-text="데이터가 없습니다."
             >
               <template v-slot:[`item.jobOrderStatus`]="{ item }">
                 <v-btn
@@ -309,6 +311,7 @@
                   single-select
                   dense
                   hide-default-footer
+                  no-data-text="데이터가 없습니다."
                 >
                 </v-data-table>
               </v-card>
@@ -326,6 +329,7 @@
                   single-select
                   dense
                   hide-default-footer
+                  no-data-text="데이터가 없습니다."
                 >
                 </v-data-table>
               </v-card>
@@ -367,6 +371,7 @@
                 multi-sort
                 show-select
                 dense
+                no-data-text="데이터가 없습니다."
               >
                 <template v-slot:item.reversalCount="props">
                   <v-edit-dialog
