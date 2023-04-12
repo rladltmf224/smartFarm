@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex flex-column align-center mx-3 my-2" style="width: 70px">
+  <div class="d-flex flex-column align-center mx-3 my-2" style="width: 63px">
     <v-chip small :color="whatColor()">
       <strong>{{ title }}</strong>
     </v-chip>

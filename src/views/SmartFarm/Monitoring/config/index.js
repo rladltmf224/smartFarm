@@ -3,6 +3,7 @@ export default {
     hearer_img: [
       { text: "파일명", value: "filename" },
       { text: "생성일자", value: "createdDate" },
+      { text: "보기", value: "popup" },
     ],
   },
   data: {

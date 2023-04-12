@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <img width="400" height="400" />
+    <script type="text/javascript">
+      var Request = function () {
+        this.getParameter = function (name) {
+          var rtnval = "";
+          var nowAddress = unescape(location.href);
+          var parameters = nowAddress
+            .slice(nowAddress.indexOf("?") + 1, nowAddress.length)
+            .split("&");
+          for (var i = 0; i < parameters.length; i++) {
+            var varName = parameters[i].split("=")[0];
+            if (varName.toUpperCase() == name.toUpperCase()) {
+              rtnval = parameters[i].split("=")[1];
+              break;
+            }
+          }
+          return rtnval;
+        };
+      };
+      var request = new Request();
+    </script>
+
+    <script type="text/javascript">
+      var paramValue = request.getParameter("src");
+      var paramValue_name = request.getParameter("name");
+      document.querySelector("img").src =
+        "/api/capture/load?file=" + paramValue_name.substr(0, 14);
+      document.title = paramValue_name;
+    </script>
+  </body>
+</html>
