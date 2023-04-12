@@ -126,7 +126,7 @@
       </v-card>
     </v-dialog>
     <!-- 생육조사 갤러리 -->
-    <v-dialog v-model="imgAlbumModal" persistent max-width="1400">
+    <v-dialog v-model="imgAlbumModal" persistent max-width="800">
       <v-card>
         <v-card-title class="headline"
           ><span>{{ imgList_title }} </span> <v-spacer></v-spacer>
@@ -136,8 +136,7 @@
           <v-row>
             <v-col cols="12">
               <v-row>
-                <v-col cols="2"
-                  >``
+                <v-col cols="4">
                   <v-menu
                     ref="startDate"
                     v-model="startDate"
@@ -181,7 +180,7 @@
                     </v-date-picker>
                   </v-menu>
                 </v-col>
-                <v-col cols="2">
+                <v-col cols="4">
                   <v-menu
                     ref="endDate"
                     v-model="endDate"
@@ -225,14 +224,15 @@
                     </v-date-picker>
                   </v-menu>
                 </v-col>
-                <v-col cols="2" align-self="end">
+                <v-spacer></v-spacer>
+                <v-col cols="2" class="text-right">
                   <v-btn color="success" large @click="getImgList" elevation="0"
                     >조회</v-btn
                   >
                 </v-col>
               </v-row>
             </v-col>
-            <v-col cols="4">
+            <v-col cols="12">
               <v-card class="card-shadow">
                 <v-data-table
                   :headers="headers_img"
@@ -250,6 +250,17 @@
                   @page-count="imgOption.pageCount = $event"
                   hide-default-footer
                 >
+                  <template v-slot:item.popup="{ item }">
+                    <v-btn
+                      color="info"
+                      small
+                      @click="openImgPopup(item)"
+                      dark
+                      depressed
+                    >
+                      <v-icon> mdi-card-search-outline </v-icon>
+                    </v-btn>
+                  </template>
                 </v-data-table>
               </v-card>
               <v-pagination
@@ -257,43 +268,6 @@
                 v-model="imgOption.page"
                 :length="imgOption.pageCount"
               ></v-pagination>
-            </v-col>
-            <v-col cols="8">
-              <v-card height="610" class="card-shadow">
-                <v-card-title>
-                  <span>{{ selectImgData.filename }}</span>
-                </v-card-title>
-                <v-card-text primary-title>
-                  <div v-if="selectImgData.facilityName != undefined">
-                    <v-row dense>
-                      <v-col cols="12">
-                        <span> 장소 : {{ selectImgData.facilityName }} </span>
-                        <span>
-                          장비상태 : {{ selectImgData.equipmentName }}({{
-                            selectImgData.equipmentStatus
-                          }})</span
-                        >
-                      </v-col>
-
-                      <v-col cols="12" align-self="center">
-                        <img
-                          class="img-align"
-                          :src="selectImgData.url"
-                          width="280"
-                        />
-                      </v-col>
-                      <v-col cols="12">
-                        <span></span>
-                      </v-col>
-                    </v-row>
-                  </div>
-                  <div v-else>
-                    <div class="text-center">
-                      <h3>이미지를 선택해주세요</h3>
-                    </div>
-                  </div>
-                </v-card-text>
-              </v-card>
             </v-col>
           </v-row>
         </v-card-text>
@@ -309,11 +283,8 @@
 import EquipStatusChip from "./EquipStatusChip.vue";
 import EnvStatusChip from "./EnvStatusChip.vue";
 import { gridCfg } from "@/util/config";
-import { io } from "socket.io-client";
 import * as api from "@/api";
 import cfg from "./config";
-//import JSMpeg from "@cycjimmy/jsmpeg-player";
-// import { jsmpeg } from "jsmpeg";
 
 export default {
   name: "RoomInfo",
@@ -344,6 +315,8 @@ export default {
       stream2: null,
       socket1: null,
       socket2: null,
+      popCnt: 0,
+      popArr: [],
     };
   },
   props: ["roomData"],
@@ -374,6 +347,9 @@ export default {
     this.imgOption = Object.assign({}, gridCfg);
     this.imgOption.options.itemsPerPage = 11;
   },
+  beforeDestroy() {
+    console.log("Start beforeDestroy");
+  },
   methods: {
     s_date_search(v) {
       this.search_condition.startDate = v;
@@ -397,6 +373,7 @@ export default {
     openImgAlbum(data) {
       this.imgAlbumModal = true;
       this.facilityData = data;
+      this.getImgList();
 
       //this.getImgList();
     },
@@ -438,7 +415,7 @@ export default {
       this.streamModal1 = true;
 
       let canvas1 = document.querySelector("#image1");
-      this.socket1 = new WebSocket("ws://192.168.0.61:9998");
+      this.socket1 = new WebSocket("ws://14.47.96.237:5100");
       this.stream1 = new jsmpeg(this.socket1, {
         canvas: canvas1,
       });
@@ -452,7 +429,7 @@ export default {
 
       let canvas2 = document.querySelector("#image2");
 
-      this.socket2 = new WebSocket("ws://192.168.0.61:9997");
+      this.socket2 = new WebSocket("ws://14.47.96.237:5101");
       this.stream2 = new jsmpeg(this.socket2, {
         canvas: canvas2,
       });
@@ -466,6 +443,48 @@ export default {
     closeModal2() {
       this.streamModal2 = false;
       this.socket2.close();
+    },
+    openImgPopup(data) {
+      let width = 430;
+      let height = 430;
+
+      let uri = data.url;
+      let left = screen.width ? (screen.width - width) / 2 : 0;
+      let top = screen.height ? (screen.height - height) / 2 : 0;
+
+      let attr = `top=${top}, left=${left}, width=${width}, height=${height}, resizable=no,status=no `;
+
+      // window.open(
+      //   uri,
+      //   `${data.filename}`,
+      //   this.getPopOptions2(width, height, this.popCnt)
+      // );
+
+      window.open(
+        `ImgPopup.html?src=${data.url}&name=${data.filename}`,
+        `${data.filename}`,
+        this.getPopOptions2(width, height, this.popCnt)
+      );
+      this.popCnt++;
+    },
+    getPopOptions2(width, height, num) {
+      let rtnVal;
+
+      let nWidth = width;
+      let nHeight = height;
+      let nLeft = num * 30;
+      let nTop = num * 30;
+
+      let strOption = "";
+      strOption += "left=" + nLeft + ",";
+      strOption += "top=" + nTop + ",";
+      strOption += "width=" + nWidth + ",";
+      strOption += "height=" + nHeight + ",";
+      strOption +=
+        "toolbar=no, status=no, menubar=no, resizable=yes, location=no scrollbars=yes";
+
+      rtnVal = strOption;
+      return rtnVal;
     },
   },
 };
