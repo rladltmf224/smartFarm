@@ -43,7 +43,7 @@
                   return-object
                   item-text="storageName"
                   item-value="storageId"
-                  :items="totalStorage_list_prop"
+                  :items="totalStorage_list"
                   label="변경 할 창고"
                   dense
                   solo
@@ -97,7 +97,7 @@ export default class RawmaterialStockStorage extends Vue {
     original_locationName: string;
     original_storageId: number | "";
   };
-  @Prop({ required: true }) totalStorage_list: object[] = [];
+  @Prop({ required: true }) totalStorage_list: object[];
 
   get totalStorage_list_prop() {
     return this.totalStorage_list;
