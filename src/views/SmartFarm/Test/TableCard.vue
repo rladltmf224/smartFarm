@@ -443,7 +443,7 @@ export default class TableCard extends Vue {
         const view: any = new Uint8Array(arraybuffer);
         for (let i = 0; i < image_data.length; i++) {
             view[i] = image_data.charCodeAt(i) & 0xff;
-            // charCodeAt() 메서드는 주어진 인덱스에 대한 UTF-16 코드를코드를 나타내는 0부터 65535 사이의 정수를 반환
+            // charCodeAt() 메서드는 주어진 인덱스에 대한 UTF-16 코드를코드를 나타내는 0부터 65535 사이의 정수를 반환n
             // 비트연산자 & 와 0xff(255) 값은 숫자를 양수로 표현하기 위한 설정
         }
         const blob: any = new Blob([arraybuffer], { type: contentType }); // base64 -> blob

@@ -1,10 +1,7 @@
 import AuthAPI from "../api/AuthAPI";
 
 export default {
-  alarmList: (params) =>
-    AuthAPI.get("/api/push/alimtalk/alarmlist", {
-      params: params,
-    }),
+  alarmList: (params) => AuthAPI.get("/api/push/alimtalk/alarmlist" + params),
   alarmCheck: (params) => {
     let form = new FormData();
 

@@ -62,8 +62,9 @@
             </v-col>
           </v-row>
           <v-card>
-            <v-data-table :height="table_height" v-model:page="page" :headers="headers" :items="cloneItems"
-              :items-per-page="itemsPerPage" hide-default-footer class="elevation-1" @update:options="options = $event">
+            <v-data-table :loading="loading" dense :height="table_height" :headers="headers" :items="cloneItems"
+              multi-sort :items-per-page="itemsPerPage" hide-default-footer @update:options="options = $event"
+              @click:header="onHeaderClick">
               <template v-slot:bottom>
                 <div class="text-center pt-2">
                   <v-pagination v-model="page" :length="options.pageCount"></v-pagination>
@@ -79,15 +80,13 @@
               </template>
               <template v-slot:item.checkedDate="{ item }">
                 <span v-if="item.checkedDate" v-html="item.checkedDate"></span>
-                <v-btn v-else color="primary" @click="check(item.id)">
+                <v-btn v-else color="primary" elevation="0" @click="check(item.id)">
                   조치
                 </v-btn>
               </template>
             </v-data-table>
           </v-card>
-          <v-pagination v-if="pagination.total >= pagination.rowsPerPage" v-model="pagination.page" :length="pages" circle
-            @input="onPageChange"></v-pagination>
-
+          <v-pagination v-model="pagination.page" :length="pages" circle @input="onPageChange"></v-pagination>
         </v-col>
       </v-row>
     </v-container>
@@ -98,7 +97,7 @@
 import * as api from "@/api";
 import { gridCfg } from "@/util/config";
 import { Component, Vue, Watch } from "vue-property-decorator";
-import _ from "lodash";
+import _, { clone } from "lodash";
 
 @Component({
   components: {},
@@ -113,95 +112,112 @@ export default class AlarmHistory extends Vue {
   };
   headers: any[] = [
     { text: "발생일시", value: "createdDate" },
-    { text: "위치", value: "room" },
-    { text: "제목", value: "title" },
-    { text: "설정범위", value: "setRange" },
-    { text: "값", value: "value" },
-    { text: "타입", value: "type" },
-    { text: "알람횟수", value: "num" },
-    { text: "조치일시", value: "checkedDate" },
-    { text: "조치자", value: "checker" },
+    { text: "위치", value: "room", sortable: false },
+    { text: "제목", value: "title", sortable: false },
+    { text: "설정범위", value: "setRange", sortable: false },
+    { text: "값", value: "value", sortable: false },
+    { text: "타입", value: "type", sortable: false },
+    { text: "알람횟수", value: "num", sortable: false },
+    { text: "조치일시", value: "checkedDate", sortable: false },
+    { text: "조치자", value: "checker", sortable: false },
   ];
   alarmList: any[] = [];
   table_data: any[] = []; // 테이블에 보여줄 데이터
-  //test: string = ''; //테스트용
-
   options: any = {
     pageCount: 1,
   }
   page: number = 1
-  itemsPerPage: number = 12
+  itemsPerPage: number = 15
   pagination: any = {
     page: 1,
     total: 0,
-    rowsPerPage: 14
+    rowsPerPage: 15
   }
   table_height: number = 0;
-
-
+  sortState: any = [];
+  loading: boolean = false;
   created() {
     //this.options = Object.assign({}, gridCfg);
   }
 
 
 
-  mounted() {
-    this.onResize();
-    this.getData();
-  }
-
-  onResize() {
-    this.table_height = window.innerHeight - 48 - 129 - 44 - 44 - 20;
-    console.log("onResize", this.table_height);
-  }
-
-  onPageChange(event: any) { //클릭한 페이지의 숫자를 콘솔에띄우기
-    console.log(event)
-  }
-
-  get pages() {
-    return Math.ceil(this.pagination.total / this.pagination.rowsPerPage)
-  }
 
 
-  get cloneItems() { //table_data를 cloneItems로 변환
-    var clone = JSON.parse(JSON.stringify(this.table_data));
-    var startFrom = (this.pagination.page * this.pagination.rowsPerPage) - this.pagination.rowsPerPage;
-    return clone.splice(startFrom, this.pagination.rowsPerPage);
-  }
+  @Watch('options', { deep: true })
+  changeOptions() {
+    let header = this.options.sortBy;
+    let value = this.options.sortDesc;
 
+    let sortState = header.map((columnName: any, index: any) => {
+      return { ascending: value[index], columnName };
+    });
 
-  s_date_search(v: any) {
-    this.search_condition.startDate = v;
-    this.startDate = false;
-    let startEL: any = this.$refs.startDate;
-    startEL.save(v);
-  }
+    this.sortState = sortState;
+
+    this.getData()
 
 
 
-  e_date_search(v: any) {
-    this.search_condition.endDate = v;
-    this.endDate = false;
-    let endEL: any = this.$refs.endDate;
-    endEL.save(v);
+    /*     let obj: any = {}; //파라미터로 넣을 객체 만들기
+    
+        for (let i = 0; i < header.length; i++) { //선택된 header만큼 반복해라
+          obj[`sort${i + 1}`] = value[i] ? `${header[i]},desc` : `${header[i]},asc`;
+        }
+     */
+    //obj객체의 키가sort1,sort2..이렇게1씩증가함.
+    //header의 값이 참이면 desc고 거짓이면 asc라고 값을 넣음.
+
+
+    // this.getData()
+
   }
   getData() {
+    this.loading = true;
+    const { sortBy, sortDesc } = this.options;
     let local: any = localStorage.getItem("userId");
     let userId = JSON.parse(local) || "";
+    let param: any = {
+      userId: userId,
+      startDate: this.search_condition.startDate,
+      endDate: this.search_condition.endDate,
+      getAll: true,
+      page: this.pagination.page,
+      size: this.pagination.rowsPerPage,
+    }
+
+
+
+    let str: any = JSON.stringify(param)
+    str = str.slice(0, -1);
+    str = str.substring(1);
+
+
+
+    let queryString = "?";
+    queryString += "userId=" + userId;
+    queryString += "&page=" + this.pagination.page;
+    queryString += "&size=20";
+    queryString += "&startDate=" + this.search_condition.startDate;
+    queryString += "&endDate=" + this.search_condition.endDate;
+
+
+    let sortState = this.sortState;
+    sortState.forEach((state: any) => {
+      queryString += "&sort=" + state.columnName + ',' + (state.ascending ? "asc" : "desc")
+    });
+
+
     api.alarm
-      .alarmList({
-        userId: userId,
-        startDate: this.search_condition.startDate,
-        endDate: this.search_condition.endDate,
-        getAll: true,
-        page: this.options.page,
-        size: this.options.size,
-      })
+      .alarmList(
+        queryString
+      )
       .then((response) => {
-        console.log("조회후 데이터", response);
+        this.loading = false;
         this.alarmList = _.map(response.data.data.content, "alarmProcess");
+        console.log("1111111111111", this.alarmList);
         this.table_data = _.uniqBy(this.alarmList, "id");
+        console.log("22222222222", this.table_data);
         for (let i = 0; i < this.table_data.length; i++) {
           let content = this.table_data[i].content.split("\n");
           this.table_data[i]["room"] = content[2].replace("room : ", "");
@@ -249,6 +265,69 @@ export default class AlarmHistory extends Vue {
       });
     this.options.totalCount = 3;
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  mounted() {
+    this.onResize();
+    this.getData();
+  }
+
+
+
+  onHeaderClick() {
+    console.log('우앵')
+  }
+
+
+  onResize() {
+    this.table_height = window.innerHeight - 48 - 129 - 44 - 44 - 20;
+    console.log("onResize", this.table_height);
+  }
+
+  onPageChange(event: any) { //클릭한 페이지의 숫자를 콘솔에띄우기
+    console.log(event)
+  }
+
+  get pages() {
+    return Math.ceil(this.pagination.total / this.pagination.rowsPerPage)
+  }
+
+
+  get cloneItems() { //table_data를 cloneItems로 변환
+    var clone = JSON.parse(JSON.stringify(this.table_data));
+    var startFrom = (this.pagination.page * this.pagination.rowsPerPage) - this.pagination.rowsPerPage;
+    return clone.splice(startFrom, this.pagination.rowsPerPage);
+  }
+
+
+  s_date_search(v: any) {
+    this.search_condition.startDate = v;
+    this.startDate = false;
+    let startEL: any = this.$refs.startDate;
+    startEL.save(v);
+  }
+
+
+
+  e_date_search(v: any) {
+    this.search_condition.endDate = v;
+    this.endDate = false;
+    let endEL: any = this.$refs.endDate;
+    endEL.save(v);
+  }
+
   check(id: number): void {
     api.alarm
       .alarmCheck({ id: id })
