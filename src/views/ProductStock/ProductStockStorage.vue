@@ -98,7 +98,7 @@ export default class ProductStockStorage extends Vue {
     original_locationName: string;
     original_storageId: number | "";
   };
-  @Prop({ required: true }) totalStorage_list: object[] = [];
+  @Prop({ required: true }) totalStorage_list: object[];
 
   get totalStorage_list_prop() {
     return this.totalStorage_list;
