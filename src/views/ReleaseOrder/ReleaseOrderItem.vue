@@ -81,9 +81,9 @@ export default class ReleaseOrderItem extends Vue {
   txtSelectCount: number = 0;
   selected_data: object[] = [];
   @Prop({ required: true }) open: boolean = false;
-  @Prop({ required: true }) selected: object[] = [];
+  @Prop({ required: true }) selected: object[];
   @Prop({ required: true }) txtReleaseCount: number = 0;
-  @Prop({ required: true }) raw_detail_list: object[] = [];
+  @Prop({ required: true }) raw_detail_list: object[];
 
   get headers_raw_add() {
     return cfg.header.headers_raw_add;
