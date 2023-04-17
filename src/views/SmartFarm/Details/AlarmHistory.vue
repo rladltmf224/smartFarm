@@ -93,6 +93,7 @@ import * as api from "@/api";
 import { gridCfg } from "@/util/config";
 import { Component, Vue, Watch } from "vue-property-decorator";
 import _, { clone } from "lodash";
+import { stringify } from "querystring";
 
 
 @Component({
@@ -113,7 +114,6 @@ export default class AlarmHistory extends Vue {
     { text: "설정범위", value: "setRange", sortable: false },
     { text: "값", value: "value", sortable: false },
     { text: "타입", value: "type", sortable: false },
-    // { text: "알람횟수", value: "num", sortable: false },
     { text: "조치일시", value: "checkedDate", sortable: false },
     { text: "조치자", value: "checker", sortable: false },
   ];
@@ -126,7 +126,7 @@ export default class AlarmHistory extends Vue {
   itemsPerPage: number = 15
   table_height: number = 0;
   sortState: any = [];
-
+  queryString: string = '';
   created() {
     this.options = Object.assign({}, gridCfg);
   }
@@ -147,94 +147,20 @@ export default class AlarmHistory extends Vue {
 
 
   }
-  getDataa() {
-    const { sortBy, sortDesc, page, itemsPerPage } = this.options;
-    let local: any = localStorage.getItem("userId");
-    let userId = JSON.parse(local) || "";
-    let param: any = {
-      userId: userId,
-      startDate: this.search_condition.startDate,
-      endDate: this.search_condition.endDate,
-      getAll: true,
-      page: this.options.page,
-      size: this.options.itemsPerPage,
-    }
-
-
-    let str: any = JSON.stringify(param)
-    str = str.slice(0, -1);
-    str = str.substring(1);
-
-    let pageNum = this.options.page - 1
-
-
-    let queryString = "?";
-    queryString += "userId=" + userId;
-    queryString += "&page=" + pageNum;
-    queryString += "&size=" + this.options.itemsPerPage;
-    queryString += "&startDate=" + this.search_condition.startDate;
-    queryString += "&endDate=" + this.search_condition.endDate;
-
-
-    let sortState = this.sortState;
-    this.sortState.forEach((state: any) => {
-      queryString += "&sort=" + state.columnName + ',' + (state.ascending ? "asc" : "desc")
-    });
-    api.alarm
-      .alarmList(
-        queryString
-      )
-      .then((response) => {
-        this.options.pageCount = response.data.data.totalPages;
-        this.table_data = _.map(response.data.data.content, "alarmProcess"); //여기가 문제같음.
-
-
-
-
-
-
-
-        //this.table_data = _.uniqBy(this.alarmList, "id");
-        for (let i = 0; i < this.table_data.length; i++) {
-          let content = this.table_data[i].content.split("\n");
-          this.table_data[i]["room"] = content[2].replace("room : ", "");
-          this.table_data[i]["title"] = content[3].replace("알림 : ", "");
-          this.table_data[i]["setRange"] = content[4].replace(
-            "설정범위 : ",
-            ""
-          );
-          this.table_data[i]["value"] =
-            content[6].replace("- ", "") +
-            "<br>" +
-            content[7].replace("- ", "");
-          this.table_data[i]["num"] = _.filter(this.alarmList, {
-            id: this.table_data[i].id,
-          }).length;
-
-          //발생일시를 가공
-          let date = this.table_data[i]["createdDate"]
-          this.table_data[i]["createdDate"] = `${date[0]}-${(date[1] < 10 ? '0' : '') + date[1]}-${(date[2] < 10 ? '0' : '') + date[2]} ${(date[3] < 10 ? '0' : '') + date[3]}:${(date[4] < 10 ? '0' : '') + date[4]}:${(date[5] < 10 ? '0' : '') + date[5]}`;
-          //조치일시를 가공
-          let checkedDate = this.table_data[i].checkedDate
-          if (this.table_data[i].checkedDate) {
-            this.table_data[i]["checkedDate"] = `${checkedDate[0]}-${(date[1] < 10 ? '0' : '') + checkedDate[1]}-${(checkedDate[2] < 10 ? '0' : '') + checkedDate[2]} ${(checkedDate[3] < 10 ? '0' : '') + checkedDate[3]}:${(checkedDate[4] < 10 ? '0' : '') + checkedDate[4]}:${(date[5] < 10 ? '0' : '') + checkedDate[5]}`;
-          }
-
-
-        }
-
-
-        //table_data의 length만큼 새로운key와 value추가
-        for (let k = 0; k < this.table_data.length; k++) {
-          this.table_data[k].newKey = k
-        }
-        console.log(this.table_data);
-
-
-
-      });
-  }
   getData() {
+    this.makeParam()
+    api.alarm
+      .alarmList(
+        this.queryString
+      )
+      .then((response) => {
+        this.options.pageCount = response.data.data.totalPages;
+        this.table_data = response.data.data.content
+        this.setContentString()
+        this.setContentDate()
+      });
+  }
+  makeParam() {
     const { sortBy, sortDesc, page, itemsPerPage } = this.options;
     let local: any = localStorage.getItem("userId");
     let userId = JSON.parse(local) || "";
@@ -248,14 +174,14 @@ export default class AlarmHistory extends Vue {
     }
 
 
-    let str: any = JSON.stringify(param)
+    let str: any = JSON.stringify(param) // param에서 '{','}'를 자른다.
     str = str.slice(0, -1);
     str = str.substring(1);
 
     let pageNum = this.options.page - 1
 
 
-    let queryString = "?";
+    let queryString = "?"; //파라미터를 쿼리스트링파라미터로 바꾸는 과정 
     queryString += "userId=" + userId;
     queryString += "&page=" + pageNum;
     queryString += "&size=" + this.options.itemsPerPage;
@@ -263,103 +189,42 @@ export default class AlarmHistory extends Vue {
     queryString += "&endDate=" + this.search_condition.endDate;
 
 
-    let sortState = this.sortState;
-    this.sortState.forEach((state: any) => {
+    this.sortState.forEach((state: any) => { //sortState 배열에서 참이면 asc 거짓이면 desc
       queryString += "&sort=" + state.columnName + ',' + (state.ascending ? "asc" : "desc")
     });
-
-    api.alarm
-      .alarmList(
-        queryString
-      )
-      .then((response) => {
-        this.options.pageCount = response.data.data.totalPages;
-        console.log(response.data.data.content)
-
-
-
-        this.table_data = response.data.data.content
-        console.log('가공한 테이블데이타', this.table_data)
-        for (let i = 0; i < this.table_data.length; i++) {
-          let content = this.table_data[i].content.split("\n");
-          this.table_data[i]["room"] = content[2].replace("room : ", "");
-          this.table_data[i]["title"] = content[3].replace("알림 : ", "");
-          this.table_data[i]["setRange"] = content[4].replace(
-            "설정범위 : ",
-            ""
-          );
-          this.table_data[i]["value"] =
-            content[6].replace("- ", "") +
-            "<br>" +
-            content[7].replace("- ", "");
-          this.table_data[i]["num"] = _.filter(this.alarmList, {
-            id: this.table_data[i].id,
-          }).length;
-
-          //발생일시를 가공
-          let date = this.table_data[i]["createdDate"]
-          this.table_data[i]["createdDate"] = `${date[0]}-${(date[1] < 10 ? '0' : '') + date[1]}-${(date[2] < 10 ? '0' : '') + date[2]} ${(date[3] < 10 ? '0' : '') + date[3]}:${(date[4] < 10 ? '0' : '') + date[4]}:${(date[5] < 10 ? '0' : '') + date[5]}`;
-          //조치일시를 가공
-          let checkedDate = this.table_data[i].checkedDate
-          if (this.table_data[i].checkedDate) {
-            this.table_data[i]["checkedDate"] = `${checkedDate[0]}-${(date[1] < 10 ? '0' : '') + checkedDate[1]}-${(checkedDate[2] < 10 ? '0' : '') + checkedDate[2]} ${(checkedDate[3] < 10 ? '0' : '') + checkedDate[3]}:${(checkedDate[4] < 10 ? '0' : '') + checkedDate[4]}:${(date[5] < 10 ? '0' : '') + checkedDate[5]}`;
-          }
-
-
-        }
-
-
-        /* 
-        
-        
-        
-        
-        
-        
-                //this.table_data = _.uniqBy(this.alarmList, "id");
-                for (let i = 0; i < this.table_data.length; i++) {
-                  let content = this.table_data[i].content.split("\n");
-                  this.table_data[i]["room"] = content[2].replace("room : ", "");
-                  this.table_data[i]["title"] = content[3].replace("알림 : ", "");
-                  this.table_data[i]["setRange"] = content[4].replace(
-                    "설정범위 : ",
-                    ""
-                  );
-                  this.table_data[i]["value"] =
-                    content[6].replace("- ", "") +
-                    "<br>" +
-                    content[7].replace("- ", "");
-                  this.table_data[i]["num"] = _.filter(this.alarmList, {
-                    id: this.table_data[i].id,
-                  }).length;
-        
-                  //발생일시를 가공
-                  let date = this.table_data[i]["createdDate"]
-                  this.table_data[i]["createdDate"] = `${date[0]}-${(date[1] < 10 ? '0' : '') + date[1]}-${(date[2] < 10 ? '0' : '') + date[2]} ${(date[3] < 10 ? '0' : '') + date[3]}:${(date[4] < 10 ? '0' : '') + date[4]}:${(date[5] < 10 ? '0' : '') + date[5]}`;
-                  //조치일시를 가공
-                  let checkedDate = this.table_data[i].checkedDate
-                  if (this.table_data[i].checkedDate) {
-                    this.table_data[i]["checkedDate"] = `${checkedDate[0]}-${(date[1] < 10 ? '0' : '') + checkedDate[1]}-${(checkedDate[2] < 10 ? '0' : '') + checkedDate[2]} ${(checkedDate[3] < 10 ? '0' : '') + checkedDate[3]}:${(checkedDate[4] < 10 ? '0' : '') + checkedDate[4]}:${(date[5] < 10 ? '0' : '') + checkedDate[5]}`;
-                  }
-        
-        
-                }
-        
-        
-                //table_data의 length만큼 새로운key와 value추가
-                for (let k = 0; k < this.table_data.length; k++) {
-                  this.table_data[k].newKey = k
-                }
-                console.log(this.table_data); */
-
-
-
-      });
-
-
-
+    this.queryString = queryString
   }
 
+  setContentString() {
+    for (let i = 0; i < this.table_data.length; i++) { //res.data의 content string을 가공한다.
+      let content = this.table_data[i].content.split("\n");
+      this.table_data[i]["room"] = content[2].replace("room : ", "");
+      this.table_data[i]["title"] = content[3].replace("알림 : ", "");
+      this.table_data[i]["setRange"] = content[4].replace(
+        "설정범위 : ",
+        ""
+      );
+      this.table_data[i]["value"] =
+        content[6].replace("- ", "") +
+        "<br>" +
+        content[7].replace("- ", "");
+      this.table_data[i]["num"] = _.filter(this.alarmList, {
+        id: this.table_data[i].id,
+      }).length;
+    }
+  }
+  setContentDate() {
+    for (let i = 0; i < this.table_data.length; i++) { //res.data의 content string을 가공한다.
+      //발생일시를 가공 
+      let date = this.table_data[i]["createdDate"]
+      this.table_data[i]["createdDate"] = `${date[0]}-${(date[1] < 10 ? '0' : '') + date[1]}-${(date[2] < 10 ? '0' : '') + date[2]} ${(date[3] < 10 ? '0' : '') + date[3]}:${(date[4] < 10 ? '0' : '') + date[4]}:${(date[5] < 10 ? '0' : '') + date[5]}`;
+      //조치일시를 가공
+      let checkedDate = this.table_data[i].checkedDate
+      if (this.table_data[i].checkedDate) {
+        this.table_data[i]["checkedDate"] = `${checkedDate[0]}-${(date[1] < 10 ? '0' : '') + checkedDate[1]}-${(checkedDate[2] < 10 ? '0' : '') + checkedDate[2]} ${(checkedDate[3] < 10 ? '0' : '') + checkedDate[3]}:${(checkedDate[4] < 10 ? '0' : '') + checkedDate[4]}:${(date[5] < 10 ? '0' : '') + checkedDate[5]}`;
+      }
+    }
+  }
   mounted() {
     this.onResize();
     this.getData();
