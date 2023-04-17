@@ -62,14 +62,8 @@
             </v-col>
           </v-row>
           <v-card>
-            <v-data-table :loading="loading" dense :height="table_height" :headers="headers" :items="cloneItems"
-              multi-sort :items-per-page="itemsPerPage" hide-default-footer @update:options="options = $event"
-              @click:header="onHeaderClick">
-              <template v-slot:bottom>
-                <div class="text-center pt-2">
-                  <v-pagination v-model="page" :length="options.pageCount"></v-pagination>
-                </div>
-              </template>
+            <v-data-table dense :height="table_height" :headers="headers" :items="table_data" multi-sort
+              :items-per-page="options.itemsPerPage" hide-default-footer :page.sync="page">
               <template v-slot:item.value="{ item }">
                 <span v-html="item.value"></span>
               </template>
@@ -85,8 +79,15 @@
                 </v-btn>
               </template>
             </v-data-table>
+
+
+
+
+
+
+
           </v-card>
-          <v-pagination v-model="pagination.page" :length="pages" circle @input="onPageChange"></v-pagination>
+          <v-pagination v-model="page" :length="options.pageCount" circle :total-visible="11"></v-pagination>
         </v-col>
       </v-row>
     </v-container>
@@ -98,6 +99,7 @@ import * as api from "@/api";
 import { gridCfg } from "@/util/config";
 import { Component, Vue, Watch } from "vue-property-decorator";
 import _, { clone } from "lodash";
+
 
 @Component({
   components: {},
@@ -117,27 +119,23 @@ export default class AlarmHistory extends Vue {
     { text: "설정범위", value: "setRange", sortable: false },
     { text: "값", value: "value", sortable: false },
     { text: "타입", value: "type", sortable: false },
-    { text: "알람횟수", value: "num", sortable: false },
+    // { text: "알람횟수", value: "num", sortable: false },
     { text: "조치일시", value: "checkedDate", sortable: false },
     { text: "조치자", value: "checker", sortable: false },
   ];
   alarmList: any[] = [];
   table_data: any[] = []; // 테이블에 보여줄 데이터
   options: any = {
-    pageCount: 1,
+
   }
-  page: number = 1
+  page: number = 1;
   itemsPerPage: number = 15
-  pagination: any = {
-    page: 1,
-    total: 0,
-    rowsPerPage: 15
-  }
   table_height: number = 0;
   sortState: any = [];
-  loading: boolean = false;
+
   created() {
-    //this.options = Object.assign({}, gridCfg);
+    this.options = Object.assign({}, gridCfg);
+    this.options.page = this.options.page - 1;
   }
 
 
@@ -149,7 +147,7 @@ export default class AlarmHistory extends Vue {
     let header = this.options.sortBy;
     let value = this.options.sortDesc;
 
-    let sortState = header.map((columnName: any, index: any) => {
+    let sortState = header.map((columnName: any, index: any) => { //선택된 sort를 이쁘게가공하기
       return { ascending: value[index], columnName };
     });
 
@@ -158,23 +156,9 @@ export default class AlarmHistory extends Vue {
     this.getData()
 
 
-
-    /*     let obj: any = {}; //파라미터로 넣을 객체 만들기
-    
-        for (let i = 0; i < header.length; i++) { //선택된 header만큼 반복해라
-          obj[`sort${i + 1}`] = value[i] ? `${header[i]},desc` : `${header[i]},asc`;
-        }
-     */
-    //obj객체의 키가sort1,sort2..이렇게1씩증가함.
-    //header의 값이 참이면 desc고 거짓이면 asc라고 값을 넣음.
-
-
-    // this.getData()
-
   }
   getData() {
-    this.loading = true;
-    const { sortBy, sortDesc } = this.options;
+    const { sortBy, sortDesc, page, itemsPerPage } = this.options;
     let local: any = localStorage.getItem("userId");
     let userId = JSON.parse(local) || "";
     let param: any = {
@@ -182,8 +166,8 @@ export default class AlarmHistory extends Vue {
       startDate: this.search_condition.startDate,
       endDate: this.search_condition.endDate,
       getAll: true,
-      page: this.pagination.page,
-      size: this.pagination.rowsPerPage,
+      page: this.options.page - 1,
+      size: this.options.itemsPerPage,
     }
 
 
@@ -196,28 +180,34 @@ export default class AlarmHistory extends Vue {
 
     let queryString = "?";
     queryString += "userId=" + userId;
-    queryString += "&page=" + this.pagination.page;
-    queryString += "&size=20";
+    queryString += "&page=" + this.options.page;
+    queryString += "&size=" + this.options.itemsPerPage;
     queryString += "&startDate=" + this.search_condition.startDate;
     queryString += "&endDate=" + this.search_condition.endDate;
 
 
     let sortState = this.sortState;
-    sortState.forEach((state: any) => {
+    this.sortState.forEach((state: any) => {
       queryString += "&sort=" + state.columnName + ',' + (state.ascending ? "asc" : "desc")
     });
-
-
     api.alarm
       .alarmList(
         queryString
       )
       .then((response) => {
-        this.loading = false;
-        this.alarmList = _.map(response.data.data.content, "alarmProcess");
-        console.log("1111111111111", this.alarmList);
-        this.table_data = _.uniqBy(this.alarmList, "id");
-        console.log("22222222222", this.table_data);
+        this.options.pageCount = response.data.data.totalPages;
+
+        this.table_data = _.map(response.data.data.content, "alarmProcess");
+
+
+
+
+        console.log('테이블데이타', this.table_data)
+
+
+
+
+        //this.table_data = _.uniqBy(this.alarmList, "id");
         for (let i = 0; i < this.table_data.length; i++) {
           let content = this.table_data[i].content.split("\n");
           this.table_data[i]["room"] = content[2].replace("room : ", "");
@@ -233,51 +223,21 @@ export default class AlarmHistory extends Vue {
           this.table_data[i]["num"] = _.filter(this.alarmList, {
             id: this.table_data[i].id,
           }).length;
-          this.table_data[i]["createdDate"] = new Date(
-            this.table_data[i]["createdDate"][0],
-            this.table_data[i]["createdDate"][1] - 1,
-            this.table_data[i]["createdDate"][2],
-            this.table_data[i]["createdDate"][3],
-            this.table_data[i]["createdDate"][4],
-            this.table_data[i]["createdDate"][5],
-            this.table_data[i]["createdDate"][6]
-          )
-            .toISOString()
-            .replace("T", " ")
-            .replace(".000Z", "");
-          if (this.table_data[i]["checkedDate"]) {
-            this.table_data[i]["checkedDate"] = new Date(
-              this.table_data[i]["checkedDate"][0],
-              this.table_data[i]["checkedDate"][1] - 1,
-              this.table_data[i]["checkedDate"][2],
-              this.table_data[i]["checkedDate"][3],
-              this.table_data[i]["checkedDate"][4],
-              this.table_data[i]["checkedDate"][5],
-              this.table_data[i]["checkedDate"][6]
-            )
-              .toISOString()
-              .replace("T", " ")
-              .replace(".000Z", "");
+
+          //발생일시를 가공
+          let date = this.table_data[i]["createdDate"]
+          this.table_data[i]["createdDate"] = `${date[0]}-${(date[1] < 10 ? '0' : '') + date[1]}-${(date[2] < 10 ? '0' : '') + date[2]} ${(date[3] < 10 ? '0' : '') + date[3]}:${(date[4] < 10 ? '0' : '') + date[4]}:${(date[5] < 10 ? '0' : '') + date[5]}`;
+          //조치일시를 가공
+          let checkedDate = this.table_data[i].checkedDate
+          if (this.table_data[i].checkedDate) {
+            this.table_data[i]["checkedDate"] = `${checkedDate[0]}-${(date[1] < 10 ? '0' : '') + checkedDate[1]}-${(checkedDate[2] < 10 ? '0' : '') + checkedDate[2]} ${(checkedDate[3] < 10 ? '0' : '') + checkedDate[3]}:${(checkedDate[4] < 10 ? '0' : '') + checkedDate[4]}:${(date[5] < 10 ? '0' : '') + checkedDate[5]}`;
           }
+
+
         }
-        this.pagination.total = this.table_data.length //페이징처리를 위해 코드추가함
         console.log(this.table_data);
       });
-    this.options.totalCount = 3;
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   mounted() {
     this.onResize();
@@ -286,9 +246,7 @@ export default class AlarmHistory extends Vue {
 
 
 
-  onHeaderClick() {
-    console.log('우앵')
-  }
+
 
 
   onResize() {
@@ -298,18 +256,11 @@ export default class AlarmHistory extends Vue {
 
   onPageChange(event: any) { //클릭한 페이지의 숫자를 콘솔에띄우기
     console.log(event)
-  }
 
-  get pages() {
-    return Math.ceil(this.pagination.total / this.pagination.rowsPerPage)
   }
 
 
-  get cloneItems() { //table_data를 cloneItems로 변환
-    var clone = JSON.parse(JSON.stringify(this.table_data));
-    var startFrom = (this.pagination.page * this.pagination.rowsPerPage) - this.pagination.rowsPerPage;
-    return clone.splice(startFrom, this.pagination.rowsPerPage);
-  }
+
 
 
   s_date_search(v: any) {
