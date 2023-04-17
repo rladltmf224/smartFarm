@@ -119,7 +119,7 @@
                 </v-chip>
               </template>
             </v-data-table>
-          </v-card> <v-pagination circle v-model="page" :length="pageCount"></v-pagination>
+          </v-card> <v-pagination circle :total-visible="11" v-model="page" :length="pageCount"></v-pagination>
         </v-col>
       </v-row>
       <!-- 거래처 생성 모달 -->
