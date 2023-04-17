@@ -173,7 +173,6 @@ export default {
       search_type_1: [],
       search_list2: [],
       search_type_2: "",
-
       search_condition: {
         controlItem: [],
         selectedRoom: "",
@@ -350,7 +349,7 @@ export default {
       this.menu2 = false;
       this.$refs.menu2.save(v);
     },
-    setDate() {
+    setDate() { //s_date와 e_date를 한국시간으로 바꾸기
       const curr = new Date();
       const utc =
         curr.getTime() +
@@ -360,10 +359,8 @@ export default {
       console.log("한국시간 : " + kr_curr); // 한국시간 : Tue May 31 2022 09:00:30 GMT+0900 (한국 표준시)
       /*       this.s_date = kr_curr;
             this.e_date = kr_curr; */
-      let test = kr_curr.toISOString().substring(0, 10);
-      console.log('짜른시간', test)
-      this.s_date = test;
-      this.e_date = test;
+      this.s_date = kr_curr.toISOString().substring(0, 10);
+      this.e_date = kr_curr.toISOString().substring(0, 10);
     }
   },
 
