@@ -133,6 +133,7 @@ export default class AlarmHistory extends Vue {
 
   @Watch('options', { deep: true })
   changeOptions() {
+    console.log('왓치페이지', this.options.page)
     let header = this.options.sortBy;
     let value = this.options.sortDesc;
 
@@ -146,7 +147,7 @@ export default class AlarmHistory extends Vue {
 
 
   }
-  getData() {
+  getDataa() {
     const { sortBy, sortDesc, page, itemsPerPage } = this.options;
     let local: any = localStorage.getItem("userId");
     let userId = JSON.parse(local) || "";
@@ -232,6 +233,131 @@ export default class AlarmHistory extends Vue {
 
 
       });
+  }
+  getData() {
+    const { sortBy, sortDesc, page, itemsPerPage } = this.options;
+    let local: any = localStorage.getItem("userId");
+    let userId = JSON.parse(local) || "";
+    let param: any = {
+      userId: userId,
+      startDate: this.search_condition.startDate,
+      endDate: this.search_condition.endDate,
+      getAll: true,
+      page: this.options.page,
+      size: this.options.itemsPerPage,
+    }
+
+
+    let str: any = JSON.stringify(param)
+    str = str.slice(0, -1);
+    str = str.substring(1);
+
+    let pageNum = this.options.page - 1
+
+
+    let queryString = "?";
+    queryString += "userId=" + userId;
+    queryString += "&page=" + pageNum;
+    queryString += "&size=" + this.options.itemsPerPage;
+    queryString += "&startDate=" + this.search_condition.startDate;
+    queryString += "&endDate=" + this.search_condition.endDate;
+
+
+    let sortState = this.sortState;
+    this.sortState.forEach((state: any) => {
+      queryString += "&sort=" + state.columnName + ',' + (state.ascending ? "asc" : "desc")
+    });
+
+    api.alarm
+      .alarmList(
+        queryString
+      )
+      .then((response) => {
+        this.options.pageCount = response.data.data.totalPages;
+        console.log(response.data.data.content)
+
+
+
+        this.table_data = response.data.data.content
+        console.log('가공한 테이블데이타', this.table_data)
+        for (let i = 0; i < this.table_data.length; i++) {
+          let content = this.table_data[i].content.split("\n");
+          this.table_data[i]["room"] = content[2].replace("room : ", "");
+          this.table_data[i]["title"] = content[3].replace("알림 : ", "");
+          this.table_data[i]["setRange"] = content[4].replace(
+            "설정범위 : ",
+            ""
+          );
+          this.table_data[i]["value"] =
+            content[6].replace("- ", "") +
+            "<br>" +
+            content[7].replace("- ", "");
+          this.table_data[i]["num"] = _.filter(this.alarmList, {
+            id: this.table_data[i].id,
+          }).length;
+
+          //발생일시를 가공
+          let date = this.table_data[i]["createdDate"]
+          this.table_data[i]["createdDate"] = `${date[0]}-${(date[1] < 10 ? '0' : '') + date[1]}-${(date[2] < 10 ? '0' : '') + date[2]} ${(date[3] < 10 ? '0' : '') + date[3]}:${(date[4] < 10 ? '0' : '') + date[4]}:${(date[5] < 10 ? '0' : '') + date[5]}`;
+          //조치일시를 가공
+          let checkedDate = this.table_data[i].checkedDate
+          if (this.table_data[i].checkedDate) {
+            this.table_data[i]["checkedDate"] = `${checkedDate[0]}-${(date[1] < 10 ? '0' : '') + checkedDate[1]}-${(checkedDate[2] < 10 ? '0' : '') + checkedDate[2]} ${(checkedDate[3] < 10 ? '0' : '') + checkedDate[3]}:${(checkedDate[4] < 10 ? '0' : '') + checkedDate[4]}:${(date[5] < 10 ? '0' : '') + checkedDate[5]}`;
+          }
+
+
+        }
+
+
+        /* 
+        
+        
+        
+        
+        
+        
+                //this.table_data = _.uniqBy(this.alarmList, "id");
+                for (let i = 0; i < this.table_data.length; i++) {
+                  let content = this.table_data[i].content.split("\n");
+                  this.table_data[i]["room"] = content[2].replace("room : ", "");
+                  this.table_data[i]["title"] = content[3].replace("알림 : ", "");
+                  this.table_data[i]["setRange"] = content[4].replace(
+                    "설정범위 : ",
+                    ""
+                  );
+                  this.table_data[i]["value"] =
+                    content[6].replace("- ", "") +
+                    "<br>" +
+                    content[7].replace("- ", "");
+                  this.table_data[i]["num"] = _.filter(this.alarmList, {
+                    id: this.table_data[i].id,
+                  }).length;
+        
+                  //발생일시를 가공
+                  let date = this.table_data[i]["createdDate"]
+                  this.table_data[i]["createdDate"] = `${date[0]}-${(date[1] < 10 ? '0' : '') + date[1]}-${(date[2] < 10 ? '0' : '') + date[2]} ${(date[3] < 10 ? '0' : '') + date[3]}:${(date[4] < 10 ? '0' : '') + date[4]}:${(date[5] < 10 ? '0' : '') + date[5]}`;
+                  //조치일시를 가공
+                  let checkedDate = this.table_data[i].checkedDate
+                  if (this.table_data[i].checkedDate) {
+                    this.table_data[i]["checkedDate"] = `${checkedDate[0]}-${(date[1] < 10 ? '0' : '') + checkedDate[1]}-${(checkedDate[2] < 10 ? '0' : '') + checkedDate[2]} ${(checkedDate[3] < 10 ? '0' : '') + checkedDate[3]}:${(checkedDate[4] < 10 ? '0' : '') + checkedDate[4]}:${(date[5] < 10 ? '0' : '') + checkedDate[5]}`;
+                  }
+        
+        
+                }
+        
+        
+                //table_data의 length만큼 새로운key와 value추가
+                for (let k = 0; k < this.table_data.length; k++) {
+                  this.table_data[k].newKey = k
+                }
+                console.log(this.table_data); */
+
+
+
+      });
+
+
+
   }
 
   mounted() {
