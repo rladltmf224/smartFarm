@@ -359,6 +359,7 @@ export default {
       console.log("한국시간 : " + kr_curr); // 한국시간 : Tue May 31 2022 09:00:30 GMT+0900 (한국 표준시)
       /*       this.s_date = kr_curr;
             this.e_date = kr_curr; */
+      let test = kr_curr.toISOString().substring(0, 10);
       this.s_date = kr_curr.toISOString().substring(0, 10);
       this.e_date = kr_curr.toISOString().substring(0, 10);
     }

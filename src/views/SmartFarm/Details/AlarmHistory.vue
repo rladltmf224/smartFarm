@@ -63,7 +63,8 @@
           </v-row>
           <v-card>
             <v-data-table dense :height="table_height" :headers="headers" :items="table_data" multi-sort
-              :items-per-page="options.itemsPerPage" hide-default-footer :page.sync="page">
+              :items-per-page="options.itemsPerPage" hide-default-footer :page.sync="options.page" :options.sync="options"
+              item-key="newKey">
               <template v-slot:item.value="{ item }">
                 <span v-html="item.value"></span>
               </template>
@@ -79,15 +80,8 @@
                 </v-btn>
               </template>
             </v-data-table>
-
-
-
-
-
-
-
           </v-card>
-          <v-pagination v-model="page" :length="options.pageCount" circle :total-visible="11"></v-pagination>
+          <v-pagination v-model="options.page" :length="options.pageCount" circle :total-visible="11"></v-pagination>
         </v-col>
       </v-row>
     </v-container>
@@ -126,21 +120,16 @@ export default class AlarmHistory extends Vue {
   alarmList: any[] = [];
   table_data: any[] = []; // 테이블에 보여줄 데이터
   options: any = {
-
+    page: 0
   }
-  page: number = 1;
+  page: number = 0;
   itemsPerPage: number = 15
   table_height: number = 0;
   sortState: any = [];
 
   created() {
     this.options = Object.assign({}, gridCfg);
-    this.options.page = this.options.page - 1;
   }
-
-
-
-
 
   @Watch('options', { deep: true })
   changeOptions() {
@@ -166,21 +155,21 @@ export default class AlarmHistory extends Vue {
       startDate: this.search_condition.startDate,
       endDate: this.search_condition.endDate,
       getAll: true,
-      page: this.options.page - 1,
+      page: this.options.page,
       size: this.options.itemsPerPage,
     }
-
 
 
     let str: any = JSON.stringify(param)
     str = str.slice(0, -1);
     str = str.substring(1);
 
+    let pageNum = this.options.page - 1
 
 
     let queryString = "?";
     queryString += "userId=" + userId;
-    queryString += "&page=" + this.options.page;
+    queryString += "&page=" + pageNum;
     queryString += "&size=" + this.options.itemsPerPage;
     queryString += "&startDate=" + this.search_condition.startDate;
     queryString += "&endDate=" + this.search_condition.endDate;
@@ -196,13 +185,10 @@ export default class AlarmHistory extends Vue {
       )
       .then((response) => {
         this.options.pageCount = response.data.data.totalPages;
-
-        this.table_data = _.map(response.data.data.content, "alarmProcess");
-
+        this.table_data = _.map(response.data.data.content, "alarmProcess"); //여기가 문제같음.
 
 
 
-        console.log('테이블데이타', this.table_data)
 
 
 
@@ -235,7 +221,16 @@ export default class AlarmHistory extends Vue {
 
 
         }
+
+
+        //table_data의 length만큼 새로운key와 value추가
+        for (let k = 0; k < this.table_data.length; k++) {
+          this.table_data[k].newKey = k
+        }
         console.log(this.table_data);
+
+
+
       });
   }
 
@@ -243,42 +238,22 @@ export default class AlarmHistory extends Vue {
     this.onResize();
     this.getData();
   }
-
-
-
-
-
-
   onResize() {
     this.table_height = window.innerHeight - 48 - 129 - 44 - 44 - 20;
     console.log("onResize", this.table_height);
   }
-
-  onPageChange(event: any) { //클릭한 페이지의 숫자를 콘솔에띄우기
-    console.log(event)
-
-  }
-
-
-
-
-
   s_date_search(v: any) {
     this.search_condition.startDate = v;
     this.startDate = false;
     let startEL: any = this.$refs.startDate;
     startEL.save(v);
   }
-
-
-
   e_date_search(v: any) {
     this.search_condition.endDate = v;
     this.endDate = false;
     let endEL: any = this.$refs.endDate;
     endEL.save(v);
   }
-
   check(id: number): void {
     api.alarm
       .alarmCheck({ id: id })
