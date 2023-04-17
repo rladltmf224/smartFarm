@@ -981,7 +981,7 @@ export default {
         { name: "5분", value: "5M" },
         { name: "1시간", value: "1H" },
       ],
-      temphumid_TimeUnit: "1H",
+      temphumid_TimeUnit: "1M",
 
       // 외부센서로딩
       // MonitoringGraph
