@@ -1,8 +1,8 @@
 export default {
   header: {
     headers: [
-      { text: "작업지시코드", value: "code", width: "10%" },
-      { text: "작업지시서명", value: "name" },
+      { text: "작업지시코드", value: "jobOrderCode", width: "10%" },
+      { text: "작업지시서명", value: "jobOrderName" },
       { text: "회사", value: "customer.name" },
       { text: "상태", value: "status", width: "7%" },
       { text: "납기일", value: "deadline", width: "7%" },
@@ -16,19 +16,16 @@ export default {
       { text: "수정/삭제", value: "edit", width: "5%" },
     ],
     headersDetail: [
-      { text: "작업지시코드", value: "code" },
-      { text: "작업지시서명", value: "name" },
-      { text: "회사", value: "customer.name" },
+      { text: "품목코드", value: "itemCode" },
+      { text: "품목명", value: "itemName" },
+      { text: "타입", value: "itemType" },
       { text: "상태", value: "status" },
-      { text: "납기일", value: "deadline" },
-      { text: "부서", value: "departmentName" },
-      { text: "담당자", value: "chargeName" },
-      { text: "수정자", value: "modifiedName" },
-      { text: "수정일", value: "modifiedDate" },
-      { text: "품목정보", value: "details" },
-      { text: "작성자", value: "createdName" },
+      { text: "투입수량", value: "targetCount" },
+      { text: "담당자", value: "createdId" },
       { text: "등록일", value: "createdDate" },
-      { text: "비고", value: "memo" },
+      { text: "수정자", value: "modifiedId" },
+      { text: "수정일자", value: "modifiedDate" },
+      { text: "진행", value: "work" },
     ],
     itemheaders: [
       { text: "타입", value: "type" },
@@ -59,15 +56,25 @@ export default {
       { text: "원자재명", value: "itemName" },
       { text: "개수", value: "count" },
     ],
+    bomHeaders: [
+      { text: "품목명", value: "itemName" },
+      { text: "투입수량(BOM기준)", value: "count" },
+      { text: "투입수량", value: "targetCount" },
+    ],
   },
   data: {
-    status: [
-      { code: "WAIT", name: "대기" },
-      { code: "SPROUT", name: "발아" },
-      { code: "SEED1", name: "1차육묘" },
-      { code: "GRAFT", name: "접목활착" },
-      { code: "SEED2", name: "2차육묘" },
-      { code: "DONE", name: "완료" },
+    status_JO: [
+      { code: "JO_WAIT", name: "대기" },
+      { code: "JO_ING", name: "진행중" },
+      { code: "JO_DONE", name: "완료" },
+    ],
+    status_JOD: [
+      { code: "JOD_WAIT", name: "대기" },
+      { code: "JOD_SPROUT", name: "발아" },
+      { code: "JOD_SEED1", name: "1차육묘" },
+      { code: "JOD_GRAFT", name: "접목활착" },
+      { code: "JOD_SEED2", name: "2차육묘" },
+      { code: "JOD_DONE", name: "완료" },
     ],
     status2: [
       { code: "대기", name: "대기" },

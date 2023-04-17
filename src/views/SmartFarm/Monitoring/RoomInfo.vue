@@ -412,20 +412,17 @@ export default {
       //console.log("data", data, this.$refs.img1);
       this.streamModal1_title = data.facilityName;
 
-      this.streamModal1 = true;
-
       let canvas1 = document.querySelector("#image1");
       this.socket1 = new WebSocket("ws://14.47.96.237:5100");
       this.stream1 = new jsmpeg(this.socket1, {
         canvas: canvas1,
       });
+      this.streamModal1 = true;
       console.log("stream1", this.stream1, this.socket1);
     },
     openStreamModal2(data) {
       // console.log("data", data, this.$refs.img2);
       this.streamModal2_title = data.facilityName;
-
-      this.streamModal2 = true;
 
       let canvas2 = document.querySelector("#image2");
 
@@ -433,6 +430,7 @@ export default {
       this.stream2 = new jsmpeg(this.socket2, {
         canvas: canvas2,
       });
+      this.streamModal2 = true;
       console.log("stream2", this.stream2, this.socket2);
     },
     closeModal1() {

@@ -857,7 +857,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="success" @click.native="okModal()">확인</v-btn>
-          <v-btn text color="success" @click.native="closeModal()">취소</v-btn>
+          <v-btn color="error" @click.native="closeModal()">취소</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -981,7 +981,7 @@ export default {
         { name: "5분", value: "5M" },
         { name: "1시간", value: "1H" },
       ],
-      temphumid_TimeUnit: "1H",
+      temphumid_TimeUnit: "1M",
 
       // 외부센서로딩
       // MonitoringGraph

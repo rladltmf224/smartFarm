@@ -133,13 +133,18 @@ export default {
       taxAmount: 0,
       unitPrice: 0,
     },
-    status: [
-      { code: "WAIT", name: "대기" },
-      { code: "SPROUT", name: "발아" },
-      { code: "SEED1", name: "1차육묘" },
-      { code: "GRAFT", name: "접목활착" },
-      { code: "SEED2", name: "2차육묘" },
-      { code: "DONE", name: "완료" },
+    status_JO: [
+      { code: "JO_WAIT", name: "대기" },
+      { code: "JO_ING", name: "진행중" },
+      { code: "JO_DONE", name: "완료" },
+    ],
+    status_JOD: [
+      { code: "JOD_WAIT", name: "대기" },
+      { code: "JOD_SPROUT", name: "발아" },
+      { code: "JOD_SEED1", name: "1차육묘" },
+      { code: "JOD_GRAFT", name: "접목활착" },
+      { code: "JOD_SEED2", name: "2차육묘" },
+      { code: "JOD_DONE", name: "완료" },
     ],
   },
 };

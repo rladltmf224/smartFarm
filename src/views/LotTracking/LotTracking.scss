@@ -1,13 +1,13 @@
-.warehousing .v-data-table-header {
-  background-color: #f6f8f9;
-}
+// .warehousing .v-data-table-header {
+//   background-color: #f6f8f9;
+// }
 
-.warehousing .v-data-table > .v-data-table__wrapper > table > tbody > tr > td,
-.warehousing .v-data-table > .v-data-table__wrapper > table > thead > tr > td,
-.warehousing .v-data-table > .v-data-table__wrapper > table > tfoot > tr > td,
-.warehousing .v-data-table > .v-data-table__wrapper > table > tfoot > tr > th {
-  height: 26px;
-}
+// .warehousing .v-data-table > .v-data-table__wrapper > table > tbody > tr > td,
+// .warehousing .v-data-table > .v-data-table__wrapper > table > thead > tr > td,
+// .warehousing .v-data-table > .v-data-table__wrapper > table > tfoot > tr > td,
+// .warehousing .v-data-table > .v-data-table__wrapper > table > tfoot > tr > th {
+//   height: 26px;
+// }
 
 tr.v-data-table__selected {
   background: #97c6f5 !important;
@@ -17,8 +17,27 @@ tr.v-data-table__selected {
   max-width: 89px;
   font-size: 12px;
 }
+// .v-card {
+//   background-color: white;
+//   box-shadow: 0 20px 27px 0 rgba(0, 0, 0, 0.05) !important;
+//   border-radius: 10px;
+// }
+.v-data-table-header {
+  background-color: #ffffff;
+}
+
 .v-card {
-  background-color: white;
-  box-shadow: 0 20px 27px 0 rgba(0, 0, 0, 0.05) !important;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05) !important;
   border-radius: 10px;
+}
+
+.v-sheet {
+  background-color: white;
+  border-radius: 5px;
+}
+
+.v-pagination .v-pagination_navigation {
+  box-shadow: none;
+  border: 1px solid #dee2e6;
+  color: #6c757d;
 }

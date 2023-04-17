@@ -27,6 +27,7 @@
                   dense
                   solo
                   rounded
+                  elevation-0
                 ></v-select>
               </v-col>
               <v-col cols="2">
@@ -37,8 +38,7 @@
                   v-model="search_condition.option"
                   @keydown.enter="getCustomer"
                   dense
-                  solon
-                  rounded
+                  elevation-0
                 ></v-text-field>
               </v-col>
               <!-- <v-col cols="1">
@@ -55,6 +55,7 @@
 
               <v-col class="text-right" cols="2">
                 <v-btn color="primary" @click="getCustomer" large elevation="0">
+                  <v-icon left> mdi-magnify </v-icon>
                   조회
                 </v-btn>
               </v-col>

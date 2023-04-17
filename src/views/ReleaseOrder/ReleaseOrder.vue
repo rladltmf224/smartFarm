@@ -441,7 +441,7 @@ export default class ReleaseOrder extends Vue {
   select_rawID: any = 0;
   release_list: [] = [];
   raw_list: [] = [];
-  process_status: any = cfg.data.status;
+  process_status: any = cfg.data.status_JO;
 
   get headers() {
     return cfg.header.headers;

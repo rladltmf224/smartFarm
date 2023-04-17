@@ -43,4 +43,8 @@ export default {
     }),
   updateOperationOrderPage: (params) =>
     AuthAPI.put("/api/operation/joborder/status", JSON.stringify(params)),
+  getItemListByBom: (params) =>
+    AuthAPI.get("/api/operation/joborder/item/bom", {
+      params: params,
+    }),
 };
