@@ -95,7 +95,7 @@ export default class ReleaseProductItemModal extends Vue {
     return cfg.header.headers_item_add;
   }
 
-  created() {
+  beforeUpdated() {
     this.itemOption = Object.assign({}, gridCfg);
   }
 
@@ -106,12 +106,14 @@ export default class ReleaseProductItemModal extends Vue {
     this.search_item_condition.sortBy = sortBy;
     this.search_item_condition.sortDesc = sortDesc;
     this.itemOption.loading = true;
+
     api.item
       .getItemList(this.search_item_condition)
       .then((response) => {
         console.log("openItemModal", response);
         this.product_list = response.data.responseData;
         this.itemOption.totalCount = response.data.totalCount;
+        this.itemOption.loading = false;
       })
       .catch((error) => {
         console.log(error);
