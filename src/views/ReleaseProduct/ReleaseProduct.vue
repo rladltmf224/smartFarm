@@ -483,6 +483,7 @@ export default class ReleaseProduct extends Vue {
   selectCustomer(data: any) {
     console.log("selectCustomer", data);
     this.selectItemID = data.id;
+    /*
     api.storage
       .getStorageList()
       .then((response) => {
@@ -492,6 +493,7 @@ export default class ReleaseProduct extends Vue {
       .catch((error) => {
         console.log(error);
       });
+    */
     api.productRelease
       .getReleaseProductDetailList({ id: data.id })
       .then((response) => {

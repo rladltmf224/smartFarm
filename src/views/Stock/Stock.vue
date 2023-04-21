@@ -420,18 +420,13 @@ export default class Stock extends Vue {
           .substr(0, 10);
       }
       if (this.row == "year") {
-        // this.search_stock.startDate = new Date(new Date().setYear(year - 1))
-        //   .toISOString()
-        //   .substr(0, 10);
+        this.search_stock.startDate = new Date(new Date().setFullYear(year - 1))
+          .toISOString()
+          .substr(0, 10);
       }
     } else if (this.row == "") {
-      if (
-        this.search_stock.startDate == "" &&
-        this.search_stock.endDate == ""
-      ) {
-        this.search_stock.startDate = "";
-        this.search_stock.endDate = "";
-      }
+      this.search_stock.startDate = "";
+      this.search_stock.endDate = "";
     }
     const { page, itemsPerPage, sortBy, sortDesc } = this.stockListCfg.options;
     this.search_stock.page = page;

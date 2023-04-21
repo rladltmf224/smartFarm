@@ -2,10 +2,10 @@ const gridCfg = {
   loading: false,
   totalCount: 0,
   page: 1,
-  pageCount: 0,
+  pageCount: 10,
   itemsPerPage: 15,
   options: {},
-  size: 20,
+  size: 15,
 };
 
 export { gridCfg };
