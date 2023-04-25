@@ -1214,9 +1214,8 @@ export default class Schedule extends Vue {
           },
           pan: {
             enabled: true,
+            mode: "x",
           },
-
-          limits: {},
         },
 
         legend: {
