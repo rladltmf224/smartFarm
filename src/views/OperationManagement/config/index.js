@@ -1,18 +1,18 @@
 export default {
   header: {
     headers: [
-      { text: "작업지시코드", value: "jobOrderCode", width: "10%" },
-      { text: "작업지시서명", value: "jobOrderName" },
-      { text: "회사", value: "customer.name" },
-      { text: "상태", value: "status", width: "7%" },
-      { text: "납기일", value: "deadline", width: "7%" },
-      { text: "작성자", value: "createdName" },
-      { text: "부서", value: "departmentName", width: "7%" },
-      { text: "담당자", value: "chargeName" },
-      { text: "수정자", value: "modifiedName" },
+      { text: "작업지시코드", value: "jobOrderCode", width: "8%" },
+      { text: "작업지시서명", value: "jobOrderName", width: "7%" },
+      { text: "회사", value: "customer.name", width: "6%" },
+      { text: "상태", value: "status", width: "2%" },
+      { text: "납기일", value: "deadline", width: "6%" },
+      { text: "작성자", value: "createdName", width: "5%" },
+      { text: "부서", value: "departmentName", width: "5%" },
+      { text: "담당자", value: "chargeName", width: "5%" },
+      { text: "수정자", value: "modifiedName", width: "5%" },
       { text: "수정일", value: "modifiedDate", width: "7%" },
       { text: "등록일", value: "createdDate", width: "7%" },
-      { text: "상태변경", value: "changeOrder" },
+      // { text: "상태변경", value: "changeOrder" },
       { text: "수정/삭제", value: "edit", width: "5%" },
     ],
     headersDetail: [

@@ -369,6 +369,7 @@ export default class Item extends Vue {
         name: data.name,
         id: data.id,
         standard: data.standard,
+        productionType: data.productionType,
         code: data.code,
         type: data.type,
         unit: data.unit,

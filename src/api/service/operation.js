@@ -16,13 +16,7 @@ export default {
     }),
   deleteorderList: (params) =>
     AuthAPI.delete("/api/operation/joborder", {
-      params: {
-        id: params.id
-          .toString()
-          .replace("[", "")
-          .replace("]", "")
-          .replace(" ", ""),
-      },
+      params: params,
     }),
   getOrderTempPage: (params) =>
     AuthAPI.post("/api/operation/joborder/temp", JSON.stringify(params)),

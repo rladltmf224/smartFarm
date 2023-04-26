@@ -150,7 +150,7 @@
                     <v-data-table
                       :headers="bomHeaders"
                       :items="bomData"
-                      hide-actions
+                      disable-pagination
                       item-key="id"
                       hide-default-footer
                       :items-per-page="20"
@@ -166,8 +166,10 @@
                             <v-text-field
                               v-model="props.item.targetCount"
                               label="Edit"
+                              type="number"
                               single-line
                               counter
+                              oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"
                             ></v-text-field>
                           </template>
                         </v-edit-dialog>
@@ -302,93 +304,6 @@
               text
               @click="interimStorage = false"
             >
-              닫기
-            </v-btn>
-          </v-col>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <!-- 시설등록 -->
-    <v-dialog v-model="equipment_modal" persistent max-width="1300px">
-      <v-card>
-        <v-card-title primary-title>
-          <div>
-            <p>시설등록</p>
-          </div>
-        </v-card-title>
-        <v-card-text>
-          <!-- 시설 리스트 -->
-          <v-card
-            v-for="(el, index) in equipmentList"
-            :key="index"
-            class="mb-4"
-          >
-            <v-card-title>
-              <span class="pr-3"
-                >{{ el.facilityName }}({{ el.details.length }})
-              </span>
-              <span class="text-subtitle-2 pr-2">
-                <v-chip
-                  >미선택 :
-                  {{
-                    el.details.length - getUseCount(el) - getActiveCount(el)
-                  }}</v-chip
-                >
-              </span>
-              <span class="text-subtitle-2 pr-2">
-                <v-chip color="primary">선택 : {{ getActiveCount(el) }}</v-chip>
-              </span>
-              <span class="text-subtitle-2">
-                <v-chip color="light-green accent-2"
-                  >사용 : {{ getUseCount(el) }}</v-chip
-                >
-              </span>
-            </v-card-title>
-            <v-card-text>
-              <v-item-group multiple>
-                <v-row class="d-flex justify-space-around">
-                  <span v-if="el.details.length == 0"
-                    ><p class="text-h6">등록된 시설이 없습니다</p></span
-                  >
-                  <v-item
-                    v-else
-                    v-for="n in el.details"
-                    :key="n.facilityDetailId"
-                  >
-                    <v-card
-                      :color="
-                        n.use
-                          ? 'light-green accent-2'
-                          : n.active
-                          ? 'primary'
-                          : 'blue-grey darken-1'
-                      "
-                      class="d-flex align-center text-center"
-                      dark
-                      height="100"
-                      width="100"
-                      @click="toggleEquip(n)"
-                    >
-                      <v-card-text>
-                        <div>
-                          <span class="text-h6">{{ n.name }} </span>
-                        </div>
-                        <div><span v-if="n.use">상세정보</span></div>
-                      </v-card-text>
-                    </v-card>
-                  </v-item>
-                </v-row>
-              </v-item-group>
-            </v-card-text>
-          </v-card>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-col class="text-right">
-            <v-btn color="success" text @click="saveEquipmentInfo">
-              저장
-            </v-btn>
-            <v-btn color="primary" text @click="closeModal_equipment">
               닫기
             </v-btn>
           </v-col>
@@ -1197,6 +1112,10 @@ export default class OperationOrderModal extends Vue {
       }
       console.log("bomData", bomData);
     });
+  }
+
+  saveTargetCount(count: string) {
+    return parseInt(count);
   }
 }
 </script>

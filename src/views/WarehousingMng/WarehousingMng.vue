@@ -113,6 +113,7 @@
               item-key="barcode"
               multi-sort
               hide-default-footer
+              disable-pagination
               dense
             >
               <template v-slot:item.orderCount="props">

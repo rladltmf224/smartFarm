@@ -4,7 +4,7 @@
       <v-row>
         <v-col class="ma-2" cols="12">
           <span class="searchbox-title">조회 조건</span>
-          <v-card class="card-shadow pa-3" height="120">
+          <v-card class="card-shadow pa-3" height="130">
             <v-row no-gutters>
               <v-col cols="10">
                 <v-row dense>
@@ -13,7 +13,7 @@
                       solo
                       rounded
                       dense
-                      hide-details="false"
+                      hide-details="true"
                       label="작업지시서명"
                       v-model="searchJobOrder"
                       return-object
@@ -26,7 +26,7 @@
                     <v-autocomplete
                       solo
                       rounded
-                      hide-details="false"
+                      hide-details="true"
                       dense
                       label="거래처"
                       class="pl-3"
@@ -43,7 +43,7 @@
                     <v-autocomplete
                       solo
                       rounded
-                      hide-details="false"
+                      hide-details="true"
                       dense
                       label="부서"
                       class="pl-3"
@@ -59,7 +59,7 @@
                     <v-autocomplete
                       solo
                       rounded
-                      hide-details="false"
+                      hide-details="true"
                       dense
                       v-model="searchCrew"
                       :items="searchCrewData"
@@ -82,7 +82,7 @@
                     >
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
-                          hide-details="false"
+                          hide-details="true"
                           dense
                           v-model="startDate"
                           solo
@@ -127,7 +127,7 @@
                     >
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
-                          hide-details="false"
+                          hide-details="true"
                           rounded
                           solo
                           dense
@@ -166,7 +166,7 @@
                 </v-row>
 
                 <v-row dense>
-                  <v-col cols="12">
+                  <v-col cols="12" align-self="center">
                     <v-radio-group dense v-model="row" row @change="getSearch">
                       진행 상태 :
                       <v-radio label="전체" value=""> </v-radio>
@@ -206,7 +206,6 @@
             <v-data-table
               multi-sort
               fixed-header
-              class="mt-1"
               height="300"
               v-model="toatalselected"
               item-key="jobOrderId"
@@ -226,9 +225,8 @@
             >
               <template v-slot:item.status="{ item }">
                 <v-btn
-                  class="text-left mt-1 mb-1"
+                  class="text-left"
                   small
-                  :color="getStatusColor(item.status, statusCode)"
                   dark
                   style="width: 100px"
                   depressed
@@ -240,39 +238,34 @@
               <template v-slot:[`item.deadline`]="{ item }">
                 {{ item.deadline }}
               </template>
+
+              <template v-slot:[`item.changeOrder`]="{ item }">
+                <v-btn
+                  v-show="item.status !== 'JO_DONE'"
+                  small
+                  fluid
+                  color="info"
+                  class="mr-1 editBtn"
+                  :value="getStatusCodeNext(item.status, statusCode).code"
+                >
+                  {{ getStatusCodeNext(item.status, statusCode).name }}
+                </v-btn>
+              </template>
               <template v-slot:[`item.edit`]="{ item }">
                 <v-icon
-                  v-show="item.status == 'JOD_WAIT'"
+                  v-if="item.status == 'JO_WAIT'"
                   small
-                  class="mr-1"
                   @click="changeData(item)"
                 >
                   mdi-pencil
                 </v-icon>
                 <v-icon
-                  v-show="item.status == 'JOD_WAIT'"
+                  v-if="item.status == 'JO_WAIT'"
                   small
-                  @click="deleteData(item)"
+                  @click="deleteItem_pop(item)"
                 >
                   mdi-delete
                 </v-icon>
-              </template>
-
-              <template v-slot:[`item.changeOrder`]="{ item }">
-                <v-btn
-                  v-show="item.status !== 'JO_DONE'"
-                  text
-                  small
-                  fluid
-                  color="primary"
-                  class="mr-1 editBtn"
-                  :value="getStatusCodeNext(item.status, statusCode).code"
-                  @click="
-                    start(item, getStatusCodeNext(item.status, statusCode).code)
-                  "
-                >
-                  {{ getStatusCodeNext(item.status, statusCode).name }}
-                </v-btn>
               </template>
             </v-data-table>
           </v-card>
@@ -303,7 +296,7 @@
               disable-pagination
               hide-default-footer
             >
-              <template v-slot:item.status="{ item }">
+              <template v-slot:[`item.status`]="{ item }">
                 <v-btn
                   class="text-left mt-1 mb-1"
                   small
@@ -548,7 +541,6 @@ export default class OperationOrder extends Vue {
     // } else if (this.totalDepartment != "" && this.searchDepartment == "") {
     //   this.keyword = this.totalDepartment.departmentId;
     // }
-
     // joborder = {
     //   departmentId: this.keyword,
     // };
@@ -577,12 +569,12 @@ export default class OperationOrder extends Vue {
       });
   }
 
-  dataDetail(item: object, row: object) {
+  dataDetail(item: any, row: any) {
     row.select(true);
     let reqData = {
       jobOrderId: item.jobOrderId,
     };
-    console.log("dataDetail", item);
+    console.log("dataDetail", item.jobOrderId);
     api.operation.getJobOrerDetail(reqData).then((res) => {
       console.log("getJobOrerDetail", res);
       this.datatable = res.data.responseData;
@@ -903,6 +895,7 @@ export default class OperationOrder extends Vue {
                     timer: 1500,
                   });
                 }
+                this.getSearch();
               })
               .catch((error) => {
                 console.log(error);
@@ -970,6 +963,42 @@ export default class OperationOrder extends Vue {
       details: [],
     };
     this.getSearch();
+  }
+
+  deleteItem_pop(item: any) {
+    //this.deleteIndex = this.customer_list.indexOf(item);
+    console.log("deleteItem_pop", item);
+    let deleteItem = {
+      jobOrderId: item.jobOrderId,
+    };
+
+    this.$swal
+      .fire({
+        title: "삭제",
+        text: "해당 데이터를 삭제 하시겠습니까?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "삭제",
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          api.operation.deleteorderList(deleteItem).then((res) => {
+            this.getSearch();
+            console.log("res", res.data.isSuccess);
+            if (res.data.isSuccess) {
+              return this.$swal.fire("성공", "삭제되었습니다.", "success");
+            }
+
+            return this.$swal.fire("실패", "관리자에게 문의바랍니다.", "error");
+          });
+        }
+      });
+  }
+
+  editData(data: any) {
+    console.log("editData", data);
   }
 }
 </script>

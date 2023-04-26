@@ -7,83 +7,122 @@
           <v-spacer></v-spacer>
         </v-card-title>
         <v-card-text>
-          <v-row>
+          <!-- <v-row>
             <v-col cols="2" align-self="center">
-              <v-select :items="customer_list" item-text="name" item-value="id" label="거래처"
-                v-model="editedCustomer.customerId" dense></v-select>
+              <v-select
+                :items="customer_list"
+                item-text="name"
+                item-value="id"
+                label="거래처"
+                v-model="editedCustomer.customerId"
+                dense
+              ></v-select>
             </v-col>
             <v-col cols="2" align-self="center">
-              <v-text-field v-model="editedCustomer.requester" label="요청자" dense></v-text-field>
+              <v-text-field
+                v-model="editedCustomer.requester"
+                label="요청자"
+                dense
+              ></v-text-field>
             </v-col>
             <v-col cols="3" align-self="center">
-              <v-text-field v-model="editedCustomer.requesterContact" label="요청자 연락처" dense></v-text-field>
+              <v-text-field
+                v-model="editedCustomer.requesterContact"
+                label="요청자 연락처"
+                dense
+              ></v-text-field>
             </v-col>
             <v-col md="2">
-              <v-menu ref="deadDate" v-model="deadDate" :close-on-content-click="false"
-                :return-value.sync="editedCustomer.deadline" transition="scale-transition" offset-y min-width="auto">
+              <v-menu
+                ref="deadDate"
+                v-model="deadDate"
+                :close-on-content-click="false"
+                :return-value.sync="editedCustomer.deadline"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
                 <template v-slot:activator="{ on, attrs }">
-                  <v-text-field v-model="editedCustomer.deadline" label="마감일" prepend-icon="mdi-calendar" readonly
-                    v-bind="attrs" v-on="on" dense></v-text-field>
+                  <v-text-field
+                    v-model="editedCustomer.deadline"
+                    label="마감일"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    dense
+                  ></v-text-field>
                 </template>
-                <v-date-picker v-model="editedCustomer.deadline" no-title scrollable locale="ko-KR">
+                <v-date-picker
+                  v-model="editedCustomer.deadline"
+                  no-title
+                  scrollable
+                  locale="ko-KR"
+                >
                   <v-spacer></v-spacer>
                   <v-btn text color="primary" @click="deadDate = false">
                     취소
                   </v-btn>
-                  <v-btn text color="primary" @click="dead_date_search(editedCustomer.deadline)">
+                  <v-btn
+                    text
+                    color="primary"
+                    @click="dead_date_search(editedCustomer.deadline)"
+                  >
                     확인
                   </v-btn>
                 </v-date-picker>
               </v-menu>
             </v-col>
-          </v-row>
-          <v-row> </v-row>
-          <v-row>
-            <v-col cols="6">
-              <h4>상세 품목</h4>
-            </v-col>
-            <v-col offset="4" cols="1" align-self="center" class="text-right">
-              <v-btn color="primary" @click="openItemModal"> 품목 추가 </v-btn>
-            </v-col>
-          </v-row>
-          <v-row>
+          </v-row> -->
+
+          <v-row dense>
             <v-col>
-              <v-data-table height="300" :headers="headers_item" :items="item_list_modal" fixed-header item-key="barcode"
-                class="elevation-4" multi-sort dense>
-                <template v-slot:item.count="props">
-                  {{ props.item.count | comma }}
-                </template>
-                <template v-slot:item.add="{ item }">
-                  <v-btn small class="mr-2" @click="selectRawDetail(item)">
-                    자재 추가
-                  </v-btn>
+              <span>작업지시서 목록</span>
+              <v-data-table
+                height="300"
+                :headers="headers_job_list"
+                :items="job_list_modal"
+                fixed-header
+                item-key="barcode"
+                class="elevation-4"
+                multi-sort
+                dense
+                disable-pagination
+                hide-default-footer
+              >
+                <template v-slot:item.targetCount="props">
+                  {{ props.item.targetCount | comma }}
                 </template>
 
-                <template v-slot:item.edit="{ item }">
-                  <v-icon small @click="deleteItem_modal(item)">
-                    mdi-delete
-                  </v-icon>
+                <template v-slot:[`item.done`]="{ item }">
+                  <v-btn small color="success" @click="processDone(item)"
+                    >출하</v-btn
+                  >
                 </template>
               </v-data-table>
             </v-col>
           </v-row>
         </v-card-text>
         <v-card-actions>
-          <v-col class="text-right">
-            <v-btn color="success" text @click="clickSaveInfo">
-              신규 등록
-            </v-btn>
-            <v-btn color="primary" text @click="closeModal_customer">
-              닫기
-            </v-btn>
-          </v-col>
+          <v-spacer></v-spacer>
+          <v-btn color="error" @click="closeModal_customer"> 닫기 </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <ReleaseProductItemModal :open="item_modal" @addItem="addItem" @closeModal="closeItemModal">
+    <ReleaseProductItemModal
+      :open="item_modal"
+      @addItem="addItem"
+      @closeModal="closeItemModal"
+    >
     </ReleaseProductItemModal>
-    <ReleaseProductModal :open="add_rawModal" :product_detail_list="product_detail_list" :selected="selected"
-      @addRaw="addRaw" @closeModal="closeRawDetail" @saveData="saveSelectedItem"></ReleaseProductModal>
+    <ReleaseProductModal
+      :open="add_rawModal"
+      :product_detail_list="product_detail_list"
+      :selected="selected"
+      @addRaw="addRaw"
+      @closeModal="closeRawDetail"
+      @saveData="saveSelectedItem"
+    ></ReleaseProductModal>
   </div>
 </template>
 <script lang="ts">
@@ -112,6 +151,7 @@ import ReleaseProductModal from "./ReleaseProductModal.vue";
 export default class ReleaseProductAddModal extends Vue {
   customer_list: object[] = [];
   item_list_modal: object[] = [];
+  job_list_modal: object[] = [];
   item_modal: boolean = false;
   add_rawModal: boolean = false;
   editedCustomer: any = {
@@ -137,8 +177,8 @@ export default class ReleaseProductAddModal extends Vue {
     this.$emit("closeModal");
   }
 
-  get headers_item() {
-    return cfg.header.headers_item;
+  get headers_job_list() {
+    return cfg.header.headers_job_list;
   }
 
   openItemModal() {
@@ -149,7 +189,7 @@ export default class ReleaseProductAddModal extends Vue {
     this.item_modal = false;
   }
 
-  addRaw() { }
+  addRaw() {}
 
   saveSelectedItem(item: object[], count: number) {
     console.log("saveSelectedItem", item, count);
@@ -178,16 +218,55 @@ export default class ReleaseProductAddModal extends Vue {
       }
     });
   }
-  getList() {
-    api.productRelease
-      .getReleaseProducCustomer()
-      .then((response) => {
-        console.log("getReleaseProducCustomer", response);
-        this.customer_list = response.data.responseData;
+
+  processDone(item: any) {
+    this.$swal
+      .fire({
+        title: "출하 요청",
+        text: "해당 데이터를 출하 하시겠습니까?",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "출하",
       })
-      .catch((error) => {
-        console.log(error);
+
+      .then((result) => {
+        if (result.isConfirmed) {
+          let reqData = {
+            jobOrderId: item.jobOrderId,
+          };
+          api.productRelease.getReleaseProductJobDone(reqData).then((res) => {
+            console.log("getReleaseProductJobDone", res);
+            this.getList();
+
+            this.$swal({
+              title: "출하되었습니다.",
+              icon: "success",
+              position: "top",
+              showCancelButton: false,
+              showConfirmButton: false,
+              toast: true,
+              timer: 1500,
+            });
+          });
+        }
       });
+  }
+  getList() {
+    api.productRelease.getReleaseProductJobList().then((res) => {
+      console.log("getReleaseProductJobList", res);
+      this.job_list_modal = res.data.responseData;
+    });
+    // api.productRelease
+    //   .getReleaseProducCustomer()
+    //   .then((response) => {
+    //     console.log("getReleaseProducCustomer", response);
+    //     this.customer_list = response.data.responseData;
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
     // api.productRelease
     //   .getReleaseProductItemList()
     //   .then((response) => {

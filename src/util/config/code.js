@@ -1,12 +1,3 @@
-const gridCfg = {
-  loading: false,
-  totalCount: 0,
-  page: 1,
-  pageCount: 0,
-  itemsPerPage: 6,
-  options: {},
-};
-
 const JO_code = [
   { code: "JO_WAIT", name: "대기" },
   { code: "JO_ING", name: "진행중" },
@@ -21,5 +12,3 @@ const JOD_code = [
   { code: "JOD_SEED2", name: "2차육묘" },
   { code: "JOD_DONE", name: "완료" },
 ];
-
-export { gridCfg, JO_code, JOD_code };

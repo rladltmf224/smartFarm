@@ -1,17 +1,20 @@
 <template>
   <div class="warehousing">
     <v-container fluid>
-      <v-row>
-        <v-col class="ma-2" md="12">
-          <h4 class="searchbox-title">조회 조건</h4>
-          <v-card class="pa-3" height="90">
-            <v-row>
+      <v-row dense>
+        <v-col class="ma-2" cols="12">
+          <span class="searchbox-title">조회 조건</span>
+          <v-card class="pa-3" height="60">
+            <v-row dense>
               <v-col cols="2">
                 <v-text-field
                   label="code"
                   v-model="search_condition.code"
                   @keydown.enter="getCustomer"
                   dense
+                  solo
+                  rounded
+                  hide-details="true"
                 ></v-text-field>
               </v-col>
 
@@ -21,18 +24,24 @@
                   v-model="search_condition.customer"
                   @keydown.enter="getCustomer"
                   dense
+                  solo
+                  rounded
+                  hide-details="true"
                 ></v-text-field>
               </v-col>
-              <v-col cols="2">
+              <v-col cols="1">
                 <v-text-field
                   label="요청자명 or 요청자 연락처"
                   v-model="search_condition.requester"
                   @keydown.enter="getCustomer"
                   dense
+                  solo
+                  rounded
+                  hide-details="true"
                 ></v-text-field>
               </v-col>
 
-              <v-col cols="2">
+              <v-col cols="1">
                 <v-select
                   :items="search_dateType"
                   v-model="search_condition.dateType"
@@ -40,10 +49,13 @@
                   item-text="name"
                   item-value="value"
                   dense
+                  solo
+                  rounded
+                  hide-details="true"
                 ></v-select>
               </v-col>
 
-              <v-col md="2">
+              <v-col cols="2">
                 <v-menu
                   ref="startDate"
                   v-model="startDate"
@@ -62,6 +74,9 @@
                       v-bind="attrs"
                       v-on="on"
                       dense
+                      solo
+                      rounded
+                      hide-details="true"
                     ></v-text-field>
                   </template>
                   <v-date-picker
@@ -85,7 +100,7 @@
                   </v-date-picker>
                 </v-menu>
               </v-col>
-              <v-col md="2">
+              <v-col cols="2">
                 <v-menu
                   ref="endDate"
                   v-model="endDate"
@@ -104,6 +119,9 @@
                       v-bind="attrs"
                       v-on="on"
                       dense
+                      solo
+                      rounded
+                      hide-details="true"
                     ></v-text-field>
                   </template>
                   <v-date-picker
@@ -127,32 +145,30 @@
                   </v-date-picker>
                 </v-menu>
               </v-col>
+              <v-spacer></v-spacer>
 
-              <v-col class="pt-5 text-right" cols="1">
-                <v-btn color="primary" x-large @click="getCustomer">
-                  조회
-                </v-btn>
+              <v-col class="text-right" cols="2" align-self="center">
+                <v-btn color="primary" @click="getCustomer"> 조회 </v-btn>
               </v-col>
             </v-row>
           </v-card>
         </v-col>
       </v-row>
-    </v-container>
-    <v-container fluid>
-      <v-row>
-        <v-col class="ma-2" md="12">
-          <v-row class="mb-2">
-            <v-col md="2">
-              <h4 class="searchbox-title">출고요청 목록</h4>
+      <v-row dense>
+        <v-col class="ma-2" cols="12">
+          <v-row class="mb-1">
+            <v-col cols="2" align-self="center">
+              <span class="searchbox-title">출하요청 목록</span>
             </v-col>
-            <v-col class="text-right" offset-md="7" md="3">
-              <v-btn class="ml-1" small color="primary" @click="editItem"
+            <v-spacer></v-spacer>
+            <v-col class="text-right" cols="3" align-self="center">
+              <v-btn color="primary" @click="editItem"
                 ><v-icon left> mdi-book-account </v-icon>출하 추가</v-btn
               >
             </v-col>
           </v-row>
           <v-card>
-            <v-data-table
+            <!-- <v-data-table
               height="280"
               :headers="headers"
               fixed-header
@@ -208,24 +224,58 @@
                   출고 완료요청
                 </v-btn>
               </template>
+            </v-data-table> -->
+
+            <v-data-table
+              height="680"
+              :headers="headers_history"
+              fixed-header
+              :items="statement_list"
+              item-key="barcode"
+              multi-sort
+              @click:row="selectCustomer"
+              :loading="productOption.loading"
+              disable-pagination
+              hide-default-footer
+              dense
+            >
+              <template v-slot:[`item.status`]="{ item }">
+                <v-btn
+                  class="text-left mt-1 mb-1"
+                  small
+                  :color="getStatusColor(item.status)"
+                  dark
+                  style="width: 100px"
+                  depressed
+                >
+                  <v-icon left> mdi-album </v-icon>
+                  {{ item.status }}
+                </v-btn>
+              </template>
+              <template v-slot:[`item.cancel`]="{ item }">
+                <v-btn
+                  v-if="item.status == '출하 요청'"
+                  small
+                  @click="deleteItem_pop(item)"
+                  color="error"
+                >
+                  출하 취소
+                </v-btn>
+              </template>
             </v-data-table>
-            <v-col>
-              <v-pagination
-                circle
-                v-model="productOption.page"
-                :length="productOption.pageCount"
-              ></v-pagination>
-            </v-col>
           </v-card>
+          <!-- <v-pagination
+            circle
+            v-model="productOption.page"
+            :length="productOption.pageCount"
+          ></v-pagination> -->
         </v-col>
       </v-row>
-    </v-container>
-    <v-container fluid>
-      <v-row>
-        <v-col class="ma-2" md="12">
+      <!-- <v-row dense>
+        <v-col class="ma-2" cols="12">
           <v-row class="mb-2">
-            <v-col md="2">
-              <h4 class="searchbox-title">출고 상세(원자재)</h4>
+            <v-col cols="2">
+              <span class="searchbox-title">출고 상세(원자재)</span>
             </v-col>
           </v-row>
           <v-card>
@@ -237,6 +287,7 @@
               item-key="barcode"
               hide-default-footer
               multi-sort
+              dense
             >
               <template v-slot:[`item.count`]="props">
                 <v-edit-dialog :return-value.sync="props.item.count">
@@ -351,8 +402,9 @@
             </v-data-table>
           </v-card>
         </v-col>
-      </v-row>
+      </v-row> -->
     </v-container>
+
     <!-- 생성 모달 -->
 
     <ReleaseProductAddModal
@@ -414,6 +466,10 @@ export default class ReleaseProduct extends Vue {
 
   get headers() {
     return cfg.header.headers;
+  }
+
+  get headers_history() {
+    return cfg.header.headers_history_list;
   }
 
   get headers_detail() {
@@ -479,18 +535,18 @@ export default class ReleaseProduct extends Vue {
   }
 
   getCustomer() {
-    const { page, itemsPerPage, sortBy, sortDesc } = this.productOption.options;
-    this.search_condition.page = page;
-    this.search_condition.size = itemsPerPage;
-    this.search_condition.sortBy = sortBy;
-    this.search_condition.sortDesc = sortDesc;
+    // const { page, itemsPerPage, sortBy, sortDesc } = this.productOption.options;
+    // this.search_condition.page = page;
+    // this.search_condition.size = itemsPerPage;
+    // this.search_condition.sortBy = sortBy;
+    // this.search_condition.sortDesc = sortDesc;
     this.productOption.loading = true;
     api.productRelease
-      .getReleaseProductList(this.search_condition)
+      .getReleaseProductList_edit(this.search_condition)
       .then((response) => {
-        console.log("getReleaseProductList", response);
+        console.log("getReleaseProductList_edit", response);
         this.statement_list = response.data.responseData;
-        this.productOption.totalCount = response.data.totalCount;
+        //this.productOption.totalCount = response.data.totalCount;
       })
       .catch((error) => {
         console.log(error);
@@ -540,6 +596,44 @@ export default class ReleaseProduct extends Vue {
 
   editItem() {
     this.edit_customer = true;
+  }
+
+  deleteItem_pop(item: any) {
+    //this.deleteIndex = this.customer_list.indexOf(item);
+    console.log("deleteItem_pop", item);
+    let deleteItem = {
+      releaseId: item.releaseId,
+    };
+
+    this.$swal
+      .fire({
+        title: "삭제",
+        text: "해당 데이터를 출하 취소 하시겠습니까?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "확인",
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          api.productRelease
+            .deleteReleaseProductJobData(deleteItem)
+            .then((res) => {
+              console.log("res", res.data.isSuccess);
+              this.getCustomer();
+              if (res.data.isSuccess) {
+                return this.$swal.fire("성공", "취소되었습니다.", "success");
+              }
+
+              return this.$swal.fire(
+                "실패",
+                "관리자에게 문의바랍니다.",
+                "error"
+              );
+            });
+        }
+      });
   }
 }
 </script>
