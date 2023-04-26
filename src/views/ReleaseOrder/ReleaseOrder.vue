@@ -1,11 +1,13 @@
 <template>
-  <div class="warehousing">
+  <div class="warehousing" fluid v-resize="onResize">
     <v-container fluid>
       <v-row no-gutters>
-        <v-col class="ma-2" cols="12">
-          <span class="searchbox-title">조회 조건</span>
-          <v-card class="pa-2" height="120">
-            <v-row dense>
+
+        <v-col class="ma-2" md="12">
+          <span>조회 조건</span>
+          <v-card class="pa-3" height="110">
+            <v-row no-gutters>
+
               <v-col cols="10">
                 <v-row dense>
                   <v-col cols="3">
@@ -13,6 +15,7 @@
                       label="작업지시서명 or 코드"
                       v-model="search_condition.jobOrder"
                       @keydown.enter="getCustomer"
+                      hide-details="false"
                       dense
                       solo
                       rounded
@@ -24,10 +27,12 @@
                       label="거래처명 or 코드"
                       v-model="search_condition.customer"
                       @keydown.enter="getCustomer"
+                      hide-details="false"
                       dense
                       solo
                       rounded
-                      hide-details="true"
+
+
                     ></v-text-field>
                   </v-col>
                   <v-col cols="2">
@@ -35,10 +40,12 @@
                       label="작업지시서 담당자"
                       v-model="search_condition.jobOrderManager"
                       @keydown.enter="getCustomer"
+                      hide-details="false"
                       dense
                       solo
                       rounded
-                      hide-details="true"
+
+
                     ></v-text-field>
                   </v-col>
                   <v-col cols="2">
@@ -51,7 +58,9 @@
                       dense
                       solo
                       rounded
-                      hide-details="true"
+
+                      hide-details="false"
+
                     ></v-select>
                   </v-col>
                   <v-col cols="3">
@@ -62,11 +71,12 @@
                       dense
                       solo
                       rounded
-                      hide-details="true"
+
+                      hide-details="false"
                     ></v-text-field>
                   </v-col>
                 </v-row>
-                <v-row>
+                <v-row dense>
                   <v-col cols="2">
                     <v-select
                       :items="search_dateType"
@@ -77,7 +87,8 @@
                       dense
                       solo
                       rounded
-                      hide-details="true"
+
+
                     ></v-select>
                   </v-col>
                   <v-col md="2">
@@ -94,14 +105,15 @@
                         <v-text-field
                           v-model="search_condition.startDate"
                           label="시작일"
-                          prepend-icon="mdi-calendar"
                           readonly
                           v-bind="attrs"
                           v-on="on"
                           dense
                           solo
                           rounded
-                          hide-details="true"
+
+                          hide-details="false"
+
                         ></v-text-field>
                       </template>
                       <v-date-picker
@@ -139,14 +151,15 @@
                         <v-text-field
                           v-model="search_condition.endDate"
                           label="종료일"
-                          prepend-icon="mdi-calendar"
                           readonly
                           v-bind="attrs"
                           v-on="on"
                           dense
                           solo
                           rounded
-                          hide-details="true"
+
+                          hide-details="false"
+
                         ></v-text-field>
                       </template>
                       <v-date-picker
@@ -179,7 +192,8 @@
                       dense
                       solo
                       rounded
-                      hide-details="true"
+
+
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -192,24 +206,15 @@
             </v-row>
           </v-card>
         </v-col>
-        <v-row dense align-self="center">
-          <v-col cols="2">
-            <span class="searchbox-title">출고 목록</span>
-          </v-col>
-          <v-spacer></v-spacer>
-          <v-col class="text-right" cols="3">
-            <v-btn color="primary" @click="editItem"
-              ><v-icon left> mdi-book-account </v-icon>출고 요청</v-btn
-            >
-          </v-col>
-        </v-row>
-        <v-col cols="12">
-          <!-- <v-row align-self="center">
-            <v-col cols="2">
-              <span class="searchbox-title">출고 목록</span>
+
+        <v-col class="ma-2" md="12">
+          <v-row class="mb-2">
+            <v-col md="2" align-self="center">
+              <span>출고 목록</span>
             </v-col>
             <v-spacer></v-spacer>
-            <v-col class="text-right" cols="3">
+            <v-col class="text-right" cols="4">
+
               <v-btn color="primary" @click="editItem"
                 ><v-icon left> mdi-book-account </v-icon>출고 요청</v-btn
               >
@@ -217,7 +222,7 @@
           </v-row> -->
           <v-card>
             <v-data-table
-              height="315"
+              :height="table_height"
               :headers="headers"
               :items="statement_list"
               item-key="jobOrderId"
@@ -233,6 +238,8 @@
               :page.sync="releaseOrderOption.page"
               @page-count="releaseOrderOption.pageCount = $event"
               hide-default-footer
+              loading-text="서버에 요청중...."
+              no-data-text="데이터가 없습니다."
             >
               <template v-slot:[`item.jobOrderStatus`]="{ item }">
                 <v-btn
@@ -294,6 +301,7 @@
                   single-select
                   dense
                   hide-default-footer
+                  no-data-text="데이터가 없습니다."
                 >
                 </v-data-table>
               </v-card>
@@ -311,6 +319,7 @@
                   single-select
                   dense
                   hide-default-footer
+                  no-data-text="데이터가 없습니다."
                 >
                 </v-data-table>
               </v-card>
@@ -323,6 +332,8 @@
     <!-- 생성 모달 -->
     <ReleaseOrderModal :open="edit_customer" @closeModal="closeModal_customer">
     </ReleaseOrderModal>
+
+
   </div>
 </template>
 
@@ -349,6 +360,7 @@ import { Component, Vue, Watch } from "vue-property-decorator";
   },
 })
 export default class ReleaseOrder extends Vue {
+  table_height: number = 0;
   startDate: boolean = false;
   endDate: boolean = false;
   releaseOrderOption: any = {};
@@ -405,6 +417,15 @@ export default class ReleaseOrder extends Vue {
   @Watch("releaseOrderOption.options", { deep: true })
   onReleaseOrderOption() {
     this.getCustomer();
+  }
+
+  mounted() {
+    this.onResize();
+  }
+
+  onResize() {
+    this.table_height = window.innerHeight - 48 - 134 - 200 - 200 - 35;
+    console.log("onResize", this.table_height);
   }
 
   created() {

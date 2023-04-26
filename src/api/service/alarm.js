@@ -1,10 +1,7 @@
 import AuthAPI from "../api/AuthAPI";
 
 export default {
-  alarmList: (params) =>
-    AuthAPI.get("/api/push/alimtalk/alarmlist", {
-      params: params,
-    }),
+  alarmList: (params) => AuthAPI.get("/api/push/alimtalk/alarmlist" + params),
   alarmCheck: (params) => {
     let form = new FormData();
 
@@ -18,4 +15,10 @@ export default {
       headers: { "Content-Type": "application/json" },
     });
   },
+  alarmPush: () =>
+    AuthAPI.get("/api/account/alarm/control", {
+      headers: { "Content-Type": "application/json" },
+    }),
+  updateAlarmPush: (params) =>
+    AuthAPI.put("/api/account/alarm/control", JSON.stringify(params)),
 };

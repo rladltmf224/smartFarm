@@ -79,8 +79,8 @@ export default class ReleaseProductItemModal extends Vue {
   selected_data: object[] = [];
 
   @Prop({ required: true }) open: boolean = false;
-  @Prop({ required: true }) product_detail_list: object[] = [];
-  @Prop({ required: true }) selected: object[] = [];
+  @Prop({ required: true }) product_detail_list: object[];
+  @Prop({ required: true }) selected: object[];
   //@Prop({ required: true }) txtReleaseCount: number = 0;
 
   get headers_product_detail_add() {

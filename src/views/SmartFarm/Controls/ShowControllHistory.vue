@@ -27,9 +27,9 @@
                     <v-btn text color="primary" @click="s_date_search(s_date)">OK</v-btn>
                   </v-date-picker>
                 </v-menu>
-
                 <!-- 시작일 -->
               </v-col>
+              <!-- 종료일 -->
               <v-col cols="2">
                 <v-menu ref="menu2" v-model="menu2" :close-on-content-click="false" :return-value.sync="e_date"
                   transition="scale-transition" offset-y min-width="290px">
@@ -119,7 +119,7 @@
                 </v-chip>
               </template>
             </v-data-table>
-          </v-card> <v-pagination circle v-model="page" :length="pageCount"></v-pagination>
+          </v-card> <v-pagination circle :total-visible="11" v-model="page" :length="pageCount"></v-pagination>
         </v-col>
       </v-row>
       <!-- 거래처 생성 모달 -->
@@ -148,19 +148,18 @@ export default {
           value: "equipmentName",
         },
         { text: "제어명칭", value: "targetValue" },
-
-        { text: "수정전", value: "before" },
-        { text: "수정후", value: "after" },
+        { text: "수정전", value: "before", sortable: false, },
+        { text: "수정후", value: "after", sortable: false, },
         { text: "수정시간", value: "createdDate" },
-        { text: "온도", value: "temperature" },
-        { text: "습도", value: "humidity" },
-        { text: "에어컨", value: "settingTemperature" },
-        { text: "가습기", value: "humidifier" },
-        { text: "환기팬", value: "airFan" },
-        { text: "LED1", value: "ledFirst" },
-        { text: "LED2", value: "ledSecond" },
-        { text: "수정자", value: "createdId" },
-        { text: "메모", value: "memo", width: "200px" },
+        { text: "온도", value: "temperature", sortable: false },
+        { text: "습도", value: "humidity", sortable: false },
+        { text: "에어컨", value: "settingTemperature", sortable: false },
+        { text: "가습기", value: "humidifier", sortable: false },
+        { text: "환기팬", value: "airFan", sortable: false },
+        { text: "LED1", value: "ledFirst", sortable: false },
+        { text: "LED2", value: "ledSecond", sortable: false },
+        { text: "수정자", value: "createdId", sortable: false },
+        { text: "메모", value: "memo", width: "200px", sortable: false },
       ],
       datas: [],
       startDate: false,
@@ -174,7 +173,6 @@ export default {
       search_type_1: [],
       search_list2: [],
       search_type_2: "",
-
       search_condition: {
         controlItem: [],
         selectedRoom: "",
@@ -201,6 +199,9 @@ export default {
       },
       deep: true,
     },
+
+
+
   },
   methods: {
     changeRoomData() {
@@ -336,20 +337,36 @@ export default {
           console.log(error);
         });
     },
-
     s_date_search(v) {
+      this.setDate()
       this.s_date = v;
       this.menu1 = false;
       this.$refs.menu1.save(v);
     },
     e_date_search(v) {
+      this.setDate();
       this.e_date = v;
       this.menu2 = false;
       this.$refs.menu2.save(v);
     },
+    setDate() { //s_date와 e_date를 한국시간으로 바꾸기
+      const curr = new Date();
+      const utc =
+        curr.getTime() +
+        (curr.getTimezoneOffset() * 60 * 1000);
+      const KR_TIME_DIFF = 9 * 60 * 60 * 1000;  //한국 시간(KST)은 UTC시간보다 9시간 더 빠르므로 9시간을 밀리초 단위로 변환.
+      const kr_curr = new Date(utc + (KR_TIME_DIFF));  //UTC 시간을 한국 시간으로 변환하기 위해 utc 밀리초 값에 9시간을 더함.
+      console.log("한국시간 : " + kr_curr); // 한국시간 : Tue May 31 2022 09:00:30 GMT+0900 (한국 표준시)
+      /*       this.s_date = kr_curr;
+            this.e_date = kr_curr; */
+      let test = kr_curr.toISOString().substring(0, 10);
+      this.s_date = kr_curr.toISOString().substring(0, 10);
+      this.e_date = kr_curr.toISOString().substring(0, 10);
+    }
   },
 
-  computed: {},
+
+
 };
 </script>
 

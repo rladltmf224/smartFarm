@@ -1,19 +1,24 @@
 <template>
   <div class="warehousing">
-    <v-container fluid>
+    <v-container fluid v-resize="onResize">
       <v-row no-gutters>
         <v-col class="ma-2" md="12">
-          <h4 class="searchbox-title">조회 조건</h4>
-          <v-card class="pa-3" height="120">
+          <span>조회 조건</span>
+          <v-card class="card-shadow pa-3" height="110">
             <v-row no-gutters>
               <v-col cols="10">
-                <v-row>
+                <v-row dense>
                   <v-col cols="3">
                     <v-text-field
                       label="품목명 or 품목코드"
                       v-model="search_condition.item"
                       @keydown.enter="getCustomer"
                       dense
+
+                      solo
+                      rounded
+                      hide-details="false"
+
                     ></v-text-field>
                   </v-col>
 
@@ -23,6 +28,11 @@
                       v-model="search_condition.warehousingCode"
                       @keydown.enter="getCustomer"
                       dense
+
+                      solo
+                      rounded
+                      hide-details="false"
+
                     ></v-text-field>
                   </v-col>
 
@@ -32,6 +42,11 @@
                       v-model="search_condition.rawMaterialLot"
                       @keydown.enter="getCustomer"
                       dense
+
+                      solo
+                      rounded
+                      hide-details="false"
+
                     ></v-text-field>
                   </v-col>
                   <v-col cols="2">
@@ -43,10 +58,15 @@
                       item-value="value"
                       @change="getCustomer"
                       dense
+
+                      solo
+                      rounded
+                      hide-details="false"
+
                     ></v-select>
                   </v-col>
                 </v-row>
-                <v-row no-gutters>
+                <v-row dense>
                   <v-col cols="2">
                     <v-select
                       label="창고"
@@ -56,6 +76,11 @@
                       item-value="id"
                       @change="getCustomer"
                       dense
+
+                      solo
+                      rounded
+                      hide-details="false"
+
                     ></v-select>
                   </v-col>
                   <v-col md="2">
@@ -72,11 +97,17 @@
                         <v-text-field
                           v-model="search_condition.startDate"
                           label="시작일"
-                          prepend-icon="mdi-calendar"
+
+
                           readonly
                           v-bind="attrs"
                           v-on="on"
                           dense
+
+                          solo
+                          rounded
+                          hide-details="false"
+
                         ></v-text-field>
                       </template>
                       <v-date-picker
@@ -114,11 +145,17 @@
                         <v-text-field
                           v-model="search_condition.endDate"
                           label="종료일"
-                          prepend-icon="mdi-calendar"
+
+
                           readonly
                           v-bind="attrs"
                           v-on="on"
                           dense
+
+                          solo
+                          rounded
+                          hide-details="false"
+
                         ></v-text-field>
                       </template>
                       <v-date-picker
@@ -158,19 +195,22 @@
         <v-col class="ma-2" md="12">
           <v-row no-gutters class="mb-2">
             <v-col md="2">
-              <h4 class="searchbox-title">원자재 재고 목록</h4>
+              <span>원자재 재고 목록</span>
             </v-col>
           </v-row>
           <v-card>
             <v-data-table
-              height="300"
+
+              :height="table_height"
+
               :headers="headers"
               :items="statement_list"
               item-key="barcode"
               fixed-header
               multi-sort
               single-select
-              dense
+
+
               :options.sync="rawmaterialStockOption.options"
               :server-items-length="rawmaterialStockOption.totalCount"
               :loading="rawmaterialStockOption.loading"
@@ -178,6 +218,10 @@
               :page.sync="rawmaterialStockOption.page"
               @page-count="rawmaterialStockOption.pageCount = $event"
               hide-default-footer
+
+              loading-text="서버에 요청중...."
+              no-data-text="데이터가 없습니다."
+
             >
               <template v-slot:item.storageName="{ item }">
                 {{ item.storageName }} &nbsp;
@@ -197,21 +241,21 @@
                 <span class="text-right"> {{ props.item.count | comma }}</span>
               </template>
             </v-data-table>
-            <v-col>
-              <v-pagination
-                circle
-                v-model="rawmaterialStockOption.page"
-                :length="rawmaterialStockOption.pageCount"
-              ></v-pagination>
-            </v-col>
+
+
           </v-card>
+          <v-pagination
+            circle
+            v-model="rawmaterialStockOption.page"
+            :length="rawmaterialStockOption.pageCount"
+          ></v-pagination>
         </v-col>
       </v-row>
       <v-row no-gutters>
         <v-col class="ma-2" md="12">
           <v-row no-gutters class="mb-2">
             <v-col md="2">
-              <h4 class="searchbox-title">검색된 품목별 리스트</h4>
+              <span>검색된 품목별 리스트</span>
             </v-col>
           </v-row>
           <v-card>
@@ -220,11 +264,13 @@
               :headers="headers_detail"
               :items="item_list"
               item-key="barcode"
-              disable-pagination
+
+              :items-per-page="5"
               hide-default-footer
               fixed-header
               multi-sort
-              dense
+              no-data-text="데이터가 없습니다."
+
             >
               <template v-slot:item.sumCount="props">
                 {{ props.item.sumCount | comma }}
@@ -268,6 +314,7 @@ import { Component, Vue, Watch } from "vue-property-decorator";
   },
 })
 export default class RawmaterialStock extends Vue {
+  table_height: number = 0;
   changeStorageId: number | null = null;
   original_storageName: string = "";
   original_locationName: string = "";
@@ -320,6 +367,12 @@ export default class RawmaterialStock extends Vue {
 
   mounted() {
     this.getStorage();
+    this.onResize();
+  }
+
+  onResize() {
+    this.table_height = window.innerHeight - 48 - 129 - 210 - 150 - 95;
+    console.log("onResize", this.table_height);
   }
 
   @Watch("rawmaterialStockOption.options", { deep: true })

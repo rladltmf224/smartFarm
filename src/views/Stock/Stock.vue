@@ -1,15 +1,15 @@
 <template>
   <div>
-    <v-container fluid class="mt-2">
+    <v-container fluid v-resize="onResize">
       <v-row>
         <v-col md="4">
           <v-row>
             <v-col>
-              <h4 class="searchbox-title">실사 조회</h4>
+              <span>실사 조회</span>
             </v-col>
           </v-row>
 
-          <v-sheet class="pa-5" color="#F6F8F9" max-width="600" height="870">
+          <v-sheet class="pa-5" color="#F6F8F9" max-width="600">
             <v-card
               height="115px"
               class="pa-4 lighten-2"
@@ -31,10 +31,13 @@
                         class="ml-6"
                         v-model="search_stock.startDate"
                         label="시작일"
-                        prepend-icon="mdi-calendar"
                         readonly
                         v-bind="attrs"
                         v-on="on"
+                        dense
+                        solo
+                        rounded
+                        hide-details="false"
                       ></v-text-field>
                     </template>
                     <v-date-picker
@@ -78,10 +81,13 @@
                         class="ml-4"
                         v-model="search_stock.endDate"
                         label="종료일"
-                        prepend-icon="mdi-calendar"
                         readonly
                         v-bind="attrs"
                         v-on="on"
+                        dense
+                        solo
+                        rounded
+                        hide-details="false"
                       ></v-text-field>
                     </template>
                     <v-date-picker
@@ -123,14 +129,17 @@
               </v-row>
             </v-card>
 
-            <v-row class="mt-1">
+            <v-row class="ma-1" dense>
               <v-col cols="6">
                 <v-text-field
-                  class="pa-0 ml-2"
                   v-model="search_stock.createdId"
                   @keydown.enter="getSearch"
                   return-object
                   label="등록자"
+                  dense
+                  solo
+                  rounded
+                  hide-details="false"
                 ></v-text-field>
               </v-col>
               <v-col cols="2" class="text-right">
@@ -157,31 +166,28 @@
                 :page.sync="stockListCfg.page"
                 @page-count="stockListCfg.pageCount = $event"
                 hide-default-footer
+                loading-text="서버에 요청중...."
+                no-data-text="데이터가 없습니다."
                 class="overflow-scroll ml-2 mr-2"
               >
-                <template v-slot:no-data>
-                  <h5>데이터가 없습니다.</h5>
-                </template>
               </v-data-table>
-              <v-col>
-                <v-pagination
-                  circle
-                  v-model="stockListCfg.page"
-                  :length="stockListCfg.pageCount"
-                ></v-pagination>
-              </v-col>
             </v-card>
+            <v-pagination
+              circle
+              v-model="stockListCfg.page"
+              :length="stockListCfg.pageCount"
+            ></v-pagination>
           </v-sheet>
         </v-col>
 
         <v-col md="8">
           <v-row>
             <v-col md="2">
-              <h4 class="searchbox-title">실사 상세 조회</h4>
+              <span>실사 상세 조회</span>
             </v-col>
             <v-col class="text-right" offset-md="3" md="7"> </v-col>
           </v-row>
-          <v-sheet class="pa-5" color="#F6F8F9" max-width="auto" height="870">
+          <v-sheet class="pa-5" color="#F6F8F9" max-width="auto">
             <v-col class="text-right" offset-md="9" md="3">
               <v-btn
                 class="saveStock"
@@ -198,7 +204,7 @@
                 multi-sort
                 v-model="lotTable"
                 :items="stockTakingDetailTable"
-                height="720"
+                :height="table_height"
                 item-key="itemId"
                 single-select
                 :options.sync="stockDetailListCfg.options"
@@ -209,6 +215,8 @@
                 @page-count="stockDetailListCfg.pageCount = $event"
                 hide-default-footer
                 :headers="checkListDetailHeader"
+                loading-text="서버에 요청중...."
+                no-data-text="데이터가 없습니다."
                 @click:row="(item, slot) => slot.expand(!slot.isExpanded)"
                 class="overflow-scroll ml-2 mr-2"
               >
@@ -243,14 +251,12 @@
                   </v-btn>
                 </template>
               </v-data-table>
-              <v-col>
-                <v-pagination
-                  circle
-                  v-model="stockDetailListCfg.page"
-                  :length="stockDetailListCfg.pageCount"
-                ></v-pagination>
-              </v-col>
             </v-card>
+            <v-pagination
+              circle
+              v-model="stockDetailListCfg.page"
+              :length="stockDetailListCfg.pageCount"
+            ></v-pagination>
           </v-sheet>
         </v-col>
       </v-row>
@@ -273,6 +279,7 @@ import { Vue, Component, Watch } from "vue-property-decorator";
   },
 })
 export default class Stock extends Vue {
+  table_height: number = 0;
   stockListCfg: any = {};
   stockDetailListCfg: any = {};
   lotTable: [] = [];
@@ -357,6 +364,11 @@ export default class Stock extends Vue {
 
   mounted() {
     this.getSearch();
+    this.onResize();
+  }
+
+  onResize() {
+    this.table_height = window.innerHeight - 48 - 129 - 20 - 20 - 15;
   }
 
   created() {
@@ -408,18 +420,13 @@ export default class Stock extends Vue {
           .substr(0, 10);
       }
       if (this.row == "year") {
-        // this.search_stock.startDate = new Date(new Date().setYear(year - 1))
-        //   .toISOString()
-        //   .substr(0, 10);
+        this.search_stock.startDate = new Date(new Date().setFullYear(year - 1))
+          .toISOString()
+          .substr(0, 10);
       }
     } else if (this.row == "") {
-      if (
-        this.search_stock.startDate == "" &&
-        this.search_stock.endDate == ""
-      ) {
-        this.search_stock.startDate = "";
-        this.search_stock.endDate = "";
-      }
+      this.search_stock.startDate = "";
+      this.search_stock.endDate = "";
     }
     const { page, itemsPerPage, sortBy, sortDesc } = this.stockListCfg.options;
     this.search_stock.page = page;
@@ -431,7 +438,6 @@ export default class Stock extends Vue {
     api.stock
       .getStockTakingList(this.search_stock)
       .then((response) => {
-        console.log(response.data);
         this.stocktakinglist = response.data.responseData;
         this.stockListCfg.totalCount = response.data.totalCount;
       })

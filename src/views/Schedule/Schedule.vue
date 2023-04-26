@@ -69,17 +69,14 @@
       </v-card>
     </div>
 
-    <div
-      class="totalBox"
-      v-show="this.selectedTabs == '달력'"
-      :height="calendar_height"
-    >
+    <div class="totalBox" v-show="this.selectedTabs == '달력'">
       <div class="filterBox">
         <v-btn-toggle
           v-model="toggle"
           color="success"
           class="filterBtnBox"
           divided
+          multiple
           variant="outlined"
         >
           <v-btn
@@ -98,12 +95,15 @@
             v-for="(item, i) in this.filterList"
             :key="i"
             :value="item"
-            @click="getSchedule(item.customerId)"
+            :color="toggle.length == 0 && i == 0 ? 'success' : ''"
             active-color="success"
             rounded
             class="mb-2"
             >{{ item.customerName }}
           </v-btn>
+          <!--             :style="[toggle.length == 0 ? testGroup : null]"
+   
+            @click="getSchedule(item.customerId)"-->
         </v-btn-toggle>
       </div>
       <div class="calendarBox">
@@ -196,8 +196,11 @@
         <v-card-text>
           <v-row class="mx-2">
             <v-col cols="3" fluid>
+              <span>회사명</span>
               <v-autocomplete
+                solo
                 dense
+                hide-details="false"
                 class="highlightFont"
                 label="회사명"
                 v-model="scheduleData.customer"
@@ -246,16 +249,22 @@
             </v-col>
 
             <v-col cols="2" class="p-2">
+              <span>작물명</span>
               <v-text-field
                 dense
+                solo
+                hide-details="false"
                 class="highlightFont"
                 placeholder="* 작물명"
                 v-model="scheduleData.cropName"
               />
             </v-col>
             <v-col cols="2" class="p-2">
+              <span>품종명</span>
               <v-text-field
                 dense
+                solo
+                hide-details="false"
                 class="highlightFont"
                 placeholder="* 품종명"
                 v-model="scheduleData.varietyName"
@@ -263,6 +272,7 @@
             </v-col>
 
             <v-col cols="3" class="p-2">
+              <span>색상표</span>
               <v-text-field
                 dense
                 v-model="scheduleData.backgroundColor"
@@ -298,7 +308,7 @@
 
           <v-row
             v-for="(item, index) in titleList"
-            class="dateBox"
+            class="dateBox mt-5"
             :key="item.title"
           >
             <v-col cols="2" class="pa-0">
@@ -670,7 +680,7 @@
                 <v-row class="mb-1">
                   <v-col cols="6"
                     ><span><strong>작물 : </strong></span>
-                    <span>{{
+                    <span class="innerTextBox">{{
                       this.detailEvent == "" ||
                       this.detailEvent[0].cropName == ""
                         ? "작물없음"
@@ -679,7 +689,7 @@
                   >
                   <v-col cols="6">
                     <span><strong>품종 : </strong></span>
-                    <span>{{
+                    <span class="innerTextBox">{{
                       this.detailEvent == "" ||
                       this.detailEvent[0].varietyName == ""
                         ? "품종없음"
@@ -724,7 +734,7 @@
                 <v-row class="mb-1">
                   <v-col cols="12">
                     <span><strong>메모 : </strong></span>
-                    <span v-show="!update">{{
+                    <span v-show="!update" class="innerTextBox">{{
                       this.detailEvent == "" || this.detailEvent[0].memo == ""
                         ? "메모없음"
                         : detailEvent[0].memo
@@ -738,12 +748,12 @@
                 <v-row class="mb-1">
                   <v-col cols="12">
                     <span><strong>색상표 : </strong></span>
-                    {{
+                    <span class="innerTextBox">{{
                       this.detailEvent == "" ||
                       this.detailEvent[0].backgroundColor == ""
                         ? "색상표 없음"
                         : detailEvent[0].backgroundColor
-                    }}
+                    }}</span>
                     <div
                       class="innerBox"
                       :style="swatchdetailStyle"
@@ -990,6 +1000,8 @@ import Calendar from "@toast-ui/vue-calendar";
 import "@toast-ui/calendar/dist/toastui-calendar.min.css";
 import * as api from "@/api";
 import _, { indexOf, template } from "lodash";
+import { faPersonMilitaryRifle } from "@fortawesome/free-solid-svg-icons";
+import { colors } from "vuetify/lib";
 
 ChartJS.register(
   Title,
@@ -1202,9 +1214,8 @@ export default class Schedule extends Vue {
           },
           pan: {
             enabled: true,
+            mode: "x",
           },
-
-          limits: {},
         },
 
         legend: {
@@ -1365,7 +1376,7 @@ export default class Schedule extends Vue {
   };
   x: number = 0;
   y: number = 0;
-  calendar_height: number = 0;
+
   historyId: number = 0;
   historyDetailId: number = 0;
   historyMessage: string = "";
@@ -1404,7 +1415,7 @@ export default class Schedule extends Vue {
   mask: string = "!#XXXXXXXX"; //[등록,수정]색상표 기본형식
   menu: boolean = false; //[등록]컬러판 v-model
   colorMenu: boolean = false; //[수정]컬러판 v-model
-  toggle: boolean = false;
+  toggle: any[] = [];
   //tost ui 관련 옵션
   dateRangeText: string = ""; //달력 날짜
   selectedView: string = "month";
@@ -1430,6 +1441,7 @@ export default class Schedule extends Vue {
   };
   month: any = {
     dayNames: ["일", "월", "화", "수", "목", "금", "토"],
+    visibleEventCount: 10,
     //visibleWeeksCount: 5, //보여줄 주단위
   };
 
@@ -1474,6 +1486,37 @@ export default class Schedule extends Vue {
 
   get existingTable() {
     return this.existingTableList;
+  }
+
+  @Watch("toggle")
+  changeBtn() {
+    this.events = [];
+    let tempTotal = JSON.parse(JSON.stringify(this.totalEvents));
+    let tempId: any = [];
+
+    this.toggle.forEach((data: any) => {
+      tempId.push(data.customerId);
+    });
+    var total = tempId.find((e: any) => e === "");
+
+    if (this.toggle.length == 0) {
+      this.getSchedule("");
+    } else {
+      if (total != undefined) {
+        this.toggle = [];
+        tempId = [];
+      } else {
+        tempTotal.forEach((value: any) => {
+          tempId.forEach((value_detail: any) => {
+            if (value.customerId == value_detail) {
+              value.details.forEach((detail: any) => {
+                this.events.push(detail);
+              });
+            }
+          });
+        });
+      }
+    }
   }
 
   @Watch("selectedView")
@@ -1539,11 +1582,6 @@ export default class Schedule extends Vue {
     this.setDateRangeText();
     this.getCustomer();
     this.getSchedule("");
-    this.onResize();
-  }
-
-  onResize() {
-    this.calendar_height = window.innerHeight - 48 - 48 - 10;
   }
 
   resetZoom() {
@@ -1617,6 +1655,7 @@ export default class Schedule extends Vue {
           value_detail["backgroundColor"] = value.backgroundColor;
           value_detail["customerName"] = value.customerName;
           value_detail["workScheduleId"] = value.workScheduleId;
+          value_detail["customerId"] = value.customerId;
           value_detail[
             "id"
           ] = `${value.customerId}-${value_detail.workScheduleId}`; //toast 일정데이터 선별하기 임의데이터 사용

@@ -1,17 +1,25 @@
 <template>
   <div>
-    <v-container fluid>
+    <v-container fluid v-resize="onResize">
       <v-row>
         <v-col class="ma-2" md="12">
-          <h4 class="searchbox-title">조회 조건</h4>
-          <v-card class="pa-3" height="90">
-            <v-row>
+          <span class="searchbox-title">조회 조건</span>
+          <v-card class="card-shadow pa-3" height="65">
+            <v-row dense>
               <v-col cols="2">
-                <v-text-field label="창고명" v-model="search_condition.name" @keydown.enter="getCustomer"></v-text-field>
+                <v-text-field
+                  label="창고명"
+                  dense
+                  solo
+                  rounded
+                  elevation-0
+                  v-model="search_condition.name"
+                  @keydown.enter="getCustomer"
+                ></v-text-field>
               </v-col>
-
-              <v-col class="pt-5 text-right" offset="8" cols="2">
-                <v-btn color="primary" x-large @click="getCustomer">
+              <v-spacer></v-spacer>
+              <v-col class="text-right" cols="2">
+                <v-btn color="primary" @click="getCustomer" large elevation="0">
                   조회
                 </v-btn>
               </v-col>
@@ -27,19 +35,36 @@
             <v-col cols="6">
               <v-row class="mb-2">
                 <v-col cols="9">
-                  <h4 class="searchbox-title">창고 목록</h4>
+                  <span class="searchbox-title">창고 목록</span>
                 </v-col>
                 <v-col cols="3" class="text-right">
-                  <v-btn small color="primary" @click="editItem"><v-icon left> mdi-book-account </v-icon>창고 추가
+                  <v-btn small color="primary" @click="editItem"
+                    ><v-icon left> mdi-book-account </v-icon>창고 추가
                   </v-btn>
                 </v-col>
               </v-row>
               <v-card>
-                <v-data-table multi-sort fixed-header height="600" :headers="headers" :items="customer_list" item-key="id"
-                  :search="search" dense single-select @click:row="selectCustomer" :options.sync="storageListCfg.options"
-                  :server-items-length="storageListCfg.totalCount" :loading="storageListCfg.loading"
-                  :items-per-page="storageListCfg.itemsPerPage" :page.sync="storageListCfg.page"
-                  @page-count="storageListCfg.pageCount = $event" hide-default-footer>
+                <v-data-table
+                  multi-sort
+                  fixed-header
+                  :height="table_height"
+                  :headers="headers"
+                  :items="customer_list"
+                  item-key="id"
+                  :search="search"
+                  dense
+                  single-select
+                  @click:row="selectCustomer"
+                  :options.sync="storageListCfg.options"
+                  :server-items-length="storageListCfg.totalCount"
+                  :loading="storageListCfg.loading"
+                  :items-per-page="storageListCfg.itemsPerPage"
+                  :page.sync="storageListCfg.page"
+                  @page-count="storageListCfg.pageCount = $event"
+                  hide-default-footer
+                  loading-text="서버에 요청중...."
+                  no-data-text="데이터가 없습니다."
+                >
                   <template v-slot:item.edit="{ item }">
                     <v-icon small class="mr-2" @click="editItem(item)">
                       mdi-pencil
@@ -49,68 +74,124 @@
                     </v-icon>
                   </template>
                 </v-data-table>
-                <v-col>
-                  <v-pagination circle v-model="storageListCfg.page" :length="storageListCfg.pageCount"></v-pagination>
-                </v-col>
-
               </v-card>
-
+              <v-pagination
+                circle
+                v-model="storageListCfg.page"
+                :length="storageListCfg.pageCount"
+              ></v-pagination>
             </v-col>
 
             <v-col cols="6">
               <v-row class="mb-2">
                 <v-col cols="8">
-                  <h4 class="searchbox-title">창고 구역 목록</h4>
+                  <span class="searchbox-title">창고 구역 목록</span>
                 </v-col>
                 <v-col cols="4" class="pl-70">
-                  <v-btn class="text-right ml-2" v-show="update == true" small color="green" @click="saveLocation"
-                    :disabled="location_list.length == 0"><v-icon small>mdi-check </v-icon>저장
+                  <v-btn
+                    class="text-right ml-2"
+                    v-show="update == true"
+                    small
+                    color="green"
+                    @click="saveLocation"
+                    :disabled="location_list.length == 0"
+                    ><v-icon small>mdi-check </v-icon>저장
                   </v-btn>
-                  <v-btn class="text-right ml-2" v-show="update == false" small color="green" @click="updateLocation"
-                    :disabled="location_list.length == 0"><v-icon small>mdi-pencil </v-icon> 수정
+                  <v-btn
+                    class="text-right ml-2"
+                    v-show="update == false"
+                    small
+                    color="green"
+                    @click="updateLocation"
+                    :disabled="location_list.length == 0"
+                    ><v-icon small>mdi-pencil </v-icon> 수정
                   </v-btn>
-                  <v-btn class="text-right ml-2" small color="primary" @click="addLocation"
-                    :disabled="location_list.length == 0"><v-icon small>mdi-plus </v-icon> 추가
+                  <v-btn
+                    class="text-right ml-2"
+                    small
+                    color="primary"
+                    @click="addLocation"
+                    :disabled="location_list.length == 0"
+                    ><v-icon small>mdi-plus </v-icon> 추가
                   </v-btn>
-                  <v-btn class="text-right ml-2" v-show="update == false" small color="primary" @click="deleteLocation"
-                    :disabled="location_list.length == 0"><v-icon small>mdi-minus </v-icon> 삭제
+                  <v-btn
+                    class="text-right ml-2"
+                    v-show="update == false"
+                    small
+                    color="primary"
+                    @click="deleteLocation"
+                    :disabled="location_list.length == 0"
+                    ><v-icon small>mdi-minus </v-icon> 삭제
                   </v-btn>
                 </v-col>
               </v-row>
               <v-card>
-                <v-data-table fixed-header multi-sort height="600" v-model="locationTable" :headers="Locationheaders"
-                  :items="location_list" :show-select="update == false" item-key="storageLocationId" dense
-                  :options.sync="locationListCfg.options" :server-items-length="locationListCfg.totalCount"
-                  :loading="locationListCfg.loading" :items-per-page="locationListCfg.itemsPerPage"
-                  :page.sync="locationListCfg.page" @page-count="locationListCfg.pageCount = $event" hide-default-footer>
+                <v-data-table
+                  fixed-header
+                  multi-sort
+                  :height="table_height"
+                  v-model="locationTable"
+                  :headers="Locationheaders"
+                  :items="location_list"
+                  :show-select="update == false"
+                  item-key="storageLocationId"
+                  dense
+                  :options.sync="locationListCfg.options"
+                  :server-items-length="locationListCfg.totalCount"
+                  :loading="locationListCfg.loading"
+                  :items-per-page="locationListCfg.itemsPerPage"
+                  :page.sync="locationListCfg.page"
+                  @page-count="locationListCfg.pageCount = $event"
+                  hide-default-footer
+                  loading-text="서버에 요청중...."
+                  no-data-text="데이터가 없습니다."
+                >
                   <template v-slot:item.storageArea="props">
-                    <v-text-field :disabled="update == false" class="pa-0" placeholder="" v-model="props.item.storageArea"
-                      single-line>
+                    <v-text-field
+                      :disabled="update == false"
+                      class="pa-0"
+                      placeholder=""
+                      v-model="props.item.storageArea"
+                      single-line
+                    >
                       {{ props.item.storageArea }}
                     </v-text-field>
                   </template>
                   <template v-slot:item.memo="props">
-                    <v-text-field :disabled="update == false" class="pa-0" placeholder="" v-model="props.item.memo"
-                      single-line>
+                    <v-text-field
+                      :disabled="update == false"
+                      class="pa-0"
+                      placeholder=""
+                      v-model="props.item.memo"
+                      single-line
+                    >
                       {{ props.item.memo }}
                     </v-text-field>
                   </template>
                   <template v-slot:item.isValid="props">
-                    <v-checkbox class="editRow" v-model="props.item.isValid"
-                      :value="props.item.isValid == true ? 'F' : 'Y'" :disabled="update == false"></v-checkbox>
+                    <v-checkbox
+                      class="editRow"
+                      v-model="props.item.isValid"
+                      :value="props.item.isValid == true ? 'F' : 'Y'"
+                      :disabled="update == false"
+                    ></v-checkbox>
                   </template>
                   <template v-slot:item.delete="{ item }">
-                    <v-icon small @click="deleteTemp(item)" v-show="item.storageLocationId < 0">
+                    <v-icon
+                      small
+                      @click="deleteTemp(item)"
+                      v-show="item.storageLocationId < 0"
+                    >
                       mdi-delete
                     </v-icon>
                   </template>
                 </v-data-table>
-                <v-col>
-                  <v-pagination circle v-model="locationListCfg.page" :length="locationListCfg.pageCount"></v-pagination>
-                </v-col>
-
               </v-card>
-
+              <v-pagination
+                circle
+                v-model="locationListCfg.page"
+                :length="locationListCfg.pageCount"
+              ></v-pagination>
             </v-col>
           </v-row>
         </v-col>
@@ -124,7 +205,14 @@
         </v-card-title>
         <v-card-text>
           <v-col align-self="center">
-            <v-text-field label="창고명" v-model="editedCustomer.name"></v-text-field>
+            <span>창고명</span>
+            <v-text-field
+              hide-details="false"
+              class="text-box-style"
+              solo
+              label="창고명"
+              v-model="editedCustomer.name"
+            ></v-text-field>
           </v-col>
         </v-card-text>
         <v-card-actions>
@@ -149,6 +237,7 @@ import { Vue, Component, Watch } from "vue-property-decorator";
 
 @Component
 export default class Storage extends Vue {
+  table_height: number = 0;
   tempIdx: number = -1;
   locationTable: any[] = [];
   update: boolean = false;
@@ -202,6 +291,10 @@ export default class Storage extends Vue {
     this.locationListCfg = Object.assign({}, gridCfg);
   }
 
+  mounted() {
+    this.onResize();
+  }
+
   get headers() {
     return cfg.header.headers;
   }
@@ -247,6 +340,11 @@ export default class Storage extends Vue {
           this.locationListCfg.loading = false;
         });
     }
+  }
+
+  onResize() {
+    this.table_height = window.innerHeight - 48 - 112 - 52 - 54 - 40;
+    console.log("onResize", this.table_height);
   }
 
   selectCustomer(data: any, row: any) {
@@ -303,7 +401,7 @@ export default class Storage extends Vue {
   deleteItem(item: any) {
     api.storage
       .deleteStorageList(item)
-      .then((response) => { })
+      .then((response) => {})
       .catch((error) => {
         console.log(error);
       });

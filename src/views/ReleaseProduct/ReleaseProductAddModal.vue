@@ -9,6 +9,8 @@
         <v-card-text>
           <!-- <v-row>
             <v-col cols="2" align-self="center">
+
+
               <v-select
                 :items="customer_list"
                 item-text="name"
@@ -16,23 +18,29 @@
                 label="거래처"
                 v-model="editedCustomer.customerId"
                 dense
+
               ></v-select>
             </v-col>
             <v-col cols="2" align-self="center">
+
               <v-text-field
                 v-model="editedCustomer.requester"
                 label="요청자"
                 dense
+
               ></v-text-field>
             </v-col>
             <v-col cols="3" align-self="center">
+
               <v-text-field
                 v-model="editedCustomer.requesterContact"
                 label="요청자 연락처"
                 dense
+
               ></v-text-field>
             </v-col>
             <v-col md="2">
+
               <v-menu
                 ref="deadDate"
                 v-model="deadDate"
@@ -46,11 +54,15 @@
                   <v-text-field
                     v-model="editedCustomer.deadline"
                     label="마감일"
-                    prepend-icon="mdi-calendar"
+
                     readonly
                     v-bind="attrs"
                     v-on="on"
                     dense
+
+                    solo
+                    hide-details="false"
+
                   ></v-text-field>
                 </template>
                 <v-date-picker
@@ -73,6 +85,7 @@
                 </v-date-picker>
               </v-menu>
             </v-col>
+
           </v-row> -->
 
           <v-row dense>
@@ -82,16 +95,19 @@
                 height="300"
                 :headers="headers_job_list"
                 :items="job_list_modal"
+
                 fixed-header
                 item-key="barcode"
                 class="elevation-4"
                 multi-sort
                 dense
+
                 disable-pagination
                 hide-default-footer
               >
                 <template v-slot:item.targetCount="props">
                   {{ props.item.targetCount | comma }}
+
                 </template>
 
                 <template v-slot:[`item.done`]="{ item }">

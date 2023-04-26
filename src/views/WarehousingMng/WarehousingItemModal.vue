@@ -9,18 +9,26 @@
         <v-card-text>
           <v-row>
             <v-col cols="2" align-self="center">
+
+              <span>거래처</span>
               <v-select
+                dense
+
                 :items="customer_list"
                 item-text="name"
                 item-value="id"
                 label="거래처"
                 v-model="editedCustomer.customerId"
                 @change="getCutomerItem()"
-                dense
+
               ></v-select>
             </v-col>
             <v-col cols="3" align-self="center">
+              <span>품목</span>
               <v-select
+                dense
+                solo
+
                 ref
                 :items="item_list"
                 item-text="itemName"
@@ -32,13 +40,19 @@
               ></v-select>
             </v-col>
             <v-col cols="2" align-self="center">
+
+              <span>갯수</span>
               <v-text-field
+                dense
+                solo
+
                 label="갯수"
                 reverse
                 type="text"
                 maxlength="10"
                 v-model="itemInfo.count"
-                dense
+
+
                 oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"
                 @keydown.enter="add_item"
               ></v-text-field>
@@ -50,7 +64,7 @@
           <v-row> </v-row>
           <v-row>
             <v-col cols="6">
-              <h4>상세 품목</h4>
+              <span class="searchbox-title">상세 품목</span>
             </v-col>
           </v-row>
           <v-row>
@@ -67,6 +81,9 @@
                 show-expand
                 multi-sort
                 dense
+
+                no-data-text="데이터가 없습니다."
+
               >
                 <template v-slot:item.orderCount="props">
                   <v-edit-dialog

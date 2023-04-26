@@ -129,11 +129,12 @@
         <v-card-text>
           <v-row dense>
             <v-col>
+              <span>날짜</span>
               <v-menu ref="DIA_menu1" v-model="DIA_menu1" :close-on-content-click="false" :return-value.sync="DIA_s_date"
                 transition="scale-transition" offset-y>
                 <template v-slot:activator="{ on, attrs }">
-                  <v-text-field solo dense v-model="editedItem.inputDate" rounded readonly v-bind="attrs" v-on="on"
-                    hide-details></v-text-field>
+                  <v-text-field class="text-box-style" solo v-model="editedItem.inputDate" rounded readonly v-bind="attrs"
+                    v-on="on" hide-details="false"></v-text-field>
                 </template>
                 <v-date-picker v-model="editedItem.inputDate" no-title scrollable :max="DIA_e_date">
                   <v-spacer></v-spacer>
@@ -143,72 +144,62 @@
               </v-menu>
             </v-col>
             <v-col>
-              <v-select :items="search_list2" label="오전/오후" v-model="editedItem.division" item-text="name" solo rounded
-                item-value="value" dense></v-select>
+              <span>오전/오후</span>
+              <v-select class="text-box-style" hide-details="false" :items="search_list2" label="오전/오후"
+                v-model="editedItem.division" item-text="name" solo rounded item-value="value"></v-select>
             </v-col>
           </v-row>
           <v-row dense>
             <v-col>
-              <v-text-field type="number" step="any" min="0" ref="input" label="양액pH(4~8사이)" :rules="[pH_numberRule]"
-                dense rounded solo v-model.number="editedItem.ph"></v-text-field>
+              <span>양액pH(4~8사이)</span>
+              <v-text-field hide-details="false" class="text-box-style" type="number" step="any" min="0" ref="input"
+                label="양액pH(4~8사이)" :rules="[pH_numberRule]" rounded solo v-model.number="editedItem.ph"></v-text-field>
             </v-col>
             <v-col>
-              <v-text-field type="number" step="any" min="0" ref="input" label="양액EC(0.3~2.5사이)" dense rounded solo
-                :rules="[EC_numberRule]" v-model.number="editedItem.ec"></v-text-field>
+              <span>양액EC(0.3~2.5사이)</span>
+              <v-text-field hide-details="false" class="text-box-style" type="number" step="any" min="0" ref="input"
+                label="양액EC(0.3~2.5사이)" rounded solo :rules="[EC_numberRule]"
+                v-model.number="editedItem.ec"></v-text-field>
             </v-col>
           </v-row>
           <v-row dense>
             <v-col>
-              <v-text-field v-model="editedItem.memo" label="메모" solo rounded dense></v-text-field>
+              <span>메모(최대 500자)</span>
+              <v-text-field hide-details="false" class="text-box-style" v-model="editedItem.memo" label="메모" solo
+                rounded></v-text-field>
             </v-col>
           </v-row>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="error" @click="close">닫기</v-btn>
-          <v-btn color="primary" @click="save">저장</v-btn>
+          <v-btn color="primary" @click="save" elevation="0">저장</v-btn>
+          <v-btn color="error" @click="close" elevation="0">닫기</v-btn>
         </v-card-actions>
       </v-card>
+
+
     </v-dialog>
   </div>
 </template>
-
 <script>
 import Swal from "sweetalert2";
-
 import * as api from "@/api";
 export default {
   name: "InputData",
-
   data() {
     return {
-      // 테스트날짜
-      // 1
       test_date1: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
 
         .toISOString()
         .substr(0, 10),
-
       test_menu1: false,
       test_modal1: false,
-      // 1
-      // 2
       test_date2: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-
         .toISOString()
         .substr(0, 10),
       test_menu2: false,
       test_modal2: false,
-
-      // 2
-
-      // 테스트
-      // 이미 있는 날짜일 시 dialog 띄우기
       DateCheck_dialog: false,
-
-      // 이미 있는 날짜일 시 dialog 띄우기
-
-      // 넘버유효성체크
       pH_numberRule: (val) => {
         7;
         if (val < 4 || val > 8) return "4~8 사이입니다.";
@@ -223,32 +214,21 @@ export default {
         return true;
         9;
       },
-      // 넘버유효성체크
-      // 레인지슬라이더
       min: 4,
       EC_min: 0.3,
       max: 8,
       EC_max: 2.5,
       range: [4, 8],
       EC_range: [0.3, 2.5],
-      // 레인지슬라이더
-      // 데이터추가시 날짜
       DIA_date: new Date().toISOString().substr(0, 10),
       DIA_s_date: new Date().toISOString().substr(0, 10),
       DIA_e_date: new Date().toISOString().substr(0, 10),
       DIA_menu1: false,
       DIA_menu2: false,
-      // 데이터추가시 날짜
-      // 데이터테이블 테스트
       dialog: false,
       dialogDelete: false,
-
       desserts: [],
       editedIndex: -1,
-
-      // 데이터테이블 테스트
-      //이슬이꺼
-      //테스트
       page: 1,
       totalData: 0, //총 데이타의 개수 백엔드에서받아서 교체할것임
       loading: false,
@@ -286,14 +266,6 @@ export default {
         { name: "오전", value: "오전" },
         { name: "오후", value: "오후" },
       ],
-      search_type_2: "발아/활착실",
-
-      search_condition: {
-        controlItem: [],
-        selectedRoom: "",
-        startDate: "",
-        endDate: "",
-      },
       editedItem: {
         memo: "",
         ph: 0,
@@ -308,12 +280,11 @@ export default {
         division: "",
         inputDate: new Date().toISOString().substr(0, 10),
       },
-      editedIndex: -1,
       table_height: 0
     };
   },
   mounted() {
-    this.BeforeWeeks();
+    //this.BeforeWeeks();
     this.onResize();
   },
   watch: {
@@ -428,30 +399,45 @@ export default {
         division: this.editedItem.division,
         memo: this.editedItem.memo,
       };
-
       if (this.editedIndex == -1) {
         console.log("등록버젼입니다.");
         api.smartfarm
           .waterECpHRegister(item)
-          .then((response) => {
+          .then((res) => {
+            if (res.status == 200) {
+              this.$swal({
+                title: "저장되었습니다.",
+                icon: "success",
+                position: "top",
+                showCancelButton: false,
+                showConfirmButton: false,
+                toast: true,
+                timer: 1500,
+              });
+              this.getWaterHistory();
+            } else {
+              this.$swal({
+                title: "해당 일자, 시간에는 등록된 데이터가 존재합니다.",
+                icon: "error",
+                position: "top",
+                showCancelButton: false,
+                showConfirmButton: false,
+                toast: true,
+                timer: 1500,
+              });
+            }
+          })
+          .catch((err) => {
+            console.log('err', err)
             this.$swal({
-              title: "저장되었습니다.",
-              icon: "success",
+              title: "서버와의 연결을 확인해주세요.",
+              icon: "error",
               position: "top",
               showCancelButton: false,
               showConfirmButton: false,
               toast: true,
               timer: 1500,
             });
-            this.getWaterHistory();
-          })
-          .catch((error) => {
-            console.log(error.response.status);
-            console.log(error.response);
-            if (error.response.status == 400) {
-              this.testSweet();
-              return;
-            }
           });
       } else {
         // 수정api연결해야함.
@@ -482,7 +468,6 @@ export default {
     editItem(item) {
       this.getAmPm();
       this.editedIndex = this.datas.indexOf(item);
-      console.log(this.editedIndex, '에딧티드인덱스에딧티드인덱스에딧티드인덱스')
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
@@ -511,11 +496,9 @@ export default {
         sortBy: sortBy,
         sortDesc: sortDesc,
       };
-      console.log("리퀘스트파라미터", item);
       api.smartfarm
         .waterECpHInfo(item)
         .then((res) => {
-
           console.log("통신후", res);
           if (res.status == 200) {
             console.log("통신후 데이타만있는거", res.data.responseData);
@@ -523,7 +506,6 @@ export default {
             this.datas = res.data.responseData;
             this.totalData = res.totalCount;
           } else {
-
             console.log("통신후 데이타만있는거", res.data.responseData);
             this.loading = false; //로딩바
             this.$swal.fire(
@@ -537,10 +519,8 @@ export default {
         .catch((error) => {
           console.log("에러입니다.");
           this.loading = false; //로딩바
-
         });
     },
-
     s_date_search(v) {
       this.s_date = v;
       this.menu1 = false;
@@ -561,4 +541,4 @@ export default {
   created() { },
 };
 </script>
-<style src="../SmartFarm.scss" lang="scss"></style>
+<style src="@/views/SmartFarm/SmartFarm.scss" lang="scss"></style>

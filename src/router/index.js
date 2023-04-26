@@ -198,6 +198,12 @@ const routes = [
         name: "AlarmHistory ",
         component: () => import("@/views/SmartFarm/Details/AlarmHistory"),
       },
+      {
+        path: "calendar",
+        name: "calendar ",
+        component: () =>
+          import("@/views/SmartFarm/ConsumerProduct/calendar.vue"),
+      },
     ],
   },
 ];

@@ -1,12 +1,14 @@
 <template>
   <div class="warehousing">
-    <v-container fluid>
+
+    <v-container fluid fluid v-resize="onResize">
       <v-row dense>
         <v-col class="ma-2" cols="12">
           <span class="searchbox-title">조회 조건</span>
           <v-card class="pa-3" height="60">
             <v-row dense>
               <v-col cols="2">
+
                 <v-text-field
                   label="code"
                   v-model="search_condition.code"
@@ -14,7 +16,9 @@
                   dense
                   solo
                   rounded
-                  hide-details="true"
+
+                  elevation-0
+
                 ></v-text-field>
               </v-col>
 
@@ -26,7 +30,9 @@
                   dense
                   solo
                   rounded
-                  hide-details="true"
+
+                  elevation-0
+
                 ></v-text-field>
               </v-col>
               <v-col cols="1">
@@ -37,7 +43,9 @@
                   dense
                   solo
                   rounded
-                  hide-details="true"
+
+                  elevation-0
+
                 ></v-text-field>
               </v-col>
 
@@ -51,7 +59,9 @@
                   dense
                   solo
                   rounded
-                  hide-details="true"
+
+                  elevation-0
+
                 ></v-select>
               </v-col>
 
@@ -69,14 +79,15 @@
                     <v-text-field
                       v-model="search_condition.startDate"
                       label="시작일"
-                      prepend-icon="mdi-calendar"
                       readonly
                       v-bind="attrs"
                       v-on="on"
                       dense
                       solo
                       rounded
-                      hide-details="true"
+
+                      elevation-0
+
                     ></v-text-field>
                   </template>
                   <v-date-picker
@@ -114,14 +125,15 @@
                     <v-text-field
                       v-model="search_condition.endDate"
                       label="종료일"
-                      prepend-icon="mdi-calendar"
                       readonly
                       v-bind="attrs"
                       v-on="on"
                       dense
                       solo
                       rounded
-                      hide-details="true"
+
+                      elevation-0
+
                     ></v-text-field>
                   </template>
                   <v-date-picker
@@ -147,13 +159,16 @@
               </v-col>
               <v-spacer></v-spacer>
 
+
               <v-col class="text-right" cols="2" align-self="center">
                 <v-btn color="primary" @click="getCustomer"> 조회 </v-btn>
+
               </v-col>
             </v-row>
           </v-card>
         </v-col>
       </v-row>
+
       <v-row dense>
         <v-col class="ma-2" cols="12">
           <v-row class="mb-1">
@@ -163,13 +178,16 @@
             <v-spacer></v-spacer>
             <v-col class="text-right" cols="3" align-self="center">
               <v-btn color="primary" @click="editItem"
+
                 ><v-icon left> mdi-book-account </v-icon>출하 추가</v-btn
               >
             </v-col>
           </v-row>
           <v-card>
+
             <!-- <v-data-table
               height="280"
+
               :headers="headers"
               fixed-header
               :items="statement_list"
@@ -183,6 +201,8 @@
               :page.sync="productOption.page"
               @page-count="productOption.pageCount = $event"
               hide-default-footer
+              loading-text="서버에 요청중...."
+              no-data-text="데이터가 없습니다."
             >
               <template v-slot:[`item.status`]="{ item }">
                 <v-btn
@@ -264,6 +284,7 @@
               </template>
             </v-data-table>
           </v-card>
+
           <!-- <v-pagination
             circle
             v-model="productOption.page"
@@ -276,6 +297,7 @@
           <v-row class="mb-2">
             <v-col cols="2">
               <span class="searchbox-title">출고 상세(원자재)</span>
+
             </v-col>
           </v-row>
           <v-card>
@@ -288,6 +310,9 @@
               hide-default-footer
               multi-sort
               dense
+
+              no-data-text="데이터가 없습니다."
+
             >
               <template v-slot:[`item.count`]="props">
                 <v-edit-dialog :return-value.sync="props.item.count">
@@ -437,6 +462,7 @@ import { Component, Vue, Watch } from "vue-property-decorator";
   },
 })
 export default class ReleaseProduct extends Vue {
+  table_height: number = 0;
   max25chars: any = (v: any) => v.length <= 25 || "Input too long!";
   deadDate: boolean = false;
   startDate: boolean = false;
@@ -486,6 +512,13 @@ export default class ReleaseProduct extends Vue {
     this.search_textType = cfg.data.search_textType;
     this.productOption = Object.assign({}, gridCfg);
   }
+  mounted() {
+    this.onResize();
+  }
+
+  onResize() {
+    this.table_height = window.innerHeight - 48 - 120 - 250 - 200 - 15;
+  }
 
   dead_date_search(v: any) {
     this.editedCustomer.deadline = v;
@@ -514,6 +547,7 @@ export default class ReleaseProduct extends Vue {
   selectCustomer(data: any) {
     console.log("selectCustomer", data);
     this.selectItemID = data.id;
+    /*
     api.storage
       .getStorageList()
       .then((response) => {
@@ -523,6 +557,7 @@ export default class ReleaseProduct extends Vue {
       .catch((error) => {
         console.log(error);
       });
+    */
     api.productRelease
       .getReleaseProductDetailList({ id: data.id })
       .then((response) => {

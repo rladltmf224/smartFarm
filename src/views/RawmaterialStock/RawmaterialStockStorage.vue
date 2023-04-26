@@ -10,15 +10,25 @@
           <v-col cols="12">
             <v-row>
               <v-col cols="5">
+                <span>기존 창고</span>
                 <v-text-field
                   v-model="originalData.original_storageName"
                   label="기존 창고"
                   :disabled="originalData.original_storageName != ''"
+                  dense
+                  solo
+                  hide-details="false"
+                  class="text-box-style"
                 ></v-text-field>
+                <span>기존 구역</span>
                 <v-text-field
                   v-model="originalData.original_locationName"
                   label="기존 구역"
                   :disabled="originalData.original_locationName != ''"
+                  dense
+                  solo
+                  hide-details="false"
+                  class="text-box-style"
                 ></v-text-field>
               </v-col>
               <v-col cols="2" align-self="center">
@@ -27,15 +37,21 @@
                 </v-icon>
               </v-col>
               <v-col cols="5">
+                <span>변경 할 창고</span>
                 <v-autocomplete
                   v-model="update_storageName"
                   return-object
                   item-text="storageName"
                   item-value="storageId"
-                  :items="totalStorage_list_prop"
+                  :items="totalStorage_list"
                   label="변경 할 창고"
+                  dense
+                  solo
+                  hide-details="false"
+                  class="text-box-style"
                   @change="getLocation"
                 ></v-autocomplete>
+                <span>변경 할 구역</span>
                 <v-autocomplete
                   v-model="update_locationeName"
                   return-object
@@ -43,6 +59,10 @@
                   item-value="storageLocationId"
                   :items="totalLocation_list"
                   label="변경 할 구역"
+                  dense
+                  solo
+                  hide-details="false"
+                  class="text-box-style"
                 ></v-autocomplete>
               </v-col>
             </v-row>
@@ -77,7 +97,7 @@ export default class RawmaterialStockStorage extends Vue {
     original_locationName: string;
     original_storageId: number | "";
   };
-  @Prop({ required: true }) totalStorage_list: object[] = [];
+  @Prop({ required: true }) totalStorage_list: object[];
 
   get totalStorage_list_prop() {
     return this.totalStorage_list;

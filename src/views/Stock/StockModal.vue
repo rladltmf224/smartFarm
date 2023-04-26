@@ -2,17 +2,23 @@
   <div>
     <v-dialog v-model="openModal" max-width="1400px" height="900">
       <v-card>
-        <v-card-title class="text-h5 dialog-title font-weight-bold">
+        <v-card-title>
           <span> 재 고 현 황 </span>
           <v-spacer></v-spacer>
         </v-card-title>
         <v-col cols="12">
           <v-row>
             <v-col cols="10">
-              <v-text-field v-model="memo" label="비고"></v-text-field>
+              <v-text-field
+                v-model="memo"
+                label="비고"
+                dense
+                solo
+                hide-details="false"
+              ></v-text-field>
             </v-col>
             <v-col cols="2">
-              <v-btn color="primary" small class="mt-3" @click="getExcel">
+              <v-btn color="primary" @click="getExcel">
                 전 체 엑 셀 다 운
               </v-btn>
             </v-col>
@@ -28,11 +34,10 @@
           height="500"
           return-object
           :items-per-page="50"
+          loading-text="서버에 요청중...."
+          no-data-text="데이터가 없습니다."
           :footer-props="footer_option"
         >
-          <template v-slot:no-data>
-            <h5>데이터가 없습니다.</h5>
-          </template>
           <template v-slot:item.currentCount="props">
             <v-text-field
               class="pa-0 countFont"
@@ -69,15 +74,25 @@
               <v-col cols="12">
                 <v-row>
                   <v-col cols="5">
+                    <span>기존 창고</span>
                     <v-text-field
                       v-model="original_storageName"
                       label="기존 창고"
                       :disabled="original_storageName != ''"
+                      dense
+                      solo
+                      hide-details="false"
+                      class="text-box-style"
                     ></v-text-field>
+                    <span>기존 구역</span>
                     <v-text-field
                       v-model="original_locationName"
                       label="기존 구역"
                       :disabled="original_locationName != ''"
+                      dense
+                      solo
+                      hide-details="false"
+                      class="text-box-style"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="2" align-self="center">
@@ -86,6 +101,7 @@
                     </v-icon>
                   </v-col>
                   <v-col cols="5">
+                    <span>변경 할 창고</span>
                     <v-autocomplete
                       v-model="update_storageName"
                       return-object
@@ -94,7 +110,12 @@
                       :items="storage_list"
                       label="변경 할 창고"
                       @change="getLocation"
+                      dense
+                      solo
+                      hide-details="false"
+                      class="text-box-style"
                     ></v-autocomplete>
+                    <span>변경 할 구역</span>
                     <v-autocomplete
                       v-model="update_locationeName"
                       return-object
@@ -102,6 +123,10 @@
                       item-value="storageLocationId"
                       :items="location_list"
                       label="변경 할 구역"
+                      dense
+                      solo
+                      hide-details="false"
+                      class="text-box-style"
                     ></v-autocomplete>
                   </v-col>
                 </v-row>

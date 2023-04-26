@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container fluid v-resize="onResize">
+    <v-container fluid>
       <v-row>
         <v-col class="ma-2" cols="12">
           <span class="searchbox-title">조회 조건</span>
@@ -61,10 +61,11 @@
               <span class="searchbox-title"></span>
             </v-col>
           </v-row>
-          <v-card>
-            <v-data-table :loading="loading" dense :height="table_height" :headers="headers" :items="table_data"
-              fixed-header multi-sort :items-per-page="options.itemsPerPage" hide-default-footer :page.sync="options.page"
-              :options.sync="options" item-key="newKey">
+          <!--  <v-card> -->
+          <!--      <v-data-table height="680" :headers="headers" :items="table_data" item-key="id" fixed-header multi-sort
+              single-select dense :options.sync="options.options" :server-items-length="options.totalCount"
+              :loading="options.loading" :items-per-page="options.itemsPerPage" :page.sync="options.page"
+              @page-count="options.pageCount = $event" hide-default-footer>
               <template v-slot:item.value="{ item }">
                 <span v-html="item.value"></span>
               </template>
@@ -75,13 +76,27 @@
               </template>
               <template v-slot:item.checkedDate="{ item }">
                 <span v-if="item.checkedDate" v-html="item.checkedDate"></span>
-                <v-btn v-else color="primary" elevation="0" @click="check(item.id)">
+                <v-btn v-else color="primary" @click="check(item.id)">
                   조치
                 </v-btn>
               </template>
             </v-data-table>
           </v-card>
-          <v-pagination v-model="options.page" :length="options.pageCount" circle :total-visible="11"></v-pagination>
+          <v-pagination circle v-model="testCount" :length="table_data.length" :total-visible="7"
+            @input="pagecheck(options.page)"></v-pagination> -->
+          <v-card>
+            <v-data-table :headers="headers" :items="table_data" :items-per-page="test_itemsPerPage" hide-default-footer
+              class="elevation-1" @update:options="options = $event">
+              <template v-slot:bottom>
+                <div class="text-center pt-2">
+                  <v-pagination v-model="test_page" :length="test_options.pageCount"></v-pagination>
+                </div>
+              </template>
+            </v-data-table>
+          </v-card>
+
+
+
         </v-col>
       </v-row>
     </v-container>
@@ -92,9 +107,7 @@
 import * as api from "@/api";
 import { gridCfg } from "@/util/config";
 import { Component, Vue, Watch } from "vue-property-decorator";
-import _, { clone } from "lodash";
-import { stringify } from "querystring";
-
+import _ from "lodash";
 
 @Component({
   components: {},
@@ -109,138 +122,162 @@ export default class AlarmHistory extends Vue {
   };
   headers: any[] = [
     { text: "발생일시", value: "createdDate" },
-    { text: "위치", value: "room", sortable: false },
-    { text: "제목", value: "title", sortable: false },
-    { text: "설정범위", value: "setRange", sortable: false },
-    { text: "값", value: "value", sortable: false },
-    { text: "타입", value: "type", sortable: false },
-    { text: "조치일시", value: "checkedDate", sortable: false },
-    { text: "조치자", value: "checker", sortable: false },
+    { text: "위치", value: "room" },
+    { text: "제목", value: "title" },
+    { text: "설정범위", value: "setRange" },
+    { text: "값", value: "value" },
+    { text: "타입", value: "type" },
+    { text: "알람횟수", value: "num" },
+    { text: "조치일시", value: "checkedDate" },
+    { text: "조치자", value: "checker" },
   ];
+  options: any = {};
   alarmList: any[] = [];
   table_data: any[] = []; // 테이블에 보여줄 데이터
-  options: any = {
-    page: 0
+  //test: string = ''; //테스트용
+
+  //
+
+
+  test_options: any = {
+    pageCount: 1
   }
-  page: number = 0;
-  itemsPerPage: number = 15
-  table_height: number = 0;
-  sortState: any = [];
-  queryString: string = '';
-  loading: boolean = false;
+  test_page: number = 1
+  test_itemsPerPage: number = 13
+
+
+
+
+
+
+
+  //
+
+
+
   created() {
     this.options = Object.assign({}, gridCfg);
   }
-  @Watch('options', { deep: true })
-  changeOptions() {
-    let header = this.options.sortBy;
-    let value = this.options.sortDesc;
-    let sortState = header.map((columnName: any, index: any) => { //선택된 sort를 이쁘게가공하기
-      return { ascending: value[index], columnName };
-    });
-    this.sortState = sortState;
-    this.getData()
-  }
-  getData() { //api 통신
-    this.makeParam()
-    this.loading = true;
-    api.alarm
-      .alarmList(
-        this.queryString
-      )
-      .then((response) => {
-        this.options.pageCount = response.data.data.totalPages;
-        this.table_data = response.data.data.content
-        this.loading = false;
-        this.setContentString()
-        this.setContentDate()
-      });
-  }
-  makeParam() { //api통신에 필요한 파라미터 가공
-    const { sortBy, sortDesc, page, itemsPerPage } = this.options;
-    let local: any = localStorage.getItem("userId");
-    let userId = JSON.parse(local) || "";
-    let param: any = {
-      userId: userId,
-      startDate: this.search_condition.startDate,
-      endDate: this.search_condition.endDate,
-      getAll: true,
-      page: this.options.page,
-      size: this.options.itemsPerPage,
-    }
 
 
-    let str: any = JSON.stringify(param) // param에서 '{','}'를 자른다.
-    str = str.slice(0, -1);
-    str = str.substring(1);
 
-    let pageNum = this.options.page - 1
-
-
-    let queryString = "?"; //파라미터를 쿼리스트링파라미터로 바꾸는 과정 
-    queryString += "userId=" + userId;
-    queryString += "&page=" + pageNum;
-    queryString += "&size=" + this.options.itemsPerPage;
-    queryString += "&startDate=" + this.search_condition.startDate;
-    queryString += "&endDate=" + this.search_condition.endDate;
-
-
-    this.sortState.forEach((state: any) => { //sortState 배열에서 참이면 asc 거짓이면 desc
-      queryString += "&sort=" + state.columnName + ',' + (state.ascending ? "asc" : "desc")
-    });
-    this.queryString = queryString
-  }
-  setContentString() { //api 통신후 res.data안의 content string을 가공
-    for (let i = 0; i < this.table_data.length; i++) { //res.data의 content string을 가공한다.
-      let content = this.table_data[i].content.split("\n");
-      this.table_data[i]["room"] = content[2].replace("room : ", "");
-      this.table_data[i]["title"] = content[3].replace("알림 : ", "");
-      this.table_data[i]["setRange"] = content[4].replace(
-        "설정범위 : ",
-        ""
-      );
-      this.table_data[i]["value"] =
-        content[6].replace("- ", "") +
-        "<br>" +
-        content[7].replace("- ", "");
-      this.table_data[i]["num"] = _.filter(this.alarmList, {
-        id: this.table_data[i].id,
-      }).length;
-    }
-  }
-  setContentDate() { //api 통신후 res.data안의 date를 가공
-    for (let i = 0; i < this.table_data.length; i++) { //res.data의 content string을 가공한다.
-      //발생일시를 가공 
-      let date = this.table_data[i]["createdDate"]
-      this.table_data[i]["createdDate"] = `${date[0]}-${(date[1] < 10 ? '0' : '') + date[1]}-${(date[2] < 10 ? '0' : '') + date[2]} ${(date[3] < 10 ? '0' : '') + date[3]}:${(date[4] < 10 ? '0' : '') + date[4]}:${(date[5] < 10 ? '0' : '') + date[5]}`;
-      //조치일시를 가공
-      let checkedDate = this.table_data[i].checkedDate
-      if (this.table_data[i].checkedDate) {
-        this.table_data[i]["checkedDate"] = `${checkedDate[0]}-${(date[1] < 10 ? '0' : '') + checkedDate[1]}-${(checkedDate[2] < 10 ? '0' : '') + checkedDate[2]} ${(checkedDate[3] < 10 ? '0' : '') + checkedDate[3]}:${(checkedDate[4] < 10 ? '0' : '') + checkedDate[4]}:${(date[5] < 10 ? '0' : '') + checkedDate[5]}`;
-      }
-    }
-  }
   mounted() {
-    this.onResize();
     this.getData();
   }
-  onResize() {
-    this.table_height = window.innerHeight - 48 - 129 - 44 - 44 - 20;
-    console.log("onResize", this.table_height);
+
+
+  get testCount() {
+    return this.options.page
   }
+
+  set testCount(val: any) {
+    console.log('페이징 처리 입니다.')
+
+    let listLeng = this.table_data.length;
+    console.log('데이터총길이', listLeng)
+    let listSize = this.options.page;
+    console.log('listSize', listSize)
+    let page = Math.floor(listLeng / listSize);
+    if (listLeng % listSize > 0) page += 1;
+    console.log('그래서페이지는?', page)
+  }
+
+  /*   set paginatedData(val: any) {
+      let start = this.options.page * this.options.itemsPerPage;
+      let end = start + this.options.itemsPerPage;
+      return this.table_data.slice(start, end);
+  
+    } */
+
+
+
+  @Watch("options.page", { deep: true }) //방금 누른 페이지 확인하기
+  checkClickedPage(new_val: any, old_val: any) {
+    console.log('new val : ' + new_val, 'old val:', old_val);
+  }
+
+
+
   s_date_search(v: any) {
     this.search_condition.startDate = v;
     this.startDate = false;
     let startEL: any = this.$refs.startDate;
     startEL.save(v);
   }
+
+  pagecheck(v: any) {
+    console.log('방금클릭된페이지 넘버', v)
+  }
+
   e_date_search(v: any) {
     this.search_condition.endDate = v;
     this.endDate = false;
     let endEL: any = this.$refs.endDate;
     endEL.save(v);
   }
-  check(id: number): void { //조치버튼 클릭 시
+  getData() {
+    let local: any = localStorage.getItem("userId");
+    let userId = JSON.parse(local) || "";
+    api.alarm
+      .alarmList({
+        userId: userId,
+        startDate: this.search_condition.startDate,
+        endDate: this.search_condition.endDate,
+        getAll: true,
+        page: this.options.page,
+        size: this.options.size,
+      })
+      .then((response) => {
+        console.log("조회후 데이터", response);
+        this.alarmList = _.map(response.data.data.content, "alarmProcess");
+        this.table_data = _.uniqBy(this.alarmList, "id");
+        for (let i = 0; i < this.table_data.length; i++) {
+          let content = this.table_data[i].content.split("\n");
+          this.table_data[i]["room"] = content[2].replace("room : ", "");
+          this.table_data[i]["title"] = content[3].replace("알림 : ", "");
+          this.table_data[i]["setRange"] = content[4].replace(
+            "설정범위 : ",
+            ""
+          );
+          this.table_data[i]["value"] =
+            content[6].replace("- ", "") +
+            "<br>" +
+            content[7].replace("- ", "");
+          this.table_data[i]["num"] = _.filter(this.alarmList, {
+            id: this.table_data[i].id,
+          }).length;
+          this.table_data[i]["createdDate"] = new Date(
+            this.table_data[i]["createdDate"][0],
+            this.table_data[i]["createdDate"][1] - 1,
+            this.table_data[i]["createdDate"][2],
+            this.table_data[i]["createdDate"][3],
+            this.table_data[i]["createdDate"][4],
+            this.table_data[i]["createdDate"][5],
+            this.table_data[i]["createdDate"][6]
+          )
+            .toISOString()
+            .replace("T", " ")
+            .replace(".000Z", "");
+          if (this.table_data[i]["checkedDate"]) {
+            this.table_data[i]["checkedDate"] = new Date(
+              this.table_data[i]["checkedDate"][0],
+              this.table_data[i]["checkedDate"][1] - 1,
+              this.table_data[i]["checkedDate"][2],
+              this.table_data[i]["checkedDate"][3],
+              this.table_data[i]["checkedDate"][4],
+              this.table_data[i]["checkedDate"][5],
+              this.table_data[i]["checkedDate"][6]
+            )
+              .toISOString()
+              .replace("T", " ")
+              .replace(".000Z", "");
+          }
+        }
+        console.log(this.table_data);
+      });
+    this.options.totalCount = 3;
+  }
+  check(id: number): void {
     api.alarm
       .alarmCheck({ id: id })
       .then((response) => {
@@ -282,4 +319,4 @@ export default class AlarmHistory extends Vue {
 }
 </script>
 
-<style lang="scss" src="../SmartFarm.scss" scoped></style>
+<style lang="scss" scoped></style>

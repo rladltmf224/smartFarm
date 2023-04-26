@@ -81,9 +81,11 @@ import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 export default class ReleaseOrderItem extends Vue {
   txtSelectCount: number = 0;
   selected_data: object[] = [];
+
   @Prop({ required: true }) open: boolean;
   @Prop({ required: true }) selected: any;
   @Prop({ required: true }) txtReleaseCount: number;
+
   @Prop({ required: true }) raw_detail_list: object[];
 
   get headers_raw_add() {

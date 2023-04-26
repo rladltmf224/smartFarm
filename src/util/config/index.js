@@ -2,9 +2,10 @@ const gridCfg = {
   loading: false,
   totalCount: 0,
   page: 1,
-  pageCount: 0,
-  itemsPerPage: 6,
+  pageCount: 10,
+  itemsPerPage: 15,
   options: {},
+  size: 15,
 };
 
 const JO_code = [
