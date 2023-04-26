@@ -182,18 +182,33 @@ export default {
 
   data() {
     return {
+      // 테스트날짜
+      // 1
       test_date1: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
 
         .toISOString()
         .substr(0, 10),
+
       test_menu1: false,
       test_modal1: false,
+      // 1
+      // 2
       test_date2: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+
         .toISOString()
         .substr(0, 10),
       test_menu2: false,
       test_modal2: false,
+
+      // 2
+
+      // 테스트
+      // 이미 있는 날짜일 시 dialog 띄우기
       DateCheck_dialog: false,
+
+      // 이미 있는 날짜일 시 dialog 띄우기
+
+      // 넘버유효성체크
       pH_numberRule: (val) => {
         7;
         if (val < 4 || val > 8) return "4~8 사이입니다.";
@@ -208,21 +223,32 @@ export default {
         return true;
         9;
       },
+      // 넘버유효성체크
+      // 레인지슬라이더
       min: 4,
       EC_min: 0.3,
       max: 8,
       EC_max: 2.5,
       range: [4, 8],
       EC_range: [0.3, 2.5],
+      // 레인지슬라이더
+      // 데이터추가시 날짜
       DIA_date: new Date().toISOString().substr(0, 10),
       DIA_s_date: new Date().toISOString().substr(0, 10),
       DIA_e_date: new Date().toISOString().substr(0, 10),
       DIA_menu1: false,
       DIA_menu2: false,
+      // 데이터추가시 날짜
+      // 데이터테이블 테스트
       dialog: false,
       dialogDelete: false,
+
       desserts: [],
       editedIndex: -1,
+
+      // 데이터테이블 테스트
+      //이슬이꺼
+      //테스트
       page: 1,
       totalData: 0, //총 데이타의 개수 백엔드에서받아서 교체할것임
       loading: false,
@@ -260,6 +286,14 @@ export default {
         { name: "오전", value: "오전" },
         { name: "오후", value: "오후" },
       ],
+      search_type_2: "발아/활착실",
+
+      search_condition: {
+        controlItem: [],
+        selectedRoom: "",
+        startDate: "",
+        endDate: "",
+      },
       editedItem: {
         memo: "",
         ph: 0,
@@ -274,6 +308,7 @@ export default {
         division: "",
         inputDate: new Date().toISOString().substr(0, 10),
       },
+      editedIndex: -1,
       table_height: 0
     };
   },
@@ -502,8 +537,10 @@ export default {
         .catch((error) => {
           console.log("에러입니다.");
           this.loading = false; //로딩바
+
         });
     },
+
     s_date_search(v) {
       this.s_date = v;
       this.menu1 = false;

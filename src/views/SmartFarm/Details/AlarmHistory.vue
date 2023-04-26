@@ -62,9 +62,9 @@
             </v-col>
           </v-row>
           <v-card>
-            <v-data-table dense :height="table_height" :headers="headers" :items="table_data" multi-sort
-              :items-per-page="options.itemsPerPage" hide-default-footer :page.sync="options.page" :options.sync="options"
-              item-key="newKey">
+            <v-data-table :loading="loading" dense :height="table_height" :headers="headers" :items="table_data"
+              fixed-header multi-sort :items-per-page="options.itemsPerPage" hide-default-footer :page.sync="options.page"
+              :options.sync="options" item-key="newKey">
               <template v-slot:item.value="{ item }">
                 <span v-html="item.value"></span>
               </template>
@@ -127,28 +127,23 @@ export default class AlarmHistory extends Vue {
   table_height: number = 0;
   sortState: any = [];
   queryString: string = '';
+  loading: boolean = false;
   created() {
     this.options = Object.assign({}, gridCfg);
   }
-
   @Watch('options', { deep: true })
   changeOptions() {
-    console.log('왓치페이지', this.options.page)
     let header = this.options.sortBy;
     let value = this.options.sortDesc;
-
     let sortState = header.map((columnName: any, index: any) => { //선택된 sort를 이쁘게가공하기
       return { ascending: value[index], columnName };
     });
-
     this.sortState = sortState;
-
     this.getData()
-
-
   }
-  getData() {
+  getData() { //api 통신
     this.makeParam()
+    this.loading = true;
     api.alarm
       .alarmList(
         this.queryString
@@ -156,11 +151,12 @@ export default class AlarmHistory extends Vue {
       .then((response) => {
         this.options.pageCount = response.data.data.totalPages;
         this.table_data = response.data.data.content
+        this.loading = false;
         this.setContentString()
         this.setContentDate()
       });
   }
-  makeParam() {
+  makeParam() { //api통신에 필요한 파라미터 가공
     const { sortBy, sortDesc, page, itemsPerPage } = this.options;
     let local: any = localStorage.getItem("userId");
     let userId = JSON.parse(local) || "";
@@ -194,8 +190,7 @@ export default class AlarmHistory extends Vue {
     });
     this.queryString = queryString
   }
-
-  setContentString() {
+  setContentString() { //api 통신후 res.data안의 content string을 가공
     for (let i = 0; i < this.table_data.length; i++) { //res.data의 content string을 가공한다.
       let content = this.table_data[i].content.split("\n");
       this.table_data[i]["room"] = content[2].replace("room : ", "");
@@ -213,7 +208,7 @@ export default class AlarmHistory extends Vue {
       }).length;
     }
   }
-  setContentDate() {
+  setContentDate() { //api 통신후 res.data안의 date를 가공
     for (let i = 0; i < this.table_data.length; i++) { //res.data의 content string을 가공한다.
       //발생일시를 가공 
       let date = this.table_data[i]["createdDate"]
@@ -245,7 +240,7 @@ export default class AlarmHistory extends Vue {
     let endEL: any = this.$refs.endDate;
     endEL.save(v);
   }
-  check(id: number): void {
+  check(id: number): void { //조치버튼 클릭 시
     api.alarm
       .alarmCheck({ id: id })
       .then((response) => {
@@ -287,4 +282,4 @@ export default class AlarmHistory extends Vue {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" src="../SmartFarm.scss" scoped></style>

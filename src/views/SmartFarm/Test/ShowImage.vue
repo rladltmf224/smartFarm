@@ -3,15 +3,25 @@
     <v-container fluid v-resize="onResize">
       <v-row>
         <v-col class="ma-2" cols="12">
-          <v-card>
-            <v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options"
-              :height="table_height" :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading"
-              hide-default-footer v-model="selected" show-select item-key="growthReportId"
-              @page-count="pageCount = $event" multi-sort>
-            </v-data-table>
-          </v-card>
+          <v-row dense class="mb-2">
+            <v-col cols="1" align-self="center">
+              <span class="searchbox-title">실험 목록</span>
+            </v-col>
+            <v-spacer></v-spacer>
+            <v-col class="text-right" cols="3">
+              <v-btn color="primary" elevation="0" @click="dialogOpen()">이미지 조회
+              </v-btn>
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
+      <v-card>
+        <v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options"
+          :height="table_height" :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading"
+          hide-default-footer v-model="selected" show-select item-key="growthReportId" @page-count="pageCount = $event"
+          multi-sort>
+        </v-data-table>
+      </v-card>
       <v-pagination circle v-model="page" :length="pageCount"></v-pagination>
       <!-- 이미지갤러리 다이아로그 -->
       <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
@@ -131,7 +141,7 @@ export default class ShowImage extends Vue {
   }
 
   onResize() {
-    this.table_height = window.innerHeight - 148;
+    this.table_height = window.innerHeight - 200;
     console.log("onResize", this.table_height);
   }
 
