@@ -2,12 +2,10 @@
   <div class="warehousing" fluid v-resize="onResize">
     <v-container fluid>
       <v-row no-gutters>
-
         <v-col class="ma-2" md="12">
           <span>조회 조건</span>
           <v-card class="pa-3" height="110">
             <v-row no-gutters>
-
               <v-col cols="10">
                 <v-row dense>
                   <v-col cols="3">
@@ -19,7 +17,6 @@
                       dense
                       solo
                       rounded
-                      hide-details="true"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="2">
@@ -31,8 +28,6 @@
                       dense
                       solo
                       rounded
-
-
                     ></v-text-field>
                   </v-col>
                   <v-col cols="2">
@@ -44,8 +39,6 @@
                       dense
                       solo
                       rounded
-
-
                     ></v-text-field>
                   </v-col>
                   <v-col cols="2">
@@ -58,9 +51,7 @@
                       dense
                       solo
                       rounded
-
                       hide-details="false"
-
                     ></v-select>
                   </v-col>
                   <v-col cols="3">
@@ -71,7 +62,6 @@
                       dense
                       solo
                       rounded
-
                       hide-details="false"
                     ></v-text-field>
                   </v-col>
@@ -87,8 +77,6 @@
                       dense
                       solo
                       rounded
-
-
                     ></v-select>
                   </v-col>
                   <v-col md="2">
@@ -111,9 +99,7 @@
                           dense
                           solo
                           rounded
-
                           hide-details="false"
-
                         ></v-text-field>
                       </template>
                       <v-date-picker
@@ -157,9 +143,7 @@
                           dense
                           solo
                           rounded
-
                           hide-details="false"
-
                         ></v-text-field>
                       </template>
                       <v-date-picker
@@ -192,8 +176,6 @@
                       dense
                       solo
                       rounded
-
-
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -214,12 +196,12 @@
             </v-col>
             <v-spacer></v-spacer>
             <v-col class="text-right" cols="4">
-
               <v-btn color="primary" @click="editItem"
                 ><v-icon left> mdi-book-account </v-icon>출고 요청</v-btn
               >
             </v-col>
-          </v-row> -->
+          </v-row>
+          -->
           <v-card>
             <v-data-table
               :height="table_height"
@@ -332,8 +314,6 @@
     <!-- 생성 모달 -->
     <ReleaseOrderModal :open="edit_customer" @closeModal="closeModal_customer">
     </ReleaseOrderModal>
-
-
   </div>
 </template>
 
