@@ -253,6 +253,20 @@ export default class Sidebar extends Vue {
         },
       ],
     });
+    this.items.push({
+      title: "소비재관리",
+      active: true,
+      icon: "mdi-package-variant-closed",
+      role: "ROLE_operationManagement",
+      use: "Y",
+      sort: 5,
+      subItems: [
+        {
+          title: "캘린더",
+          to: "calendar",
+        },
+      ],
+    });
 
     for (let i = 0; i < this.items.length; i++) {
       //tooltip을 위한 데이터를

@@ -1312,7 +1312,6 @@ export default {
           }
         });
     },
-
     async updateControlHistory(reqData) {
       try {
         const latestControl = await api.smartfarm.getlatestControl(reqData);
@@ -1823,10 +1822,8 @@ export default {
             this.getOutDoor();
             return;
           }
-
           console.log(res.data.response.body.items);
           var Arr = res.data.response.body.items.item;
-
           var Out_RainFall = _.filter(Arr, { category: "RN1" });
           console.log("강수량", Out_RainFall[0].obsrValue);
           this.outdoorSensor[1].value = Out_RainFall[0].obsrValue;
@@ -1886,6 +1883,11 @@ export default {
           //console.log(cfg.data.windDirectionData);
         });
     },
+
+    
+   
+
+
     // 기상센서api
     // 시작일을 일주일전으로
     BeforeWeeks() {
