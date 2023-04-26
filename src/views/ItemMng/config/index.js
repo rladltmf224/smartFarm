@@ -38,6 +38,10 @@ export default {
       { name: "완제품", value: "완제품" },
       { name: "반제품", value: "반제품" },
     ],
+    product_type_list: [
+      { name: "실생묘", value: "실생묘" },
+      { name: "접목묘", value: "접목묘" },
+    ],
     items_type: [{ name: "원자재" }, { name: "완제품" }, { name: "반제품" }],
   },
 };

@@ -1,257 +1,259 @@
 <template>
   <div>
     <v-dialog width="1200px" v-model="openModal" persistent>
-      <v-card max-height="99%">
-        <v-card-title class="bomRow">
+      <v-card>
+        <v-card-title>
           <span v-show="!change">BOM 등록</span>
           <span v-show="change">BOM 수정</span>
-          <v-btn
-            small
-            class="closeBtn"
-            color="primary"
-            text
-            @click="closeModal"
-          >
-            닫기
-          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="error" @click="closeModal"> 닫기 </v-btn>
         </v-card-title>
-        <v-stepper v-model="step" vertical>
-          <v-stepper-step :complete="step > 1" step="1">
-            1. 완제품 선택
-          </v-stepper-step>
+        <v-card-text>
+          <v-stepper v-model="step" vertical>
+            <v-stepper-step :complete="step > 1" step="1">
+              1. 완제품 선택
+            </v-stepper-step>
 
-          <v-stepper-content step="1" class="pt-0 pb-0">
-            <v-card
-              v-show="!change"
-              color="#F6F8F9"
-              class="elevation-0 pa-0"
-              height="550"
-            >
-              <v-row>
-                <v-col colos="8" class="pb-0">
-                  <v-text-field
-                    label="품목코드 or 품목명"
-                    class="ml-3"
-                    @keydown.enter="getProduct"
-                    v-model="searchProduct"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="4" class="pb-0">
-                  <v-btn
-                    class="mr-3 mt-2"
-                    fluid
-                    color="primary"
-                    @click="getProduct"
-                  >
-                    조회
-                  </v-btn>
-                </v-col>
-              </v-row>
-              <v-data-table
-                multi-sort
-                fixed-header
-                :options.sync="bomItemListCfg.options"
-                :server-items-length="bomItemListCfg.totalCount"
-                :loading="bomItemListCfg.loading"
-                loading-text="서버에 요청중...."
-                no-data-text="데이터가 없습니다."
-                :items-per-page="bomItemListCfg.itemsPerPage"
-                :page.sync="bomItemListCfg.page"
-                @page-count="bomItemListCfg.pageCount = $event"
-                class="ml-2 mr-2 mt-5 pa-0 overflow-scroll elevation-1"
-                height="400"
-                v-model="bomData.item"
-                :headers="bomHeader"
-                :items="bomTable"
-                item-key="id"
-                return-object
-                single-select
-                dense
-                hide-default-footer
-                @click:row="click"
-                @dblclick:row="dblclickRow"
-              >
-              </v-data-table>
-              <v-pagination
-                v-model="bomItemListCfg.page"
-                :length="bomItemListCfg.pageCount"
-              ></v-pagination>
-            </v-card>
-            <v-container fluid class="d-flex justify-center pt-2">
-              <v-btn
-                v-show="!change"
-                color="green"
-                @click="next"
-                :disabled="bomData.item.length == 0"
-              >
-                <!-- :disabled="bomData.itemId.length == 0" -->
-                다음
-              </v-btn>
-            </v-container>
-          </v-stepper-content>
-
-          <v-stepper-step :complete="step > 2" step="2">
-            2. 원자재 선택
-          </v-stepper-step>
-
-          <v-stepper-content step="2" class="pt-0 pb-0 pl-0">
-            <v-card color="#F6F8F9" height="625">
-              <v-container fluid>
-                <v-row>
-                  <v-col class="pa-0">
-                    <h4 class="searchbox-title pt-3 mx-5">1. 원자재 목록</h4>
+            <v-stepper-content step="1">
+              <v-card v-show="!change" elevation="0">
+                <v-row dense>
+                  <v-col cols="4">
+                    <v-text-field
+                      label="품목코드 or 품목명"
+                      @keydown.enter="getProduct"
+                      v-model="searchProduct"
+                      dense
+                      solo
+                      rounded
+                      elevation-0
+                      hide-details="false"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="1" align-self="center">
+                    <v-btn color="primary" @click="getProduct"> 조회 </v-btn>
                   </v-col>
                 </v-row>
-              </v-container>
-              <v-container fluid class="d-flex pa-0">
-                <v-col cols="4" class="pa-0">
-                  <v-select
-                    class="ml-3"
-                    label="검색"
-                    dense
-                    v-model="searchItemkeyword"
-                    :items="searchItemType"
-                    item-text="text"
-                    return-object
-                  ></v-select>
-                </v-col>
-                <v-col colos="8" class="pb-0 pt-0">
-                  <v-autocomplete
-                    v-show="itemKeyword == 'customerName'"
-                    class="ml-3"
-                    dense
-                    v-model="searchItemCustmerText"
-                    @change="getItem"
-                    :items="custmerlist"
-                    item-text="name"
-                    return-object
-                  ></v-autocomplete>
-                  <v-select
-                    v-show="itemKeyword == 'itemtype'"
-                    class="ml-3"
-                    dense
-                    v-model="searchTypekeyword"
-                    @change="getItem"
-                    :items="itemTypelist"
-                    return-object
-                  ></v-select>
-                  <v-text-field
-                    dense
-                    v-show="
-                      itemKeyword != 'customerName' && itemKeyword != 'itemtype'
-                    "
-                    v-model="searchItemText"
-                    @keydown.enter="getItem"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="2" class="pa-0">
+                <v-row dense>
+                  <v-col cols="12">
+                    <v-card elevation="0">
+                      <v-data-table
+                        multi-sort
+                        fixed-header
+                        :options.sync="bomItemListCfg.options"
+                        :server-items-length="bomItemListCfg.totalCount"
+                        :loading="bomItemListCfg.loading"
+                        loading-text="서버에 요청중...."
+                        no-data-text="데이터가 없습니다."
+                        :items-per-page="bomItemListCfg.itemsPerPage"
+                        :page.sync="bomItemListCfg.page"
+                        @page-count="bomItemListCfg.pageCount = $event"
+                        class="elevation-3 overflow-scroll"
+                        height="400"
+                        v-model="bomData.item"
+                        :headers="bomHeader"
+                        :items="bomTable"
+                        item-key="id"
+                        return-object
+                        single-select
+                        dense
+                        hide-default-footer
+                        @click:row="click"
+                        @dblclick:row="dblclickRow"
+                      >
+                      </v-data-table>
+                      <v-pagination
+                        v-model="bomItemListCfg.page"
+                        :length="bomItemListCfg.pageCount"
+                      ></v-pagination>
+                    </v-card>
+                  </v-col>
+                </v-row>
+                <v-row dense class="pa-1 justify-center">
                   <v-btn
-                    class="mr-10 float-right"
-                    fluid
-                    small
+                    v-show="!change"
                     color="primary"
-                    @click="getItem"
+                    @click="next"
+                    :disabled="bomData.item.length == 0"
                   >
-                    조회
+                    다음
                   </v-btn>
-                </v-col>
-              </v-container>
+                </v-row>
+              </v-card>
+            </v-stepper-content>
 
-              <v-container fluid class="pa-0">
-                <v-data-table
-                  multi-sort
-                  fixed-header
-                  v-model="plusSelected"
-                  show-select
-                  height="180"
-                  class="ml-2 mr-2 overflow-scroll elevation-4"
-                  :headers="itemHeader"
-                  :items="itemTable"
-                  item-key="itemPriceId"
-                  return-object
-                  :items-per-page="50"
-                  :footer-props="footer_option"
-                  dense
-                  @click:row="selectedItemData"
-                  @dblclick:row="dblclickRow"
-                >
-                </v-data-table>
-              </v-container>
-              <v-container fluid class="d-flex justify-center pa-0">
-                <v-col cols="1">
-                  <v-btn small fluid color="deep-orange" @click="minus">
-                    <v-icon>mdi-arrow-up-bold-outline</v-icon>
-                  </v-btn>
-                </v-col>
-                <v-col cols="1">
-                  <v-btn small fluid color="deep-orange" @click="plus">
-                    <v-icon>mdi-arrow-down-bold-outline</v-icon>
-                  </v-btn>
-                </v-col>
-              </v-container>
-              <v-container fluid class="pa-0">
-                <v-col class="pa-0">
-                  <h4 class="searchbox-title ml-5">2. 원자재 등록</h4>
-                </v-col>
-                <v-data-table
-                  multi-sort
-                  fixed-header
-                  v-model="bomData.details"
-                  item-key="id"
-                  height="160"
-                  class="ml-2 mr-2 pa-0 overflow-scroll elevation-4"
-                  :headers="itemDetailHeader"
-                  :items="itemDetailTable"
-                  return-object
-                  :items-per-page="50"
-                  :footer-props="footer_option"
-                  show-select
-                  dense
-                >
-                  <template v-slot:item.count="props">
+            <v-stepper-step :complete="step > 2" step="2">
+              2. 원자재 선택
+            </v-stepper-step>
+
+            <v-stepper-content step="2">
+              <v-card>
+                <v-row>
+                  <v-col>
+                    <h4>1. 원자재 목록</h4>
+                  </v-col>
+                </v-row>
+                <v-row dense>
+                  <v-col cols="2">
+                    <v-select
+                      label="검색"
+                      dense
+                      v-model="searchItemkeyword"
+                      :items="searchItemType"
+                      item-text="text"
+                      return-object
+                      solo
+                      rounded
+                      elevation-0
+                      hide-details="false"
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="2">
+                    <v-autocomplete
+                      v-show="itemKeyword == 'customerName'"
+                      dense
+                      v-model="searchItemCustmerText"
+                      @change="getItem"
+                      :items="custmerlist"
+                      item-text="name"
+                      return-object
+                      solo
+                      rounded
+                      elevation-0
+                      hide-details="false"
+                    ></v-autocomplete>
+                    <v-select
+                      v-show="itemKeyword == 'itemtype'"
+                      dense
+                      v-model="searchTypekeyword"
+                      @change="getItem"
+                      :items="itemTypelist"
+                      return-object
+                      solo
+                      rounded
+                      elevation-0
+                      hide-details="false"
+                    ></v-select>
                     <v-text-field
-                      class="pa-0 countFont"
-                      oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');"
-                      placeholder="* 수량 필수"
-                      v-model="props.item.count"
-                      single-line
+                      dense
+                      v-show="
+                        itemKeyword != 'customerName' &&
+                        itemKeyword != 'itemtype'
+                      "
+                      v-model="searchItemText"
+                      solo
+                      rounded
+                      elevation-0
+                      @keydown.enter="getItem"
+                      hide-details="false"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="2">
+                    <v-btn color="primary" @click="getItem"> 조회 </v-btn>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-data-table
+                      multi-sort
+                      fixed-header
+                      v-model="plusSelected"
+                      show-select
+                      height="185"
+                      class="overflow-scroll elevation-3"
+                      :headers="itemHeader"
+                      :items="itemTable"
+                      item-key="itemPriceId"
+                      return-object
+                      :items-per-page="50"
+                      :footer-props="footer_option"
+                      dense
+                      @click:row="selectedItemData"
+                      @dblclick:row="dblclickRow"
+                      hide-default-footer
                     >
-                      {{ props.item.count }}
-                    </v-text-field>
-                  </template>
-                </v-data-table>
-              </v-container>
-            </v-card>
-            <v-container fluid class="d-flex justify-center pt-1">
-              <v-btn
-                v-show="!change"
-                class="align-center"
-                color="green "
-                @click="back"
-              >
-                이전 단계
-              </v-btn>
-              <v-btn
-                v-show="!change"
-                class="align-center ml-2"
-                color="primary"
-                :disabled="totalItem.length == 0"
-                @click="complete"
-              >
-                등 록
-              </v-btn>
-              <v-btn
-                v-show="change"
-                class="align-center ml-2"
-                color="primary"
-                @click="update"
-                :disabled="totalItem.length == 0"
-              >
-                수 정
-              </v-btn>
-            </v-container>
-          </v-stepper-content>
-        </v-stepper>
+                    </v-data-table>
+                  </v-col>
+                </v-row>
+
+                <v-row dense class="d-flex justify-center">
+                  <v-col cols="1">
+                    <v-btn small fluid color="deep-orange" @click="minus">
+                      <v-icon>mdi-arrow-up-bold-outline</v-icon>
+                    </v-btn>
+                  </v-col>
+                  <v-col cols="1">
+                    <v-btn small fluid color="deep-orange" @click="plus">
+                      <v-icon>mdi-arrow-down-bold-outline</v-icon>
+                    </v-btn>
+                  </v-col>
+                </v-row>
+                <v-row dense>
+                  <v-col cols="12">
+                    <h4 class="searchbox-title ml-5">2. 원자재 등록</h4>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-data-table
+                      multi-sort
+                      fixed-header
+                      v-model="bomData.details"
+                      item-key="id"
+                      height="185"
+                      class="overflow-scroll elevation-4"
+                      :headers="itemDetailHeader"
+                      :items="itemDetailTable"
+                      return-object
+                      :items-per-page="50"
+                      :footer-props="footer_option"
+                      show-select
+                      dense
+                      hide-default-footer
+                    >
+                      <template v-slot:item.count="props">
+                        <v-text-field
+                          class="pa-0 countFont"
+                          oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');"
+                          placeholder="* 수량 필수"
+                          v-model="props.item.count"
+                          single-line
+                        >
+                          {{ props.item.count }}
+                        </v-text-field>
+                      </template>
+                    </v-data-table>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col class="d-flex justify-center" cols="12">
+                    <v-btn
+                      v-show="!change"
+                      class="align-center"
+                      color="green "
+                      @click="back"
+                    >
+                      이전 단계
+                    </v-btn>
+                    <v-btn
+                      v-show="!change"
+                      class="align-center"
+                      color="primary"
+                      :disabled="totalItem.length == 0"
+                      @click="complete"
+                    >
+                      등 록
+                    </v-btn>
+                    <v-btn
+                      v-show="change"
+                      class="align-center"
+                      color="primary"
+                      @click="update"
+                      :disabled="totalItem.length == 0"
+                    >
+                      수 정
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-card>
+            </v-stepper-content>
+          </v-stepper>
+        </v-card-text>
       </v-card>
     </v-dialog>
   </div>

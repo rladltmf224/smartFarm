@@ -180,16 +180,15 @@
                   </v-col>
                 </v-row>
               </v-col>
-              <v-col cols="2">
-                <v-col class="pt- text-right">
-                  <v-btn color="primary" x-large @click="getCustomer">
-                    조회
-                  </v-btn>
-                </v-col>
+              <v-col cols="2" class="text-right" align-self="center">
+                <v-btn color="primary" x-large @click="getCustomer">
+                  조회
+                </v-btn>
               </v-col>
             </v-row>
           </v-card>
         </v-col>
+
         <v-col class="ma-2" md="12">
           <v-row class="mb-2">
             <v-col md="2" align-self="center">
@@ -202,6 +201,7 @@
               >
             </v-col>
           </v-row>
+          -->
           <v-card>
             <v-data-table
               :height="table_height"
@@ -252,41 +252,13 @@
               <template v-slot:[`item.totalPrice`]="{ item }">
                 {{ item.totalPrice | comma }}원
               </template>
-              <template v-slot:[`item.edit`]="{ item }">
-                <v-btn
-                  v-if="item.status == '출고 요청'"
-                  small
-                  class="mr-2"
-                  @click="releaseProcess(item)"
-                >
-                  출고진행
-                </v-btn>
-                <v-btn
-                  v-if="item.status == '출고 진행'"
-                  small
-                  class="mr-2"
-                  @click="releaseDone(item)"
-                >
-                  출고완료
-                </v-btn>
-                <v-btn
-                  v-if="item.status != '출고 취소'"
-                  small
-                  class="mr-2"
-                  @click="releaseCancle(item)"
-                >
-                  출고취소
-                </v-btn>
-              </template>
             </v-data-table>
-            <v-col>
-              <v-pagination
-                circle
-                v-model="releaseOrderOption.page"
-                :length="releaseOrderOption.pageCount"
-              ></v-pagination
-            ></v-col>
           </v-card>
+          <v-pagination
+            circle
+            v-model="releaseOrderOption.page"
+            :length="releaseOrderOption.pageCount"
+          ></v-pagination>
         </v-col>
         <v-col cols="12" class="pt-0 pb-0">
           <v-tabs v-model="tabs" align-with-title>
@@ -301,7 +273,7 @@
             <v-tab-item>
               <v-card>
                 <v-data-table
-                  height="180"
+                  height="200"
                   :headers="headers_release"
                   :items="release_list"
                   item-key="barcode"
@@ -319,7 +291,7 @@
             <v-tab-item
               ><v-card>
                 <v-data-table
-                  height="180"
+                  height="200"
                   :headers="headers_raw"
                   :items="raw_list"
                   item-key="barcode"
@@ -340,80 +312,15 @@
     </v-container>
 
     <!-- 생성 모달 -->
-
     <ReleaseOrderModal :open="edit_customer" @closeModal="closeModal_customer">
     </ReleaseOrderModal>
-
-    <!--자재 환입 모달 -->
-    <v-dialog v-model="reversal_rawModal" max-width="1000px" persistent>
-      <v-card>
-        <v-card-title>
-          <span>자재 환입</span>
-          <v-spacer></v-spacer>
-          <span
-            >출고된 수량 : {{ txtReleaseCount_check }} | 선택된 수량 :
-            {{ txtSelectCount_check }}</span
-          >
-        </v-card-title>
-        <v-card-text>
-          <v-row>
-            <v-col>
-              <v-data-table
-                height="300"
-                ref="rawGrid"
-                v-model="selected_check"
-                :headers="headers_raw_reversal"
-                :items="raw_reversal_list"
-                item-key="rawMaterialDetailId"
-                class="elevation-4"
-                @item-selected="addRawItem_reversal"
-                hide-default-footer
-                multi-sort
-                show-select
-                dense
-                no-data-text="데이터가 없습니다."
-              >
-                <template v-slot:item.reversalCount="props">
-                  <v-edit-dialog
-                    :return-value.sync="props.item.reversalCount"
-                    @save="props.item = saveReversalCount(props.item)"
-                  >
-                    {{ props.item.reversalCount | comma }}
-                    <template v-slot:input>
-                      <v-text-field
-                        v-model="props.item.reversalCount"
-                        label="Edit"
-                        single-line
-                        type="text"
-                        maxlength="10"
-                        oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"
-                      ></v-text-field>
-                    </template>
-                  </v-edit-dialog>
-                </template>
-              </v-data-table>
-            </v-col>
-          </v-row>
-        </v-card-text>
-        <v-card-actions>
-          <v-col class="text-right">
-            <v-btn color="success" text @click="saveRawData_reversal">
-              환입 추가
-            </v-btn>
-            <v-btn color="primary" text @click="closeRawReversalDetail">
-              닫기
-            </v-btn>
-          </v-col>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 
 <script lang="ts">
 import _ from "lodash";
 import * as api from "@/api";
-import { gridCfg } from "@/util/config";
+import { gridCfg, JO_code, JOD_code } from "@/util/config";
 import cfg from "./config";
 import ReleaseOrderModal from "./ReleaseOrderModal.vue";
 import { Component, Vue, Watch } from "vue-property-decorator";
@@ -469,7 +376,7 @@ export default class ReleaseOrder extends Vue {
   select_rawID: any = 0;
   release_list: [] = [];
   raw_list: [] = [];
-  process_status: any = cfg.data.status;
+  process_status: any = JO_code;
 
   get headers() {
     return cfg.header.headers;

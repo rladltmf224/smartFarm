@@ -119,7 +119,12 @@
               item-key="barcode"
               multi-sort
               hide-default-footer
+
+              disable-pagination
+              dense
+
               no-data-text="데이터가 없습니다."
+
             >
               <template v-slot:item.orderCount="props">
                 {{ props.item.orderCount | comma }}

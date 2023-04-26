@@ -1,15 +1,15 @@
 <template>
   <div>
     <!-- 생성 모달 -->
-    <v-dialog persistent v-model="openModal" max-width="600px">
-      <v-card class="box-radius">
+    <v-dialog persistent v-model="openModal" max-width="800px">
+      <v-card class="card-shadow box-radius">
         <v-card-title>
           <span>{{ editedType ? "품목 생성" : "품목 수정" }}</span>
           <v-spacer></v-spacer>
         </v-card-title>
         <v-card-text>
           <v-row dense>
-            <v-col cols="3" align-self="center" v-if="!editedType">
+            <v-col cols="2" align-self="center" v-if="!editedType">
               <span>code</span>
               <v-text-field
                 v-model="itemData.code"
@@ -19,16 +19,8 @@
                 class="text-box-style"
               ></v-text-field>
             </v-col>
+
             <v-col cols="3" align-self="center">
-              <span>버전</span>
-              <v-text-field
-                v-model="itemData.version"
-                hide-details="false"
-                class="text-box-style"
-                solo
-              ></v-text-field>
-            </v-col>
-            <v-col cols="6" align-self="center">
               <span>품목명</span>
               <v-text-field
                 v-model="itemData.name"
@@ -39,7 +31,7 @@
             </v-col>
           </v-row>
           <v-row dense>
-            <v-col cols="4" align-self="center">
+            <v-col cols="3" align-self="center">
               <span>규격</span>
               <v-text-field
                 v-model="itemData.standard"
@@ -48,7 +40,7 @@
                 class="text-box-style"
               ></v-text-field>
             </v-col>
-            <v-col cols="4" align-self="center">
+            <v-col cols="3" align-self="center">
               <span>unit</span>
               <v-text-field
                 v-model="itemData.unit"
@@ -57,11 +49,27 @@
                 class="text-box-style"
               ></v-text-field>
             </v-col>
-            <v-col cols="4" align-self="center">
+            <v-col cols="2" align-self="center">
               <span>타입</span>
               <v-select
                 :items="items_type"
                 v-model="itemData.type"
+                item-text="name"
+                item-value="name"
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-select>
+            </v-col>
+            <v-col
+              v-if="itemData.type == '완제품'"
+              cols="2"
+              align-self="center"
+            >
+              <span>완제품 타입</span>
+              <v-select
+                :items="product_type"
+                v-model="itemData.productionType"
                 item-text="name"
                 item-value="name"
                 solo
@@ -119,6 +127,7 @@ import cfg from "./config/index";
 @Component
 export default class ItemModal extends Vue {
   items_type: object[] = [];
+  product_type: object[] = [];
   storageID: number = 0;
   locationID: number = 0;
 
@@ -130,6 +139,7 @@ export default class ItemModal extends Vue {
       code: "",
       standard: "",
       type: "",
+      productionType: "",
       unit: "",
       storageId: "",
       storageLocationId: "",
@@ -142,6 +152,7 @@ export default class ItemModal extends Vue {
 
   created() {
     this.items_type = cfg.data.items_type;
+    this.product_type = cfg.data.product_type_list;
   }
 
   get openModal() {
@@ -198,10 +209,6 @@ export default class ItemModal extends Vue {
     let customerInfo: any = this.itemData;
     console.log("clickSaveCustomerInfo", customerInfo);
 
-    if (customerInfo.version == null) {
-      return this.$swal("경고", "버전을 입력해주세요", "error");
-    }
-
     if (customerInfo.name == null) {
       return this.$swal("경고", "품목명을 입력해주세요", "error");
     }
@@ -225,12 +232,3 @@ export default class ItemModal extends Vue {
   }
 }
 </script>
-<!-- <style lang="scss">
-.text-box-style {
-  border-radius: 10px !important;
-}
-</style>
-
-<style lang="sass">
-$text-field-border-radius:10px
-</style> -->

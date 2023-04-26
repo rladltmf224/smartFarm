@@ -52,6 +52,10 @@ let demo_side_data = [
         to: "operationOrder",
       },
       {
+        title: "작업지시서 상세관리",
+        to: "operationOrderDetail",
+      },
+      {
         title: "LOT 추적",
         to: "lottracking",
       },
@@ -129,10 +133,10 @@ let demo_side_data = [
         title: "원자재 입고관리",
         to: "warehousingmng",
       },
-      {
-        title: "완제품 입고관리",
-        to: "productwarehousing",
-      },
+      // {
+      //   title: "완제품 입고관리",
+      //   to: "productwarehousing",
+      // },
     ],
   },
   {

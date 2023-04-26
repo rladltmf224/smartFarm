@@ -87,4 +87,10 @@ export default {
       { text: "반제품", value: "반제품" },
     ],
   },
+  data: {
+    bom_type: [
+      { code: "접목묘", name: "접목묘" },
+      { code: "실생묘", name: "실생묘" },
+    ],
+  },
 };

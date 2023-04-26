@@ -11,7 +11,7 @@
           >
         </v-card-title>
         <v-card-text>
-          <v-row>
+          <v-row dense>
             <v-col>
               <v-data-table
                 height="300"
@@ -28,6 +28,7 @@
                 multi-sort
                 show-select
                 dense
+                disable-pagination
               >
                 <template v-slot:item.releaseCount="props">
                   <v-edit-dialog
@@ -52,16 +53,16 @@
           </v-row>
         </v-card-text>
         <v-card-actions>
-          <v-col class="text-right">
-            <v-btn color="success" text @click="saveRawData"> 출고 추가 </v-btn>
-            <v-btn color="primary" text @click="closeRawDetail"> 닫기 </v-btn>
-          </v-col>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="saveRawData"> 출고 추가 </v-btn>
+          <v-btn color="error" @click="closeRawDetail"> 닫기 </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
   </div>
 </template>
 <script lang="ts">
+import * as api from "@/api";
 import cfg from "./config";
 import _ from "lodash";
 import { Vue, Component, Prop, Watch } from "vue-property-decorator";
@@ -80,9 +81,11 @@ import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 export default class ReleaseOrderItem extends Vue {
   txtSelectCount: number = 0;
   selected_data: object[] = [];
-  @Prop({ required: true }) open: boolean = false;
-  @Prop({ required: true }) selected: object[];
-  @Prop({ required: true }) txtReleaseCount: number = 0;
+
+  @Prop({ required: true }) open: boolean;
+  @Prop({ required: true }) selected: any;
+  @Prop({ required: true }) txtReleaseCount: number;
+
   @Prop({ required: true }) raw_detail_list: object[];
 
   get headers_raw_add() {
@@ -93,11 +96,6 @@ export default class ReleaseOrderItem extends Vue {
     return this.raw_detail_list;
   }
 
-  // get selected_prop(): any {
-  //   this.selected_data = _.cloneDeep(this.selected);
-  //   return this.selected;
-  // }
-
   get open_prop(): any {
     this.openModal();
     return this.open;
@@ -105,9 +103,9 @@ export default class ReleaseOrderItem extends Vue {
 
   openModal() {
     console.log("selected", this.selected);
-    this.selected_data = _.cloneDeep(this.selected);
-    let sum_data = _.cloneDeep(this.selected);
-    this.txtSelectCount = _.sumBy(sum_data, "count");
+    //this.selected_data = _.cloneDeep(this.selected);
+    // let sum_data = _.cloneDeep(this.selected);
+    // this.txtSelectCount = _.sumBy(sum_data, "count");
   }
 
   addRawItem(item: any) {
@@ -134,6 +132,7 @@ export default class ReleaseOrderItem extends Vue {
 
   closeRawDetail() {
     this.txtSelectCount = 0;
+    this.selected_data = [];
     this.$emit("closeModal");
   }
 
@@ -153,17 +152,44 @@ export default class ReleaseOrderItem extends Vue {
 
   saveRawData() {
     console.log("saveRawData", this.$refs.rawGrid);
+    let reqData = {
+      releaseCode: "123123", // 코드는 곧 사라질 예정
+      jobOrderId: this.selected.jobOrderId,
+      jobOrderDetailId: this.selected.jobOrderDetailId,
+      itemId: this.selected.itemId,
+      count: this.selected.targetCount,
+      details: this.selected_data.map((el: any) => {
+        return { materialId: el.materialId, count: el.releaseCount };
+      }),
+    };
 
-    this.$emit("saveItem", this.selected_data, this.txtSelectCount);
-    //this.$refs.rawListGrid.$forceUpdate();
+    api.rawRelease.postReleaseOrderRawRegi(reqData).then((res) => {
+      console.log("postReleaseOrderRawRegi", res);
+      if (res.status == 400) {
+        this.$swal({
+          title: res.data.message,
+          icon: "error",
+          position: "top",
+          showCancelButton: false,
+          showConfirmButton: false,
+          toast: true,
+          timer: 1500,
+        });
+      }
 
-    this.closeRawDetail();
+      this.$emit("saveItem", this.selected_data, this.txtSelectCount);
+
+      this.closeRawDetail();
+
+      this.selected_data = [];
+      this.txtSelectCount = 0;
+    });
   }
 
   saveReleaseCount(item: any) {
     item.releaseCount = parseInt(item.releaseCount);
     let sumData = 0;
-    this.selected.forEach((el: any) => {
+    this.selected_data.forEach((el: any) => {
       sumData += parseInt(el.releaseCount);
     });
     console.log("sumData", sumData);

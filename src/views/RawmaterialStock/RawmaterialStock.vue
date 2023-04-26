@@ -14,9 +14,11 @@
                       v-model="search_condition.item"
                       @keydown.enter="getCustomer"
                       dense
+
                       solo
                       rounded
                       hide-details="false"
+
                     ></v-text-field>
                   </v-col>
 
@@ -26,9 +28,11 @@
                       v-model="search_condition.warehousingCode"
                       @keydown.enter="getCustomer"
                       dense
+
                       solo
                       rounded
                       hide-details="false"
+
                     ></v-text-field>
                   </v-col>
 
@@ -38,9 +42,11 @@
                       v-model="search_condition.rawMaterialLot"
                       @keydown.enter="getCustomer"
                       dense
+
                       solo
                       rounded
                       hide-details="false"
+
                     ></v-text-field>
                   </v-col>
                   <v-col cols="2">
@@ -52,9 +58,11 @@
                       item-value="value"
                       @change="getCustomer"
                       dense
+
                       solo
                       rounded
                       hide-details="false"
+
                     ></v-select>
                   </v-col>
                 </v-row>
@@ -68,9 +76,11 @@
                       item-value="id"
                       @change="getCustomer"
                       dense
+
                       solo
                       rounded
                       hide-details="false"
+
                     ></v-select>
                   </v-col>
                   <v-col md="2">
@@ -87,13 +97,17 @@
                         <v-text-field
                           v-model="search_condition.startDate"
                           label="시작일"
+
+
                           readonly
                           v-bind="attrs"
                           v-on="on"
                           dense
+
                           solo
                           rounded
                           hide-details="false"
+
                         ></v-text-field>
                       </template>
                       <v-date-picker
@@ -131,13 +145,17 @@
                         <v-text-field
                           v-model="search_condition.endDate"
                           label="종료일"
+
+
                           readonly
                           v-bind="attrs"
                           v-on="on"
                           dense
+
                           solo
                           rounded
                           hide-details="false"
+
                         ></v-text-field>
                       </template>
                       <v-date-picker
@@ -182,13 +200,17 @@
           </v-row>
           <v-card>
             <v-data-table
+
               :height="table_height"
+
               :headers="headers"
               :items="statement_list"
               item-key="barcode"
               fixed-header
               multi-sort
               single-select
+
+
               :options.sync="rawmaterialStockOption.options"
               :server-items-length="rawmaterialStockOption.totalCount"
               :loading="rawmaterialStockOption.loading"
@@ -196,8 +218,10 @@
               :page.sync="rawmaterialStockOption.page"
               @page-count="rawmaterialStockOption.pageCount = $event"
               hide-default-footer
+
               loading-text="서버에 요청중...."
               no-data-text="데이터가 없습니다."
+
             >
               <template v-slot:item.storageName="{ item }">
                 {{ item.storageName }} &nbsp;
@@ -212,7 +236,13 @@
                   <v-icon x-small> mdi-pencil </v-icon>
                 </v-btn>
               </template>
+
+              <template v-slot:item.count="props">
+                <span class="text-right"> {{ props.item.count | comma }}</span>
+              </template>
             </v-data-table>
+
+
           </v-card>
           <v-pagination
             circle
@@ -234,11 +264,13 @@
               :headers="headers_detail"
               :items="item_list"
               item-key="barcode"
+
               :items-per-page="5"
               hide-default-footer
               fixed-header
               multi-sort
               no-data-text="데이터가 없습니다."
+
             >
               <template v-slot:item.sumCount="props">
                 {{ props.item.sumCount | comma }}

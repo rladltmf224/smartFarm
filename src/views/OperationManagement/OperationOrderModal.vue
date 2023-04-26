@@ -127,73 +127,64 @@
                 </v-row>
                 <v-row dense>
                   <v-col cols="3">
-                    <v-autocomplete
+                    <v-select
                       v-model="orderData.selectItem"
                       :items="itemList"
                       item-value="id"
                       item-text="name"
                       dense
                       label="품종"
-                      @change="getProcessList"
-                    ></v-autocomplete>
-                  </v-col>
-                  <!-- <v-col cols="3">
-                    <v-select
-                      label="공정설정"
-                      :items="processList"
-                      v-model="orderData.selectProcess"
-                      item-value="processId"
-                      item-text="processName"
-                      autocomplete
-                      :disabled="processList.length == 0"
-                      dense
                     ></v-select>
-                  </v-col> -->
-                  <v-col cols="2">
+                  </v-col>
+                  <v-col cols="3">
                     <v-text-field
-                      v-model="orderData.itemCount"
-                      type="number"
                       label="수량"
-                      max="9999999"
-                      step="10"
-                      min="0"
+                      type="number"
+                      v-model="orderData.targetCount"
                       dense
-                      reverse
-                      :rules="[numberRule]"
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="1">
-                    <v-btn color="primary" @click="openModal_equipment"
-                      >시설등록</v-btn
+                </v-row>
+                <v-row dense>
+                  <v-col cols=" 12">
+                    <v-data-table
+                      :headers="bomHeaders"
+                      :items="bomData"
+                      disable-pagination
+                      item-key="id"
+                      hide-default-footer
+                      :items-per-page="20"
+                      dense
                     >
+                      <template v-slot:item.targetCount="props">
+                        <v-edit-dialog
+                          v-if="!props.item.read"
+                          :return-value.sync="props.item.targetCount"
+                        >
+                          {{ props.item.targetCount | comma }}
+                          <template v-slot:input>
+                            <v-text-field
+                              v-model="props.item.targetCount"
+                              label="Edit"
+                              type="number"
+                              single-line
+                              counter
+                              oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"
+                            ></v-text-field>
+                          </template>
+                        </v-edit-dialog>
+                        <span v-else-if="props.item.read">{{
+                          props.item.targetCount | comma
+                        }}</span>
+                      </template>
+                    </v-data-table>
                   </v-col>
                 </v-row>
-                <v-row dense>
-                  <div class="d-flex">
-                    <v-chip
-                      v-for="data in orderData.selectEquipData_regi"
-                      class="ma-1"
-                      label
-                      color="light-green accent-2"
-                      :key="data.facilityDetailId"
-                      @click:close="onClose(data)"
-                      close
-                    >
-                      {{ data.facilityName }} ({{
-                        data.facilityDetailName || data.name
-                      }})
-                    </v-chip>
-                  </div>
-                </v-row>
-
-                <v-row dense>
-                  <v-col>
+                <v-row>
+                  <v-col cols="12">
                     <v-text-field
-                      class="pt-0"
                       label="비고"
                       v-model="orderData.memo"
-                      tabindex="6"
-                      dense
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -217,8 +208,7 @@
                 this.orderData.name == '' ||
                 this.orderData.customer == '' ||
                 this.orderData.departmentName == '' ||
-                this.orderData.item == '' ||
-                this.orderData.memo == ''
+                this.orderData.itemId
               "
               class="mr-1"
               color="primary"
@@ -242,9 +232,7 @@
             >
               등 록
             </v-btn>
-            <v-btn class="closeBtn" color="error" @click="closeModal">
-              닫기
-            </v-btn>
+            <v-btn color="error" @click="closeModal"> 닫기 </v-btn>
           </v-row>
         </v-card-actions>
       </v-card>
@@ -322,93 +310,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <!-- 시설등록 -->
-    <v-dialog v-model="equipment_modal" persistent max-width="1300px">
-      <v-card>
-        <v-card-title primary-title>
-          <div>
-            <p>시설등록</p>
-          </div>
-        </v-card-title>
-        <v-card-text>
-          <!-- 시설 리스트 -->
-          <v-card
-            v-for="(el, index) in equipmentList"
-            :key="index"
-            class="mb-4"
-          >
-            <v-card-title>
-              <span class="pr-3"
-                >{{ el.facilityName }}({{ el.details.length }})
-              </span>
-              <span class="text-subtitle-2 pr-2">
-                <v-chip
-                  >미선택 :
-                  {{
-                    el.details.length - getUseCount(el) - getActiveCount(el)
-                  }}</v-chip
-                >
-              </span>
-              <span class="text-subtitle-2 pr-2">
-                <v-chip color="primary">선택 : {{ getActiveCount(el) }}</v-chip>
-              </span>
-              <span class="text-subtitle-2">
-                <v-chip color="light-green accent-2"
-                  >사용 : {{ getUseCount(el) }}</v-chip
-                >
-              </span>
-            </v-card-title>
-            <v-card-text>
-              <v-item-group multiple>
-                <v-row class="d-flex justify-space-around">
-                  <span v-if="el.details.length == 0"
-                    ><p class="text-h6">등록된 시설이 없습니다</p></span
-                  >
-                  <v-item
-                    v-else
-                    v-for="n in el.details"
-                    :key="n.facilityDetailId"
-                  >
-                    <v-card
-                      :color="
-                        n.use
-                          ? 'light-green accent-2'
-                          : n.active
-                          ? 'primary'
-                          : 'blue-grey darken-1'
-                      "
-                      class="d-flex align-center text-center"
-                      dark
-                      height="100"
-                      width="100"
-                      @click="toggleEquip(n)"
-                    >
-                      <v-card-text>
-                        <div>
-                          <span class="text-h6">{{ n.name }} </span>
-                        </div>
-                        <div><span v-if="n.use">상세정보</span></div>
-                      </v-card-text>
-                    </v-card>
-                  </v-item>
-                </v-row>
-              </v-item-group>
-            </v-card-text>
-          </v-card>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-col class="text-right">
-            <v-btn color="success" text @click="saveEquipmentInfo">
-              저장
-            </v-btn>
-            <v-btn color="primary" text @click="closeModal_equipment">
-              닫기
-            </v-btn>
-          </v-col>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 <script lang="ts">
@@ -417,7 +318,17 @@ import cfg from "./config";
 import _ from "lodash";
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 
-@Component
+@Component({
+  filters: {
+    comma(val: any) {
+      if (val === null) {
+        console.log(val);
+        val = 0;
+      }
+      return String(val).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
+  },
+})
 export default class OperationOrderModal extends Vue {
   footer_option: {
     disableItemsPerPage: boolean;
@@ -464,6 +375,7 @@ export default class OperationOrderModal extends Vue {
     selectProcess: "",
     selectEquipData_regi: [],
     memo: "",
+    targetCount: 0,
   };
   itemName: any = "";
   selectedData: any;
@@ -479,6 +391,7 @@ export default class OperationOrderModal extends Vue {
   selectObject: any = 0;
   processList: any[] = [];
   selectProcess: any = 0;
+  bomData: any[] = [];
 
   @Prop({ required: true }) open: boolean;
   @Prop({ required: true }) change: boolean;
@@ -536,6 +449,30 @@ export default class OperationOrderModal extends Vue {
     }
   }
 
+  @Watch("orderData.targetCount")
+  onTargetCountChange(val: any) {
+    console.log("onTargetCountChange", val);
+    const regex = /[^0-9]/g;
+    let getKeyword = val;
+
+    if (regex.test(getKeyword)) {
+      val = getKeyword.replace(regex, "");
+      //asdklj  34532
+    }
+
+    val = val.replaceAll("^0+", "");
+
+    if (this.bomData.length != 0) {
+      this.bomData.forEach((el) => {
+        if (el.read) {
+          el.targetCount = val;
+        }
+      });
+    }
+
+    //return val;
+  }
+
   get openModal() {
     this.getItemList();
     return this.open;
@@ -545,6 +482,10 @@ export default class OperationOrderModal extends Vue {
   }
   get customerData() {
     return this.customerList;
+  }
+
+  get bomHeaders() {
+    return cfg.header.bomHeaders;
   }
 
   get itemheaders() {
@@ -783,6 +724,8 @@ export default class OperationOrderModal extends Vue {
       type: this.orderData.selectObject,
       deadline: this.orderData.deadline,
       memo: this.orderData.memo,
+      details: this.bomData,
+      targetCount: this.orderData.targetCount,
     };
     joborder.facilityDetailIds = _.map(
       this.orderData.selectEquipData_regi,
@@ -856,6 +799,7 @@ export default class OperationOrderModal extends Vue {
             departmentchargeName: "",
             deadline: "",
             memo: "",
+            targetCount: 0,
             details: [],
           };
           this.openModal = false;
@@ -1128,17 +1072,50 @@ export default class OperationOrderModal extends Vue {
     this.orderData.deadline = "";
     this.orderData.memo = "";
     this.orderData.selectEquipData_regi = [];
+    this.bomData = [];
   }
   getProcessList() {
     let reqData = {
       itemId: this.orderData.selectItem,
     };
 
-    api.process.getProcessListbyItem(reqData).then((res) => {
-      console.log("getProcessListbyItem", res.data.responseData);
+    api.operation.getItemListByBom(reqData).then((res) => {
+      console.log("getItemListByBom", res);
+      let bomData = res.data.responseData.details.map((item: any) => {
+        delete item.bomDetailId;
+        return item;
+      });
+      if (res.data.responseData.productionType == "실생묘") {
+        res.data.responseData.details.forEach((element: any) => {
+          element.targetCount = this.orderData.targetCount;
+          element.read = true;
+          return element;
+        });
+        this.bomData = res.data.responseData.details;
+      } else if (res.data.responseData.productionType == "접목묘") {
+        let arrData = [];
+        arrData = res.data.responseData.details;
 
-      this.processList = res.data.responseData;
+        arrData.forEach((element: any) => {
+          element.targetCount = 0;
+          element.read = false;
+          return element;
+        });
+        arrData.push({
+          itemName: res.data.responseData.itemName,
+          itemId: res.data.responseData.itemId,
+          count: 1,
+          targetCount: this.orderData.targetCount,
+          read: true,
+        });
+        this.bomData = arrData;
+      }
+      console.log("bomData", bomData);
     });
+  }
+
+  saveTargetCount(count: string) {
+    return parseInt(count);
   }
 }
 </script>

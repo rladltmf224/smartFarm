@@ -1,26 +1,43 @@
 <template>
-  <v-navigation-drawer app clipped permanent color="white" :mini-variant="mini" class="py-4 border-radius-lg hover">
+  <v-navigation-drawer
+    app
+    clipped
+    permanent
+    color="white"
+    :mini-variant="mini"
+    class="py-4 border-radius-lg hover"
+  >
     <v-container class="px-0 text-h4 sidebar-main-text home" @click="goHome">
       <v-list-item class="px-2">
-        <v-img v-if="!mini" style="width:130px" class="ml-12" src="@/assets/images/logo_green.png" />
+        <v-img
+          v-if="!mini"
+          style="width: 130px"
+          class="ml-12"
+          src="@/assets/images/logo_green.png"
+        />
         <v-btn icon v-if="mini" @click="mini = !mini">
           <v-icon>mdi-page-last </v-icon>
         </v-btn>
-        <v-list-item-title></v-list-item-title>
+
         <v-btn icon @click.stop="mini = !mini">
           <v-icon>mdi-page-first</v-icon>
         </v-btn>
       </v-list-item>
-      <!-- <v-list-item class="px-2">
-       
-        </v-list-item> -->
-      </v-list>
     </v-container>
     <v-divider></v-divider>
-    <font-awesome-icon :icon="['fas', 'angle-down']" />
 
-    <v-list height="700" style="overflow-y: auto; overflow-x: hidden; display: contents" dense nav>
-      <v-list-item class="pb-1 mx-2" :link="true" :to="to_home" @click="selectedPage(subItem == null)">
+    <v-list
+      height="700"
+      style="overflow-y: auto; overflow-x: hidden; display: contents"
+      dense
+      nav
+    >
+      <v-list-item
+        class="pb-1 mx-2"
+        :link="true"
+        :to="to_home"
+        @click="selectedPage(subItem == null)"
+      >
         <v-list-item-icon @mouseover="openTooltip(item)">
           <v-icon>mdi-monitor</v-icon>
         </v-list-item-icon>
@@ -32,47 +49,49 @@
         </v-list-item-icon>
         <v-list-item-title>일정관리</v-list-item-title>
       </v-list-item>
-      <v-list-group v-for="(item, i) in items" :key="i" class="pb-1 mx-2" active-class="active-group" mandatory
-        @click="test(item)">
+      <v-list-group
+        v-for="(item, i) in items"
+        :key="i"
+        class="pb-1 mx-2"
+        active-class="active-group"
+        mandatory
+        @click="test(item)"
+      >
         <template v-slot:activator>
-          <v-list-item-icon class="border-radius-md mx-2 align-center" style="height: 28px; width: 28px; padding: 6px">
+          <v-list-item-icon
+            class="border-radius-md mx-2 align-center"
+            style="height: 28px; width: 28px; padding: 6px"
+          >
             <v-icon v-text="item.icon" small @mouseover="openTooltip(item)">
             </v-icon>
           </v-list-item-icon>
           <v-list-item-content>
-            <v-list-item-title class="ms-1 text-subtitle-1" v-text="item.title"></v-list-item-title>
+            <v-list-item-title
+              class="ms-1 text-subtitle-1"
+              v-text="item.title"
+            ></v-list-item-title>
           </v-list-item-content>
         </template>
-        <v-list-item v-for="subItem in item.subItems" :key="subItem.title" :to="subItem.to" color="F3F4FD" class="ps-10"
-          active-class="active-item-title" active-color="red" dense>
+        <v-list-item
+          v-for="subItem in item.subItems"
+          :key="subItem.title"
+          :to="subItem.to"
+          color="F3F4FD"
+          class="ps-10"
+          active-class="active-item-title"
+          active-color="red"
+          dense
+        >
           <v-list-item-content @click="selectedPage(subItem)">
-            <v-list-item-title color="#b5b4c7" v-text="'•  ' + subItem.title"></v-list-item-title>
+            <v-list-item-title
+              color="#b5b4c7"
+              v-text="'•  ' + subItem.title"
+            ></v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list-group>
     </v-list>
 
-    <v-list dense nav rounded>
-      <!--
-      <v-list-item @click="mySettingDialog = true" @mouseover="openTooltip()">
-        <v-list-item-icon>
-          <v-icon>mdi-account-circle-outline</v-icon>
-        </v-list-item-icon>
-        <v-list-item-title>회원정보 변경</v-list-item-title>
-      </v-list-item>
-      <v-list-item @click="userInfoDialog = true" @mouseover="openTooltip()">
-        <v-list-item-icon>
-          <v-icon>mdi-account-circle-outline</v-icon>
-        </v-list-item-icon>
-        <v-list-item-title>비밀번호 변경</v-list-item-title>
-      </v-list-item>-->
-      <!-- <v-list-item @click="logout" @mouseover="openTooltip()">
-        <v-btn block class="btn-gradient" dark v-if="!mini">
-          <v-icon>mdi-power</v-icon>
-          <span style="color:white">로그아웃</span>
-        </v-btn>
-      </v-list-item> -->
-    </v-list>
     <template v-slot:append v-if="!mini">
       <div class="pa-2">
         <v-btn block color="#27d98f" dark elevation="0" @click="logout">
@@ -279,8 +298,10 @@ export default class Sidebar extends Vue {
   }
 
   goHome(): void {
+
     this.$store.commit("setPageName", "모니터링");
     this.$router.push("/monitoring").catch(() => { });
+
     return;
   }
 
