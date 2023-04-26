@@ -9,153 +9,64 @@
               <v-col cols="10">
                 <v-row dense>
                   <v-col cols="3">
-                    <v-text-field
-                      label="품목명 or 품목코드"
-                      v-model="search_condition.item"
-                      @keydown.enter="getCustomer"
-                      dense
-                      solo
-                      rounded
-                      hide-details="false"
-                    ></v-text-field>
+                    <v-text-field label="품목명 or 품목코드" v-model="search_condition.item" @keydown.enter="getCustomer" dense
+                      solo rounded hide-details="false"></v-text-field>
                   </v-col>
 
                   <v-col cols="2">
-                    <v-text-field
-                      label="입고코드"
-                      v-model="search_condition.warehousingCode"
-                      @keydown.enter="getCustomer"
-                      dense
-                      solo
-                      rounded
-                      hide-details="false"
-                    ></v-text-field>
+                    <v-text-field label="입고코드" v-model="search_condition.warehousingCode" @keydown.enter="getCustomer"
+                      dense solo rounded hide-details="false"></v-text-field>
                   </v-col>
 
                   <v-col cols="2">
-                    <v-text-field
-                      label="LOT코드"
-                      v-model="search_condition.rawMaterialLot"
-                      @keydown.enter="getCustomer"
-                      dense
-                      solo
-                      rounded
-                      hide-details="false"
-                    ></v-text-field>
+                    <v-text-field label="LOT코드" v-model="search_condition.rawMaterialLot" @keydown.enter="getCustomer"
+                      dense solo rounded hide-details="false"></v-text-field>
                   </v-col>
                   <v-col cols="2">
-                    <v-select
-                      label="자재타입"
-                      v-model="search_condition.status"
-                      :items="rawmaterial_list"
-                      item-text="name"
-                      item-value="value"
-                      @change="getCustomer"
-                      dense
-                      solo
-                      rounded
-                      hide-details="false"
-                    ></v-select>
+                    <v-select label="자재타입" v-model="search_condition.status" :items="rawmaterial_list" item-text="name"
+                      item-value="value" @change="getCustomer" dense solo rounded hide-details="false"></v-select>
                   </v-col>
                 </v-row>
                 <v-row dense>
                   <v-col cols="2">
-                    <v-select
-                      label="창고"
-                      v-model="search_condition.storage"
-                      :items="storage_list_search"
-                      item-text="name"
-                      item-value="id"
-                      @change="getCustomer"
-                      dense
-                      solo
-                      rounded
-                      hide-details="false"
-                    ></v-select>
+                    <v-select label="창고" v-model="search_condition.storage" :items="storage_list_search" item-text="name"
+                      item-value="id" @change="getCustomer" dense solo rounded hide-details="false"></v-select>
                   </v-col>
                   <v-col md="2">
-                    <v-menu
-                      ref="startDate"
-                      v-model="startDate"
-                      :close-on-content-click="false"
-                      :return-value.sync="search_condition.startDate"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
+                    <v-menu ref="startDate" v-model="startDate" :close-on-content-click="false"
+                      :return-value.sync="search_condition.startDate" transition="scale-transition" offset-y
+                      min-width="auto">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="search_condition.startDate"
-                          label="시작일"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                          dense
-                          solo
-                          rounded
-                          hide-details="false"
-                        ></v-text-field>
+                        <v-text-field v-model="search_condition.startDate" label="시작일" readonly v-bind="attrs" v-on="on"
+                          dense solo rounded hide-details="false"></v-text-field>
                       </template>
-                      <v-date-picker
-                        v-model="search_condition.startDate"
-                        no-title
-                        scrollable
-                        locale="ko-KR"
-                        :max="search_condition.endDate"
-                      >
+                      <v-date-picker v-model="search_condition.startDate" no-title scrollable locale="ko-KR"
+                        :max="search_condition.endDate">
                         <v-spacer></v-spacer>
                         <v-btn text color="primary" @click="startDate = false">
                           취소
                         </v-btn>
-                        <v-btn
-                          text
-                          color="primary"
-                          @click="s_date_search(search_condition.startDate)"
-                        >
+                        <v-btn text color="primary" @click="s_date_search(search_condition.startDate)">
                           확인
                         </v-btn>
                       </v-date-picker>
                     </v-menu>
                   </v-col>
                   <v-col md="2">
-                    <v-menu
-                      ref="endDate"
-                      v-model="endDate"
-                      :close-on-content-click="false"
-                      :return-value.sync="search_condition.endDate"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
+                    <v-menu ref="endDate" v-model="endDate" :close-on-content-click="false"
+                      :return-value.sync="search_condition.endDate" transition="scale-transition" offset-y
+                      min-width="auto">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="search_condition.endDate"
-                          label="종료일"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                          dense
-                          solo
-                          rounded
-                          hide-details="false"
-                        ></v-text-field>
+                        <v-text-field v-model="search_condition.endDate" label="종료일" readonly v-bind="attrs" v-on="on"
+                          dense solo rounded hide-details="false"></v-text-field>
                       </template>
-                      <v-date-picker
-                        v-model="search_condition.endDate"
-                        no-title
-                        scrollable
-                        locale="ko-KR"
-                        :min="search_condition.startDate"
-                      >
+                      <v-date-picker v-model="search_condition.endDate" no-title scrollable locale="ko-KR"
+                        :min="search_condition.startDate">
                         <v-spacer></v-spacer>
                         <v-btn text color="primary" @click="endDate = false">
                           취소
                         </v-btn>
-                        <v-btn
-                          text
-                          color="primary"
-                          @click="e_date_search(search_condition.endDate)"
-                        >
+                        <v-btn text color="primary" @click="e_date_search(search_condition.endDate)">
                           확인
                         </v-btn>
                       </v-date-picker>
@@ -181,44 +92,22 @@
             </v-col>
           </v-row>
           <v-card>
-            <v-data-table
-              :height="table_height"
-              :headers="headers"
-              :items="statement_list"
-              item-key="barcode"
-              fixed-header
-              multi-sort
-              single-select
-              :options.sync="rawmaterialStockOption.options"
-              :server-items-length="rawmaterialStockOption.totalCount"
-              :loading="rawmaterialStockOption.loading"
-              :items-per-page="rawmaterialStockOption.itemsPerPage"
-              :page.sync="rawmaterialStockOption.page"
-              @page-count="rawmaterialStockOption.pageCount = $event"
-              hide-default-footer
-              loading-text="서버에 요청중...."
-              no-data-text="데이터가 없습니다."
-            >
+            <v-data-table :height="table_height" :headers="headers" :items="statement_list" item-key="barcode"
+              fixed-header multi-sort single-select :options.sync="rawmaterialStockOption.options"
+              :server-items-length="rawmaterialStockOption.totalCount" :loading="rawmaterialStockOption.loading"
+              :items-per-page="rawmaterialStockOption.itemsPerPage" :page.sync="rawmaterialStockOption.page"
+              @page-count="rawmaterialStockOption.pageCount = $event" hide-default-footer loading-text="서버에 요청중...."
+              no-data-text="데이터가 없습니다.">
               <template v-slot:item.storageName="{ item }">
                 {{ item.storageName }} &nbsp;
-                <v-btn
-                  text
-                  x-small
-                  fluid
-                  color="primary"
-                  class="editBtn"
-                  @click="edit_changeStorage(item)"
-                >
+                <v-btn text x-small fluid color="primary" class="editBtn" @click="edit_changeStorage(item)">
                   <v-icon x-small> mdi-pencil </v-icon>
                 </v-btn>
               </template>
             </v-data-table>
           </v-card>
-          <v-pagination
-            circle
-            v-model="rawmaterialStockOption.page"
-            :length="rawmaterialStockOption.pageCount"
-          ></v-pagination>
+          <v-pagination circle v-model="rawmaterialStockOption.page"
+            :length="rawmaterialStockOption.pageCount"></v-pagination>
         </v-col>
       </v-row>
       <v-row no-gutters>
@@ -229,17 +118,8 @@
             </v-col>
           </v-row>
           <v-card>
-            <v-data-table
-              height="270"
-              :headers="headers_detail"
-              :items="item_list"
-              item-key="barcode"
-              :items-per-page="5"
-              hide-default-footer
-              fixed-header
-              multi-sort
-              no-data-text="데이터가 없습니다."
-            >
+            <v-data-table height="270" :headers="headers_detail" :items="item_list" item-key="barcode" :items-per-page="5"
+              hide-default-footer fixed-header multi-sort no-data-text="데이터가 없습니다.">
               <template v-slot:item.sumCount="props">
                 {{ props.item.sumCount | comma }}
               </template>
@@ -250,12 +130,8 @@
     </v-container>
 
     <!-- 창고 변경 모달 -->
-    <RawmaterialStockStorage
-      :open="edit_storage"
-      :originalData="originalData"
-      :totalStorage_list="totalStorage_list"
-      @closeModal="close_modal"
-    >
+    <RawmaterialStockStorage :open="edit_storage" :originalData="originalData" :totalStorage_list="totalStorage_list"
+      @closeModal="close_modal">
     </RawmaterialStockStorage>
   </div>
 </template>
@@ -315,10 +191,10 @@ export default class RawmaterialStock extends Vue {
     original_locationName: string;
     original_storageId: number | "";
   } = {
-    original_storageName: "",
-    original_locationName: "",
-    original_storageId: "",
-  };
+      original_storageName: "",
+      original_locationName: "",
+      original_storageId: "",
+    };
 
   get headers() {
     return cfg.header.headers;
