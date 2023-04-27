@@ -15,18 +15,19 @@ export default {
 
       { text: "불량수량", value: "defectCount" },
       { text: "창고", value: "storageName" },
+      { text: "납품날짜", value: "date" },
     ],
     headers_item: [
       { text: "품목명", value: "name", width: "15%" },
       { text: "주문수량", value: "orderCount", width: "8%" },
-
       { text: "정상수량", value: "normalCount", width: "8%" },
       { text: "불량수량", value: "defectCount", width: "8%" },
+      { text: "납품일자", value: "date", width: "12%" },
 
       { text: "창고", value: "storageId", width: "12%" },
       { text: "창고구역", value: "storageLocationId", width: "10%" },
       { text: "비고", value: "memo" },
-      { text: "삭제", value: "edit", width: "2%" },
+      { text: "삭제", value: "edit", width: "4%", sortable: false },
       { text: "", value: "data-table-expand" },
     ],
     headers_history: [
@@ -50,6 +51,7 @@ export default {
       orderCount: 0,
       storageId: 0,
       storageLocationId: 0,
+      date: "",
     },
     inputDefaultData_customer: {
       code: "",
