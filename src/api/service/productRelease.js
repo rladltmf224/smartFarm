@@ -31,4 +31,19 @@ export default {
     }),
   getReleaseProductStockList: (params) =>
     AuthAPI.post("/api/release/product/status", JSON.stringify(params)),
+
+  getReleaseProductList_edit: (params) =>
+    AuthAPI.post("/api/editRelease/product/search", JSON.stringify(params)),
+  getReleaseProductJobList: () =>
+    AuthAPI.get("/api/editRelease/product/jobOrder", {
+      headers: { "Content-Type": "application/json" },
+    }),
+
+  getReleaseProductJobDone: (params) =>
+    AuthAPI.post("/api/editRelease/product", JSON.stringify(params)),
+  deleteReleaseProductJobData: (params) =>
+    AuthAPI.delete("/api/editRelease/product", {
+      headers: { "Content-Type": "application/json" },
+      params: params,
+    }),
 };

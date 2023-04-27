@@ -15,4 +15,10 @@ export default {
       headers: { "Content-Type": "application/json" },
     });
   },
+  alarmPush: () =>
+    AuthAPI.get("/api/account/alarm/control", {
+      headers: { "Content-Type": "application/json" },
+    }),
+  updateAlarmPush: (params) =>
+    AuthAPI.put("/api/account/alarm/control", JSON.stringify(params)),
 };

@@ -9,6 +9,7 @@
               <v-col cols="10">
                 <v-row dense>
                   <v-col cols="3">
+
                     <v-text-field label="품목명 or 품목코드" v-model="search_condition.item" @keydown.enter="getCustomer" dense
                       solo rounded hide-details="false"></v-text-field>
                   </v-col>
@@ -29,6 +30,7 @@
                 </v-row>
                 <v-row dense>
                   <v-col cols="2">
+
                     <v-select label="창고" v-model="search_condition.storage" :items="storage_list_search" item-text="name"
                       item-value="id" @change="getCustomer" dense solo rounded hide-details="false"></v-select>
                   </v-col>
@@ -37,6 +39,7 @@
                       :return-value.sync="search_condition.startDate" transition="scale-transition" offset-y
                       min-width="auto">
                       <template v-slot:activator="{ on, attrs }">
+
                         <v-text-field v-model="search_condition.startDate" label="시작일" readonly v-bind="attrs" v-on="on"
                           dense solo rounded hide-details="false"></v-text-field>
                       </template>
@@ -57,6 +60,7 @@
                       :return-value.sync="search_condition.endDate" transition="scale-transition" offset-y
                       min-width="auto">
                       <template v-slot:activator="{ on, attrs }">
+
                         <v-text-field v-model="search_condition.endDate" label="종료일" readonly v-bind="attrs" v-on="on"
                           dense solo rounded hide-details="false"></v-text-field>
                       </template>
@@ -92,6 +96,7 @@
             </v-col>
           </v-row>
           <v-card>
+
             <v-data-table :height="table_height" :headers="headers" :items="statement_list" item-key="barcode"
               fixed-header multi-sort single-select :options.sync="rawmaterialStockOption.options"
               :server-items-length="rawmaterialStockOption.totalCount" :loading="rawmaterialStockOption.loading"
@@ -104,7 +109,13 @@
                   <v-icon x-small> mdi-pencil </v-icon>
                 </v-btn>
               </template>
+
+              <template v-slot:item.count="props">
+                <span class="text-right"> {{ props.item.count | comma }}</span>
+              </template>
             </v-data-table>
+
+
           </v-card>
           <v-pagination circle v-model="rawmaterialStockOption.page"
             :length="rawmaterialStockOption.pageCount"></v-pagination>
@@ -118,6 +129,7 @@
             </v-col>
           </v-row>
           <v-card>
+
             <v-data-table height="270" :headers="headers_detail" :items="item_list" item-key="barcode" :items-per-page="5"
               hide-default-footer fixed-header multi-sort no-data-text="데이터가 없습니다.">
               <template v-slot:item.sumCount="props">

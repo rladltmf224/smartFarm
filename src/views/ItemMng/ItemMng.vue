@@ -12,11 +12,11 @@
               </v-col>
               <v-col cols="2">
                 <v-select label="타입" v-model="search_condition.type" :items="items_type_list" item-text="name"
-                  @change="getCustomer" dense solo rounded></v-select>
+                  @change="getCustomer" dense solo rounded elevation-0></v-select>
               </v-col>
               <v-col cols="2">
                 <v-text-field label="규격 or 단위" solo rounded v-model="search_condition.option" @keydown.enter="getCustomer"
-                  dense solon rounded></v-text-field>
+                  dense elevation-0></v-text-field>
               </v-col>
               <!-- <v-col cols="1">
                 <v-text-field
@@ -32,6 +32,7 @@
 
               <v-col class="text-right" cols="2">
                 <v-btn color="primary" @click="getCustomer" large elevation="0">
+                  <v-icon left> mdi-magnify </v-icon>
                   조회
                 </v-btn>
               </v-col>
@@ -270,6 +271,7 @@ export default class Item extends Vue {
         name: data.name,
         id: data.id,
         standard: data.standard,
+        productionType: data.productionType,
         code: data.code,
         type: data.type,
         unit: data.unit,

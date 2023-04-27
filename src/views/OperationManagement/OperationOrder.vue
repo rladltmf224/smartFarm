@@ -1,10 +1,10 @@
 <template>
   <div>
-    <v-container fluid v-resize="onResize">
+    <v-container fluid>
       <v-row>
         <v-col class="ma-2" cols="12">
           <span class="searchbox-title">조회 조건</span>
-          <v-card class="card-shadow pa-3" height="120">
+          <v-card class="card-shadow pa-3" height="130">
             <v-row no-gutters>
               <v-col cols="10">
                 <v-row dense>
@@ -13,7 +13,7 @@
                       solo
                       rounded
                       dense
-                      hide-details="false"
+                      hide-details="true"
                       label="작업지시서명"
                       v-model="searchJobOrder"
                       return-object
@@ -22,10 +22,11 @@
                     ></v-text-field>
                   </v-col>
                   <v-col cols="2">
+                    <span class="text"></span>
                     <v-autocomplete
                       solo
                       rounded
-                      hide-details="false"
+                      hide-details="true"
                       dense
                       label="거래처"
                       class="pl-3"
@@ -42,7 +43,7 @@
                     <v-autocomplete
                       solo
                       rounded
-                      hide-details="false"
+                      hide-details="true"
                       dense
                       label="부서"
                       class="pl-3"
@@ -58,7 +59,7 @@
                     <v-autocomplete
                       solo
                       rounded
-                      hide-details="false"
+                      hide-details="true"
                       dense
                       v-model="searchCrew"
                       :items="searchCrewData"
@@ -81,7 +82,7 @@
                     >
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
-                          hide-details="false"
+                          hide-details="true"
                           dense
                           v-model="startDate"
                           solo
@@ -126,7 +127,7 @@
                     >
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
-                          hide-details="false"
+                          hide-details="true"
                           rounded
                           solo
                           dense
@@ -165,15 +166,13 @@
                 </v-row>
 
                 <v-row dense>
-                  <v-col cols="6">
+                  <v-col cols="12" align-self="center">
                     <v-radio-group dense v-model="row" row @change="getSearch">
                       진행 상태 :
                       <v-radio label="전체" value=""> </v-radio>
-                      <v-radio label="대기" value="대기"> </v-radio>
-                      <v-radio label="작업 진행중" value="작업 진행중">
-                      </v-radio>
-                      <v-radio label="생산 완료" value="생산 완료"> </v-radio>
-                      <v-radio label="작업 종료" value="작업 종료"> </v-radio>
+                      <v-radio label="대기" value="JO_WAIT"> </v-radio>
+                      <v-radio label="진행중" value="JO_ING"> </v-radio>
+                      <v-radio label="완료" value="JO_DONE"> </v-radio>
                     </v-radio-group>
                   </v-col>
                 </v-row>
@@ -192,11 +191,11 @@
       <v-row no-gutters>
         <v-col class="ma-2" cols="12">
           <v-row dense class="mb-1">
-            <v-col cols="2">
+            <v-col cols="2" align-self="center">
               <span class="searchbox-title">작업지시서 목록</span>
             </v-col>
             <v-spacer></v-spacer>
-            <v-col class="text-right" cols="1">
+            <v-col class="text-right" cols="2">
               <!-- <v-btn small class="mr-1" color="primary" @click="totalDelete">
                 선 택 삭 제
               </v-btn> -->
@@ -207,13 +206,14 @@
             <v-data-table
               multi-sort
               fixed-header
-              class="mt-1"
               height="300"
               v-model="toatalselected"
+              item-key="jobOrderId"
               :headers="headers"
               :items="totalTable"
               @click:row="dataDetail"
               dense
+              single-select
               :options.sync="orderListCfg.options"
               :server-items-length="orderListCfg.totalCount"
               :loading="orderListCfg.loading"
@@ -225,51 +225,47 @@
             >
               <template v-slot:item.status="{ item }">
                 <v-btn
-                  class="text-left mt-1 mb-1"
+                  class="text-left"
                   small
-                  :color="getStatusColor(item.status)"
                   dark
                   style="width: 100px"
                   depressed
                 >
                   <v-icon left> mdi-album </v-icon>
-                  {{ getStatusCode(item.status) }}
+                  {{ getStatusCode(item.status, statusCode) }}
                 </v-btn>
               </template>
               <template v-slot:[`item.deadline`]="{ item }">
                 {{ item.deadline }}
               </template>
+
+              <template v-slot:[`item.changeOrder`]="{ item }">
+                <v-btn
+                  v-show="item.status !== 'JO_DONE'"
+                  small
+                  fluid
+                  color="info"
+                  class="mr-1 editBtn"
+                  :value="getStatusCodeNext(item.status, statusCode).code"
+                >
+                  {{ getStatusCodeNext(item.status, statusCode).name }}
+                </v-btn>
+              </template>
               <template v-slot:[`item.edit`]="{ item }">
                 <v-icon
-                  v-show="item.status == '대기' || item.status == '생산전'"
+                  v-if="item.status == 'JO_WAIT'"
                   small
-                  class="mr-1"
                   @click="changeData(item)"
                 >
                   mdi-pencil
                 </v-icon>
                 <v-icon
-                  v-show="item.status == '대기' || item.status == '생산전'"
+                  v-if="item.status == 'JO_WAIT'"
                   small
-                  @click="deleteData(item)"
+                  @click="deleteItem_pop(item)"
                 >
                   mdi-delete
                 </v-icon>
-              </template>
-
-              <template v-slot:[`item.changeOrder`]="{ item }">
-                <v-btn
-                  v-show="item.status !== 'DONE'"
-                  text
-                  small
-                  fluid
-                  color="primary"
-                  class="mr-1 editBtn"
-                  :value="getStatusCodeNext(item.status).code"
-                  @click="start(item, getStatusCodeNext(item.status).code)"
-                >
-                  {{ getStatusCodeNext(item.status).name }}
-                </v-btn>
               </template>
             </v-data-table>
           </v-card>
@@ -282,8 +278,8 @@
       </v-row>
       <v-row no-gutters>
         <v-col class="ma-2" cols="12">
-          <v-row dense class="mb-1">
-            <v-col cols="2">
+          <v-row dense>
+            <v-col cols="2" align-self="center">
               <span class="searchbox-title">작업지시서 상세목록</span>
             </v-col>
           </v-row>
@@ -300,7 +296,7 @@
               disable-pagination
               hide-default-footer
             >
-              <template v-slot:item.status="{ item }">
+              <template v-slot:[`item.status`]="{ item }">
                 <v-btn
                   class="text-left mt-1 mb-1"
                   small
@@ -310,23 +306,30 @@
                   depressed
                 >
                   <v-icon left> mdi-album </v-icon>
-                  {{ item.status }}
+                  {{ getStatusCode(item.status, statusCode_detail) }}
                 </v-btn>
               </template>
 
-              <template v-slot:item.details="{ item }">
-                <td :colspan="1" class="treeTable">
-                  <v-data-table
-                    multi-sort
-                    :headers="totalItem"
-                    :items="item.details"
-                    dense
-                    disable-pagination
-                    hide-default-footer
-                    hide-default-header
-                  >
-                  </v-data-table>
-                </td>
+              <template v-slot:[`item.work`]="{ item }">
+                <v-btn
+                  v-show="item.status !== 'JOD_DONE'"
+                  text
+                  small
+                  fluid
+                  color="primary"
+                  class="mr-1 editBtn"
+                  :value="
+                    getStatusCodeNext(item.status, statusCode_detail).code
+                  "
+                  @click="
+                    start_detail(
+                      item,
+                      getStatusCodeNext(item.status, statusCode_detail).code
+                    )
+                  "
+                >
+                  {{ getStatusCodeNext(item.status, statusCode_detail).name }}
+                </v-btn>
               </template>
 
               <template v-slot:item.deadline="{ item }">
@@ -396,6 +399,7 @@ export default class OperationOrder extends Vue {
   jobordeList: any = {};
   departmentCrewList: any;
   statusCode: any = [];
+  statusCode_detail: any = [];
 
   @Watch("searchDepartment")
   onSearchDepartmentChange() {
@@ -445,7 +449,8 @@ export default class OperationOrder extends Vue {
   created() {
     this.orderListCfg = Object.assign({}, gridCfg);
     this.editedOrder = Object.assign({}, this.editedOrder);
-    this.statusCode = _.cloneDeep(cfg.data.status);
+    this.statusCode = _.cloneDeep(cfg.data.status_JO);
+    this.statusCode_detail = _.cloneDeep(cfg.data.status_JOD);
     this.orderListCfg.options.itemsPerPage = 6;
   }
 
@@ -470,6 +475,7 @@ export default class OperationOrder extends Vue {
 
   getSearch() {
     const { page, itemsPerPage, sortBy, sortDesc } = this.orderListCfg.options;
+    this.toatalselected = [];
 
     this.jobordeList = {
       jobOrder: this.searchJobOrder,
@@ -535,7 +541,6 @@ export default class OperationOrder extends Vue {
     // } else if (this.totalDepartment != "" && this.searchDepartment == "") {
     //   this.keyword = this.totalDepartment.departmentId;
     // }
-
     // joborder = {
     //   departmentId: this.keyword,
     // };
@@ -564,10 +569,16 @@ export default class OperationOrder extends Vue {
       });
   }
 
-  dataDetail(item: object) {
-    this.datatable = [];
-
-    this.datatable.push(item);
+  dataDetail(item: any, row: any) {
+    row.select(true);
+    let reqData = {
+      jobOrderId: item.jobOrderId,
+    };
+    console.log("dataDetail", item.jobOrderId);
+    api.operation.getJobOrerDetail(reqData).then((res) => {
+      console.log("getJobOrerDetail", res);
+      this.datatable = res.data.responseData;
+    });
   }
   add() {
     this.orderDialog = true;
@@ -586,6 +597,60 @@ export default class OperationOrder extends Vue {
 
     joborder = {
       jobOrderId: item.id,
+      status: code,
+    };
+
+    this.$swal
+      .fire({
+        text: "작업을 진행하시겠습니까?",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "진행",
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          api.operation
+            .updateOperationOrderPage(joborder)
+            .then((response) => {
+              if (response.status == 200) {
+                this.$swal({
+                  title: "작업을 진행하겠습니다.",
+                  icon: "success",
+                  position: "top",
+                  showCancelButton: false,
+                  showConfirmButton: false,
+                  toast: true,
+                  timer: 1500,
+                });
+                this.getSearch();
+                this.toatalselected = [];
+                this.datatable = [];
+              } else {
+                this.$swal({
+                  title: "상태변경이 실패되었습니다.",
+                  icon: "error",
+                  position: "top",
+                  showCancelButton: false,
+                  showConfirmButton: false,
+                  toast: true,
+                  timer: 1500,
+                });
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      });
+  }
+
+  start_detail(item: any, code: string) {
+    let joborder: object;
+
+    joborder = {
+      jobOrderDetailId: item.jobOrderDetailId,
       status: code,
     };
 
@@ -830,6 +895,7 @@ export default class OperationOrder extends Vue {
                     timer: 1500,
                   });
                 }
+                this.getSearch();
               })
               .catch((error) => {
                 console.log(error);
@@ -855,35 +921,33 @@ export default class OperationOrder extends Vue {
     else return "black";
   }
 
-  getStatusCode(status: string) {
+  getStatusCode(status: string, code: any[]) {
     if (status === undefined) {
       return "";
     }
-    if (_.find(this.statusCode, { code: status }).name == undefined) {
+    if (_.find(code, { code: status }).name == undefined) {
       return "오류";
     }
-    return _.find(this.statusCode, { code: status }).name;
+    return _.find(code, { code: status }).name;
   }
-  getStatusCodeNext(status: any) {
+  getStatusCodeNext(status: any, code: any[]) {
     if (status == undefined) {
       return "오류";
     }
-    if (_.find(this.statusCode, { code: status }).name == undefined) {
+    if (_.find(code, { code: status }).name == undefined) {
       return "오류";
     }
-    const index: number = this.statusCode.findIndex(
-      (item: any) => item.code === status
-    );
+    const index: number = code.findIndex((item: any) => item.code === status);
 
-    console.log("status", status, index);
+    //console.log("status", status, index);
 
-    if (index == this.statusCode.length - 1) {
-      console.log("getStatusCodeNext2", index);
-      return this.statusCode[index];
+    if (index == code.length - 1) {
+      //console.log("getStatusCodeNext2", index);
+      return code[index];
     } else {
-      console.log("getStatusCodeNext1", index, this.statusCode[index + 1]);
+      // console.log("getStatusCodeNext1", index, this.statusCode[index + 1]);
 
-      return this.statusCode[index + 1];
+      return code[index + 1];
     }
   }
   closeModal() {
@@ -899,6 +963,42 @@ export default class OperationOrder extends Vue {
       details: [],
     };
     this.getSearch();
+  }
+
+  deleteItem_pop(item: any) {
+    //this.deleteIndex = this.customer_list.indexOf(item);
+    console.log("deleteItem_pop", item);
+    let deleteItem = {
+      jobOrderId: item.jobOrderId,
+    };
+
+    this.$swal
+      .fire({
+        title: "삭제",
+        text: "해당 데이터를 삭제 하시겠습니까?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "삭제",
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          api.operation.deleteorderList(deleteItem).then((res) => {
+            this.getSearch();
+            console.log("res", res.data.isSuccess);
+            if (res.data.isSuccess) {
+              return this.$swal.fire("성공", "삭제되었습니다.", "success");
+            }
+
+            return this.$swal.fire("실패", "관리자에게 문의바랍니다.", "error");
+          });
+        }
+      });
+  }
+
+  editData(data: any) {
+    console.log("editData", data);
   }
 }
 </script>

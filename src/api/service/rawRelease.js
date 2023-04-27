@@ -48,4 +48,17 @@ export default {
       headers: { "Content-Type": "application/json" },
       params: params,
     }),
+  getReleaseOrderRawBefore: (params) =>
+    AuthAPI.get("/api/editRelease/before", {
+      headers: { "Content-Type": "application/json" },
+      params: params,
+    }),
+  getReleaseOrderRawAfter: (params) =>
+    AuthAPI.get("/api/editRelease/after", {
+      headers: { "Content-Type": "application/json" },
+      params: params,
+    }),
+
+  postReleaseOrderRawRegi: (params) =>
+    AuthAPI.post("/api/editRelease", JSON.stringify(params)),
 };

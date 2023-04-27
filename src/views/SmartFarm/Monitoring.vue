@@ -261,7 +261,7 @@
           <span>{{ roomName_control }}</span>
           <v-spacer></v-spacer>
         </v-card-title>
-        <v-card-text>
+        <v-card-text class="pb-0">
           <p v-html="latestRecord"></p>
           <v-col align-self="center">
             <v-data-table
@@ -703,15 +703,60 @@
                 </div>
               </template>
               <template v-slot:[`item.alarm`]="{ item }">
-                <v-btn text @click="openAlarmSetting(item)">
-                  <v-icon dark> mdi-cog </v-icon>
-                </v-btn>
+                <v-row dense align-self="center">
+                  <v-col cols="12">
+                    <v-row dense align-self="center">
+                      <v-col dense cols="6">
+                        <v-chip x-small color="warning"> 주의 </v-chip>
+                        <v-switch
+                          v-if="alarmPushList.length != 0"
+                          class="ma-1"
+                          indeterminate
+                          :value="true"
+                          v-model="item.alarm['warning_alarm']"
+                          @click="
+                            changePush(
+                              item,
+                              item.alarm['warning_alarm'],
+                              item.alarm['error_alarm']
+                            )
+                          "
+                          hide-details
+                          inset
+                          color="warning"
+                        >
+                        </v-switch>
+                      </v-col>
+                      <v-col dense cols="6">
+                        <v-chip x-small color="error"> 경고 </v-chip>
+                        <v-switch
+                          v-if="alarmPushList.length != 0"
+                          class="ma-1"
+                          indeterminate
+                          :value="true"
+                          v-model="item.alarm['error_alarm']"
+                          @click="
+                            changePush(
+                              item,
+                              item.alarm['warning_alarm'],
+                              item.alarm['error_alarm']
+                            )
+                          "
+                          hide-details
+                          inset
+                          color="error"
+                        >
+                        </v-switch>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                </v-row>
               </template>
             </v-data-table>
           </v-col>
         </v-card-text>
         <v-card-actions>
-          <v-col class="text-right">
+          <v-col class="text-right pa-0">
             <v-btn color="primary" text @click="closeControlModal">
               닫기
             </v-btn>
@@ -720,7 +765,7 @@
       </v-card>
     </v-dialog>
     <!-- 알람설정 -->
-    <v-dialog v-model="alarm_modal" persistent max-width="650px">
+    <!--<v-dialog v-model="alarm_modal" persistent max-width="350px">
       <v-card>
         <v-card-title>
           <span>
@@ -731,8 +776,8 @@
           <v-row class="mt-2" dense align-self="center">
             <v-col cols="12">
               <v-row dense align-self="center">
-                <v-col cols="2">
-                  <v-chip class="" color="warning"> 주의 </v-chip>
+                <v-col cols="4">
+                  <v-chip class="mt-2" color="warning"> 주의 </v-chip>
                 </v-col>
                 <v-col cols="2">
                   <v-text-field
@@ -768,10 +813,37 @@
                     dense
                   ></v-checkbox>
                 </v-col>
+                <v-col cols="8">
+                  <v-btn-toggle mandatory disabled v-model="warning_alarm">
+                    <v-btn color="green" text value="ON" dense>
+                      <p class="pa-0 ma-0">on</p>
+                    </v-btn>
+
+                    <v-btn color="red " text value="OFF" dense>
+                      <p class="pa-0 ma-0">off</p>
+                    </v-btn>
+                  </v-btn-toggle>
+                <v-checkbox
+                    :label="warning_alarm.pushYN ? 'Push ON' : 'Push OFF'"
+                    v-model="warning_alarm.pushYN"
+                    dense
+                  ></v-checkbox>
+                </v-col>
               </v-row>
               <v-row dense align-self="center">
-                <v-col cols="2">
-                  <v-chip class="" color="error"> 경고 </v-chip>
+                <v-col cols="4">
+                  <v-chip class="mt-2" color="error"> 경고 </v-chip>
+                </v-col>
+                <v-col cols="8">
+                  <v-btn-toggle mandatory disabled v-model="error_alarm">
+                    <v-btn color="green" text value="ON" dense>
+                      <p class="pa-0 ma-0">on</p>
+                    </v-btn>
+
+                    <v-btn color="red " text value="OFF" dense>
+                      <p class="pa-0 ma-0">off</p>
+                    </v-btn>
+                  </v-btn-toggle>
                 </v-col>
                 <v-col cols="2">
                   <v-text-field
@@ -818,7 +890,7 @@
           </v-col>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </v-dialog>-->
     <!-- 에어컨 설정 -->
     <v-dialog v-model="airCon_modal" persistent max-width="290">
       <v-card>
@@ -857,7 +929,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="success" @click.native="okModal()">확인</v-btn>
-          <v-btn text color="success" @click.native="closeModal()">취소</v-btn>
+          <v-btn color="error" @click.native="closeModal()">취소</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -929,6 +1001,8 @@ export default {
   },
   data() {
     return {
+      alarmPushList: [],
+      selectedFacilityName: "",
       period_data: "",
       period_modal: false,
       airCon_modal: false,
@@ -967,7 +1041,7 @@ export default {
         },
 
         { text: "상세설정", value: "setting", width: "15%", align: "center" },
-        { text: "알람설정", value: "alarm", width: "1%", align: "center" },
+        { text: "알람설정", value: "alarm", width: "5%", align: "center" },
       ],
 
       loader: null,
@@ -1140,18 +1214,6 @@ export default {
       bala_data: [],
       roomName_alarm: "",
       roomID: "",
-      warning_alarm: {
-        min: 0,
-        max: 0,
-        useYN: true,
-        pushYN: false,
-      },
-      error_alarm: {
-        min: 0,
-        max: 0,
-        useYN: true,
-        pushYN: false,
-      },
       ControlModal_currentVal: "",
       detailData_before: "",
 
@@ -1342,7 +1404,7 @@ export default {
       });
       return beforeRecord + afterRecord;
     },
-    openControlModal(data) {
+    async openControlModal(data) {
       let reqData = {
         facilityId: data.facilityId,
       };
@@ -1362,7 +1424,13 @@ export default {
         this.bala_data_backup = _.cloneDeep(res.data.responseData);
         this.bala_data = res.data.responseData;
         this.roomName_control = data.roomName;
-        this.control_modal = true;
+        this.selectedFacilityName = res.data.responseData[0].facilityName; //선택된 방 이름
+
+        return new Promise((resolve) => {
+          this.getAlarmPush();
+          this.control_modal = true;
+          resolve(resolve);
+        });
       });
     },
     getRoomData() {
@@ -2033,6 +2101,124 @@ export default {
     },
 
     // 제어항목조회
+    //주의, 경고 관련 알람설정
+    getAlarmPush() {
+      this.alarmPushList = [];
+
+      api.alarm
+        .alarmPush()
+        .then((response) => {
+          response.data.responseData.forEach((value) => {
+            if (this.selectedFacilityName == value.room) {
+              this.alarmPushList.push(value);
+              switch (value.level) {
+                case 0:
+                  value["warning_alarm"] = false;
+                  value["error_alarm"] = false;
+                  return value;
+                case 1:
+                  value["warning_alarm"] = true;
+                  value["error_alarm"] = false;
+                  return value;
+                case 2:
+                  value["warning_alarm"] = false;
+                  value["error_alarm"] = true;
+                  return value;
+                default:
+                  value["warning_alarm"] = true;
+                  value["error_alarm"] = true;
+                  return value;
+              }
+
+              /*
+              if (value.level == 0) {
+                value["warning_alarm"] = false;
+                value["error_alarm"] = false;
+              } else if (value.level == 1) {
+                value["warning_alarm"] = true;
+                value["error_alarm"] = false;
+              } else if (value.level == 2) {
+                value["warning_alarm"] = false;
+                value["error_alarm"] = true;
+              } else {
+                value["warning_alarm"] = true;
+                value["error_alarm"] = true;
+              }
+              */
+            }
+          });
+
+          this.alarmPushList.forEach((data) => {
+            this.bala_data.forEach((dataList) => {
+              if (data.name == dataList.equipmentName) {
+                dataList["alarm"] = data;
+              }
+            });
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    changePush(data, warning_alarm, error_alarm) {
+      let tempLevel = 0;
+      let tempPush = false;
+      let changeItem = {
+        data: [],
+      };
+
+      if (warning_alarm && error_alarm) {
+        tempLevel = 3;
+        tempPush = true;
+      } else if (!warning_alarm && !error_alarm) {
+        tempLevel = 0;
+        tempPush = false;
+      } else if (warning_alarm && !error_alarm) {
+        tempLevel = 1;
+        tempPush = true;
+      } else if (!warning_alarm && error_alarm) {
+        tempLevel = 2;
+        tempPush = true;
+      }
+
+      let tempItem = {
+        id: data.alarm.id,
+        level: tempLevel,
+        on: tempPush,
+      };
+
+      changeItem["data"].push(tempItem);
+
+      api.alarm
+        .updateAlarmPush(changeItem)
+        .then((response) => {
+          if (response.status == 200) {
+            this.$swal({
+              title: "수정되었습니다.",
+              icon: "success",
+              position: "top",
+              showCancelButton: false,
+              showConfirmButton: false,
+              toast: true,
+              timer: 1500,
+            });
+            this.getAlarmPush();
+          } else {
+            this.$swal({
+              title: "수정에 실패되었습니다.",
+              icon: "error",
+              position: "top",
+              showCancelButton: false,
+              showConfirmButton: false,
+              toast: true,
+              timer: 1500,
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
   },
 };
 </script>

@@ -48,6 +48,25 @@ export default {
       { text: "수량", value: "count" },
       { text: "출고수량", value: "releaseCount" },
     ],
+    headers_job_list: [
+      { text: "작업지시서명", value: "jobOrderName" },
+      { text: "거래처", value: "customerName" },
+
+      { text: "마감일", value: "jobOrderDeadline" },
+      { text: "품목명", value: "itemName" },
+      { text: "수량", value: "targetCount" },
+      { text: "출하처리", value: "done" },
+    ],
+    headers_history_list: [
+      { text: "출하코드", value: "releaseCode" },
+      { text: "작업지시서명", value: "jobOrderName" },
+      { text: "마감일", value: "deadline" },
+
+      { text: "품목명", value: "itemName" },
+      { text: "출하수량", value: "count" },
+      // { text: "상태", value: "status" },
+      { text: "취소", value: "cancel" },
+    ],
   },
 
   data: {
