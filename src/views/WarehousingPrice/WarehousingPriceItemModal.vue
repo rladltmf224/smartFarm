@@ -10,14 +10,8 @@
         <v-card-text>
           <v-row>
             <v-col cols="2" align-self="center">
-              <v-text-field
-                label="품목명 or 품목코드"
-                v-model.trim="search_condition_modal.item"
-                @keydown.enter="search_itemList"
-                dense
-                solo
-                hide-details="false"
-              ></v-text-field>
+              <v-text-field label="품목명 or 품목코드" v-model.trim="search_condition_modal.item"
+                @keydown.enter="search_itemList" dense solo hide-details="false"></v-text-field>
             </v-col>
 
             <v-col cols="2">
@@ -32,39 +26,17 @@
           </v-row>
           <v-row>
             <v-col>
-              <v-data-table
-                height="480"
-                v-model="selectItemList"
-                :headers="headers_item"
-                :items="itemList"
-                item-key="itemId"
-                class="elevation-4"
-                show-select
-                multi-sort
-                dense
-                :options.sync="itemListCfg.options"
-                :server-items-length="itemListCfg.totalCount"
-                :loading="itemListCfg.loading"
-                :items-per-page="itemListCfg.itemsPerPage"
-                :page.sync="itemListCfg.page"
-                @page-count="itemListCfg.pageCount = $event"
-                hide-default-footer
-              >
+              <v-data-table height="380" v-model="selectItemList" :headers="headers_item" :items="itemList"
+                item-key="itemId" class="elevation-4" show-select multi-sort dense :options.sync="itemListCfg.options"
+                :server-items-length="itemListCfg.totalCount" :loading="itemListCfg.loading"
+                :items-per-page="itemListCfg.itemsPerPage" :page.sync="itemListCfg.page"
+                @page-count="itemListCfg.pageCount = $event" hide-default-footer>
                 <template v-slot:item.storageId="props">
-                  <v-select
-                    class="select"
-                    :items="storage_list"
-                    item-text="name"
-                    item-value="id"
-                    v-model="props.item.storageId"
-                    dense
-                  ></v-select>
+                  <v-select class="select" :items="storage_list" item-text="name" item-value="id"
+                    v-model="props.item.storageId" dense></v-select>
                 </template>
               </v-data-table>
-              <v-pagination
-                v-model="itemListCfg.page"
-                :length="itemListCfg.pageCount"
-              ></v-pagination>
+              <v-pagination circle v-model="itemListCfg.page" :length="itemListCfg.pageCount"></v-pagination>
             </v-col>
           </v-row>
         </v-card-text>
@@ -98,13 +70,14 @@ export default class WarehousingPriceItemModal extends Vue {
     sortBy?: string[];
     sortDesc?: boolean[];
   } = {
-    item: "",
-    types: ["원자재", "반제품"],
-  };
+      item: "",
+      types: ["원자재", "반제품"],
+    };
   itemListCfg: any = {};
 
   @Prop({ required: true }) open: boolean;
   @Prop({ required: true }) customerID: number;
+  @Prop({ required: true }) checkDuplication: any;
 
   get headers_item() {
     return cfg.header.itemList;
@@ -125,9 +98,33 @@ export default class WarehousingPriceItemModal extends Vue {
     this.$emit("closeModal");
   }
 
-  add_item() {
-    this.$emit("addItemList", this.selectItemList);
+  add_item() { //기존 품목과 새로등록할 품목의 중복체크도함.
+    let A = this.checkDuplication; //기존에 있던 데이터 
+    let B = this.selectItemList; //새롭게 등록할 데이터
+    let isDuplicate = false;
+
+    A.forEach((itemA: any) => {
+      B.forEach((itemB: any) => {
+        if (itemA.itemId === itemB.itemId) {
+          isDuplicate = true;
+          return;
+        }
+      });
+      if (isDuplicate) {
+        return;
+      }
+    });
+
+    if (!isDuplicate) {
+      this.$emit("addItemList", this.selectItemList);
+    } else {
+      this.$swal("경고", "중복된 품목은 추가할 수 없습니다.", "error");
+    }
   }
+
+
+
+
 
   search_itemList() {
     this.search_condition_modal.customerId = this.customerID;

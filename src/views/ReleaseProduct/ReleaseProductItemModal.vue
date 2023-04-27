@@ -8,12 +8,8 @@
         <v-card-text>
           <v-row>
             <v-col cols="3">
-              <v-text-field
-                v-model="search_item_condition.item"
-                label="품목명 or 품목코드"
-                @keydown.enter="getItem"
-                dense
-              ></v-text-field>
+              <v-text-field v-model="search_item_condition.item" label="품목명 or 품목코드" @keydown.enter="getItem"
+                dense></v-text-field>
             </v-col>
             <v-col cols="1">
               <v-btn color="primary" @click="getItem"> 조회 </v-btn>
@@ -21,31 +17,13 @@
           </v-row>
           <v-row>
             <v-col>
-              <v-data-table
-                height="360"
-                ref="itemGrid"
-                v-model="selected_item"
-                :headers="headers_item_add"
-                fixed-header
-                :items="product_list"
-                item-key="id"
-                class="elevation-4"
-                multi-sort
-                show-select
-                dense
-                :options.sync="itemOption.options"
-                :server-items-length="itemOption.totalCount"
-                :loading="itemOption.loading"
-                :items-per-page="itemOption.itemsPerPage"
-                :page.sync="itemOption.page"
-                @page-count="itemOption.pageCount = $event"
-                hide-default-footer
-              >
+              <v-data-table height="360" ref="itemGrid" v-model="selected_item" :headers="headers_item_add" fixed-header
+                :items="product_list" item-key="id" class="elevation-4" multi-sort show-select dense
+                :options.sync="itemOption.options" :server-items-length="itemOption.totalCount"
+                :loading="itemOption.loading" :items-per-page="itemOption.itemsPerPage" :page.sync="itemOption.page"
+                @page-count="itemOption.pageCount = $event" hide-default-footer>
               </v-data-table>
-              <v-pagination
-                v-model="itemOption.page"
-                :length="itemOption.pageCount"
-              ></v-pagination>
+              <v-pagination v-model="itemOption.page" :length="itemOption.pageCount"></v-pagination>
             </v-col>
           </v-row>
         </v-card-text>

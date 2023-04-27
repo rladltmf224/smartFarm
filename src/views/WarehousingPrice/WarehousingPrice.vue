@@ -109,7 +109,7 @@
 
     <!-- 생성 모달 -->
     <WarehousingPriceItemModal :open="edit_customer" :customerID="selectCustomerID" @addItemList="handlerSaveItemModal"
-      @closeModal="close_item_modal"></WarehousingPriceItemModal>
+      @closeModal="close_item_modal" :checkDuplication="this.statement_detail_list"></WarehousingPriceItemModal>
   </div>
 </template>
 
@@ -449,7 +449,7 @@ export default class WarehousingPrice extends Vue {
     this.selected_item = [];
   }
   handlerSaveItemModal(item: object[]) {
-    console.log("handlerSaveItemModal", item);
+    console.log("자식에서 보낸 item들 ", item);
 
     item.forEach(
       (el: {
@@ -475,7 +475,32 @@ export default class WarehousingPrice extends Vue {
         this.statement_detail_list.unshift(data);
       }
     );
+
+    //중복된 품목추가 막기
+
+
+    /*    let newItem: any = item
+   
+       newItem.forEach((el1: any) => {
+         this.statement_detail_list.forEach(el2 => {
+           if (el1.itemId === el2.itemId) {
+             this.$swal("경고", "중복된 품목은 추가할 수 없습니다.", "error");
+           } else {
+             this.close_item_modal();
+           }
+         });
+       });
+    */
+
+
+
+
+
+
+
+
     this.close_item_modal();
+    console.log("자식에서보낸 item과 기존부모에있던 데이트합친거 ", this.statement_detail_list);
   }
 }
 </script>

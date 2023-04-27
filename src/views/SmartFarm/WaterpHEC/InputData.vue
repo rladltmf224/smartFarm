@@ -123,8 +123,7 @@
     <v-dialog v-model="dialog" max-width="600px">
       <v-card>
         <v-card-title>
-          <span v-if="this.editedIndex == -1">데이터 추가</span>
-          <span v-else>데이터 수정</span>
+          {{ this.editedIndex === -1 ? '데이터 추가' : '데이터 수정' }}
         </v-card-title>
         <v-card-text>
           <v-row dense>
@@ -189,7 +188,6 @@ export default {
   data() {
     return {
       test_date1: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-
         .toISOString()
         .substr(0, 10),
       test_menu1: false,
@@ -238,11 +236,9 @@ export default {
       datas_header: [
         {
           text: "날짜",
-
           value: "inputDate",
         },
         { text: "오전/오후", value: "division" },
-
         { text: "ec", value: "ec" },
         { text: "ph", value: "ph" },
         { text: "비고(양액명)", value: "memo" },
@@ -284,7 +280,7 @@ export default {
     };
   },
   mounted() {
-    //this.BeforeWeeks();
+    this.BeforeWeeks();
     this.onResize();
   },
   watch: {
@@ -303,26 +299,26 @@ export default {
   },
   methods: {
     // 시작일을 일주일전으로
-    // BeforeWeeks() {
-    //   let nowDate = new Date();
-    //   let weekDate = nowDate.getTime() - 7 * 24 * 60 * 60 * 1000;
-    //   nowDate.setTime(weekDate);
+    BeforeWeeks() {
+      let nowDate = new Date();
+      let weekDate = nowDate.getTime() - 7 * 24 * 60 * 60 * 1000;
+      nowDate.setTime(weekDate);
 
-    //   let weekYear = nowDate.getFullYear();
-    //   let weekMonth = nowDate.getMonth() + 1;
-    //   let weekDay = nowDate.getDate();
+      let weekYear = nowDate.getFullYear();
+      let weekMonth = nowDate.getMonth() + 1;
+      let weekDay = nowDate.getDate();
 
-    //   if (weekMonth < 10) {
-    //     weekMonth = '0' + weekMonth;
-    //   }
-    //   if (weekDay < 10) {
-    //     weekDay = '0' + weekDay;
-    //   }
+      if (weekMonth < 10) {
+        weekMonth = '0' + weekMonth;
+      }
+      if (weekDay < 10) {
+        weekDay = '0' + weekDay;
+      }
 
-    //   let resultDate = weekYear + '-' + weekMonth + '-' + weekDay;
-    //   this.test_date1 = resultDate;
-    //   console.log(resultDate);
-    // },
+      let resultDate = weekYear + '-' + weekMonth + '-' + weekDay;
+      this.test_date1 = resultDate;
+      console.log(resultDate);
+    },
     // 시작일을 일주일전으로
     //스윗알러트
     onResize() {
@@ -400,10 +396,10 @@ export default {
         memo: this.editedItem.memo,
       };
       if (this.editedIndex == -1) {
-        console.log("등록버젼입니다.");
         api.smartfarm
           .waterECpHRegister(item)
           .then((res) => {
+            console.log(res.data.message)
             if (res.status == 200) {
               this.$swal({
                 title: "저장되었습니다.",
@@ -414,10 +410,12 @@ export default {
                 toast: true,
                 timer: 1500,
               });
+              this.close();
               this.getWaterHistory();
             } else {
+
               this.$swal({
-                title: "해당 일자, 시간에는 등록된 데이터가 존재합니다.",
+                title: res.data.message,
                 icon: "error",
                 position: "top",
                 showCancelButton: false,
@@ -440,23 +438,35 @@ export default {
             });
           });
       } else {
-        // 수정api연결해야함.
         item.id = this.editedItem.id;
-        api.smartfarm.waterECpHEdit(item).then((response) => {
-          this.$swal({
-            title: "저장되었습니다.",
-            icon: "success",
-            position: "top",
-            showCancelButton: false,
-            showConfirmButton: false,
-            toast: true,
-            timer: 1500,
-          });
-          this.getWaterHistory();
-        });
+        api.smartfarm.waterECpHEdit(item).then((res) => {
+          if (res.status == 200) {
+            this.$swal({
+              title: "수정되었습니다.",
+              icon: "success",
+              position: "top",
+              showCancelButton: false,
+              showConfirmButton: false,
+              toast: true,
+              timer: 1500,
+            });
+            this.close()
+            this.getWaterHistory();
+          } else {
+            this.$swal({
+              title: res.data.message,
+              icon: "error",
+              position: "top",
+              showCancelButton: false,
+              showConfirmButton: false,
+              toast: true,
+              timer: 1500,
+            });
+          }
+        }).catch((err) => {
+          console.log(err)
+        })
       }
-
-      this.close();
     },
     close() {
       this.dialog = false;
