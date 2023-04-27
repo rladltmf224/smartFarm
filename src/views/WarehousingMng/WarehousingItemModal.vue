@@ -9,53 +9,26 @@
         <v-card-text>
           <v-row>
             <v-col cols="2" align-self="center">
-
               <span>거래처</span>
-              <v-select
-                dense
-
-                :items="customer_list"
-                item-text="name"
-                item-value="id"
-                label="거래처"
-                v-model="editedCustomer.customerId"
-                @change="getCutomerItem()"
-
-              ></v-select>
+              <v-select dense :items="customer_list" item-text="name" item-value="id" v-model="editedCustomer.customerId"
+                solo @change="getCutomerItem()"></v-select>
             </v-col>
             <v-col cols="3" align-self="center">
               <span>품목</span>
-              <v-select
-                dense
-                solo
-
-                ref
-                :items="item_list"
-                item-text="itemName"
-                item-value="itemId"
-                label="품목"
-                v-model="itemInfo.itemId"
-                :disabled="item_list.length == 0"
-                dense
-              ></v-select>
+              <v-select dense solo ref :items="item_list" item-text="itemName" item-value="itemId" label="품목"
+                v-model="itemInfo.itemId" :disabled="item_list.length == 0" dense></v-select>
             </v-col>
             <v-col cols="2" align-self="center">
-
               <span>갯수</span>
-              <v-text-field
-                dense
-                solo
-
-                label="갯수"
-                reverse
-                type="text"
-                maxlength="10"
-                v-model="itemInfo.count"
-
-
+              <v-text-field dense solo label="갯수" reverse type="text" maxlength="10" v-model="itemInfo.count"
                 oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"
-                @keydown.enter="add_item"
-              ></v-text-field>
+                @keydown.enter="add_item"></v-text-field>
+            </v-col>
+            <v-col cols="2" align-self="center">
+              <span>납품일자</span>
+              <v-text-field dense solo label="갯수" reverse type="text" maxlength="10" v-model="itemInfo.count"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"
+                @keydown.enter="add_item"></v-text-field>
             </v-col>
             <v-col cols="1" align-self="center" class="text-right">
               <v-btn color="primary" @click="add_item"> 품목 추가 </v-btn>
@@ -69,39 +42,17 @@
           </v-row>
           <v-row>
             <v-col>
-              <v-data-table
-                height="480"
-                :headers="headers_item"
-                :items="item_list_modal"
-                :expanded.sync="expanded"
-                :single-expand="singleExpand"
-                fixed-header
-                item-key="itemId"
-                class="elevation-4"
-                show-expand
-                multi-sort
-                dense
-
-                no-data-text="데이터가 없습니다."
-
-              >
+              <v-data-table height="480" :headers="headers_item" :items="item_list_modal" :expanded.sync="expanded"
+                :single-expand="singleExpand" fixed-header item-key="itemId" class="elevation-4" show-expand multi-sort
+                dense no-data-text="데이터가 없습니다.">
                 <template v-slot:item.orderCount="props">
-                  <v-edit-dialog
-                    :return-value.sync="props.item.orderCount"
-                    @save="props.item = saveOrderCount(props.item)"
-                  >
+                  <v-edit-dialog :return-value.sync="props.item.orderCount"
+                    @save="props.item = saveOrderCount(props.item)">
                     {{ props.item.orderCount | comma }}
                     <template v-slot:input>
-                      <v-text-field
-                        v-model="props.item.orderCount"
-                        label="Edit"
-                        props.
-                        single-line
-                        dense
-                        type="text"
+                      <v-text-field v-model="props.item.orderCount" label="Edit" props. single-line dense type="text"
                         maxlength="10"
-                        oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"
-                      ></v-text-field>
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"></v-text-field>
                     </template>
                   </v-edit-dialog>
                 </template>
@@ -115,37 +66,20 @@
                 </template>
 
                 <template v-slot:item.storageId="props">
-                  <v-select
-                    class="select_warehousing"
-                    :items="storage_list"
-                    item-text="name"
-                    item-value="id"
-                    v-model="props.item.storageId"
-                    dense
-                  ></v-select>
+                  <v-select class="select_warehousing" :items="storage_list" item-text="name" item-value="id"
+                    v-model="props.item.storageId" dense></v-select>
                 </template>
                 <template v-slot:item.storageLocationId="props">
-                  <v-select
-                    class="select_warehousing"
-                    :items="selectStorageLocation(props)"
-                    item-text="area"
-                    item-value="id"
-                    v-model="props.item.storageLocationId"
-                    :disabled="props.item.storageId == 0"
-                    dense
-                  ></v-select>
+                  <v-select class="select_warehousing" :items="selectStorageLocation(props)" item-text="area"
+                    item-value="id" v-model="props.item.storageLocationId" :disabled="props.item.storageId == 0"
+                    dense></v-select>
                 </template>
 
                 <template v-slot:item.memo="props">
                   <v-edit-dialog :return-value.sync="props.item.memo">
                     {{ props.item.memo }}
                     <template v-slot:input>
-                      <v-text-field
-                        v-model="props.item.memo"
-                        single-line
-                        counter
-                        dense
-                      ></v-text-field>
+                      <v-text-field v-model="props.item.memo" single-line counter dense></v-text-field>
                     </template>
                   </v-edit-dialog>
                 </template>
@@ -161,16 +95,10 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr
-                            v-for="(dessert, index) in item.eachCount"
-                            :key="index"
-                          >
+                          <tr v-for="(dessert, index) in item.eachCount" :key="index">
                             <td>{{ dessert.count | comma }}</td>
                             <td>
-                              <v-icon
-                                small
-                                @click="deleteDetailItem_pop(item, index)"
-                              >
+                              <v-icon small @click="deleteDetailItem_pop(item, index)">
                                 mdi-delete
                               </v-icon>
                             </td>
@@ -461,8 +389,11 @@ export default class WarehousingItemModal extends Vue {
   }
 
   add_item() {
+    console.log('추가할 품목의 데이터', this.itemInfo)
+
+
     if (this.itemInfo.itemId == "") {
-      return this.$swal("경고", "아이템을 선택해주세요!", "error");
+      return this.$swal("경고", "품목을 선택해주세요!", "error");
     }
 
     if (this.itemInfo.count == 0) {

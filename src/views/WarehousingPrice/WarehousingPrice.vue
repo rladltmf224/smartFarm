@@ -233,7 +233,7 @@ export default class WarehousingPrice extends Vue {
   onResize() {
     this.customerList_height = window.innerHeight - 48 - 129 - 90;
     this.itemList_height = window.innerHeight - 48 - 550;
-    this.changeList_height = window.innerHeight - 48 - 550;
+    this.changeList_height = window.innerHeight - 48 - 500;
   }
   getStatusColor(status: string) {
     switch (status) {
@@ -449,8 +449,6 @@ export default class WarehousingPrice extends Vue {
     this.selected_item = [];
   }
   handlerSaveItemModal(item: object[]) {
-    console.log("자식에서 보낸 item들 ", item);
-
     item.forEach(
       (el: {
         itemId: number;
@@ -476,31 +474,7 @@ export default class WarehousingPrice extends Vue {
       }
     );
 
-    //중복된 품목추가 막기
-
-
-    /*    let newItem: any = item
-   
-       newItem.forEach((el1: any) => {
-         this.statement_detail_list.forEach(el2 => {
-           if (el1.itemId === el2.itemId) {
-             this.$swal("경고", "중복된 품목은 추가할 수 없습니다.", "error");
-           } else {
-             this.close_item_modal();
-           }
-         });
-       });
-    */
-
-
-
-
-
-
-
-
     this.close_item_modal();
-    console.log("자식에서보낸 item과 기존부모에있던 데이트합친거 ", this.statement_detail_list);
   }
 }
 </script>

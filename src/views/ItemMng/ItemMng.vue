@@ -264,7 +264,6 @@ export default class Item extends Vue {
   }
 
   handlerSaveData(data: any, editedIndex: number) {
-    console.log('에밋 실행실행실행')
     if (!editedIndex) {
       data = {
         version: data.version,
@@ -281,9 +280,21 @@ export default class Item extends Vue {
       api.item
         .updateItemList(data)
         .then((response) => {
-          console.log("updateItemList", response);
-          this.alertResult(response.data.isSuccess);
-          this.closeModal();
+          if (response.status == 200) {
+            console.log("updateItemList", response);
+            this.alertResult(response.data.isSuccess);
+            this.closeModal();
+          } else {
+            this.$swal({
+              title: response.data.message,
+              icon: "error",
+              position: "top",
+              showCancelButton: false,
+              showConfirmButton: false,
+              toast: true,
+              timer: 1500,
+            });
+          }
         })
         .catch((error) => {
           console.log(error);
@@ -292,9 +303,21 @@ export default class Item extends Vue {
       api.item
         .createItemList(data)
         .then((response) => {
-          console.log("createCustomerItem", response);
-          this.alertResult(response.data.isSuccess);
-          this.closeModal();
+          if (response.status == 200) {
+            console.log("createCustomerItem", response);
+            this.alertResult(response.data.isSuccess);
+            this.closeModal();
+          } else {
+            this.$swal({
+              title: response.data.message,
+              icon: "error",
+              position: "top",
+              showCancelButton: false,
+              showConfirmButton: false,
+              toast: true,
+              timer: 1500,
+            });
+          }
         })
         .catch((error) => {
           console.log(error);
@@ -325,7 +348,6 @@ export default class Item extends Vue {
       });
     }
   }
-
   selectCustomer(data: any) {
     console.log("selectCustomer", data);
   }
