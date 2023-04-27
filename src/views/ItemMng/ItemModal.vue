@@ -167,7 +167,6 @@ export default class ItemModal extends Vue {
     }
 
     if (customerInfo.type == "") {
-      console.log('타입타입타입타입타입타입', customerInfo.type)
       return this.$swal("경고", "타입을 선택해주세요", "error");
     }
 
@@ -180,5 +179,12 @@ export default class ItemModal extends Vue {
     }
     this.$emit("save-data", customerInfo, this.editedIndex);
   }
+
+  checkDup() { //품목명 중복체크
+
+
+  }
+
+
 }
 </script>
