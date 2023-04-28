@@ -252,7 +252,8 @@ export default class ReleaseOrderModal extends Vue {
         console.log("getReleaseRawDetailList", response);
         let list_data = [];
         response.data.responseData.forEach((el: any) => {
-          el.releaseCount = el.count;
+          //el.releaseCount = el.count;
+          el.releaseCount = 0;
         });
         if (this.selected != undefined) {
           response.data.responseData.forEach((el: any) => {

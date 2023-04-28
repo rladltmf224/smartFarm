@@ -179,7 +179,13 @@
               </v-col>
               <v-spacer></v-spacer>
               <v-col cols="2" class="text-right" align-self="center">
-                <v-btn x-large color="primary" @click="getCustomer">
+                <v-btn
+                  x-large
+                  color="primary"
+                  @click="getCustomer"
+                  elevation="0"
+                >
+                  <v-icon left> mdi-magnify </v-icon>
                   조회
                 </v-btn>
               </v-col>

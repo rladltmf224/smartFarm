@@ -95,19 +95,59 @@
                 height="300"
                 :headers="headers_job_list"
                 :items="job_list_modal"
-
                 fixed-header
                 item-key="barcode"
                 class="elevation-4"
                 multi-sort
                 dense
-
                 disable-pagination
                 hide-default-footer
               >
                 <template v-slot:item.targetCount="props">
                   {{ props.item.targetCount | comma }}
+                </template>
 
+                <template v-slot:[`item.date`]="{ item }">
+                  <v-menu
+                    :key="item.date"
+                    dense
+                    ref="releaseCalendar"
+                    :close-on-content-click="false"
+                    :return-value.sync="item.date"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="auto"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        flat
+                        solo
+                        hide-details
+                        class="pt-1"
+                        dense
+                        v-model="item.date"
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      v-model="item.date"
+                      no-title
+                      scrollable
+                      locale="ko-KR"
+                    >
+                      <v-spacer></v-spacer>
+                      <v-btn text color="primary" @click="item.date = ''">
+                        취소
+                      </v-btn>
+                    </v-date-picker>
+                  </v-menu>
+                </template>
+                <template v-slot:[`item.time`]="{ item }">
+                  <v-row>
+                    <vue-timepicker v-model="item.time"></vue-timepicker>
+                  </v-row>
                 </template>
 
                 <template v-slot:[`item.done`]="{ item }">
@@ -145,9 +185,10 @@
 import cfg from "./config";
 import _ from "lodash";
 import * as api from "@/api";
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import ReleaseProductItemModal from "./ReleaseProductItemModal.vue";
 import ReleaseProductModal from "./ReleaseProductModal.vue";
+import VueTimepicker from "vue2-timepicker/src/vue-timepicker.vue";
 
 @Component({
   filters: {
@@ -162,9 +203,13 @@ import ReleaseProductModal from "./ReleaseProductModal.vue";
   components: {
     ReleaseProductItemModal,
     ReleaseProductModal,
+    VueTimepicker,
   },
 })
 export default class ReleaseProductAddModal extends Vue {
+  $refs!: {
+    releaseCalendar: HTMLFormElement;
+  };
   customer_list: object[] = [];
   item_list_modal: object[] = [];
   job_list_modal: object[] = [];
@@ -246,16 +291,19 @@ export default class ReleaseProductAddModal extends Vue {
         cancelButtonColor: "#d33",
         confirmButtonText: "출하",
       })
-
       .then((result) => {
         if (result.isConfirmed) {
           let reqData = {
             jobOrderId: item.jobOrderId,
+            date: item.date,
+            time: item.time,
           };
+
+          console.log("reqData", reqData);
+          /*
           api.productRelease.getReleaseProductJobDone(reqData).then((res) => {
             console.log("getReleaseProductJobDone", res);
             this.getList();
-
             this.$swal({
               title: "출하되었습니다.",
               icon: "success",
@@ -266,14 +314,22 @@ export default class ReleaseProductAddModal extends Vue {
               timer: 1500,
             });
           });
+          */
         }
       });
   }
   getList() {
     api.productRelease.getReleaseProductJobList().then((res) => {
       console.log("getReleaseProductJobList", res);
+
+      res.data.responseData.forEach((value: any) => {
+        value["date"] = new Date().toISOString().substr(0, 10);
+        value["time"] = "00:00";
+      });
+
       this.job_list_modal = res.data.responseData;
     });
+
     // api.productRelease
     //   .getReleaseProducCustomer()
     //   .then((response) => {
@@ -294,12 +350,12 @@ export default class ReleaseProductAddModal extends Vue {
     //   });
   }
 
-  dead_date_search(v: any) {
-    this.editedCustomer.deadline = v;
-    this.deadDate = false;
-    let deadEL: any = this.$refs.deadDate;
-    deadEL.save(v);
-  }
+  // dead_date_search(v: any) {
+  //   this.editedCustomer.deadline = v;
+  //   this.deadDate = false;
+  //   let deadEL: any = this.$refs.deadDate;
+  //   deadEL.save(v);
+  // }
 
   closeModal_customer() {
     this.editedCustomer.customerId = 0;
@@ -443,3 +499,13 @@ export default class ReleaseProductAddModal extends Vue {
   }
 }
 </script>
+<style>
+.vue__time-picker input.display-time {
+  font-family: "Pretendard" !important;
+  font-size: 16px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border: 1px solid rgba(255, 255, 255, 0);
+  border-radius: 5px;
+}
+</style>

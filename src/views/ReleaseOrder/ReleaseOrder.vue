@@ -180,8 +180,10 @@
                   </v-col>
                 </v-row>
               </v-col>
-              <v-col cols="2" class="text-right" align-self="center">
+              <v-spacer></v-spacer>
+              <v-col class="pt-5 text-right" cols="2">
                 <v-btn color="primary" x-large @click="getCustomer">
+                  <v-icon left> mdi-magnify </v-icon>
                   조회
                 </v-btn>
               </v-col>
@@ -201,7 +203,7 @@
               >
             </v-col>
           </v-row>
-          -->
+
           <v-card>
             <v-data-table
               :height="table_height"

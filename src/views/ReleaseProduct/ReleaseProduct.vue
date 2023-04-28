@@ -1,6 +1,5 @@
 <template>
   <div class="warehousing">
-
     <v-container fluid fluid v-resize="onResize">
       <v-row dense>
         <v-col class="ma-2" cols="12">
@@ -8,7 +7,6 @@
           <v-card class="pa-3" height="60">
             <v-row dense>
               <v-col cols="2">
-
                 <v-text-field
                   label="code"
                   v-model="search_condition.code"
@@ -16,9 +14,7 @@
                   dense
                   solo
                   rounded
-
                   elevation-0
-
                 ></v-text-field>
               </v-col>
 
@@ -30,9 +26,7 @@
                   dense
                   solo
                   rounded
-
                   elevation-0
-
                 ></v-text-field>
               </v-col>
               <v-col cols="1">
@@ -43,9 +37,7 @@
                   dense
                   solo
                   rounded
-
                   elevation-0
-
                 ></v-text-field>
               </v-col>
 
@@ -59,9 +51,7 @@
                   dense
                   solo
                   rounded
-
                   elevation-0
-
                 ></v-select>
               </v-col>
 
@@ -85,9 +75,7 @@
                       dense
                       solo
                       rounded
-
                       elevation-0
-
                     ></v-text-field>
                   </template>
                   <v-date-picker
@@ -131,9 +119,7 @@
                       dense
                       solo
                       rounded
-
                       elevation-0
-
                     ></v-text-field>
                   </template>
                   <v-date-picker
@@ -159,10 +145,11 @@
               </v-col>
               <v-spacer></v-spacer>
 
-
-              <v-col class="text-right" cols="2" align-self="center">
-                <v-btn color="primary" @click="getCustomer"> 조회 </v-btn>
-
+              <v-col class="text-right" cols="2">
+                <v-btn color="primary" large @click="getCustomer" elevation="0">
+                  <v-icon left> mdi-magnify </v-icon>
+                  조회
+                </v-btn>
               </v-col>
             </v-row>
           </v-card>
@@ -178,13 +165,11 @@
             <v-spacer></v-spacer>
             <v-col class="text-right" cols="3" align-self="center">
               <v-btn color="primary" @click="editItem"
-
                 ><v-icon left> mdi-book-account </v-icon>출하 추가</v-btn
               >
             </v-col>
           </v-row>
           <v-card>
-
             <!-- <v-data-table
               height="280"
 
