@@ -53,7 +53,7 @@
                 </v-btn>
               </template>
               <template v-slot:item.edit="{ item }">
-                <v-btn v-if="item.status != '반품'" small @click="deleteItem_pop(item)" color="error" elevation="0">
+                <v-btn v-if="item.status != '반품'" small @click="deleteItem_pop(item)" color="error" elevation="">
                   반품 요청
                 </v-btn>
               </template>
