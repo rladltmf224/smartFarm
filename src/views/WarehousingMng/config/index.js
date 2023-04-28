@@ -15,7 +15,7 @@ export default {
 
       { text: "불량수량", value: "defectCount" },
       { text: "창고", value: "storageName" },
-      { text: "납품날짜", value: "date" },
+      { text: "납품일자", value: "date" },
     ],
     headers_item: [
       { text: "품목명", value: "name", width: "15%" },

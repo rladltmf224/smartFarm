@@ -11,7 +11,7 @@
             <v-col cols="2" align-self="center">
               <span>거래처</span>
               <v-select dense :items="customer_list" item-text="name" item-value="id" v-model="editedCustomer.customerId"
-                solo @change="getCutomerItem()"></v-select>
+                label="거래처" solo @change="getCutomerItem()"></v-select>
             </v-col>
             <v-col cols="3" align-self="center">
               <span>품목</span>
@@ -133,7 +133,7 @@
         <v-card-actions>
           <v-col class="text-right">
             <v-btn color="success" text @click="clickSaveInfo"> 저장 </v-btn>
-            <v-btn color="primary" text @click="closeModal_customer">
+            <v-btn text @click="closeModal_customer">
               닫기
             </v-btn>
           </v-col>
@@ -168,7 +168,6 @@ export default class WarehousingItemModal extends Vue {
   expanded: [] = [];
   editedCustomer: any = {};
   itemInfo: any = Object.assign({}, cfg.data.inputDefaultData_item);
-  date: any = (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10);
   menu: boolean = false;
   @Prop({ required: true }) open: boolean;
   created() {
@@ -416,6 +415,8 @@ export default class WarehousingItemModal extends Vue {
     if (this.itemInfo.date == '') {
       return this.$swal("경고", "납품일자를 입력해주세요", "error");
     }
+
+
 
     let add_ItemData: any = _.cloneDeep(this.itemInfo);
 

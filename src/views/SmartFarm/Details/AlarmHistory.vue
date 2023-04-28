@@ -62,9 +62,10 @@
             </v-col>
           </v-row>
           <v-card>
-            <v-data-table :loading="loading" dense :height="table_height" :headers="headers" :items="table_data"
-              fixed-header multi-sort :items-per-page="options.itemsPerPage" hide-default-footer :page.sync="options.page"
-              :options.sync="options" item-key="newKey">
+            <v-data-table :height="table_height" :headers="headers" :items="table_data" fixed-header multi-sort
+              :options.sync="itemListCfg.options" :server-items-length="itemListCfg.totalCount"
+              :loading="itemListCfg.loading" :items-per-page="itemListCfg.itemsPerPage" :page.sync="itemListCfg.page"
+              @page-count="itemListCfg.pageCount = $event" hide-default-footer>
               <template v-slot:item.value="{ item }">
                 <span v-html="item.value"></span>
               </template>
@@ -81,7 +82,7 @@
               </template>
             </v-data-table>
           </v-card>
-          <v-pagination v-model="options.page" :length="options.pageCount" circle :total-visible="11"></v-pagination>
+          <v-pagination circle v-model="itemListCfg.page" :length="itemListCfg.pageCount"></v-pagination>
         </v-col>
       </v-row>
     </v-container>
@@ -119,29 +120,45 @@ export default class AlarmHistory extends Vue {
   ];
   alarmList: any[] = [];
   table_data: any[] = []; // 테이블에 보여줄 데이터
-  options: any = {
-    page: 0
-  }
-  page: number = 0;
-  itemsPerPage: number = 15
   table_height: number = 0;
   sortState: any = [];
   queryString: string = '';
   loading: boolean = false;
+  itemListCfg: any = {};
+
+
+
   created() {
-    this.options = Object.assign({}, gridCfg);
+    this.itemListCfg = Object.assign({}, gridCfg);
   }
-  @Watch('options', { deep: true })
+  mounted() {
+    this.onResize();
+  }
+
+
+  @Watch('itemListCfg.options', { immediate: true, deep: true })
   changeOptions() {
-    let header = this.options.sortBy;
-    let value = this.options.sortDesc;
+    this.getData()
+  }
+
+  /*  @Watch("itemListCfg.options", { immediate: true, deep: true })
+   public exampleMethod(value: string, oldValue: string) {
+     this.getData()
+   } */
+
+
+
+
+  setSorts() {
+    let header = this.itemListCfg.options.sortBy;
+    let value = this.itemListCfg.options.sortDesc;
     let sortState = header.map((columnName: any, index: any) => { //선택된 sort를 이쁘게가공하기
       return { ascending: value[index], columnName };
     });
     this.sortState = sortState;
-    this.getData()
   }
   getData() { //api 통신
+    this.setSorts()
     this.makeParam()
     this.loading = true;
     api.alarm
@@ -149,7 +166,7 @@ export default class AlarmHistory extends Vue {
         this.queryString
       )
       .then((response) => {
-        this.options.pageCount = response.data.data.totalPages;
+        this.itemListCfg.totalCount = response.data.data.totalElements;
         this.table_data = response.data.data.content
         this.loading = false;
         this.setContentString()
@@ -157,16 +174,19 @@ export default class AlarmHistory extends Vue {
       });
   }
   makeParam() { //api통신에 필요한 파라미터 가공
-    const { sortBy, sortDesc, page, itemsPerPage } = this.options;
+    /* const { page, itemsPerPage, sortBy, sortDesc } = this.itemListCfg.options; */
+
     let local: any = localStorage.getItem("userId");
     let userId = JSON.parse(local) || "";
+    let param_page = this.itemListCfg.options.page - 1;
+    let param_size = this.itemListCfg.options.itemsPerPage - 2;
     let param: any = {
       userId: userId,
       startDate: this.search_condition.startDate,
       endDate: this.search_condition.endDate,
       getAll: true,
-      page: this.options.page,
-      size: this.options.itemsPerPage,
+      page: param_page,
+      size: param_size
     }
 
 
@@ -174,16 +194,15 @@ export default class AlarmHistory extends Vue {
     str = str.slice(0, -1);
     str = str.substring(1);
 
-    let pageNum = this.options.page - 1
+    let pageNum = param_page;
 
 
     let queryString = "?"; //파라미터를 쿼리스트링파라미터로 바꾸는 과정 
     queryString += "userId=" + userId;
     queryString += "&page=" + pageNum;
-    queryString += "&size=" + this.options.itemsPerPage;
+    queryString += "&size=" + param_size;
     queryString += "&startDate=" + this.search_condition.startDate;
     queryString += "&endDate=" + this.search_condition.endDate;
-
 
     this.sortState.forEach((state: any) => { //sortState 배열에서 참이면 asc 거짓이면 desc
       queryString += "&sort=" + state.columnName + ',' + (state.ascending ? "asc" : "desc")
@@ -220,13 +239,9 @@ export default class AlarmHistory extends Vue {
       }
     }
   }
-  mounted() {
-    this.onResize();
-    this.getData();
-  }
+
   onResize() {
     this.table_height = window.innerHeight - 48 - 129 - 44 - 44 - 20;
-    console.log("onResize", this.table_height);
   }
   s_date_search(v: any) {
     this.search_condition.startDate = v;
