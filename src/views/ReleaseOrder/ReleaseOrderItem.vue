@@ -5,10 +5,8 @@
         <v-card-title>
           <span>자재 추가</span>
           <v-spacer></v-spacer>
-          <span
-            >출고할 수량 : {{ txtReleaseCount }} | 선택된 수량 :
-            {{ txtSelectCount }}</span
-          >
+          <span>출고할 수량 : {{ txtReleaseCount }} |</span>
+          <span :style="checkCount">선택된 수량 : {{ txtSelectCount }}</span>
         </v-card-title>
         <v-card-text>
           <v-row dense>
@@ -43,8 +41,10 @@
                         single-line
                         type="text"
                         maxlength="10"
-                        oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"
+                        oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');"
+                        :rules="countRules"
                       ></v-text-field>
+                      <!--oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');"-->
                     </template>
                   </v-edit-dialog>
                 </template>
@@ -65,7 +65,7 @@
 import * as api from "@/api";
 import cfg from "./config";
 import _ from "lodash";
-import { Vue, Component, Prop, Watch } from "vue-property-decorator";
+import { Vue, Component, Prop } from "vue-property-decorator";
 
 @Component({
   filters: {
@@ -81,12 +81,31 @@ import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 export default class ReleaseOrderItem extends Vue {
   txtSelectCount: number = 0;
   selected_data: object[] = [];
-
+  countRules: any[] = [
+    (v: any) =>
+      !(v.length > 1 && v.charAt(0) == "0") || "0를 삭제 후 재입력해주세요",
+  ];
   @Prop({ required: true }) open: boolean;
   @Prop({ required: true }) selected: any;
   @Prop({ required: true }) txtReleaseCount: number;
 
   @Prop({ required: true }) raw_detail_list: object[];
+
+  get checkCount() {
+    if (this.txtSelectCount > this.txtReleaseCount) {
+      return {
+        color: "red",
+      };
+    } else if (this.txtSelectCount == this.txtReleaseCount) {
+      return {
+        color: "green",
+      };
+    } else {
+      return {
+        color: "black",
+      };
+    }
+  }
 
   get headers_raw_add() {
     return cfg.header.headers_raw_add;

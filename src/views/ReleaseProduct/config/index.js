@@ -55,6 +55,8 @@ export default {
       { text: "마감일", value: "jobOrderDeadline" },
       { text: "품목명", value: "itemName" },
       { text: "수량", value: "targetCount" },
+      { text: "출하 기간", value: "date" },
+      { text: "출하 시간", value: "time" },
       { text: "출하처리", value: "done" },
     ],
     headers_history_list: [
