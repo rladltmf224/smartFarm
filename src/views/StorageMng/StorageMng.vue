@@ -20,6 +20,7 @@
               <v-spacer></v-spacer>
               <v-col class="text-right" cols="2">
                 <v-btn color="primary" @click="getCustomer" large elevation="0">
+                  <v-icon left> mdi-magnify </v-icon>
                   조회
                 </v-btn>
               </v-col>
