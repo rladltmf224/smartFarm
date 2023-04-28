@@ -3,6 +3,7 @@ export default {
     headers: [
       { text: "입고코드", value: "code" },
       { text: "입고날짜", value: "createdDate" },
+      { text: "납품일자", value: "date" },
       { text: "거래처", value: "customerName" },
       { text: "상태", value: "status" },
       { text: "반품", value: "edit" },
@@ -15,14 +16,12 @@ export default {
 
       { text: "불량수량", value: "defectCount" },
       { text: "창고", value: "storageName" },
-      { text: "납품일자", value: "date" },
     ],
     headers_item: [
       { text: "품목명", value: "name", width: "15%" },
       { text: "주문수량", value: "orderCount", width: "8%" },
       { text: "정상수량", value: "normalCount", width: "8%" },
       { text: "불량수량", value: "defectCount", width: "8%" },
-      { text: "납품일자", value: "date", width: "12%" },
 
       { text: "창고", value: "storageId", width: "12%" },
       { text: "창고구역", value: "storageLocationId", width: "10%" },
