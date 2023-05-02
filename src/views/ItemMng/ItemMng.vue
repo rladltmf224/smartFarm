@@ -285,15 +285,18 @@ export default class Item extends Vue {
             this.alertResult(response.data.isSuccess);
             this.closeModal();
           } else {
-            this.$swal({
-              title: response.data.message,
-              icon: "error",
-              position: "top",
-              showCancelButton: false,
-              showConfirmButton: false,
-              toast: true,
-              timer: 1500,
-            });
+            /*  this.$swal({
+               title: response.data.message,
+               icon: "error",
+               position: "top",
+               showCancelButton: false,
+               showConfirmButton: false,
+               toast: true,
+               timer: 1500,
+             }); */
+            this.$swal("경고", `${response.data.message}`, "error");
+
+
           }
         })
         .catch((error) => {

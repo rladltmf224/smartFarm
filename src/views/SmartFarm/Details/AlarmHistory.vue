@@ -126,8 +126,6 @@ export default class AlarmHistory extends Vue {
   loading: boolean = false;
   itemListCfg: any = {};
 
-
-
   created() {
     this.itemListCfg = Object.assign({}, gridCfg);
   }
@@ -135,27 +133,20 @@ export default class AlarmHistory extends Vue {
     this.onResize();
   }
 
-
-  @Watch('itemListCfg.options', { immediate: true, deep: true })
+  @Watch('itemListCfg.options', { deep: true })
   changeOptions() {
     this.getData()
   }
-
-  /*  @Watch("itemListCfg.options", { immediate: true, deep: true })
-   public exampleMethod(value: string, oldValue: string) {
-     this.getData()
-   } */
-
-
-
-
   setSorts() {
-    let header = this.itemListCfg.options.sortBy;
-    let value = this.itemListCfg.options.sortDesc;
-    let sortState = header.map((columnName: any, index: any) => { //선택된 sort를 이쁘게가공하기
-      return { ascending: value[index], columnName };
-    });
-    this.sortState = sortState;
+    const { sortBy, sortDesc } = this.itemListCfg.options;
+
+    if (sortBy && sortDesc) {
+      const sortState = sortBy.map((columnName: any, index: any) => ({
+        ascending: sortDesc[index],
+        columnName,
+      }));
+      this.sortState = sortState;
+    }
   }
   getData() { //api 통신
     this.setSorts()
@@ -171,15 +162,19 @@ export default class AlarmHistory extends Vue {
         this.loading = false;
         this.setContentString()
         this.setContentDate()
-      });
+      }).catch((error) => {
+        console.error(error)
+      })
   }
   makeParam() { //api통신에 필요한 파라미터 가공
-    /* const { page, itemsPerPage, sortBy, sortDesc } = this.itemListCfg.options; */
-
     let local: any = localStorage.getItem("userId");
     let userId = JSON.parse(local) || "";
     let param_page = this.itemListCfg.options.page - 1;
-    let param_size = this.itemListCfg.options.itemsPerPage - 2;
+    let param_size = this.itemListCfg.options.itemsPerPage + 2;
+
+
+
+
     let param: any = {
       userId: userId,
       startDate: this.search_condition.startDate,
@@ -189,17 +184,9 @@ export default class AlarmHistory extends Vue {
       size: param_size
     }
 
-
-    let str: any = JSON.stringify(param) // param에서 '{','}'를 자른다.
-    str = str.slice(0, -1);
-    str = str.substring(1);
-
-    let pageNum = param_page;
-
-
     let queryString = "?"; //파라미터를 쿼리스트링파라미터로 바꾸는 과정 
     queryString += "userId=" + userId;
-    queryString += "&page=" + pageNum;
+    queryString += "&page=" + param_page;
     queryString += "&size=" + param_size;
     queryString += "&startDate=" + this.search_condition.startDate;
     queryString += "&endDate=" + this.search_condition.endDate;
@@ -239,7 +226,6 @@ export default class AlarmHistory extends Vue {
       }
     }
   }
-
   onResize() {
     this.table_height = window.innerHeight - 48 - 129 - 44 - 44 - 20;
   }

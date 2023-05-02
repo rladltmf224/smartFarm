@@ -155,8 +155,6 @@ export default class ItemModal extends Vue {
 
   clickSaveInfo() {
     let customerInfo: any = this.itemData;
-    console.log('기존 데이터 ', this.itemData)
-    console.log("후처리한 데이터", customerInfo);
 
     if (customerInfo.name == null) {
       return this.$swal("경고", "품목명을 입력해주세요", "error");
@@ -170,6 +168,10 @@ export default class ItemModal extends Vue {
       return this.$swal("경고", "타입을 선택해주세요", "error");
     }
 
+    if (customerInfo.type == '완제품' && customerInfo.productionType == null) {
+      return this.$swal("경고", "완제품타입을  선택해주세요.", "error");
+    }
+
     if (customerInfo.storageId == null) {
       return this.$swal("경고", "창고를 선택해주세요.", "error");
     }
@@ -177,6 +179,10 @@ export default class ItemModal extends Vue {
     if (customerInfo.storageLocationId == null) {
       return this.$swal("경고", "구역을 선택해주세요.", "error");
     }
+
+
+
+
     this.$emit("save-data", customerInfo, this.editedIndex);
   }
 
