@@ -170,7 +170,11 @@ export default class AlarmHistory extends Vue {
     let local: any = localStorage.getItem("userId");
     let userId = JSON.parse(local) || "";
     let param_page = this.itemListCfg.options.page - 1;
-    let param_size = this.itemListCfg.options.itemsPerPage - 2;
+    let param_size = this.itemListCfg.options.itemsPerPage + 2;
+
+
+
+
     let param: any = {
       userId: userId,
       startDate: this.search_condition.startDate,
@@ -180,17 +184,9 @@ export default class AlarmHistory extends Vue {
       size: param_size
     }
 
-
-    let str: any = JSON.stringify(param) // param에서 '{','}'를 자른다.
-    str = str.slice(0, -1);
-    str = str.substring(1);
-
-    let pageNum = param_page;
-
-
     let queryString = "?"; //파라미터를 쿼리스트링파라미터로 바꾸는 과정 
     queryString += "userId=" + userId;
-    queryString += "&page=" + pageNum;
+    queryString += "&page=" + param_page;
     queryString += "&size=" + param_size;
     queryString += "&startDate=" + this.search_condition.startDate;
     queryString += "&endDate=" + this.search_condition.endDate;
