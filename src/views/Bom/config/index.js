@@ -63,8 +63,8 @@ export default {
     ],
     headersChild: [
       { text: "타입", value: "type", width: "10%" },
-      { text: "완제품 코드", value: "code" },
-      { text: "완제품명", value: "name" },
+      { text: "코드", value: "code" },
+      { text: "자재명", value: "name" },
       { text: "창고", value: "storageName" },
       { text: "개수", value: "count" },
     ],
