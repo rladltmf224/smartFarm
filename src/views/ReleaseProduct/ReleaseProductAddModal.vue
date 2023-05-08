@@ -295,15 +295,14 @@ export default class ReleaseProductAddModal extends Vue {
         if (result.isConfirmed) {
           let reqData = {
             jobOrderId: item.jobOrderId,
-            date: item.date,
-            time: item.time,
+            shipDate: item.date,
+            shipTime: item.time,
           };
 
-          console.log("reqData", reqData);
-          /*
           api.productRelease.getReleaseProductJobDone(reqData).then((res) => {
             console.log("getReleaseProductJobDone", res);
             this.getList();
+            this.closeModal_customer();
             this.$swal({
               title: "출하되었습니다.",
               icon: "success",
@@ -314,7 +313,6 @@ export default class ReleaseProductAddModal extends Vue {
               timer: 1500,
             });
           });
-          */
         }
       });
   }

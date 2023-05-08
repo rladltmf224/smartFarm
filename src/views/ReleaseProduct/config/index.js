@@ -55,15 +55,15 @@ export default {
       { text: "마감일", value: "jobOrderDeadline" },
       { text: "품목명", value: "itemName" },
       { text: "수량", value: "targetCount" },
-      { text: "출하 기간", value: "date" },
+      { text: "출하일", value: "date" },
       { text: "출하 시간", value: "time" },
       { text: "출하처리", value: "done" },
     ],
     headers_history_list: [
       { text: "출하코드", value: "releaseCode" },
       { text: "작업지시서명", value: "jobOrderName" },
-      { text: "마감일", value: "deadline" },
-
+      { text: "출하일", value: "shipDate" },
+      { text: "출하시간", value: "shipTime" },
       { text: "품목명", value: "itemName" },
       { text: "출하수량", value: "count" },
       // { text: "상태", value: "status" },
