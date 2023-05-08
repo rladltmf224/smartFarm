@@ -2,7 +2,6 @@ export default {
   header: {
     totalBomHeader: [
       { text: "타입", value: "type", width: "10%" },
-      { text: "버전", value: "version" },
       { text: "품목코드", value: "code" },
       { text: "품목명", value: "name" },
       { text: "규격", value: "standard" },
@@ -11,7 +10,6 @@ export default {
     ],
     bomHeader: [
       { text: "타입", value: "type" },
-      { text: "완제품버전", value: "version" },
       { text: "완제품코드", value: "code" },
       { text: "완제품명", value: "name" },
       { text: "단위", value: "unit" },
@@ -22,7 +20,6 @@ export default {
     itemHeader: [
       { text: "타입", value: "type" },
       { text: "거래처", value: "customer" },
-      { text: "버전", value: "version" },
       { text: "원자재코드", value: "code" },
       { text: "원자재명", value: "name" },
       { text: "창고", value: "storageName" },
@@ -32,7 +29,6 @@ export default {
     ],
     itemDetailHeader: [
       { text: "타입", value: "type" },
-      { text: "버전", value: "version" },
       { text: "창고", value: "storageName" },
       { text: "구역", value: "area" },
       { text: "원자재코드", value: "code" },
@@ -50,7 +46,6 @@ export default {
     ],
     reverseItemHeader: [
       { text: "타입", value: "type" },
-      { text: "버전", value: "version" },
       { text: "원자재코드", value: "code" },
       { text: "원자재명", value: "name" },
       { text: "사용된 개수", value: "childCount" },
@@ -59,7 +54,6 @@ export default {
     ],
     frontBomHeader: [
       { text: "타입", value: "type" },
-      { text: "버전", value: "version" },
       { text: "코드", value: "code" },
       { text: "완제품명", value: "name" },
       { text: "타입", value: "type" },
@@ -69,7 +63,6 @@ export default {
     ],
     headersChild: [
       { text: "타입", value: "type", width: "10%" },
-      { text: "완제품 버전", value: "version" },
       { text: "완제품 코드", value: "code" },
       { text: "완제품명", value: "name" },
       { text: "창고", value: "storageName" },
