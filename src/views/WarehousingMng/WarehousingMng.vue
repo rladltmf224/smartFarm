@@ -68,7 +68,7 @@
             </v-col>
           </v-row>
           <v-card>
-            <v-data-table :height="table_height" :headers="headers_detail" :items="statement_detail_list" fixed-header
+            <v-data-table :height="table_height2" :headers="headers_detail" :items="statement_detail_list" fixed-header
               item-key="barcode" multi-sort hide-default-footer disable-pagination dense no-data-text="데이터가 없습니다.">
               <template v-slot:item.orderCount="props">
                 {{ props.item.orderCount | comma }}
@@ -127,6 +127,7 @@ import { Vue, Component, Watch } from "vue-property-decorator";
 })
 export default class WarehousingMng extends Vue {
   table_height: number = 0;
+  table_height2: number = 0;
   edit_customer: boolean = false;
   history_modal: boolean = false;
   history_modal_title: string = "";
@@ -170,6 +171,7 @@ export default class WarehousingMng extends Vue {
 
   onResize() {
     this.table_height = window.innerHeight - 48 - 97 - 400 - 100 - 15;
+    this.table_height2 = window.innerHeight - 48 - 97 - 400 - 100 - 15;
   }
 
   closeModal_history() {
