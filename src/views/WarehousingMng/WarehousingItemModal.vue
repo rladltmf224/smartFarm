@@ -9,6 +9,25 @@
         <v-card-text>
           <v-row>
             <v-col cols="2" align-self="center">
+              <span>납품일자</span>
+              <v-menu ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="itemInfo.receive_date"
+                transition="scale-transition" offset-y min-width="auto">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field solo dense v-model="itemInfo.receive_date" readonly v-bind="attrs"
+                    v-on="on"></v-text-field>
+                </template>
+                <v-date-picker v-model="itemInfo.receive_date" no-title scrollable>
+                  <v-spacer></v-spacer>
+                  <v-btn text @click="menu = false">
+                    취소
+                  </v-btn>
+                  <v-btn text color="primary" @click="$refs.menu.save(itemInfo.receive_date)">
+                    확인
+                  </v-btn>
+                </v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col cols="2" align-self="center">
               <span>거래처</span>
               <v-select dense :items="customer_list" item-text="name" item-value="id" v-model="editedCustomer.customerId"
                 label="거래처" solo @change="getCutomerItem()"></v-select>
@@ -24,24 +43,7 @@
                 oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"
                 @keydown.enter="add_item"></v-text-field>
             </v-col>
-            <v-col cols="2" align-self="center">
-              <span>납품일자</span>
-              <v-menu ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="itemInfo.date"
-                transition="scale-transition" offset-y min-width="auto">
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field solo dense v-model="itemInfo.date" readonly v-bind="attrs" v-on="on"></v-text-field>
-                </template>
-                <v-date-picker v-model="itemInfo.date" no-title scrollable>
-                  <v-spacer></v-spacer>
-                  <v-btn text @click="menu = false">
-                    취소
-                  </v-btn>
-                  <v-btn text color="primary" @click="$refs.menu.save(itemInfo.date)">
-                    확인
-                  </v-btn>
-                </v-date-picker>
-              </v-menu>
-            </v-col>
+
             <v-col cols="1" align-self="center" class="text-right">
               <v-btn color="primary" @click="add_item"> 품목 추가 </v-btn>
             </v-col>
@@ -54,8 +56,8 @@
           </v-row>
           <v-row>
             <v-col>
-              <v-data-table height="480" :headers="headers_item" :items="item_list_modal" :expanded.sync="expanded"
-                :single-expand="singleExpand" fixed-header item-key="itemId" class="elevation-4" show-expand multi-sort
+              <v-data-table height="400" :headers="headers_item" :items="item_list_modal" :expanded.sync="expanded"
+                :single-expand="singleExpand" fixed-header item-key="itemId" show-expand multi-sort hide-default-footer
                 dense no-data-text="데이터가 없습니다.">
                 <template v-slot:item.orderCount="props">
                   <v-edit-dialog :return-value.sync="props.item.orderCount"
@@ -246,9 +248,33 @@ export default class WarehousingItemModal extends Vue {
       );
     }
 
+
+    //details에서 date를 빼서 receive_date로 바꾸기
+
+    let newCustomerInfo: object = {
+      customerId: customerInfo.customerId,
+      receive_date: customerInfo.details[0].receive_date,
+      details: customerInfo.details
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     console.log("생성", customerInfo);
     api.rawWarehousing
-      .createWarehousingData(customerInfo)
+      .createWarehousingData(newCustomerInfo)
       .then((response) => {
         console.log("createCustomerItem", response);
 
@@ -401,8 +427,10 @@ export default class WarehousingItemModal extends Vue {
   }
 
   add_item() {
-    console.log('추가할 품목의 데이터', this.itemInfo.date)
-
+    console.log('추가할 품목의 데이터', this.itemInfo.receive_date)
+    if (this.itemInfo.receive_date == '') {
+      return this.$swal("경고", "납품일자를 입력해주세요", "error");
+    }
 
     if (this.itemInfo.itemId == "") {
       return this.$swal("경고", "품목을 선택해주세요!", "error");
@@ -412,9 +440,7 @@ export default class WarehousingItemModal extends Vue {
       return this.$swal("경고", "수량을 입력해주세요", "error");
     }
 
-    if (this.itemInfo.date == '') {
-      return this.$swal("경고", "납품일자를 입력해주세요", "error");
-    }
+
 
 
 
