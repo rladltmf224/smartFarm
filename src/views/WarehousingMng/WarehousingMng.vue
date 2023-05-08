@@ -34,12 +34,13 @@
           </v-row>
 
           <v-card>
-            <v-data-table :height="table_height" :headers="headers" :items="statement_list" item-key="id" multi-sort
-              single-select fixed-header disable-items-per-page @click:row="selectCustomer"
-              :options.sync="warehousingListCfg.options" :server-items-length="warehousingListCfg.totalCount"
-              :loading="warehousingListCfg.loading" :items-per-page="warehousingListCfg.itemsPerPage"
-              :page.sync="warehousingListCfg.page" @page-count="warehousingListCfg.pageCount = $event" hide-default-footer
-              loading-text="서버에 요청중...." no-data-text="데이터가 없습니다.">
+            <!-- :height="table_height" -->
+            <v-data-table height="50vh" :headers="headers" :items="statement_list" item-key="id" multi-sort single-select
+              fixed-header disable-items-per-page @click:row="selectCustomer" :options.sync="warehousingListCfg.options"
+              :server-items-length="warehousingListCfg.totalCount" :loading="warehousingListCfg.loading"
+              :items-per-page="warehousingListCfg.itemsPerPage" :page.sync="warehousingListCfg.page"
+              @page-count="warehousingListCfg.pageCount = $event" hide-default-footer loading-text="서버에 요청중...."
+              no-data-text="데이터가 없습니다.">
               <template v-slot:item.code="{ item }">
                 <v-btn class="closeBtn text-left mt-1 mb-1" text small @click="selectHistory(item)">
                   {{ item.code }}
@@ -68,7 +69,8 @@
             </v-col>
           </v-row>
           <v-card>
-            <v-data-table :height="table_height2" :headers="headers_detail" :items="statement_detail_list" fixed-header
+            <!-- :height="table_height2" -->
+            <v-data-table height="10vh" :headers="headers_detail" :items="statement_detail_list" fixed-header
               item-key="barcode" multi-sort hide-default-footer disable-pagination dense no-data-text="데이터가 없습니다.">
               <template v-slot:item.orderCount="props">
                 {{ props.item.orderCount | comma }}
@@ -162,6 +164,7 @@ export default class WarehousingMng extends Vue {
 
   created() {
     this.warehousingListCfg = Object.assign({}, gridCfg);
+    this.warehousingListCfg.options.itemsPerPage = 10;
   }
 
   mounted() {
@@ -170,8 +173,8 @@ export default class WarehousingMng extends Vue {
   }
 
   onResize() {
-    this.table_height = window.innerHeight - 48 - 97 - 400 - 100 - 15;
-    this.table_height2 = window.innerHeight - 48 - 97 - 400 - 100 - 15;
+    this.table_height = window.innerHeight - 48 - 97 - 400;
+    this.table_height2 = window.innerHeight - 48 - 97 - 400 - 100 - 115;
   }
 
   closeModal_history() {
@@ -209,6 +212,11 @@ export default class WarehousingMng extends Vue {
       });
   }
   getCustomer() {
+
+    this.statement_detail_list = [];
+
+
+
     const { page, itemsPerPage, sortBy, sortDesc } =
       this.warehousingListCfg.options;
     this.search_condition.page = page;
