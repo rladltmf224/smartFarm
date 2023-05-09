@@ -351,6 +351,90 @@
       :editedCustomerData="editedOrder"
       @closeModal="closeModal"
     ></order-modal>
+
+    <v-dialog v-model="updateStatus" width="450px">
+      <v-card>
+        <v-card-title> </v-card-title>
+
+        <v-card-text class="pb-0">
+          <v-row dense>
+            <v-col align-self="center">
+              <span>품목</span>
+              <v-text-field
+                label="품목"
+                v-model.trim="this.itemName"
+                dense
+                solo
+                disabled
+                hide-details="false"
+              ></v-text-field>
+            </v-col>
+            <v-col align-self="center">
+              <span>투입수량</span>
+              <v-text-field
+                v-model.trim="this.exCount"
+                dense
+                solo
+                disabled
+                hide-details="false"
+              ></v-text-field>
+            </v-col>
+            <v-col align-self="center">
+              <span>다음단계</span>
+              <v-text-field
+                dense
+                :value="this.nextStep"
+                solo
+                disabled
+                hide-details="false"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col cols="6" class="pb-0">
+              <span>불량갯수</span>
+              <v-text-field
+                v-model="orderData.inputCount"
+                placeholder="불량 개수 입력"
+                oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');"
+                :rules="countRules"
+                solo
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6" class="pb-0">
+              <span class="ml-5">불량률</span>
+              <v-text-field
+                color="red"
+                class="percentFont ml-5"
+                v-model="percent"
+                solo
+                hide-details
+                text-h4
+                flat
+              >
+              </v-text-field
+            ></v-col>
+          </v-row>
+          <v-row dense>
+            <v-col align-self="center">
+              <span>비고</span>
+              <v-text-field
+                v-model="orderData.memo"
+                dense
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="success" @click="done()">진행</v-btn>
+          <v-btn color="error" @click="updateStatus = false">닫기</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -368,6 +452,19 @@ import _ from "lodash";
   },
 })
 export default class OperationOrder extends Vue {
+  countRules: any[] = [
+    (v: any) =>
+      !(v.length > 1 && v.charAt(0) == "0") || "0를 삭제 후 재입력해주세요",
+  ];
+  itemName: string = "";
+  nextStep: string = "";
+  updateStatus: boolean = false;
+  exCount: number = 0;
+  percent: string = "0%";
+  orderData: any = {
+    inputCount: 0,
+    memo: "",
+  };
   orderListCfg: any = {};
   orderDialog: boolean = false;
   editedOrder: any = {
@@ -400,6 +497,7 @@ export default class OperationOrder extends Vue {
   departmentCrewList: any;
   statusCode: any = [];
   statusCode_detail: any = [];
+  joborder: any = {};
 
   @Watch("searchDepartment")
   onSearchDepartmentChange() {
@@ -416,6 +514,41 @@ export default class OperationOrder extends Vue {
   @Watch("orderListCfg.options", { deep: true })
   onOrderListCfgChange() {
     this.getSearch();
+  }
+
+  @Watch("orderData.inputCount")
+  checkCount() {
+    let stringNum = this.orderData.inputCount.toString();
+
+    if (this.orderData.inputCount > this.exCount) {
+      this.$swal({
+        title: "투입수량보다 클 순 없습니다.",
+        icon: "error",
+        position: "top",
+        showCancelButton: false,
+        showConfirmButton: false,
+        toast: true,
+        timer: 1500,
+      });
+      return (this.percent = "0%");
+    } else if (
+      this.orderData.inputCount != 0 &&
+      stringNum.length >= 1 &&
+      stringNum.charAt(0) != "0"
+    ) {
+      let temp = (this.orderData.inputCount / this.exCount) * 100;
+      let totalTemp = temp.toString().split(".");
+      if (totalTemp.length != 1) {
+        let firstNum = totalTemp[0].toString();
+        let secondNum = totalTemp[1].toString().slice(0, 2);
+        return (this.percent = `${firstNum}.${secondNum}%`);
+      } else {
+        let firstNum = totalTemp[0].toString();
+        return (this.percent = `${firstNum}.00%`);
+      }
+    } else {
+      return (this.percent = "0%");
+    }
   }
 
   get searchCustomerData() {
@@ -647,57 +780,74 @@ export default class OperationOrder extends Vue {
   }
 
   start_detail(item: any, code: string) {
-    let joborder: object;
+    this.joborder = {};
+    this.orderData.memo = "";
+    this.orderData.inputCount = 0;
+    this.updateStatus = true;
+    this.nextStep = "";
+    this.itemName = item.itemName;
+    this.exCount = item.targetCount;
 
-    joborder = {
+    let temp = this.statusCode_detail.find((item: any) => item.code == code);
+    this.nextStep = temp.name;
+
+    this.joborder = {
       jobOrderDetailId: item.jobOrderDetailId,
       status: code,
     };
+  }
 
-    this.$swal
-      .fire({
-        text: "작업을 진행하시겠습니까?",
-        icon: "info",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "진행",
-      })
-      .then((result) => {
-        if (result.isConfirmed) {
-          api.operation
-            .updateOperationOrderPage(joborder)
-            .then((response) => {
-              if (response.status == 200) {
-                this.$swal({
-                  title: "작업을 진행하겠습니다.",
-                  icon: "success",
-                  position: "top",
-                  showCancelButton: false,
-                  showConfirmButton: false,
-                  toast: true,
-                  timer: 1500,
-                });
-                this.getSearch();
-                this.toatalselected = [];
-                this.datatable = [];
-              } else {
-                this.$swal({
-                  title: "상태변경이 실패되었습니다.",
-                  icon: "error",
-                  position: "top",
-                  showCancelButton: false,
-                  showConfirmButton: false,
-                  toast: true,
-                  timer: 1500,
-                });
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      });
+  done() {
+    if (this.orderData.inputCount != 0) {
+      this.joborder["failCount"] = this.orderData.inputCount;
+      this.joborder["comment"] = this.orderData.memo;
+
+      this.$swal
+        .fire({
+          text: "작업을 진행하시겠습니까?",
+          icon: "info",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "진행",
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            api.operation
+              .updateOperationOrderPage(this.joborder)
+              .then((response) => {
+                if (response.status == 200) {
+                  this.$swal({
+                    title: "작업을 진행하겠습니다.",
+                    icon: "success",
+                    position: "top",
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    toast: true,
+                    timer: 1500,
+                  });
+                  this.updateStatus = false;
+                  this.getSearch();
+                  this.toatalselected = [];
+                  this.datatable = [];
+                } else {
+                  this.$swal({
+                    title: "상태변경이 실패되었습니다.",
+                    icon: "error",
+                    position: "top",
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    toast: true,
+                    timer: 1500,
+                  });
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          }
+        });
+    }
   }
 
   finish(item: any) {
@@ -995,10 +1145,6 @@ export default class OperationOrder extends Vue {
           });
         }
       });
-  }
-
-  editData(data: any) {
-    console.log("editData", data);
   }
 }
 </script>
