@@ -4,7 +4,11 @@
     <v-toolbar-title>
       <div class="AppBar">
         <div>
-          <slot>{{ pageName }}</slot>
+          <slot>{{ pageTitleName
+          }}
+            <span v-if="pageTitleName"> ></span>
+            {{ pageName }}
+          </slot>
         </div>
       </div>
     </v-toolbar-title>
@@ -93,6 +97,9 @@ import Alarm from "../Sidebar/Alarm.vue";
   computed: {
     pageName() {
       return this.$store.state.pageName
+    },
+    pageTitleName() {
+      return this.$store.state.pageTitleName
     }
   },
 })
@@ -138,6 +145,7 @@ export default class Sidebar extends Vue {
   //     if (alarmIcon) alarmIcon.click();
   //   }
   // }
+
 
   mounted() {
     this.getTodayInfo();
@@ -258,9 +266,11 @@ export default class Sidebar extends Vue {
     }
   }
 
-  get pageName() {
-    return this.$store.state.pageName;
-  }
+  /*  get pageName() {
+     return this.$store.state.pageName;
+   } */
+
+
 
   // alarmToggle() {
   //   this.alarmOn = !this.alarmOn;
@@ -274,6 +284,8 @@ export default class Sidebar extends Vue {
   // removeAlarm(alarm: Object): void {
   //   this.$store.commit("ALARM/removeAlarm", alarm);
   // }
+
+
 
   goHome(): void {
     this.$router.push("/monitoring").catch(() => { });

@@ -7,6 +7,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     pageName: "", //app bar default 페이지이름
+    pageTitleName: "", //app bar default 부모 페이지이름
     // nothing: 아무것도 안함
     // pending: 데이터 기다리는중
     // manager: 로그인 성공
@@ -60,7 +61,9 @@ export default new Vuex.Store({
     },
     setPageName(state, pageName) {
       state.pageName = pageName;
-      console.log("뮤테이션 페이지네임", pageName);
+    },
+    setPageTitleName(state, pageTitleName) {
+      state.pageTitleName = pageTitleName;
     },
 
     logout(state) {
