@@ -31,7 +31,7 @@
                       s_date_search_order(
                         search_condition.order_startDate
                       )
-                    ">
+                      ">
                       확인
                     </v-btn>
                   </v-date-picker>
@@ -53,7 +53,7 @@
                     </v-btn>
                     <v-btn text color="primary" @click="
                       e_date_search_order(search_condition.order_endDate)
-                    ">
+                      ">
                       확인
                     </v-btn>
                   </v-date-picker>

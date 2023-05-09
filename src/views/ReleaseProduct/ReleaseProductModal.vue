@@ -10,34 +10,16 @@
         <v-card-text>
           <v-row>
             <v-col>
-              <v-data-table
-                ref="rawGrid"
-                v-model="selected_data"
-                :headers="headers_product_detail_add"
-                :items="product_detail_list_prop"
-                fixed-header
-                item-key="materialId"
-                class="elevation-4"
-                @item-selected="addRawItem"
-                @toggle-select-all="totalAddRawItem"
-                multi-sort
-                show-select
-                dense
-              >
+              <v-data-table ref="rawGrid" v-model="selected_data" :headers="headers_product_detail_add"
+                :items="product_detail_list_prop" fixed-header item-key="materialId" class="elevation-4"
+                @item-selected="addRawItem" @toggle-select-all="totalAddRawItem" multi-sort show-select dense>
                 <template v-slot:item.releaseCount="props">
-                  <v-edit-dialog
-                    :return-value.sync="props.item.releaseCount"
-                    @save="props.item = saveReleaseCount(props.item)"
-                  >
+                  <v-edit-dialog large :return-value.sync="props.item.releaseCount"
+                    @save="props.item = saveReleaseCount(props.item)">
                     {{ props.item.releaseCount | comma }}
                     <template v-slot:input>
-                      <v-text-field
-                        v-model="props.item.releaseCount"
-                        label="Edit"
-                        single-line
-                        type="number"
-                        counter
-                      ></v-text-field>
+                      <v-text-field v-model="props.item.releaseCount" label="Edit" single-line type="number"
+                        counter></v-text-field>
                     </template>
                   </v-edit-dialog>
                 </template>
