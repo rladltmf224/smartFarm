@@ -1,5 +1,7 @@
 <template>
-  <div></div>
+  <div>
+    작업지시서 상세관리페이지입니다.
+  </div>
 </template>
 
 <script lang="ts">
