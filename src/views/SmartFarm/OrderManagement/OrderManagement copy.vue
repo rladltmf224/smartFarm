@@ -37,7 +37,7 @@
                                                     s_date_search_order(
                                                         search_condition.order_startDate
                                                     )
-                                                ">
+                                                    ">
                                                     확인
                                                 </v-btn>
                                             </v-date-picker>
@@ -60,7 +60,7 @@
                                                 </v-btn>
                                                 <v-btn text color="primary" @click="
                                                     e_date_search_order(search_condition.order_endDate)
-                                                ">
+                                                    ">
                                                     확인
                                                 </v-btn>
                                             </v-date-picker>
@@ -118,7 +118,7 @@
                         </template>
                         <!-- 요청사항 -->
                         <template v-slot:item.memo="props">
-                            <v-edit-dialog :return-value.sync="props.item.memo" large persistent
+                            <v-edit-dialog :return-value.sync="props.item.memo" large persistent large
                                 @save="editTableOrderInfo(props.item)" cancel-text="취소" save-text="수정">
                                 <div>{{ props.item.memo }}</div>
                                 <template v-slot:input>

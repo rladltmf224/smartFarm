@@ -60,7 +60,7 @@
                 :single-expand="singleExpand" fixed-header item-key="itemId" show-expand multi-sort hide-default-footer
                 dense no-data-text="데이터가 없습니다.">
                 <template v-slot:item.orderCount="props">
-                  <v-edit-dialog :return-value.sync="props.item.orderCount"
+                  <v-edit-dialog :return-value.sync="props.item.orderCount" large
                     @save="props.item = saveOrderCount(props.item)">
                     {{ props.item.orderCount | comma }}
                     <template v-slot:input>
@@ -70,15 +70,12 @@
                     </template>
                   </v-edit-dialog>
                 </template>
-
                 <template v-slot:item.normalCount="props">
                   {{ props.item.normalCount | comma }}
                 </template>
-
                 <template v-slot:item.defectCount="props">
                   {{ props.item.defectCount | comma }}
                 </template>
-
                 <template v-slot:item.storageId="props">
                   <v-select class="select_warehousing" :items="storage_list" item-text="name" item-value="id"
                     v-model="props.item.storageId" dense></v-select>
@@ -88,9 +85,8 @@
                     item-value="id" v-model="props.item.storageLocationId" :disabled="props.item.storageId == 0"
                     dense></v-select>
                 </template>
-
                 <template v-slot:item.memo="props">
-                  <v-edit-dialog :return-value.sync="props.item.memo">
+                  <v-edit-dialog :return-value.sync="props.item.memo" large>
                     {{ props.item.memo }}
                     <template v-slot:input>
                       <v-text-field v-model="props.item.memo" single-line counter dense></v-text-field>
@@ -99,7 +95,7 @@
                 </template>
 
                 <template v-slot:expanded-item="{ headers, item }">
-                  <td :colspan="headers.length">
+                  <td :colspan="headers.length" class="px-0 ">
                     <v-simple-table dense>
                       <template v-slot:default>
                         <thead>

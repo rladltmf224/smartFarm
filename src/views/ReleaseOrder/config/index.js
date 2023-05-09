@@ -1,7 +1,7 @@
 export default {
   header: {
     headers: [
-      { text: "작업지지서 코드", value: "jobOrderCode" },
+      { text: "작업지시서 코드", value: "jobOrderCode" },
       { text: "작업지시서명", value: "jobOrderName" },
       { text: "작업지시서 상태", value: "jobOrderStatus" },
       { text: "거래처", value: "customerName" },

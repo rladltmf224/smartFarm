@@ -11,39 +11,18 @@
         <v-card-text>
           <v-row dense>
             <v-col>
-              <v-data-table
-                height="300"
-                ref="rawGrid"
-                v-model="selected_data"
-                :headers="headers_raw_add"
-                :items="raw_detail_list_prop"
-                item-key="rawMaterialDetailId"
-                fixed-header
-                class="elevation-4"
-                @item-selected="addRawItem"
-                @toggle-select-all="totalAddRawItem"
-                hide-default-footer
-                multi-sort
-                show-select
-                dense
-                disable-pagination
-              >
+              <v-data-table height="300" ref="rawGrid" v-model="selected_data" :headers="headers_raw_add"
+                :items="raw_detail_list_prop" item-key="rawMaterialDetailId" fixed-header class="elevation-4"
+                @item-selected="addRawItem" @toggle-select-all="totalAddRawItem" hide-default-footer multi-sort
+                show-select dense disable-pagination>
                 <template v-slot:item.releaseCount="props">
-                  <v-edit-dialog
-                    :return-value.sync="props.item.releaseCount"
-                    @save="props.item = saveReleaseCount(props.item)"
-                  >
+                  <v-edit-dialog large :return-value.sync="props.item.releaseCount"
+                    @save="props.item = saveReleaseCount(props.item)">
                     {{ props.item.releaseCount | comma }}
                     <template v-slot:input>
-                      <v-text-field
-                        v-model="props.item.releaseCount"
-                        label="Edit"
-                        single-line
-                        type="text"
-                        maxlength="10"
+                      <v-text-field v-model="props.item.releaseCount" label="Edit" single-line type="text" maxlength="10"
                         oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');"
-                        :rules="countRules"
-                      ></v-text-field>
+                        :rules="countRules"></v-text-field>
                       <!--oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');"-->
                     </template>
                   </v-edit-dialog>
