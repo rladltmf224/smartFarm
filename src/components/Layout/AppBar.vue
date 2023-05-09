@@ -9,9 +9,7 @@
       </div>
     </v-toolbar-title>
     <v-spacer></v-spacer>
-
     <Alarm></Alarm>
-
     <v-menu offset-y v-model="menu" :close-on-content-click="false" location="end">
       <template v-slot:activator="{ on, attrs }">
         <v-btn elevation="0" color="transparent" rounded v-bind="attrs" v-on="on">
@@ -93,9 +91,9 @@ import Alarm from "../Sidebar/Alarm.vue";
     Alarm,
   },
   computed: {
-    /*   pageName() {
-              return this.$store.state.pageName
-          } */
+    pageName() {
+      return this.$store.state.pageName
+    }
   },
 })
 export default class Sidebar extends Vue {
@@ -112,7 +110,6 @@ export default class Sidebar extends Vue {
   to_notdev?: string = "notdev";
   items?: any[] = [];
   items_dev?: any[] = [];
-
   password?: string = "";
   changePassword?: string = "";
   value?: boolean = false;

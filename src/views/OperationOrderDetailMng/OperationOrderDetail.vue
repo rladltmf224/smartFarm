@@ -1,6 +1,9 @@
 <template>
   <div>
-    작업지시서 상세관리페이지입니다.
+    <v-container fluid>
+      작업지시서 상세관리페이지입니다.
+
+    </v-container>
   </div>
 </template>
 
