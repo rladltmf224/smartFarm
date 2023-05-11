@@ -91,52 +91,20 @@
           <v-row dense>
             <v-col>
               <span>작업지시서 목록</span>
-              <v-data-table
-                height="300"
-                :headers="headers_job_list"
-                :items="job_list_modal"
-                fixed-header
-                item-key="barcode"
-                class="elevation-4"
-                multi-sort
-                dense
-                disable-pagination
-                hide-default-footer
-              >
+              <v-data-table height="300" :headers="headers_job_list" :items="job_list_modal" fixed-header
+                item-key="barcode" class="elevation-4" multi-sort dense disable-pagination hide-default-footer>
                 <template v-slot:item.targetCount="props">
                   {{ props.item.targetCount | comma }}
                 </template>
 
                 <template v-slot:[`item.date`]="{ item }">
-                  <v-menu
-                    :key="item.date"
-                    dense
-                    ref="releaseCalendar"
-                    :close-on-content-click="false"
-                    :return-value.sync="item.date"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="auto"
-                  >
+                  <v-menu :key="item.date" dense ref="releaseCalendar" :close-on-content-click="false"
+                    :return-value.sync="item.date" transition="scale-transition" offset-y min-width="auto">
                     <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
-                        flat
-                        solo
-                        hide-details
-                        class="pt-1"
-                        dense
-                        v-model="item.date"
-                        readonly
-                        v-bind="attrs"
-                        v-on="on"
-                      ></v-text-field>
+                      <v-text-field flat solo hide-details class="pt-1" dense v-model="item.date" readonly v-bind="attrs"
+                        v-on="on"></v-text-field>
                     </template>
-                    <v-date-picker
-                      v-model="item.date"
-                      no-title
-                      scrollable
-                      locale="ko-KR"
-                    >
+                    <v-date-picker v-model="item.date" no-title scrollable locale="ko-KR">
                       <v-spacer></v-spacer>
                       <v-btn text color="primary" @click="item.date = ''">
                         취소
@@ -151,9 +119,7 @@
                 </template>
 
                 <template v-slot:[`item.done`]="{ item }">
-                  <v-btn small color="success" @click="processDone(item)"
-                    >출하</v-btn
-                  >
+                  <v-btn small color="success" @click="processDone(item)">출하</v-btn>
                 </template>
               </v-data-table>
             </v-col>
@@ -165,20 +131,10 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <ReleaseProductItemModal
-      :open="item_modal"
-      @addItem="addItem"
-      @closeModal="closeItemModal"
-    >
+    <ReleaseProductItemModal :open="item_modal" @addItem="addItem" @closeModal="closeItemModal">
     </ReleaseProductItemModal>
-    <ReleaseProductModal
-      :open="add_rawModal"
-      :product_detail_list="product_detail_list"
-      :selected="selected"
-      @addRaw="addRaw"
-      @closeModal="closeRawDetail"
-      @saveData="saveSelectedItem"
-    ></ReleaseProductModal>
+    <ReleaseProductModal :open="add_rawModal" :product_detail_list="product_detail_list" :selected="selected"
+      @addRaw="addRaw" @closeModal="closeRawDetail" @saveData="saveSelectedItem"></ReleaseProductModal>
   </div>
 </template>
 <script lang="ts">
@@ -250,7 +206,7 @@ export default class ReleaseProductAddModal extends Vue {
     this.item_modal = false;
   }
 
-  addRaw() {}
+  addRaw() { }
 
   saveSelectedItem(item: object[], count: number) {
     console.log("saveSelectedItem", item, count);
