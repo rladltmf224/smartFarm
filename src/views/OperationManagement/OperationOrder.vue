@@ -180,8 +180,7 @@
     </v-container>
 
     <!--작업지시서 등록 모달-->
-    <order-modal :open="orderDialog" :change="change" :editedCustomerData="editedOrder"
-      @closeModal="closeModal"></order-modal>
+
 
     <v-dialog v-model="updateStatus" width="450px">
       <v-card>
@@ -191,35 +190,68 @@
           <v-row dense>
             <v-col align-self="center">
               <span>품목</span>
-              <v-text-field label="품목" v-model.trim="this.itemName" dense solo disabled
-                hide-details="false"></v-text-field>
+
+              <v-text-field
+                label="품목"
+                v-model.trim="this.itemName"
+                dense
+                solo
+                disabled
+                hide-details="false"
+              ></v-text-field>
             </v-col>
             <v-col align-self="center">
               <span>투입수량</span>
-              <v-text-field v-model.trim="this.exCount" dense solo disabled hide-details="false"></v-text-field>
+              <v-text-field
+                v-model.trim="this.exCount"
+                dense
+                solo
+                disabled
+                hide-details="false"
+              ></v-text-field>
             </v-col>
             <v-col align-self="center">
               <span>다음단계</span>
-              <v-text-field dense :value="this.nextStep" solo disabled hide-details="false"></v-text-field>
+              <v-text-field
+                dense
+                :value="this.nextStep"
+                solo
+                disabled
+                hide-details="false"
+              ></v-text-field>
+
             </v-col>
           </v-row>
           <v-row justify="center">
             <v-col cols="6" class="pb-0">
               <span>불량갯수</span>
-              <v-text-field v-model="orderData.inputCount" placeholder="불량 개수 입력"
-                oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');" :rules="countRules"
-                solo></v-text-field>
+
+              <v-text-field
+                v-model="orderData.inputCount"
+                placeholder="불량 개수 입력"
+                oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');"
+                :rules="countRules"
+                solo
+              ></v-text-field>
             </v-col>
             <v-col cols="6" class="pb-0">
               <span class="ml-5">불량률</span>
-              <v-text-field color="red" class="percentFont ml-5" v-model="percent" solo hide-details text-h4 flat>
-              </v-text-field></v-col>
+              <v-text-field
+                color="red"
+                class="percentFont ml-5"
+                v-model="percent"
+                solo
+                hide-details
+                text-h4
+                flat
+              >
+              </v-text-field
+            ></v-col>
+
           </v-row>
           <v-row dense>
             <v-col align-self="center">
               <span>비고</span>
-              <v-text-field v-model="orderData.memo" dense solo hide-details="false"
-                class="text-box-style"></v-text-field>
             </v-col>
           </v-row>
         </v-card-text>
