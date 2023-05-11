@@ -9,11 +9,11 @@
               <v-col cols="10">
                 <v-row dense>
                   <v-col cols="2">
-                    <v-text-field solo rounded dense hide-details="true" label="작업지시서코드" v-model="searchJobOrder"
+                    <v-text-field solo rounded dense hide-details="true" label="작업지시서 코드" v-model="searchJobOrder"
                       return-object @keydown.enter="getSearch" required></v-text-field>
                   </v-col>
                   <v-col cols="2">
-                    <v-text-field solo rounded dense hide-details="true" label="품목명" v-model="itemname" return-object
+                    <v-text-field solo rounded dense hide-details="true" label="품목코드" v-model="itemCode" return-object
                       @keydown.enter="getSearch" required></v-text-field>
                   </v-col>
                   <v-col cols="2">
@@ -22,6 +22,7 @@
                       v-model="searchCustomer" :items="searchCustomerData" @change="getSearch" item-value="id"
                       item-text="name" return-object required></v-autocomplete>
                   </v-col>
+
                 </v-row>
                 <v-row dense>
                   <v-col cols="12" align-self="center">
@@ -54,137 +55,45 @@
             </v-col>
           </v-row>
           <v-card>
-            <v-data-table multi-sort fixed-header height="300" :headers="headers" :items="totalTable" dense single-select
-              :options.sync="orderListCfg.options" :server-items-length="orderListCfg.totalCount"
-              :loading="orderListCfg.loading" :items-per-page="orderListCfg.itemsPerPage" :page.sync="orderListCfg.page"
+            <v-data-table multi-sort fixed-header height="300" :headers="headers" :items="totalData"
+              @click:row="dataDetail" single-select :options.sync="orderListCfg.options"
+              :server-items-length="orderListCfg.totalCount" :loading="orderListCfg.loading"
+              :items-per-page="orderListCfg.itemsPerPage" :page.sync="orderListCfg.page"
               @page-count="orderListCfg.pageCount = $event" hide-default-footer no-data-text="데이터가 없습니다.">
-
-
-              <template v-slot:[`item.status`]="{ item }">
-                <v-btn class="text-left mt-1 mb-1" small :color="getStatusColor(item.status)" dark style="width: 100px"
-                  depressed>
+              <template v-slot:item.status="{ item }">
+                <v-btn class="text-left" small dark style="width: 100px" depressed>
                   <v-icon left> mdi-album </v-icon>
-                  {{ getStatusCode(item.status, statusCode_detail) }}
+                  {{ getStatusCode(item.status, statusCode) }}
                 </v-btn>
+              </template>
+              <template v-slot:[`item.deadline`]="{ item }">
+                {{ item.deadline }}
               </template>
 
-              <template v-slot:[`item.work`]="{ item }">
-                <v-btn v-show="item.status !== 'JOD_DONE'" text small fluid color="primary" class="mr-1 editBtn"
-                  :value="getStatusCodeNext(item.status, statusCode_detail).code"
-                  @click="start_detail(item, getStatusCodeNext(item.status, statusCode_detail).code)">
-                  {{ getStatusCodeNext(item.status, statusCode_detail).name }}
+              <template v-slot:[`item.changeOrder`]="{ item }">
+                <v-btn v-show="item.status !== 'JO_DONE'" small fluid color="info" class="mr-1 editBtn"
+                  :value="getStatusCodeNext(item.status, statusCode).code">
+                  {{ getStatusCodeNext(item.status, statusCode).name }}
                 </v-btn>
               </template>
-              <template v-slot:[`item.detail`]="{ item }">
-                <v-btn small depressed @click="showDetailDialog(item)">상세보기</v-btn>
+              <template v-slot:[`item.edit`]="{ item }">
+                <v-icon v-if="item.status == 'JO_WAIT'" small @click="changeData(item)">
+                  mdi-pencil
+                </v-icon>
+                <v-icon v-if="item.status == 'JO_WAIT'" small @click="deleteItem_pop(item)">
+                  mdi-delete
+                </v-icon>
               </template>
             </v-data-table>
           </v-card>
           <v-pagination circle v-model="orderListCfg.page" :length="orderListCfg.pageCount"></v-pagination>
         </v-col>
       </v-row>
+
     </v-container>
-
-
-    <v-dialog v-model="updateStatus" width="450px">
-      <v-card>
-        <v-card-title> </v-card-title>
-
-        <v-card-text class="pb-0">
-          <v-row dense>
-            <v-col align-self="center">
-              <span>품목</span>
-              <v-text-field label="품목" v-model.trim="this.itemName" dense solo disabled
-                hide-details="false"></v-text-field>
-            </v-col>
-            <v-col align-self="center">
-              <span>투입수량</span>
-              <v-text-field v-model.trim="this.exCount" dense solo disabled hide-details="false"></v-text-field>
-            </v-col>
-            <v-col align-self="center">
-              <span>다음단계</span>
-              <v-text-field dense :value="this.nextStep" solo disabled hide-details="false"></v-text-field>
-            </v-col>
-          </v-row>
-          <v-row justify="center">
-            <v-col cols="6" class="pb-0">
-              <span>불량갯수</span>
-              <v-text-field v-model="orderData.inputCount" placeholder="불량 개수 입력"
-                oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');" :rules="countRules"
-                solo></v-text-field>
-            </v-col>
-            <v-col cols="6" class="pb-0">
-              <span class="ml-5">불량률</span>
-              <v-text-field color="red" class="percentFont ml-5" v-model="percent" solo hide-details text-h4 flat>
-              </v-text-field></v-col>
-          </v-row>
-          <v-row dense>
-            <v-col align-self="center">
-              <span>비고</span>
-              <v-text-field v-model="orderData.memo" dense solo hide-details="false"
-                class="text-box-style"></v-text-field>
-            </v-col>
-          </v-row>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="success" @click="done()">진행</v-btn>
-          <v-btn color="error" @click="updateStatus = false">닫기</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog v-model="showDetail" width="450px">
-      <v-card>
-        <v-card-title> </v-card-title>
-
-        <v-card-text class="pb-0">
-          <v-row dense>
-            <v-col align-self="center">
-              <span>품목</span>
-              <v-text-field label="품목" v-model.trim="this.itemName" dense solo disabled
-                hide-details="false"></v-text-field>
-            </v-col>
-            <v-col align-self="center">
-              <span>투입수량</span>
-              <v-text-field v-model.trim="this.exCount" dense solo disabled hide-details="false"></v-text-field>
-            </v-col>
-            <v-col align-self="center">
-              <span>다음단계</span>
-              <v-text-field dense :value="this.nextStep" solo disabled hide-details="false"></v-text-field>
-            </v-col>
-          </v-row>
-          <v-row justify="center">
-            <v-col cols="6" class="pb-0">
-              <span>불량갯수</span>
-              <v-text-field v-model="orderData.inputCount" placeholder="불량 개수 입력"
-                oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');" :rules="countRules"
-                solo></v-text-field>
-            </v-col>
-            <v-col cols="6" class="pb-0">
-              <span class="ml-5">불량률</span>
-              <v-text-field color="red" class="percentFont ml-5" v-model="percent" solo hide-details text-h4 flat>
-              </v-text-field></v-col>
-          </v-row>
-          <v-row dense>
-            <v-col align-self="center">
-              <span>비고</span>
-              <v-text-field v-model="orderData.memo" dense solo hide-details="false"
-                class="text-box-style"></v-text-field>
-            </v-col>
-          </v-row>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="success" @click="done()">진행</v-btn>
-          <v-btn color="error" @click="showDetail = false">닫기</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-
   </div>
 </template>
+
 <script lang="ts">
 import * as api from "@/api";
 import cfg from "./config";
@@ -201,9 +110,8 @@ export default class OperationOrder extends Vue {
     (v: any) =>
       !(v.length > 1 && v.charAt(0) == "0") || "0를 삭제 후 재입력해주세요",
   ];
-  showDetail: boolean = false;
+  itemCode: string = '';
   itemName: string = "";
-  itemname: string = "";
   nextStep: string = "";
   updateStatus: boolean = false;
   exCount: number = 0;
@@ -319,8 +227,9 @@ export default class OperationOrder extends Vue {
     return cfg.header.headers_Details_Details;
   }
 
-
-
+  get totalItem() {
+    return cfg.header.totalItem;
+  }
 
   created() {
     this.orderListCfg = Object.assign({}, gridCfg);
@@ -332,7 +241,7 @@ export default class OperationOrder extends Vue {
 
   mounted() {
     this.getSearch();
-    this.getDataList();
+    /* this.getDataList(); */
     this.getDepartmentList();
   }
 
@@ -349,25 +258,14 @@ export default class OperationOrder extends Vue {
     endEL.save(v);
   }
 
-  showDetailDialog(item: any) {
-    console.log(item.jobOrderCode)
-    this.showDetail = true;
-
-
-
-
-
-
-  }
-
   getSearch() {
     const { page, itemsPerPage, sortBy, sortDesc } = this.orderListCfg.options;
     this.toatalselected = [];
 
     this.jobordeList = {
       joborder: this.searchJobOrder,
-      item: this.itemname,
       customer: "",
+      item: this.itemCode,
       status: this.row,
       page: page,
       size: itemsPerPage,
@@ -392,9 +290,10 @@ export default class OperationOrder extends Vue {
       this.jobordeList["customer"] = this.searchCustomer.code;
     }
     api.operation
-      .getTotalDetailOrderListPage(this.jobordeList)
+      .getOperationOrderPage(this.jobordeList)
       .then((response) => {
         this.totalData = response.data.responseData;
+        console.log(this.totalData, this.headers)
         this.orderListCfg.totalCount = response.data.totalCount;
       })
       .catch((error) => {
@@ -440,18 +339,18 @@ export default class OperationOrder extends Vue {
     // }
   }
 
-  getDataList() {
-    api.operation
-      .getBasicDataPage()
-      .then((response) => {
-        this.customerList = [{ name: "전체", code: "", id: "" }];
-        this.customerList.push(...response.data.responseData.basicCustomers);
-        //this.itemList = response.data.responseData.basicItems;
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
+  /*  getDataList() {
+     api.operation
+       .getBasicDataPage()
+       .then((response) => {
+         this.customerList = [{ name: "전체", code: "", id: "" }];
+         this.customerList.push(...response.data.responseData.basicCustomers);
+         //this.itemList = response.data.responseData.basicItems;
+       })
+       .catch((error) => {
+         console.log(error);
+       });
+   } */
 
   dataDetail(item: any, row: any) {
     row.select(true);
@@ -531,7 +430,6 @@ export default class OperationOrder extends Vue {
   }
 
   start_detail(item: any, code: string) {
-    console.log('startDetail', item)
     this.joborder = {};
     this.orderData.memo = "";
     this.orderData.inputCount = 0;
@@ -539,13 +437,16 @@ export default class OperationOrder extends Vue {
     this.nextStep = "";
     this.itemName = item.itemName;
     this.exCount = item.targetCount;
+
     let temp = this.statusCode_detail.find((item: any) => item.code == code);
     this.nextStep = temp.name;
+
     this.joborder = {
       jobOrderDetailId: item.jobOrderDetailId,
       status: code,
     };
   }
+
   done() {
     if (this.orderData.inputCount != 0) {
       this.joborder["failCount"] = this.orderData.inputCount;
@@ -737,7 +638,7 @@ export default class OperationOrder extends Vue {
   changeData(item: any) {
     this.change = true;
     this.orderDialog = true;
-    this.getDataList();
+    /*   this.getDataList(); */
     this.getDepartmentList();
     this.editedOrder = Object.assign({}, item);
     this.editedOrder.department = {
@@ -819,22 +720,16 @@ export default class OperationOrder extends Vue {
     else if (status == "생산 완료") return "green";
     else return "black";
   }
+
   getStatusCode(status: string, code: any[]) {
+    console.log('코드코드코드코드코드코드코드코드', status, code)
     if (status === undefined) {
       return "";
     }
-    const foundCode = _.find(code, { code: status }); //code배열에서 status와 일치하는 객체를찾음
-
-    console.log('foundCodefoundCodefoundCode', status) //???다 오류로 뜨는디..ㅠㅠ
-    console.log('codecodecodecode', code)
-
-    if (foundCode === undefined || foundCode.name === undefined) {
+    if (_.find(code, { code: status }).name == undefined) {
       return "오류";
     }
-
-    //정의되지않으면 오류로 반환함.
-
-    return foundCode.name; //정의됐으면 name으로 반환함.
+    return _.find(code, { code: status }).name;
   }
   getStatusCodeNext(status: any, code: any[]) {
     if (status == undefined) {

@@ -3,8 +3,16 @@ import AuthAPI from "../api/AuthAPI";
 export default {
   getTotalOrderListPage: (params) =>
     AuthAPI.post("/api/operation/joborder/search", JSON.stringify(params)),
+  getTotalDetailOrderListPage: (params) =>
+    AuthAPI.post(
+      "/api/operation/joborder/detail/search",
+      JSON.stringify(params)
+    ),
   getOperationOrderPage: (params) =>
-    AuthAPI.post("/api/operation/joborder", JSON.stringify(params)),
+    AuthAPI.post(
+      "/api/operation/joborder/detail/search",
+      JSON.stringify(params)
+    ),
   getBasicDataPage: () => AuthAPI.get("/api/operation/joborder/basicdatas"),
   getOperationOrderChangePage: (params) =>
     AuthAPI.put("/api/operation/joborder", JSON.stringify(params)),

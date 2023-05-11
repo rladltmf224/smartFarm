@@ -35,7 +35,7 @@
 
           <v-card>
             <!-- :height="table_height" -->
-            <v-data-table height="50vh" :headers="headers" :items="statement_list" item-key="id" multi-sort single-select
+            <v-data-table height="40vh" :headers="headers" :items="statement_list" item-key="id" multi-sort single-select
               fixed-header disable-items-per-page @click:row="selectCustomer" :options.sync="warehousingListCfg.options"
               :server-items-length="warehousingListCfg.totalCount" :loading="warehousingListCfg.loading"
               :items-per-page="warehousingListCfg.itemsPerPage" :page.sync="warehousingListCfg.page"
@@ -70,7 +70,7 @@
           </v-row>
           <v-card>
             <!-- :height="table_height2" -->
-            <v-data-table height="10vh" :headers="headers_detail" :items="statement_detail_list" fixed-header
+            <v-data-table height="20vh" :headers="headers_detail" :items="statement_detail_list" fixed-header
               item-key="barcode" multi-sort hide-default-footer disable-pagination dense no-data-text="데이터가 없습니다.">
               <template v-slot:item.orderCount="props">
                 {{ props.item.orderCount | comma }}
@@ -164,7 +164,7 @@ export default class WarehousingMng extends Vue {
 
   created() {
     this.warehousingListCfg = Object.assign({}, gridCfg);
-    this.warehousingListCfg.options.itemsPerPage = 10;
+    this.warehousingListCfg.options.itemsPerPage = 8;
   }
 
   mounted() {

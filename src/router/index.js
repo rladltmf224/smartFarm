@@ -204,6 +204,12 @@ const routes = [
         component: () =>
           import("@/views/SmartFarm/ConsumerProduct/calendar.vue"),
       },
+      {
+        path: "OperationOrderDetail",
+        name: "OperationOrderDetail ",
+        component: () =>
+          import("@/views/OperationOrderDetailMng/OperationOrderDetail.vue"),
+      },
     ],
   },
 ];

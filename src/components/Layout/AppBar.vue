@@ -4,14 +4,16 @@
     <v-toolbar-title>
       <div class="AppBar">
         <div>
-          <slot>{{ pageName }}</slot>
+          <slot>{{ pageTitleName
+          }}
+            <span v-if="pageTitleName"> ></span>
+            {{ pageName }}
+          </slot>
         </div>
       </div>
     </v-toolbar-title>
     <v-spacer></v-spacer>
-
     <Alarm></Alarm>
-
     <v-menu offset-y v-model="menu" :close-on-content-click="false" location="end">
       <template v-slot:activator="{ on, attrs }">
         <v-btn elevation="0" color="transparent" rounded v-bind="attrs" v-on="on">
@@ -93,9 +95,12 @@ import Alarm from "../Sidebar/Alarm.vue";
     Alarm,
   },
   computed: {
-    /*   pageName() {
-              return this.$store.state.pageName
-          } */
+    pageName() {
+      return this.$store.state.pageName
+    },
+    pageTitleName() {
+      return this.$store.state.pageTitleName
+    }
   },
 })
 export default class Sidebar extends Vue {
@@ -112,7 +117,6 @@ export default class Sidebar extends Vue {
   to_notdev?: string = "notdev";
   items?: any[] = [];
   items_dev?: any[] = [];
-
   password?: string = "";
   changePassword?: string = "";
   value?: boolean = false;
@@ -141,6 +145,7 @@ export default class Sidebar extends Vue {
   //     if (alarmIcon) alarmIcon.click();
   //   }
   // }
+
 
   mounted() {
     this.getTodayInfo();
@@ -261,9 +266,11 @@ export default class Sidebar extends Vue {
     }
   }
 
-  get pageName() {
-    return this.$store.state.pageName;
-  }
+  /*  get pageName() {
+     return this.$store.state.pageName;
+   } */
+
+
 
   // alarmToggle() {
   //   this.alarmOn = !this.alarmOn;
@@ -277,6 +284,8 @@ export default class Sidebar extends Vue {
   // removeAlarm(alarm: Object): void {
   //   this.$store.commit("ALARM/removeAlarm", alarm);
   // }
+
+
 
   goHome(): void {
     this.$router.push("/monitoring").catch(() => { });
