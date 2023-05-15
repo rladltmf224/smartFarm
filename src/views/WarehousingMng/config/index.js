@@ -3,9 +3,12 @@ export default {
     headers: [
       { text: "입고코드", value: "code" },
       { text: "입고날짜", value: "createdDate" },
-      { text: "납품일자", value: "date" },
+      { text: "납품일자", value: "receiveDate" },
       { text: "거래처", value: "customerName" },
+      { text: "제조사", value: "" },
       { text: "상태", value: "status" },
+      { text: "입고처리 담당자", value: "createName" },
+      // { text: "반품요청 담당자", value: "" },
       { text: "반품", value: "edit" },
     ],
     headers_detail: [
@@ -19,6 +22,8 @@ export default {
     ],
     headers_item: [
       { text: "품목명", value: "name", width: "15%" },
+      { text: "거래처", value: "customer", width: "10%" },
+      { text: "제조사", value: "manufacturer", width: "10%" },
       { text: "주문수량", value: "orderCount", width: "8%" },
       { text: "정상수량", value: "normalCount", width: "8%" },
       { text: "불량수량", value: "defectCount", width: "8%" },
@@ -36,6 +41,10 @@ export default {
       { text: "증가수량", value: "increaseCount" },
       { text: "감소수량", value: "decreaseCount" },
       { text: "입고일자", value: "createdDate" },
+    ],
+    detail_header: [
+      { text: "반품 항목", value: "itemName" },
+      { text: "반품 사유", value: "test" },
     ],
   },
   data: {
