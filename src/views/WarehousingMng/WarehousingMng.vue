@@ -7,8 +7,15 @@
           <v-card class="card-shadow pa-3" height="65">
             <v-row>
               <v-col cols="2">
-                <v-text-field dense solo rounded elevation-0 label="입고코드" v-model="search_condition.code"
-                  @keydown.enter="getCustomer"></v-text-field>
+                <v-text-field
+                  dense
+                  solo
+                  rounded
+                  elevation-0
+                  label="입고코드"
+                  v-model="search_condition.code"
+                  @keydown.enter="getCustomer"
+                ></v-text-field>
               </v-col>
               <v-spacer></v-spacer>
               <v-col class="text-right" cols="2">
@@ -29,38 +36,75 @@
             </v-col>
             <v-spacer></v-spacer>
             <v-col class="text-right" cols="4">
-              <v-btn elevation="0" color="primary" @click="editItem"><v-icon left> mdi-pencil-plus </v-icon>입고 추가</v-btn>
+              <v-btn elevation="0" color="primary" @click="editItem"
+                ><v-icon left> mdi-pencil-plus </v-icon>입고 추가</v-btn
+              >
             </v-col>
           </v-row>
 
           <v-card>
             <!-- :height="table_height" -->
-            <v-data-table height="40vh" :headers="headers" :items="statement_list" item-key="id" multi-sort single-select
-              fixed-header disable-items-per-page @click:row="selectCustomer" :options.sync="warehousingListCfg.options"
-              :server-items-length="warehousingListCfg.totalCount" :loading="warehousingListCfg.loading"
-              :items-per-page="warehousingListCfg.itemsPerPage" :page.sync="warehousingListCfg.page"
-              @page-count="warehousingListCfg.pageCount = $event" hide-default-footer loading-text="서버에 요청중...."
-              no-data-text="데이터가 없습니다.">
+            <v-data-table
+              height="40vh"
+              :headers="headers"
+              :items="statement_list"
+              item-key="id"
+              multi-sort
+              single-select
+              fixed-header
+              disable-items-per-page
+              @click:row="selectCustomer"
+              :options.sync="warehousingListCfg.options"
+              :server-items-length="warehousingListCfg.totalCount"
+              :loading="warehousingListCfg.loading"
+              :items-per-page="warehousingListCfg.itemsPerPage"
+              :page.sync="warehousingListCfg.page"
+              @page-count="warehousingListCfg.pageCount = $event"
+              hide-default-footer
+              loading-text="서버에 요청중...."
+              no-data-text="데이터가 없습니다."
+            >
               <template v-slot:item.code="{ item }">
-                <v-btn class="closeBtn text-left mt-1 mb-1" text small @click="selectHistory(item)">
+                <v-btn
+                  class="closeBtn text-left mt-1 mb-1"
+                  text
+                  small
+                  @click="selectHistory(item)"
+                >
                   {{ item.code }}
                 </v-btn>
               </template>
               <template v-slot:item.status="{ item }">
-                <v-btn class="text-left mt-1 mb-1" small :color="getStatusColor(item.status)" dark style="width: 100px"
-                  depressed>
+                <v-btn
+                  class="text-left mt-1 mb-1"
+                  small
+                  :color="getStatusColor(item.status)"
+                  dark
+                  style="width: 100px"
+                  depressed
+                >
                   <v-icon left> mdi-album </v-icon>
                   {{ item.status }}
                 </v-btn>
               </template>
               <template v-slot:item.edit="{ item }">
-                <v-btn v-if="item.status != '반품'" small @click="deleteItem_pop(item)" color="error" elevation="">
+                <v-btn
+                  v-if="item.status != '반품'"
+                  small
+                  @click="deleteItem_pop(item)"
+                  color="error"
+                  elevation=""
+                >
                   반품 요청
                 </v-btn>
               </template>
             </v-data-table>
           </v-card>
-          <v-pagination circle v-model="warehousingListCfg.page" :length="warehousingListCfg.pageCount"></v-pagination>
+          <v-pagination
+            circle
+            v-model="warehousingListCfg.page"
+            :length="warehousingListCfg.pageCount"
+          ></v-pagination>
         </v-col>
         <v-col class="ma-2" md="12">
           <v-row dense class="mb-2">
@@ -70,8 +114,18 @@
           </v-row>
           <v-card>
             <!-- :height="table_height2" -->
-            <v-data-table height="20vh" :headers="headers_detail" :items="statement_detail_list" fixed-header
-              item-key="barcode" multi-sort hide-default-footer disable-pagination dense no-data-text="데이터가 없습니다.">
+            <v-data-table
+              height="20vh"
+              :headers="headers_detail"
+              :items="statement_detail_list"
+              fixed-header
+              item-key="barcode"
+              multi-sort
+              hide-default-footer
+              disable-pagination
+              dense
+              no-data-text="데이터가 없습니다."
+            >
               <template v-slot:item.orderCount="props">
                 {{ props.item.orderCount | comma }}
               </template>
@@ -95,12 +149,27 @@
     </v-container>
 
     <!-- 생성 모달 -->
-    <WarehousingItemModal ref="ItemModal" :open="edit_customer" @closeModal="closeModal_customer">
+    <WarehousingItemModal
+      ref="ItemModal"
+      :open="edit_customer"
+      @closeModal="closeModal_customer"
+    >
     </WarehousingItemModal>
 
     <!-- 이력 모달 -->
-    <WarehousingHistoryModal :open="history_modal" :history_modal_title="history_modal_title"
-      :history_list="item_history_modal" @closeModal="closeModal_history"></WarehousingHistoryModal>
+    <WarehousingHistoryModal
+      :open="history_modal"
+      :history_modal_title="history_modal_title"
+      :history_list="item_history_modal"
+      @closeModal="closeModal_history"
+    ></WarehousingHistoryModal>
+
+    <!-- 반품 요청 (개별 반품처리를 위한) 모달
+    <WarehousingDeleteModal
+      :open="delete_modal"
+      @closeModal="closeModal_deleteItem"
+      :delete_item="delete_item"
+    ></WarehousingDeleteModal>-->
   </div>
 </template>
 
@@ -110,12 +179,14 @@ import * as api from "@/api";
 import cfg from "./config";
 import WarehousingItemModal from "./WarehousingItemModal.vue";
 import WarehousingHistoryModal from "./WarehousingHistoryModal.vue";
+//import WarehousingDeleteModal from "./WarehousingDeleteModal.vue";
 import { Vue, Component, Watch } from "vue-property-decorator";
 
 @Component({
   components: {
     WarehousingItemModal,
     WarehousingHistoryModal,
+    //WarehousingDeleteModal
   },
   filters: {
     comma(val: any) {
@@ -128,6 +199,8 @@ import { Vue, Component, Watch } from "vue-property-decorator";
   },
 })
 export default class WarehousingMng extends Vue {
+  //delete_modal: boolean = false; 반품 요청 (개별 반품처리)
+  //delete_item: any[] = []; 반품 요청 (개별 반품처리)
   table_height: number = 0;
   table_height2: number = 0;
   edit_customer: boolean = false;
@@ -149,6 +222,13 @@ export default class WarehousingMng extends Vue {
     val || this.closeModal_customer();
   }
 
+  /*
+  @Watch("delete_modal")
+  onDeleteItem(val: any) {
+    val || this.closeModal_deleteItem();
+  }
+  */
+
   @Watch("warehousingListCfg.options", { deep: true })
   onWarehousingListCfg() {
     this.getCustomer();
@@ -168,7 +248,6 @@ export default class WarehousingMng extends Vue {
   }
 
   mounted() {
-    this.getCustomer();
     this.onResize();
   }
 
@@ -212,10 +291,7 @@ export default class WarehousingMng extends Vue {
       });
   }
   getCustomer() {
-
     this.statement_detail_list = [];
-
-
 
     const { page, itemsPerPage, sortBy, sortDesc } =
       this.warehousingListCfg.options;
@@ -258,6 +334,14 @@ export default class WarehousingMng extends Vue {
     this.edit_customer = false;
     this.getCustomer();
   }
+
+  /*반품 요청 (개별 반품처리)
+  closeModal_deleteItem() {
+    this.delete_modal = false;
+    this.getCustomer();
+  }
+  */
+
   // getCutomerItem() {
   //   let reqData = {
   //     customerId: this.editedCustomer.customerId,
@@ -280,6 +364,11 @@ export default class WarehousingMng extends Vue {
   }
 
   deleteItem_pop(item: any) {
+    /*반품 요청 (개별 반품처리)
+    this.delete_item = [];
+    this.delete_item.push(item);
+    this.delete_modal = true;
+    */
     this.$swal
       .fire({
         title: "반품 요청",
