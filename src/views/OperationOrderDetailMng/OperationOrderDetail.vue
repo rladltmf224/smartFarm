@@ -134,25 +134,28 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="showDetail" width="1400px">
+    <v-dialog v-model="showDetail" width="400px">
       <v-card>
-        <v-card-title></v-card-title>
-        <v-card-text class="pb-0">
-          <v-row dense>
-            <v-data-table multi-sort fixed-header height="100" :headers="detail_jobOrder_headers"
-              :items="detailJobOrderData" dense single-select :options.sync="orderListCfg.options"
-              :server-items-length="orderListCfg.totalCount" :loading="orderListCfg.loading"
-              :items-per-page="orderListCfg.itemsPerPage" :page.sync="orderListCfg.page"
-              @page-count="orderListCfg.pageCount = $event" hide-default-footer no-data-text="데이터가 없습니다.">
-            </v-data-table>
-          </v-row>
-
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="error" @click="showDetail = false">닫기</v-btn>
-        </v-card-actions>
+        <v-card>
+          <v-card-text>
+            <v-timeline align-top dense>
+              <v-timeline-item v-for="( item, i ) in detailJobOrderData" :key="i" small>
+                <div>
+                  <div class="font-weight-normal">
+                    <strong>{{ item.text }}</strong>
+                  </div>
+                  <div>{{ item.value }}</div>
+                </div>
+              </v-timeline-item>
+            </v-timeline>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer />
+            <v-btn color="error" @click="showDetail = false">닫기</v-btn>
+          </v-card-actions>
+        </v-card>
       </v-card>
+
     </v-dialog>
 
 
@@ -334,9 +337,24 @@ export default class OperationOrder extends Vue {
     api.operation
       .searchJobOrderCode(param)
       .then((res) => {
-        let resArr = [];
-        resArr.push(res.data.responseData)
-        this.detailJobOrderData = resArr;
+        console.log(this.detailJobOrderData)
+        this.detailJobOrderData = res.data.responseData
+        let resData = res.data.responeData
+        console.log(this.detailJobOrderData.code)
+
+        this.detailJobOrderData = [
+          { text: "작업지시코드", value: this.detailJobOrderData.code },
+          { text: "작업지시서명", value: this.detailJobOrderData.name },
+          { text: "거래처", value: this.detailJobOrderData.customer },
+          { text: "상태", value: this.detailJobOrderData.status },
+          { text: "납기일", value: this.detailJobOrderData.deadline },
+          { text: "작성자", value: this.detailJobOrderData.createdId },
+          { text: "수정자", value: this.detailJobOrderData.modifiedId },
+          { text: "수정일", value: this.detailJobOrderData.modifiedDate.substr(0, 10) },
+          { text: "등록일", value: this.detailJobOrderData.createDate.substr(0, 10) },
+          { text: "타입", value: this.detailJobOrderData.type },
+          { text: "목표수량", value: this.detailJobOrderData.targetCount },
+        ]
       })
       .catch((err) => {
         console.log(err)
