@@ -134,49 +134,22 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="showDetail" width="450px">
+    <v-dialog v-model="showDetail" width="1400px">
       <v-card>
-        <v-card-title> </v-card-title>
-
+        <v-card-title></v-card-title>
         <v-card-text class="pb-0">
           <v-row dense>
-            <v-col align-self="center">
-              <span>품목</span>
-              <v-text-field label="품목" v-model.trim="this.itemName" dense solo disabled
-                hide-details="false"></v-text-field>
-            </v-col>
-            <v-col align-self="center">
-              <span>투입수량</span>
-              <v-text-field v-model.trim="this.exCount" dense solo disabled hide-details="false"></v-text-field>
-            </v-col>
-            <v-col align-self="center">
-              <span>다음단계</span>
-              <v-text-field dense :value="this.nextStep" solo disabled hide-details="false"></v-text-field>
-            </v-col>
+            <v-data-table multi-sort fixed-header height="100" :headers="detail_jobOrder_headers"
+              :items="detailJobOrderData" dense single-select :options.sync="orderListCfg.options"
+              :server-items-length="orderListCfg.totalCount" :loading="orderListCfg.loading"
+              :items-per-page="orderListCfg.itemsPerPage" :page.sync="orderListCfg.page"
+              @page-count="orderListCfg.pageCount = $event" hide-default-footer no-data-text="데이터가 없습니다.">
+            </v-data-table>
           </v-row>
-          <v-row justify="center">
-            <v-col cols="6" class="pb-0">
-              <span>불량갯수</span>
-              <v-text-field v-model="orderData.inputCount" placeholder="불량 개수 입력"
-                oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');" :rules="countRules"
-                solo></v-text-field>
-            </v-col>
-            <v-col cols="6" class="pb-0">
-              <span class="ml-5">불량률</span>
-              <v-text-field color="red" class="percentFont ml-5" v-model="percent" solo hide-details text-h4 flat>
-              </v-text-field></v-col>
-          </v-row>
-          <v-row dense>
-            <v-col align-self="center">
-              <span>비고</span>
-              <v-text-field v-model="orderData.memo" dense solo hide-details="false"
-                class="text-box-style"></v-text-field>
-            </v-col>
-          </v-row>
+
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn color="success" @click="done()">진행</v-btn>
           <v-btn color="error" @click="showDetail = false">닫기</v-btn>
         </v-card-actions>
       </v-card>
@@ -245,6 +218,7 @@ export default class OperationOrder extends Vue {
   statusCode: any = [];
   statusCode_detail: any = [];
   joborder: any = {};
+  detailJobOrderData: any = [];
 
   @Watch("searchDepartment")
   onSearchDepartmentChange() {
@@ -318,6 +292,9 @@ export default class OperationOrder extends Vue {
   get headers() {
     return cfg.header.headers_Details_Details;
   }
+  get detail_jobOrder_headers() {
+    return cfg.header.detail_jobOrder;
+  }
 
 
 
@@ -350,10 +327,20 @@ export default class OperationOrder extends Vue {
   }
 
   showDetailDialog(item: any) {
-    console.log(item.jobOrderCode)
     this.showDetail = true;
-
-
+    let param = {
+      code: item.jobOrderCode
+    }
+    api.operation
+      .searchJobOrderCode(param)
+      .then((res) => {
+        let resArr = [];
+        resArr.push(res.data.responseData)
+        this.detailJobOrderData = resArr;
+      })
+      .catch((err) => {
+        console.log(err)
+      })
 
 
 
@@ -825,8 +812,6 @@ export default class OperationOrder extends Vue {
     }
     const foundCode = _.find(code, { code: status }); //code배열에서 status와 일치하는 객체를찾음
 
-    console.log('foundCodefoundCodefoundCode', status) //???다 오류로 뜨는디..ㅠㅠ
-    console.log('codecodecodecode', code)
 
     if (foundCode === undefined || foundCode.name === undefined) {
       return "오류";
