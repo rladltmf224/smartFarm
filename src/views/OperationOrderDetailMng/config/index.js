@@ -22,6 +22,21 @@ export default {
       { text: "진행", value: "work" },
       { text: "상세", value: "detail" },
     ],
+    detail_jobOrder: [
+      { text: "작업지시코드", value: "code", width: "8%", sortable: false },
+      { text: "작업지시서명", value: "name", width: "7%", sortable: false },
+      { text: "거래처", value: "customer", width: "6%", sortable: false },
+      { text: "상태", value: "status", width: "2%", sortable: false },
+      { text: "납기일", value: "deadline", width: "6%", sortable: false },
+      { text: "작성자", value: "createdId", width: "5%", sortable: false },
+      { text: "담당자", value: "chargeName", width: "5%", sortable: false },
+      { text: "수정자", value: "modifiedId", width: "5%", sortable: false },
+      { text: "수정일", value: "modifiedDate", width: "7%", sortable: false },
+      { text: "등록일", value: "createDate", width: "7%", sortable: false },
+      { text: "타입", value: "type", width: "7%", sortable: false },
+      { text: "목표수량", value: "targetCount", width: "7%", sortable: false },
+      // { text: "상태변경", value: "changeOrder" },
+    ],
   },
   data: {
     status_JO: [

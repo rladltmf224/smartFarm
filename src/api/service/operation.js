@@ -16,8 +16,15 @@ export default {
   getBasicDataPage: () => AuthAPI.get("/api/operation/joborder/basicdatas"),
   getOperationOrderChangePage: (params) =>
     AuthAPI.put("/api/operation/joborder", JSON.stringify(params)),
+
   getDepartmentDataPage: () =>
     AuthAPI.get("/api/operation/joborder/department"),
+
+  searchJobOrderCode: (params) =>
+    AuthAPI.get("/api/operation/joborder/search/code", {
+      params: params,
+    }),
+
   getDepartmentCrewDataPage: (params) =>
     AuthAPI.get("/api/operation/joborder/department/account", {
       params: params,
