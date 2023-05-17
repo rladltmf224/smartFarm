@@ -59,12 +59,11 @@
                       @save="props.item = saveUnitPrice(props.item)">
                       {{ props.item.unitPrice | comma }}
                       <template v-slot:input>
-                        <v-text-field v-model="props.item.unitPrice" label="Edit" single-line type="text" maxlength="15 "
-                          oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"></v-text-field>
+                        <v-text-field v-model.number="props.item.unitPrice" label="Edit" single-line type="number"
+                          step="0.01" min="0"></v-text-field>
                       </template>
                     </v-edit-dialog>
                   </template>
-
                   <template v-slot:[`item.supplyPrice`]="props">
                     {{ props.item.supplyPrice | comma }}
                   </template>
