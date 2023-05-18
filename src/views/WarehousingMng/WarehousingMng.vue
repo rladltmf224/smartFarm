@@ -164,12 +164,12 @@
       @closeModal="closeModal_history"
     ></WarehousingHistoryModal>
 
-    <!-- 반품 요청 (개별 반품처리를 위한) 모달
+    <!-- 반품 요청 (개별 반품처리를 위한) 모달 -->
     <WarehousingDeleteModal
       :open="delete_modal"
       @closeModal="closeModal_deleteItem"
       :delete_item="delete_item"
-    ></WarehousingDeleteModal>-->
+    ></WarehousingDeleteModal>
   </div>
 </template>
 
@@ -179,14 +179,14 @@ import * as api from "@/api";
 import cfg from "./config";
 import WarehousingItemModal from "./WarehousingItemModal.vue";
 import WarehousingHistoryModal from "./WarehousingHistoryModal.vue";
-//import WarehousingDeleteModal from "./WarehousingDeleteModal.vue";
+import WarehousingDeleteModal from "./WarehousingDeleteModal.vue";
 import { Vue, Component, Watch } from "vue-property-decorator";
 
 @Component({
   components: {
     WarehousingItemModal,
     WarehousingHistoryModal,
-    //WarehousingDeleteModal
+    WarehousingDeleteModal,
   },
   filters: {
     comma(val: any) {
@@ -199,8 +199,8 @@ import { Vue, Component, Watch } from "vue-property-decorator";
   },
 })
 export default class WarehousingMng extends Vue {
-  //delete_modal: boolean = false; 반품 요청 (개별 반품처리)
-  //delete_item: any[] = []; 반품 요청 (개별 반품처리)
+  delete_modal: boolean = false; //반품 요청 (개별 반품처리)
+  delete_item: any[] = []; //반품 요청 (개별 반품처리)
   table_height: number = 0;
   table_height2: number = 0;
   edit_customer: boolean = false;
@@ -222,12 +222,10 @@ export default class WarehousingMng extends Vue {
     val || this.closeModal_customer();
   }
 
-  /*
   @Watch("delete_modal")
   onDeleteItem(val: any) {
     val || this.closeModal_deleteItem();
   }
-  */
 
   @Watch("warehousingListCfg.options", { deep: true })
   onWarehousingListCfg() {
@@ -335,12 +333,11 @@ export default class WarehousingMng extends Vue {
     this.getCustomer();
   }
 
-  /*반품 요청 (개별 반품처리)
+  //반품 요청 (개별 반품처리)
   closeModal_deleteItem() {
     this.delete_modal = false;
     this.getCustomer();
   }
-  */
 
   // getCutomerItem() {
   //   let reqData = {
@@ -364,41 +361,10 @@ export default class WarehousingMng extends Vue {
   }
 
   deleteItem_pop(item: any) {
-    /*반품 요청 (개별 반품처리)
+    //반품 요청 (개별 반품처리)
     this.delete_item = [];
     this.delete_item.push(item);
     this.delete_modal = true;
-    */
-    this.$swal
-      .fire({
-        title: "반품 요청",
-        text: "반품 하시겠습니까?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "반품",
-        inputLabel: "반품 사유",
-        input: "text",
-      })
-      .then((result) => {
-        console.log("deleteItem_pop", result);
-        if (result.isConfirmed) {
-          let reqDate = {
-            id: item.id,
-            memo: result.value,
-          };
-          api.rawWarehousing
-            .deleteWarehousingList(reqDate)
-            .then((response) => {
-              console.log("deleteWarehousingList", response);
-              this.getCustomer();
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      });
   }
   deleteItem_modal(item: any) {
     let deleteIndex = this.item_list_modal.indexOf(item);

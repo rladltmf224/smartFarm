@@ -180,13 +180,14 @@
                 </template>
                 <v-date-picker
                   :max="item.end"
-                  @change="checkText(index)"
+                  @change="checkText(index, item.start)"
                   v-model="item.start"
                   no-title
                   scrollable
                   locale="ko-KR"
                 >
                   <v-spacer></v-spacer>
+
                   <v-btn text color="primary" @click="item.start = ''">
                     취소
                   </v-btn>
@@ -225,6 +226,7 @@
                   locale="ko-KR"
                 >
                   <v-spacer></v-spacer>
+
                   <v-btn text color="primary" @click="item.end = ''">
                     취소
                   </v-btn>
@@ -294,13 +296,6 @@
                   <v-btn text color="primary" @click="menu = false">
                     취소
                   </v-btn>
-                  <v-btn
-                    text
-                    color="primary"
-                    @click="secondS_date_search(item.start)"
-                  >
-                    확인
-                  </v-btn>
                 </v-date-picker>
               </v-menu>
             </v-col>
@@ -336,13 +331,6 @@
                   <v-spacer></v-spacer>
                   <v-btn text color="primary" @click="menu = false">
                     취소
-                  </v-btn>
-                  <v-btn
-                    text
-                    color="primary"
-                    @click="secondE_date_search(item.end)"
-                  >
-                    확인
                   </v-btn>
                 </v-date-picker>
               </v-menu>
@@ -390,6 +378,7 @@ export default class ScheduleAddModal extends Vue {
   $refs!: {
     secondStartDate: HTMLFormElement;
     secondEndDate: HTMLFormElement;
+    endDate: HTMLFormElement;
   };
   @Prop({ required: true }) open: boolean = false;
   @Prop({ required: true }) totalEvents: any[];
@@ -454,6 +443,10 @@ export default class ScheduleAddModal extends Vue {
     },
   ];
   get chooseDialog() {
+    this.scheduleData.customer = "";
+    this.scheduleData.cropName = "";
+    this.scheduleData.varietyName = "";
+    this.scheduleData.backgroundColor = "#4caf50";
     return this.open;
   }
   set chooseDialog(val: any) {
@@ -488,24 +481,20 @@ export default class ScheduleAddModal extends Vue {
       backgroundColor: this.scheduleData.backgroundColor,
     };
   }
+
   @Watch("secondTitleList")
   addSecondTitle() {
     return this.secondTitleList;
   }
 
-  created() {
-    this.getCustomer();
-  }
-  secondS_date_search(v: any) {
-    this.secondStartDate = v;
-    let startEL: any = this.$refs.secondStartDate;
-    startEL.save(v);
+  @Watch("titleList", { deep: true })
+  checkList() {
+    console.log("감지됨", this.titleList);
+    return this.titleList;
   }
 
-  secondE_date_search(v: any) {
-    this.secondEndDate = v;
-    let endEL: any = this.$refs.secondEndDate;
-    endEL.save(v);
+  created() {
+    this.getCustomer();
   }
 
   chooseAddModal() {
@@ -597,7 +586,6 @@ export default class ScheduleAddModal extends Vue {
 
   //일정 등록 이벤트
   saveInfo() {
-    //this.update = false;
     let schedule: any = {
       cropName: "",
       varietyName: "",
@@ -724,7 +712,8 @@ export default class ScheduleAddModal extends Vue {
     }
   }
 
-  checkText(item: any) {
+  checkText(item: any, data: any) {
+    //시작일
     if (item != 0 && item != 6) {
       if (
         this.titleList[item]["start"] != "" &&
@@ -744,12 +733,19 @@ export default class ScheduleAddModal extends Vue {
         });
       }
     }
+
+    //실시간 Rerendering을 위한작업
+    this.$set(this.titleList, this.titleList[item]["start"], data);
   }
   autoText(item: any, data: any) {
-    if (item != 6) {
+    //종료일 ->다음날 시작일
+    if (item != 5) {
       this.titleList[item + 1]["start"] = data;
       return this.titleList;
     }
+
+    //실시간 Rerendering을 위한작업
+    this.$set(this.titleList, this.titleList[item]["start"], data);
   }
   //Modal 닫기
   closeModal() {

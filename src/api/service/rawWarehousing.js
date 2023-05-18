@@ -18,9 +18,7 @@ export default {
   updateWarehousingList: (params) =>
     AuthAPI.put("/api/warehousing", JSON.stringify(params)),
   deleteWarehousingList: (params) =>
-    AuthAPI.delete("/api/warehousing", {
-      params: params,
-    }),
+    AuthAPI.post("/api/warehousing/cancel", JSON.stringify(params)),
   getWarehousingHistoryList: (params) =>
     AuthAPI.get("/api/warehousing/history", {
       params: params,

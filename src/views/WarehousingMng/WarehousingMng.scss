@@ -31,3 +31,15 @@ tr.v-data-table__selected {
 .closeBtn {
   border: 1px solid #72e072;
 }
+.countFont input::placeholder {
+  color: red !important;
+  opacity: 1;
+  font-size: 12px;
+}
+.countFont input {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+.countFont .v-input__control {
+  height: 30px;
+}

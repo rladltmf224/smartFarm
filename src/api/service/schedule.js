@@ -57,4 +57,8 @@ export default {
     AuthAPI.get("/api/workschedule/today", {
       headers: { "Content-Type": "application/json" },
     }),
+  updateScheduleState: (params) =>
+    AuthAPI.put("/api/workschedule/detail/done", JSON.stringify(params), {
+      headers: { "Content-Type": "application/json" },
+    }),
 };
