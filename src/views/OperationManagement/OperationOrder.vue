@@ -103,7 +103,7 @@
             </v-col>
           </v-row>
           <v-card>
-            <v-data-table multi-sort fixed-header height="300" v-model="toatalselected" item-key="jobOrderId"
+            <v-data-table multi-sort fixed-header height="300" v-model="clickedRow" item-key="jobOrderId"
               :headers="headers" :items="totalTable" @click:row="dataDetail" dense single-select
               :options.sync="orderListCfg.options" :server-items-length="orderListCfg.totalCount"
               :loading="orderListCfg.loading" :items-per-page="orderListCfg.itemsPerPage" :page.sync="orderListCfg.page"
@@ -294,7 +294,7 @@ export default class OperationOrder extends Vue {
   statusCode: any = [];
   statusCode_detail: any = [];
   joborder: any = {};
-
+  clickedRow: any = [];
   @Watch("searchDepartment")
   onSearchDepartmentChange() {
     if (
@@ -439,8 +439,10 @@ export default class OperationOrder extends Vue {
     api.operation
       .getTotalOrderListPage(this.jobordeList)
       .then((response) => {
+
         this.totalData = response.data.responseData;
         this.orderListCfg.totalCount = response.data.totalCount;
+
       })
       .catch((error) => {
         console.log(error);
@@ -503,7 +505,8 @@ export default class OperationOrder extends Vue {
     let reqData = {
       jobOrderId: item.jobOrderId,
     };
-    console.log("dataDetail", item.jobOrderId);
+    this.clickedRow = row.index; //클릭된 row의 숫자를 변수에 담는다.
+    console.log('클릭된 row의 숫자 ', row.index)
     api.operation.getJobOrerDetail(reqData).then((res) => {
       console.log("getJobOrerDetail", res);
       this.datatable = res.data.responseData;
@@ -556,6 +559,10 @@ export default class OperationOrder extends Vue {
                 this.getSearch();
                 this.toatalselected = [];
                 this.datatable = [];
+                /*  console.log('1111111111111111', this.toatalselected)
+                 this.toatalselected = this.clickedRow
+                 console.log('22222222', this.toatalselected) */
+
               } else {
                 this.$swal({
                   title: "상태변경이 실패되었습니다.",
@@ -607,6 +614,7 @@ export default class OperationOrder extends Vue {
       })
       .then((result) => {
         if (result.isConfirmed) {
+          console.log('111111111111', this.datatable)
           api.operation
             .updateOperationOrderPage(this.joborder)
             .then((response) => {
@@ -623,7 +631,8 @@ export default class OperationOrder extends Vue {
                 this.updateStatus = false;
                 this.getSearch();
                 this.toatalselected = [];
-                this.datatable = [];
+                console.log('22222222222222', this.datatable)
+                /*  this.datatable = []; */
               } else {
                 this.$swal({
                   title: "상태변경이 실패되었습니다.",

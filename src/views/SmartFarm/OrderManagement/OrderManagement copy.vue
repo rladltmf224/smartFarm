@@ -118,8 +118,8 @@
                         </template>
                         <!-- 요청사항 -->
                         <template v-slot:item.memo="props">
-                            <v-edit-dialog cancel-text="취소" save-text="수정" :return-value.sync="props.item.memo" large
-                                persistent large @save="editTableOrderInfo(props.item)" cancel-text="취소" save-text="수정">
+                            <v-edit-dialog :return-value.sync="props.item.memo" large persistent large
+                                @save="editTableOrderInfo(props.item)" cancel-text="취소" save-text="수정">
                                 <div>{{ props.item.memo }}</div>
                                 <template v-slot:input>
                                     <div class="mt-4 title">Update Iron</div>
