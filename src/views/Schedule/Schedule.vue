@@ -938,10 +938,6 @@ export default class Schedule extends Vue {
 
   openModal() {
     this.chooseDialog = true;
-    //this.scheduleData.customer = "";
-    //this.scheduleData.cropName = "";
-    //this.scheduleData.varietyName = "";
-    //this.scheduleData.backgroundColor = "#4caf50";
   }
 
   clickTab(item: any) {
@@ -1036,13 +1032,15 @@ export default class Schedule extends Vue {
 
   closeModal_schedule() {
     this.chooseDialog = false;
+    console.log(this.totalEvents);
     this.getSchedule("");
-    this.getTotalSchedule();
+    //this.getTotalSchedule();
   }
   closeMenu_schedule() {
     this.detailMenu = false;
+    console.log(this.totalEvents);
     this.getSchedule("");
-    this.getTotalSchedule();
+    //this.getTotalSchedule();
   }
 }
 </script>

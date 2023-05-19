@@ -145,10 +145,9 @@
             </v-col>
           </v-row>
           <v-card>
+
             <v-data-table multi-sort class="detailFont" fixed-header :headers="headersDetail" height="260"
               :items="datatable" item-key="index" dense disable-pagination hide-default-footer>
-
-
               <template v-slot:[`item.status`]="{ item }">
                 <v-btn class="text-left mt-1 mb-1" small :color="getStatusColor(item.status)" dark style="width: 100px"
                   depressed>
@@ -158,7 +157,7 @@
               </template>
 
               <template v-slot:[`item.work`]="{ item }">
-                <v-btn v-show="item.status !== 'JOD_DONE'" text small fluid color="primary" class="mr-1 editBtn" :value="getStatusCodeNext(item.status, statusCode_detail).code
+                <v-btn v-show="item.status !== 'SB08'" text small fluid color="primary" class="mr-1 editBtn" :value="getStatusCodeNext(item.status, statusCode_detail).code
                   " @click="
     start_detail(
       item,
@@ -184,7 +183,6 @@
     <!--작업지시서 등록 모달-->
     <order-modal :open="orderDialog" :change="change" :editedCustomerData="editedOrder"
       @closeModal="closeModal"></order-modal>
-
     <v-dialog v-model="updateStatus" width="450px">
       <v-card>
         <v-card-title> </v-card-title>
@@ -215,7 +213,10 @@
             <v-col cols="6" class="pb-0">
               <span class="ml-5">불량률</span>
               <v-text-field color="red" class="percentFont ml-5" v-model="percent" solo hide-details text-h4 flat>
-              </v-text-field></v-col>
+              </v-text-field>
+            </v-col>
+            <v-text-field color="red" class="percentFont ml-5" v-model="percent" solo hide-details text-h4 flat>
+            </v-text-field></v-col>
           </v-row>
           <v-row dense>
             <v-col align-self="center">
