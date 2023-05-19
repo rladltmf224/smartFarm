@@ -564,8 +564,6 @@ export default class ScheduleDetailModal extends Vue {
             });
           }
           //일정 데이터 불러오기
-          //this.detailMenu = false;
-          //this.getSchedule("");
           this.$emit("closeModal");
         })
         .catch((error) => {
@@ -717,8 +715,6 @@ export default class ScheduleDetailModal extends Vue {
                   });
                 }
                 //일정 데이터 불러오기
-                //this.detailMenu = false;
-                //this.getSchedule("");
                 this.$emit("closeModal");
               })
               .catch((error) => {

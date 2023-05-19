@@ -489,7 +489,6 @@ export default class ScheduleAddModal extends Vue {
 
   @Watch("titleList", { deep: true })
   checkList() {
-    console.log("감지됨", this.titleList);
     return this.titleList;
   }
 
@@ -546,6 +545,7 @@ export default class ScheduleAddModal extends Vue {
   }
 
   clickedExisting(item: any, row: any) {
+    let check: boolean = false; //고정일정 외의 추가일정 생성하는 코드
     this.titleList = JSON.parse(JSON.stringify(this.resetTypeData));
     this.secondTitleList = JSON.parse(JSON.stringify(this.secondResetTypeData));
     this.clickedExistingId = item.workScheduleId;
@@ -572,6 +572,7 @@ export default class ScheduleAddModal extends Vue {
               memo: value_detail.memo,
             };
           } else {
+            check = true;
             this.secondTitleList.push({
               title: value_detail.title,
               start: value_detail.start,
@@ -582,6 +583,8 @@ export default class ScheduleAddModal extends Vue {
         });
       }
     });
+
+    if (!check) this.add();
   }
 
   //일정 등록 이벤트
@@ -664,9 +667,6 @@ export default class ScheduleAddModal extends Vue {
           //일정 데이터 불러오기
           this.$emit("closeModal");
           this.dialog = false;
-          //this.chooseDialog = false;
-          //this.getSchedule("");
-          //this.getTotalSchedule();
         })
         .catch((error) => {
           console.log(error);
@@ -702,9 +702,6 @@ export default class ScheduleAddModal extends Vue {
           //일정 데이터 불러오기
           this.$emit("closeModal");
           this.dialog = false;
-          //this.chooseDialog = false;
-          //this.getSchedule("");
-          //this.getTotalSchedule();
         })
         .catch((error) => {
           console.log(error);
