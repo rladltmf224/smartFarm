@@ -253,7 +253,6 @@ export default class Customer extends Vue {
 
   handlerSaveModal(data: object, editedType: boolean) {
     if (!editedType) {
-      console.log('수정입니다.')
       api.customer
         .updateCustomerItem(data)
         .then((response) => {
@@ -264,7 +263,6 @@ export default class Customer extends Vue {
           console.log(error);
         });
     } else {
-      console.log('생성입니다.')
       api.customer
         .createCustomerItem(data)
         .then((response) => {
@@ -279,7 +277,7 @@ export default class Customer extends Vue {
   alertResult(isSuccess: boolean) {
     if (isSuccess) {
       this.$swal({
-        title: "수정되었습니다.",
+        title: "등록되었습니다.",
         icon: "success",
         position: "top",
         showCancelButton: false,

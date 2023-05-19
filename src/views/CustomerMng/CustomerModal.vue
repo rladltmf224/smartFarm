@@ -186,23 +186,37 @@ export default class CustomerModal extends Vue {
   }
 
   clickSaveCustomerInfo() {
-
-    console.log('거래처데이터', typeof (this.customerData))
-    console.log('this.editedType', this.editedType)
-
-
-
-
+    console.log('에딧티드타입', this.editedType)
     let customerInfo: any = this.customerData;
-    customerInfo.contactPoint = util.replaceOnlyNum(customerInfo.contactPoint);
-    customerInfo.businessRegisterNumber = util.replaceOnlyNum(
-      customerInfo.businessRegisterNumber
-    );
-    customerInfo.faxNumber = util.replaceOnlyNum(customerInfo.faxNumber);
-    customerInfo.telephone = util.replaceOnlyNum(customerInfo.telephone);
-
-    console.log("clickSaveCustomerInfo", customerInfo);
-    this.$emit("save-customer", customerInfo, this.editedType);
+    if (customerInfo.name == '') {
+      this.$swal({
+        title: "거래처명을 입력해주세요.",
+        icon: "error",
+        position: "top",
+        showCancelButton: false,
+        showConfirmButton: false,
+        toast: true,
+        timer: 1500,
+      });
+    } else if (customerInfo.type == '') {
+      this.$swal({
+        title: "거래처 유형을 입력해주세요.",
+        icon: "error",
+        position: "top",
+        showCancelButton: false,
+        showConfirmButton: false,
+        toast: true,
+        timer: 1500,
+      });
+    } else {
+      customerInfo.contactPoint = util.replaceOnlyNum(customerInfo.contactPoint);
+      customerInfo.businessRegisterNumber = util.replaceOnlyNum(
+        customerInfo.businessRegisterNumber
+      );
+      customerInfo.faxNumber = util.replaceOnlyNum(customerInfo.faxNumber);
+      customerInfo.telephone = util.replaceOnlyNum(customerInfo.telephone);
+      this.$emit("save-customer", customerInfo, this.editedType);
+    }
   }
 }
 </script>
