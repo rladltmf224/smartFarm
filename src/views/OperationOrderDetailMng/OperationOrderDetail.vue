@@ -134,7 +134,7 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="showDetail" width="400px">
+    <!--  <v-dialog v-model="showDetail" width="400px">
       <v-card>
         <v-card>
           <v-card-text>
@@ -156,6 +156,80 @@
         </v-card>
       </v-card>
 
+    </v-dialog> -->
+    <v-dialog v-model="showDetail" max-width="800px">
+      <v-card>
+        <v-card-title>
+        </v-card-title>
+        <v-card-text>
+          <v-row dense>
+            <v-col cols="4" align-self="center">
+              <span>작업지시코드</span>
+              <v-text-field v-model="detailJobOrderData.code" disabled dense solo hide-details="false"
+                class="text-box-style"></v-text-field>
+            </v-col>
+            <v-col cols="3" align-self="center">
+              <span>생성일</span>
+              <v-text-field v-model="detailJobOrderData.createdDate" disabled dense solo hide-details="false"
+                class="text-box-style"></v-text-field>
+            </v-col>
+            <v-col cols="2" align-self="center">
+              <span>작성자</span>
+              <v-text-field v-model="detailJobOrderData.createdId" disabled dense solo hide-details="false"
+                class="text-box-style"></v-text-field>
+            </v-col>
+            <v-col cols="3" align-self="center">
+              <span>거래처</span>
+              <v-text-field v-model="detailJobOrderData.customer" disabled dense solo hide-details="false"
+                class="text-box-style"></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row dense>
+            <v-col cols="3" align-self="center">
+              <span>수정자</span>
+              <v-text-field v-model="detailJobOrderData.modifiedId" disabled dense solo hide-details="false"
+                class="text-box-style"></v-text-field>
+            </v-col>
+            <v-col cols="3" align-self="center">
+              <span>수정일</span>
+              <v-text-field v-model="detailJobOrderData.modifiedDate" disabled dense solo hide-details="false"
+                class="text-box-style"></v-text-field>
+            </v-col>
+            <v-col cols="6" align-self="center">
+              <span>메모</span>
+              <v-text-field v-model="detailJobOrderData.memo" disabled dense solo hide-details="false"
+                class="text-box-style"></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row dense>
+            <v-col cols="3" align-self="center">
+              <span>작업지시서명</span>
+              <v-text-field v-model="detailJobOrderData.name" disabled dense solo hide-details="false"
+                class="text-box-style"></v-text-field>
+            </v-col>
+            <v-col cols="3" align-self="center">
+              <span>상태</span>
+              <v-text-field v-model="detailJobOrderData.status" disabled dense solo hide-details="false"
+                class="text-box-style">
+              </v-text-field>
+            </v-col>
+            <v-col cols="3" align-self="center">
+              <span>목표수량</span>
+              <v-text-field v-model="detailJobOrderData.targetCount" disabled dense solo hide-details="false"
+                class="text-box-style"></v-text-field>
+            </v-col>
+            <v-col cols="3" align-self="center">
+              <span>타입</span>
+              <v-text-field v-model="detailJobOrderData.type" disabled dense solo hide-details="false"
+                class="text-box-style"></v-text-field>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="error" @click="showDetail = false">닫기</v-btn>
+        </v-card-actions>
+      </v-card>
     </v-dialog>
 
 
@@ -301,7 +375,6 @@ export default class OperationOrder extends Vue {
 
 
 
-
   created() {
     this.orderListCfg = Object.assign({}, gridCfg);
     this.editedOrder = Object.assign({}, this.editedOrder);
@@ -337,34 +410,29 @@ export default class OperationOrder extends Vue {
     api.operation
       .searchJobOrderCode(param)
       .then((res) => {
-        console.log(this.detailJobOrderData)
         this.detailJobOrderData = res.data.responseData
         let resData = res.data.responeData
-        console.log(this.detailJobOrderData.code)
 
-        this.detailJobOrderData = [
-          { text: "작업지시코드", value: this.detailJobOrderData.code },
-          { text: "작업지시서명", value: this.detailJobOrderData.name },
-          { text: "거래처", value: this.detailJobOrderData.customer },
-          { text: "상태", value: this.detailJobOrderData.status },
-          { text: "납기일", value: this.detailJobOrderData.deadline },
-          { text: "작성자", value: this.detailJobOrderData.createdId },
-          { text: "수정자", value: this.detailJobOrderData.modifiedId },
-          { text: "수정일", value: this.detailJobOrderData.modifiedDate.substr(0, 10) },
-          { text: "등록일", value: this.detailJobOrderData.createDate.substr(0, 10) },
-          { text: "타입", value: this.detailJobOrderData.type },
-          { text: "목표수량", value: this.detailJobOrderData.targetCount },
-        ]
+
+        this.detailJobOrderData.createdDate = this.detailJobOrderData.createDate.substr(0, 10)
+        this.detailJobOrderData.modifiedDate = this.detailJobOrderData.modifiedDate.substr(0, 10)
+
+        let statusList: { [key: string]: string } = {
+          'SA02': '진행중',
+          'SA01': '대기',
+          'SA03': '완료'
+        };
+
+        if (statusList.hasOwnProperty(this.detailJobOrderData.status)) {
+          this.detailJobOrderData.status = statusList[this.detailJobOrderData.status];
+        }
+
+
       })
       .catch((err) => {
         console.log(err)
       })
-
-
-
-
   }
-
   getSearch() {
     const { page, itemsPerPage, sortBy, sortDesc } = this.orderListCfg.options;
     this.toatalselected = [];
@@ -829,14 +897,10 @@ export default class OperationOrder extends Vue {
       return "";
     }
     const foundCode = _.find(code, { code: status }); //code배열에서 status와 일치하는 객체를찾음
-
-
     if (foundCode === undefined || foundCode.name === undefined) {
       return "오류";
     }
-
     //정의되지않으면 오류로 반환함.
-
     return foundCode.name; //정의됐으면 name으로 반환함.
   }
   getStatusCodeNext(status: any, code: any[]) {
