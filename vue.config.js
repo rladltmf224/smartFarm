@@ -3,7 +3,7 @@ module.exports = defineConfig({
   // productionSourceMap: false,
   // configureWebpack: {
   //   mode: "production",
-  //   devtool: "eval",
+  //   devtool: "eval",115,007 5781 	109,226
   // },
   transpileDependencies: ["vuetify"],
   lintOnSave: false,

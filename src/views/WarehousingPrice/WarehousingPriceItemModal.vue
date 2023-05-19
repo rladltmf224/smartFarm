@@ -175,7 +175,7 @@ export default class WarehousingPriceItemModal extends Vue {
         console.log("postWarehousingItemData", response);
 
         this.itemList = response.data.responseData;
-        this.itemListCfg.totalCount = response.data.responseData.totalCount;
+        this.itemListCfg.totalCount = response.data.totalCount;
       })
       .catch((error) => {
         console.log(error);
