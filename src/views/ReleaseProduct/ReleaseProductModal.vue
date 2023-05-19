@@ -14,7 +14,7 @@
                 :items="product_detail_list_prop" fixed-header item-key="materialId" class="elevation-4"
                 @item-selected="addRawItem" @toggle-select-all="totalAddRawItem" multi-sort show-select dense>
                 <template v-slot:item.releaseCount="props">
-                  <v-edit-dialog large :return-value.sync="props.item.releaseCount"
+                  <v-edit-dialog cancel-text="취소" save-text="수정" large :return-value.sync="props.item.releaseCount"
                     @save="props.item = saveReleaseCount(props.item)">
                     {{ props.item.releaseCount | comma }}
                     <template v-slot:input>

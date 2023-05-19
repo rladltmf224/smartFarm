@@ -25,7 +25,7 @@
               <v-data-table :headers="headers_item_detail" :items="joborder_detail_list" fixed-header item-key="id"
                 class="elevation-4" multi-sort :footer-props="footer_option" dense no-data-text="데이터가 없습니다.">
                 <template v-slot:item.normalCount="props">
-                  <v-edit-dialog :return-value.sync="props.item.normalCount"
+                  <v-edit-dialog cancel-text="취소" save-text="수정" :return-value.sync="props.item.normalCount"
                     @save="props.item = saveOrderCount(props.item)" large>
                     {{ props.item.normalCount | comma }}
                     <template v-slot:input>
@@ -37,7 +37,7 @@
                 </template>
 
                 <template v-slot:item.boxpercount="props">
-                  <v-edit-dialog :return-value.sync="props.item.boxpercount"
+                  <v-edit-dialog cancel-text="취소" save-text="수정" :return-value.sync="props.item.boxpercount"
                     @save="props.item = saveBOXperCount(props.item)" large>
                     {{ props.item.boxpercount | comma }}
                     <template v-slot:input>
@@ -49,7 +49,7 @@
                 </template>
 
                 <template v-slot:item.boxcount="props">
-                  <v-edit-dialog :return-value.sync="props.item.boxcount" large>
+                  <v-edit-dialog cancel-text="취소" save-text="수정" :return-value.sync="props.item.boxcount" large>
                     {{ props.item.boxcount | comma }}
                     <template v-slot:input>
                       <v-text-field v-model="props.item.boxcount" label="Edit" props. single-line type="text"
@@ -74,7 +74,7 @@
                 </template>
 
                 <template v-slot:item.memo="props">
-                  <v-edit-dialog :return-value.sync="props.item.memo" large>
+                  <v-edit-dialog cancel-text="취소" save-text="수정" :return-value.sync="props.item.memo" large>
                     {{ props.item.memo }}
                     <template v-slot:input>
                       <v-text-field v-model="props.item.memo" single-line counter></v-text-field>

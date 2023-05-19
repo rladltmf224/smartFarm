@@ -71,7 +71,8 @@
                     <v-data-table :headers="bomHeaders" :items="bomData" disable-pagination item-key="id"
                       hide-default-footer :items-per-page="20" dense>
                       <template v-slot:item.targetCount="props">
-                        <v-edit-dialog v-if="!props.item.read" :return-value.sync="props.item.targetCount" large>
+                        <v-edit-dialog cancel-text="취소" save-text="수정" v-if="!props.item.read"
+                          :return-value.sync="props.item.targetCount" large>
                           {{ props.item.targetCount | comma }}
                           <template v-slot:input>
                             <v-text-field v-model="props.item.targetCount" label="Edit" type="number" single-line counter

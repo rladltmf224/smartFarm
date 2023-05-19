@@ -55,7 +55,7 @@
                 <v-data-table :height="itemList_height" :headers="headers_detail" :items="statement_detail_list"
                   item-key="itemId" single-select multi-sort hide-default-footer dense @click:row="selectItemHistory">
                   <template v-slot:[`item.unitPrice`]="props">
-                    <v-edit-dialog :return-value.sync="props.item.unitPrice" large
+                    <v-edit-dialog cancel-text="취소" save-text="수정" :return-value.sync="props.item.unitPrice" large
                       @save="props.item = saveUnitPrice(props.item)">
                       {{ props.item.unitPrice | comma }}
                       <template v-slot:input>
