@@ -594,7 +594,6 @@ export default class OperationOrder extends Vue {
   }
 
   done() {
-    console.log('111111111')
     this.joborder["failCount"] = this.orderData.inputCount;
     this.joborder["comment"] = this.orderData.memo;
     this.$swal
