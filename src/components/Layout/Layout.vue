@@ -18,7 +18,7 @@ import AppBar from "@/components/Layout/AppBar.vue";
     AppBar,
   },
 })
-export default class Layout extends Vue {}
+export default class Layout extends Vue { }
 </script>
 
 <style src="./Layout.scss" lang="scss"></style>

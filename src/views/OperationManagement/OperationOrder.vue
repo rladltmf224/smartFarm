@@ -147,6 +147,8 @@
           <v-card>
             <v-data-table multi-sort class="detailFont" fixed-header :headers="headersDetail" height="260"
               :items="datatable" item-key="index" dense disable-pagination hide-default-footer>
+
+
               <template v-slot:[`item.status`]="{ item }">
                 <v-btn class="text-left mt-1 mb-1" small :color="getStatusColor(item.status)" dark style="width: 100px"
                   depressed>
@@ -180,7 +182,8 @@
     </v-container>
 
     <!--작업지시서 등록 모달-->
-
+    <order-modal :open="orderDialog" :change="change" :editedCustomerData="editedOrder"
+      @closeModal="closeModal"></order-modal>
 
     <v-dialog v-model="updateStatus" width="450px">
       <v-card>
@@ -190,68 +193,35 @@
           <v-row dense>
             <v-col align-self="center">
               <span>품목</span>
-
-              <v-text-field
-                label="품목"
-                v-model.trim="this.itemName"
-                dense
-                solo
-                disabled
-                hide-details="false"
-              ></v-text-field>
+              <v-text-field label="품목" v-model.trim="this.itemName" dense solo disabled
+                hide-details="false"></v-text-field>
             </v-col>
             <v-col align-self="center">
               <span>투입수량</span>
-              <v-text-field
-                v-model.trim="this.exCount"
-                dense
-                solo
-                disabled
-                hide-details="false"
-              ></v-text-field>
+              <v-text-field v-model.trim="this.exCount" dense solo disabled hide-details="false"></v-text-field>
             </v-col>
             <v-col align-self="center">
               <span>다음단계</span>
-              <v-text-field
-                dense
-                :value="this.nextStep"
-                solo
-                disabled
-                hide-details="false"
-              ></v-text-field>
-
+              <v-text-field dense :value="this.nextStep" solo disabled hide-details="false"></v-text-field>
             </v-col>
           </v-row>
           <v-row justify="center">
             <v-col cols="6" class="pb-0">
               <span>불량갯수</span>
-
-              <v-text-field
-                v-model="orderData.inputCount"
-                placeholder="불량 개수 입력"
-                oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');"
-                :rules="countRules"
-                solo
-              ></v-text-field>
+              <v-text-field v-model="orderData.inputCount" placeholder="불량 개수 입력"
+                oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');" :rules="countRules"
+                solo></v-text-field>
             </v-col>
             <v-col cols="6" class="pb-0">
               <span class="ml-5">불량률</span>
-              <v-text-field
-                color="red"
-                class="percentFont ml-5"
-                v-model="percent"
-                solo
-                hide-details
-                text-h4
-                flat
-              >
-              </v-text-field
-            ></v-col>
-
+              <v-text-field color="red" class="percentFont ml-5" v-model="percent" solo hide-details text-h4 flat>
+              </v-text-field></v-col>
           </v-row>
           <v-row dense>
             <v-col align-self="center">
               <span>비고</span>
+              <v-text-field v-model="orderData.memo" dense solo hide-details="false"
+                class="text-box-style"></v-text-field>
             </v-col>
           </v-row>
         </v-card-text>
@@ -898,35 +868,51 @@ export default class OperationOrder extends Vue {
     else return "black";
   }
 
-  getStatusCode(status: string, code: any[]) {
+  /*   getStatusCode(status: string, code: any[]) {
+      if (status === undefined) {
+        return "";
+      }
+      if (_.find(code, { code: status }).name == undefined) {
+        return "오류";
+      }
+      return _.find(code, { code: status }).name;
+    } */
+
+
+  getStatusCode(status: any, code: any) { //위 코드에서 에러나서 예외처리,수정함.
     if (status === undefined) {
       return "";
     }
-    if (_.find(code, { code: status }).name == undefined) {
-      return "오류";
-    }
-    return _.find(code, { code: status }).name;
-  }
-  getStatusCodeNext(status: any, code: any[]) {
-    if (status == undefined) {
-      return "오류";
-    }
-    if (_.find(code, { code: status }).name == undefined) {
-      return "오류";
-    }
-    const index: number = code.findIndex((item: any) => item.code === status);
-
-    //console.log("status", status, index);
-
-    if (index == code.length - 1) {
-      //console.log("getStatusCodeNext2", index);
-      return code[index];
+    const foundItem = _.find(code, { code: status });
+    if (foundItem && foundItem.name !== undefined) {
+      return foundItem.name;
     } else {
-      // console.log("getStatusCodeNext1", index, this.statusCode[index + 1]);
-
-      return code[index + 1];
+      return "오류";
     }
   }
+
+
+  getStatusCodeNext(status: any, code: any) {
+    if (status === undefined) {
+      return "오류";
+    }
+    const foundItem = _.find(code, { code: status });
+    if (foundItem && foundItem.name !== undefined) {
+      const index = code.findIndex((item: any) => item.code === status);
+      if (index === -1) {
+        return "오류";
+      }
+      if (index === code.length - 1) {
+        return code[index];
+      } else {
+        return code[index + 1];
+      }
+    } else {
+      return "오류";
+    }
+  }
+
+
   closeModal() {
     this.orderDialog = false;
     this.change = false;
