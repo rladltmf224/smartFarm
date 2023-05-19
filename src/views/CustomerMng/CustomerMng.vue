@@ -96,7 +96,7 @@
         <v-col class="ma-2" cols="12">
           <v-row dense class="mb-2">
             <v-col cols="2" align-self="center">
-              <span>거래처 목ㅇ록</span>
+              <span>거래처 목록</span>
             </v-col>
             <v-spacer></v-spacer>
             <v-col class="text-right" cols="4">
