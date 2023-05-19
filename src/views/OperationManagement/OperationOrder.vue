@@ -215,8 +215,6 @@
               <v-text-field color="red" class="percentFont ml-5" v-model="percent" solo hide-details text-h4 flat>
               </v-text-field>
             </v-col>
-            <v-text-field color="red" class="percentFont ml-5" v-model="percent" solo hide-details text-h4 flat>
-            </v-text-field></v-col>
           </v-row>
           <v-row dense>
             <v-col align-self="center">
@@ -596,56 +594,55 @@ export default class OperationOrder extends Vue {
   }
 
   done() {
-    if (this.orderData.inputCount != 0) {
-      this.joborder["failCount"] = this.orderData.inputCount;
-      this.joborder["comment"] = this.orderData.memo;
+    console.log('111111111')
+    this.joborder["failCount"] = this.orderData.inputCount;
+    this.joborder["comment"] = this.orderData.memo;
+    this.$swal
+      .fire({
+        text: "작업을 진행하시겠습니까?",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "진행",
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          api.operation
+            .updateOperationOrderPage(this.joborder)
+            .then((response) => {
+              if (response.status == 200) {
+                this.$swal({
+                  title: "작업을 진행하겠습니다.",
+                  icon: "success",
+                  position: "top",
+                  showCancelButton: false,
+                  showConfirmButton: false,
+                  toast: true,
+                  timer: 1500,
+                });
+                this.updateStatus = false;
+                this.getSearch();
+                this.toatalselected = [];
+                this.datatable = [];
+              } else {
+                this.$swal({
+                  title: "상태변경이 실패되었습니다.",
+                  icon: "error",
+                  position: "top",
+                  showCancelButton: false,
+                  showConfirmButton: false,
+                  toast: true,
+                  timer: 1500,
+                });
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      });
 
-      this.$swal
-        .fire({
-          text: "작업을 진행하시겠습니까?",
-          icon: "info",
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "진행",
-        })
-        .then((result) => {
-          if (result.isConfirmed) {
-            api.operation
-              .updateOperationOrderPage(this.joborder)
-              .then((response) => {
-                if (response.status == 200) {
-                  this.$swal({
-                    title: "작업을 진행하겠습니다.",
-                    icon: "success",
-                    position: "top",
-                    showCancelButton: false,
-                    showConfirmButton: false,
-                    toast: true,
-                    timer: 1500,
-                  });
-                  this.updateStatus = false;
-                  this.getSearch();
-                  this.toatalselected = [];
-                  this.datatable = [];
-                } else {
-                  this.$swal({
-                    title: "상태변경이 실패되었습니다.",
-                    icon: "error",
-                    position: "top",
-                    showCancelButton: false,
-                    showConfirmButton: false,
-                    toast: true,
-                    timer: 1500,
-                  });
-                }
-              })
-              .catch((error) => {
-                console.log(error);
-              });
-          }
-        });
-    }
   }
 
   finish(item: any) {
