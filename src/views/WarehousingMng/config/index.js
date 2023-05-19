@@ -7,7 +7,7 @@ export default {
       { text: "거래처", value: "customerName" },
       { text: "상태", value: "status" },
       { text: "입고처리 담당자", value: "createName" },
-      // { text: "반품요청 담당자", value: "" },
+      { text: "반품요청 처리자", value: "returnName" },
       { text: "반품", value: "edit" },
     ],
     headers_detail: [
