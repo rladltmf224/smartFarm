@@ -253,6 +253,7 @@ export default class Customer extends Vue {
 
   handlerSaveModal(data: object, editedType: boolean) {
     if (!editedType) {
+      console.log('수정입니다.')
       api.customer
         .updateCustomerItem(data)
         .then((response) => {
@@ -263,6 +264,7 @@ export default class Customer extends Vue {
           console.log(error);
         });
     } else {
+      console.log('생성입니다.')
       api.customer
         .createCustomerItem(data)
         .then((response) => {
@@ -299,6 +301,7 @@ export default class Customer extends Vue {
   }
   closeModal() {
     this.customerDialog = false;
+
     this.editedCustomer = Object.assign({}, this.customer);
     this.getCustomer();
     console.log("closeModal");

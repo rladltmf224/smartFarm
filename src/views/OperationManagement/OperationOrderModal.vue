@@ -624,7 +624,7 @@ export default class OperationOrderModal extends Vue {
     if (this.change) {
       joborder.id = this.orderData.id;
       api.operation
-        .getOperationOrderChangePage(joborder)
+        .makeOperationOrderPage(joborder)
         .then((response) => {
           if (response.status == 200) {
             this.$swal({
@@ -664,7 +664,7 @@ export default class OperationOrderModal extends Vue {
         });
     } else {
       api.operation
-        .getOperationOrderPage(joborder)
+        .makeOperationOrderPage(joborder)
         .then((response) => {
           if (response.status == 200) {
             this.$swal({

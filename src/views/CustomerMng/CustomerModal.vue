@@ -8,7 +8,7 @@
         </v-card-title>
         <v-card-text>
           <v-row dense>
-            <v-col cols="2" align-self="center" v-if="!editedIndex">
+            <v-col cols="4" align-self="center" v-if="!editedIndex">
               <span>code</span>
               <v-text-field label="code" v-model.trim="customerData.code" disabled dense solo hide-details="false"
                 class="text-box-style"></v-text-field>
@@ -142,6 +142,7 @@ export default class CustomerModal extends Vue {
     { name: "미사용", value: "미사용" },
   ];
 
+
   @Prop({ required: true }) readonly open: boolean;
   @Prop({
     required: true,
@@ -185,6 +186,13 @@ export default class CustomerModal extends Vue {
   }
 
   clickSaveCustomerInfo() {
+
+    console.log('거래처데이터', typeof (this.customerData))
+    console.log('this.editedType', this.editedType)
+
+
+
+
     let customerInfo: any = this.customerData;
     customerInfo.contactPoint = util.replaceOnlyNum(customerInfo.contactPoint);
     customerInfo.businessRegisterNumber = util.replaceOnlyNum(
