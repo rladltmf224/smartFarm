@@ -100,7 +100,7 @@
                   :headers="Locationheaders" :items="locationList" item-key="code" show-select :expanded.sync="expanded"
                   hide-default-footer no-data-text="데이터가 없습니다.">
                   <template v-slot:item.name="props">
-                    <v-edit-dialog :return-value.sync="props.item.name" large>
+                    <v-edit-dialog cancel-text="취소" save-text="수정" :return-value.sync="props.item.name" large>
                       {{ props.item.name }}
                       <template v-slot:input>
                         <v-text-field v-model="props.item.name" placeholder="* 구역명" single-line counter
@@ -110,7 +110,8 @@
                   </template>
 
                   <template v-slot:item.memo="props">
-                    <v-edit-dialog :return-value.sync="props.item.memo" large v-show="props.item.jobOrderId != null">
+                    <v-edit-dialog cancel-text="취소" save-text="수정" :return-value.sync="props.item.memo" large
+                      v-show="props.item.jobOrderId != null">
                       {{ props.item.memo }}
                       <template v-slot:input>
                         <v-text-field v-model="props.item.memo" placeholder="* 비고" single-line counter

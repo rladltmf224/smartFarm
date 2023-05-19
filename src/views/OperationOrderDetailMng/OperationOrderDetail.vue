@@ -436,7 +436,6 @@ export default class OperationOrder extends Vue {
   getSearch() {
     const { page, itemsPerPage, sortBy, sortDesc } = this.orderListCfg.options;
     this.toatalselected = [];
-
     this.jobordeList = {
       joborder: this.searchJobOrder,
       item: this.itemname,
@@ -573,7 +572,7 @@ export default class OperationOrder extends Vue {
             .then((response) => {
               if (response.status == 200) {
                 this.$swal({
-                  title: "작업을 진행하겠습니다.",
+                  title: "작업을 진행하dd겠습니다.",
                   icon: "success",
                   position: "top",
                   showCancelButton: false,

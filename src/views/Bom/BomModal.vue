@@ -18,16 +18,8 @@
               <v-card v-show="!change" elevation="0">
                 <v-row dense>
                   <v-col cols="4">
-                    <v-text-field
-                      label="품목코드 or 품목명"
-                      @keydown.enter="getProduct"
-                      v-model="searchProduct"
-                      dense
-                      solo
-                      rounded
-                      elevation-0
-                      hide-details="false"
-                    ></v-text-field>
+                    <v-text-field label="품목코드 or 품목명" @keydown.enter="getProduct" v-model="searchProduct" dense solo
+                      rounded elevation-0 hide-details="false"></v-text-field>
                   </v-col>
                   <v-col cols="1" align-self="center">
                     <v-btn color="primary" @click="getProduct"> 조회 </v-btn>
@@ -36,45 +28,21 @@
                 <v-row dense>
                   <v-col cols="12">
                     <v-card elevation="0">
-                      <v-data-table
-                        multi-sort
-                        fixed-header
-                        :options.sync="bomItemListCfg.options"
-                        :server-items-length="bomItemListCfg.totalCount"
-                        :loading="bomItemListCfg.loading"
-                        loading-text="서버에 요청중...."
-                        no-data-text="데이터가 없습니다."
-                        :items-per-page="bomItemListCfg.itemsPerPage"
-                        :page.sync="bomItemListCfg.page"
-                        @page-count="bomItemListCfg.pageCount = $event"
-                        class="elevation-3 overflow-scroll"
-                        height="400"
-                        v-model="bomData.item"
-                        :headers="bomHeader"
-                        :items="bomTable"
-                        item-key="id"
-                        return-object
-                        single-select
-                        dense
-                        hide-default-footer
-                        @click:row="click"
-                        @dblclick:row="dblclickRow"
-                      >
+                      <v-data-table multi-sort fixed-header :options.sync="bomItemListCfg.options"
+                        :server-items-length="bomItemListCfg.totalCount" :loading="bomItemListCfg.loading"
+                        loading-text="서버에 요청중...." no-data-text="데이터가 없습니다." :items-per-page="bomItemListCfg.itemsPerPage"
+                        :page.sync="bomItemListCfg.page" @page-count="bomItemListCfg.pageCount = $event"
+                        class="elevation-3 overflow-scroll" height="400" v-model="bomData.item" :headers="bomHeader"
+                        :items="bomTable" item-key="id" return-object single-select dense hide-default-footer
+                        @click:row="click" @dblclick:row="dblclickRow">
                       </v-data-table>
-                      <v-pagination
-                        v-model="bomItemListCfg.page"
-                        :length="bomItemListCfg.pageCount"
-                      ></v-pagination>
+                      <v-pagination circle v-model="bomItemListCfg.page"
+                        :length="bomItemListCfg.pageCount"></v-pagination>
                     </v-card>
                   </v-col>
                 </v-row>
                 <v-row dense class="pa-1 justify-center">
-                  <v-btn
-                    v-show="!change"
-                    color="primary"
-                    @click="next"
-                    :disabled="bomData.item.length == 0"
-                  >
+                  <v-btn v-show="!change" color="primary" @click="next" :disabled="bomData.item.length == 0">
                     다음
                   </v-btn>
                 </v-row>
@@ -94,81 +62,28 @@
                 </v-row>
                 <v-row dense>
                   <v-col cols="2">
-                    <v-select
-                      label="검색"
-                      dense
-                      v-model="searchItemkeyword"
-                      :items="searchItemType"
-                      item-text="text"
-                      return-object
-                      solo
-                      rounded
-                      elevation-0
-                      hide-details="false"
-                    ></v-select>
+                    <v-select label="검색" dense v-model="searchItemkeyword" :items="searchItemType" item-text="text"
+                      return-object solo rounded elevation-0 hide-details="false"></v-select>
                   </v-col>
                   <v-col cols="2">
-                    <v-autocomplete
-                      v-show="itemKeyword == 'customerName'"
-                      dense
-                      v-model="searchItemCustmerText"
-                      @change="getItem"
-                      :items="custmerlist"
-                      item-text="name"
-                      return-object
-                      solo
-                      rounded
-                      elevation-0
-                      hide-details="false"
-                    ></v-autocomplete>
-                    <v-select
-                      v-show="itemKeyword == 'itemtype'"
-                      dense
-                      v-model="searchTypekeyword"
-                      @change="getItem"
-                      :items="itemTypelist"
-                      return-object
-                      solo
-                      rounded
-                      elevation-0
-                      hide-details="false"
-                    ></v-select>
-                    <v-text-field
-                      dense
-                      v-show="
-                        itemKeyword != 'customerName' &&
-                        itemKeyword != 'itemtype'
-                      "
-                      v-model="searchItemText"
-                      solo
-                      rounded
-                      elevation-0
-                      @keydown.enter="getItem"
-                      hide-details="false"
-                    ></v-text-field>
+                    <v-autocomplete v-show="itemKeyword == 'customerName'" dense v-model="searchItemCustmerText"
+                      @change="getItem" :items="custmerlist" item-text="name" return-object solo rounded elevation-0
+                      hide-details="false"></v-autocomplete>
+                    <v-select v-show="itemKeyword == 'itemtype'" dense v-model="searchTypekeyword" @change="getItem"
+                      :items="itemTypelist" return-object solo rounded elevation-0 hide-details="false"></v-select>
+                    <v-text-field dense v-show="itemKeyword != 'customerName' &&
+                      itemKeyword != 'itemtype'
+                      " v-model="searchItemText" solo rounded elevation-0 @keydown.enter="getItem"
+                      hide-details="false"></v-text-field>
                   </v-col>
                   <v-col cols="2">
                     <v-btn color="primary" @click="getItem"> 조회 </v-btn>
                   </v-col>
                   <v-col cols="12">
-                    <v-data-table
-                      multi-sort
-                      fixed-header
-                      v-model="plusSelected"
-                      show-select
-                      height="185"
-                      class="overflow-scroll elevation-3"
-                      :headers="itemHeader"
-                      :items="itemTable"
-                      item-key="itemPriceId"
-                      return-object
-                      :items-per-page="50"
-                      :footer-props="footer_option"
-                      dense
-                      @click:row="selectedItemData"
-                      @dblclick:row="dblclickRow"
-                      hide-default-footer
-                    >
+                    <v-data-table multi-sort fixed-header v-model="plusSelected" show-select height="185"
+                      class="overflow-scroll elevation-3" :headers="itemHeader" :items="itemTable" item-key="itemPriceId"
+                      return-object :items-per-page="50" :footer-props="footer_option" dense @click:row="selectedItemData"
+                      @dblclick:row="dblclickRow" hide-default-footer>
                     </v-data-table>
                   </v-col>
                 </v-row>
@@ -190,30 +105,14 @@
                     <h4 class="searchbox-title ml-5">2. 원자재 등록</h4>
                   </v-col>
                   <v-col cols="12">
-                    <v-data-table
-                      multi-sort
-                      fixed-header
-                      v-model="bomData.details"
-                      item-key="id"
-                      height="185"
-                      class="overflow-scroll elevation-4"
-                      :headers="itemDetailHeader"
-                      :items="itemDetailTable"
-                      return-object
-                      :items-per-page="50"
-                      :footer-props="footer_option"
-                      show-select
-                      dense
-                      hide-default-footer
-                    >
+                    <v-data-table multi-sort fixed-header v-model="bomData.details" item-key="id" height="185"
+                      class="overflow-scroll elevation-4" :headers="itemDetailHeader" :items="itemDetailTable"
+                      return-object :items-per-page="50" :footer-props="footer_option" show-select dense
+                      hide-default-footer>
                       <template v-slot:item.count="props">
-                        <v-text-field
-                          class="pa-0 countFont"
-                          oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');"
-                          placeholder="* 수량 필수"
-                          v-model="props.item.count"
-                          single-line
-                        >
+                        <v-text-field class="pa-0 countFont"
+                          oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');" placeholder="* 수량 필수"
+                          v-model="props.item.count" single-line>
                           {{ props.item.count }}
                         </v-text-field>
                       </template>
@@ -222,30 +121,15 @@
                 </v-row>
                 <v-row>
                   <v-col class="d-flex justify-center" cols="12">
-                    <v-btn
-                      v-show="!change"
-                      class="align-center"
-                      color="green "
-                      @click="back"
-                    >
+                    <v-btn v-show="!change" class="align-center" color="green " @click="back">
                       이전 단계
                     </v-btn>
-                    <v-btn
-                      v-show="!change"
-                      class="align-center"
-                      color="primary"
-                      :disabled="totalItem.length == 0"
-                      @click="complete"
-                    >
+                    <v-btn v-show="!change" class="align-center mx-4" color="primary" :disabled="totalItem.length == 0"
+                      @click="complete">
                       등 록
                     </v-btn>
-                    <v-btn
-                      v-show="change"
-                      class="align-center"
-                      color="primary"
-                      @click="update"
-                      :disabled="totalItem.length == 0"
-                    >
+                    <v-btn v-show="change" class="align-center" color="primary" @click="update"
+                      :disabled="totalItem.length == 0">
                       수 정
                     </v-btn>
                   </v-col>
