@@ -209,21 +209,9 @@
             </v-col>
             <v-col cols="3" align-self="center">
               <span>상태</span>
-
-
               <v-text-field v-model="detailJobOrderData.status" disabled dense solo hide-details="false"
                 class="text-box-style">
               </v-text-field>
-
-
-
-
-
-
-
-
-
-
             </v-col>
             <v-col cols="3" align-self="center">
               <span>목표수량</span>
@@ -234,13 +222,8 @@
               <span>타입</span>
               <v-text-field v-model="detailJobOrderData.type" disabled dense solo hide-details="false"
                 class="text-box-style"></v-text-field>
-
-
-
-
             </v-col>
           </v-row>
-
         </v-card-text>
         <v-card-actions>
           <v-spacer />
@@ -429,10 +412,22 @@ export default class OperationOrder extends Vue {
       .then((res) => {
         this.detailJobOrderData = res.data.responseData
         let resData = res.data.responeData
-        console.log(this.detailJobOrderData.code)
+
 
         this.detailJobOrderData.createdDate = this.detailJobOrderData.createDate.substr(0, 10)
-        this.detailJobOrderData.createdDate = this.detailJobOrderData.modifiedDate.substr(0, 10)
+        this.detailJobOrderData.modifiedDate = this.detailJobOrderData.modifiedDate.substr(0, 10)
+
+        let statusList: { [key: string]: string } = {
+          'SA02': '진행중',
+          'SA01': '대기',
+          'SA03': '완료'
+        };
+
+        if (statusList.hasOwnProperty(this.detailJobOrderData.status)) {
+          this.detailJobOrderData.status = statusList[this.detailJobOrderData.status];
+        }
+
+
       })
       .catch((err) => {
         console.log(err)
