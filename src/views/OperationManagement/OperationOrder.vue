@@ -103,7 +103,7 @@
             </v-col>
           </v-row>
           <v-card>
-            <v-data-table multi-sort fixed-header height="300" v-model="clickedRow" item-key="jobOrderId"
+            <v-data-table multi-sort fixed-header height="300" v-model="clickedNum" item-key="jobOrderId"
               :headers="headers" :items="totalTable" @click:row="dataDetail" dense single-select
               :options.sync="orderListCfg.options" :server-items-length="orderListCfg.totalCount"
               :loading="orderListCfg.loading" :items-per-page="orderListCfg.itemsPerPage" :page.sync="orderListCfg.page"
@@ -294,7 +294,8 @@ export default class OperationOrder extends Vue {
   statusCode: any = [];
   statusCode_detail: any = [];
   joborder: any = {};
-  clickedRow: any = [];
+  clickedNum: any = [];
+  seletedJobOrderId: any = [];
   @Watch("searchDepartment")
   onSearchDepartmentChange() {
     if (
@@ -311,6 +312,8 @@ export default class OperationOrder extends Vue {
   onOrderListCfgChange() {
     this.getSearch();
   }
+
+
 
   @Watch("orderData.inputCount")
   checkCount() {
@@ -350,6 +353,9 @@ export default class OperationOrder extends Vue {
   get searchCustomerData() {
     return this.customerList;
   }
+
+
+
 
   get searchDepartmentData() {
     return this.departmentList;
@@ -405,7 +411,6 @@ export default class OperationOrder extends Vue {
   getSearch() {
     const { page, itemsPerPage, sortBy, sortDesc } = this.orderListCfg.options;
     this.toatalselected = [];
-
     this.jobordeList = {
       jobOrder: this.searchJobOrder,
       department: "",
@@ -500,18 +505,23 @@ export default class OperationOrder extends Vue {
       });
   }
 
+
+
   dataDetail(item: any, row: any) {
     row.select(true);
     let reqData = {
       jobOrderId: item.jobOrderId,
     };
-    this.clickedRow = row.index; //클릭된 row의 숫자를 변수에 담는다.
-    console.log('클릭된 row의 숫자 ', row.index)
+    this.seletedJobOrderId = reqData
+    console.log('reqDatareqDatareqData', reqData)
     api.operation.getJobOrerDetail(reqData).then((res) => {
       console.log("getJobOrerDetail", res);
       this.datatable = res.data.responseData;
     });
   }
+
+
+
   add() {
     this.orderDialog = true;
     this.editedOrder = {
@@ -557,12 +567,24 @@ export default class OperationOrder extends Vue {
                   timer: 1500,
                 });
                 this.getSearch();
-                this.toatalselected = [];
-                this.datatable = [];
-                /*  console.log('1111111111111111', this.toatalselected)
-                 this.toatalselected = this.clickedRow
-                 console.log('22222222', this.toatalselected) */
 
+                let reqData = {
+                  jobOrderId: item.id,
+                };
+
+                api.operation.getJobOrerDetail(reqData).then((res) => {
+                  console.log("getJobOrerDetail", res);
+                  this.datatable = res.data.responseData;
+                });
+
+
+
+
+
+
+
+
+                this.datatable = [];
               } else {
                 this.$swal({
                   title: "상태변경이 실패되었습니다.",
@@ -598,7 +620,10 @@ export default class OperationOrder extends Vue {
       jobOrderDetailId: item.jobOrderDetailId,
       status: code,
     };
+
+    console.log('111111111111', this.joborder)
   }
+
 
   done() {
     this.joborder["failCount"] = this.orderData.inputCount;
@@ -614,7 +639,6 @@ export default class OperationOrder extends Vue {
       })
       .then((result) => {
         if (result.isConfirmed) {
-          console.log('111111111111', this.datatable)
           api.operation
             .updateOperationOrderPage(this.joborder)
             .then((response) => {
@@ -631,8 +655,13 @@ export default class OperationOrder extends Vue {
                 this.updateStatus = false;
                 this.getSearch();
                 this.toatalselected = [];
-                console.log('22222222222222', this.datatable)
                 /*  this.datatable = []; */
+
+                let reqData = this.seletedJobOrderId;
+                api.operation.getJobOrerDetail(reqData).then((res) => {
+                  this.datatable = res.data.responseData;
+                });
+
               } else {
                 this.$swal({
                   title: "상태변경이 실패되었습니다.",
