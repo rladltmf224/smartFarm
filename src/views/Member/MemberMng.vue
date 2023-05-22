@@ -284,7 +284,7 @@ export default class Member extends Vue {
   user_id_rule: any[] = [
     (v: string) => !!v || "아이디는 필수 입력사항입니다.",
     (v: string) =>
-      /^[a-zA-Z0-9]*$/.test(v) ||
+      /^[a-zA-Z0-9_-]{5,10}$/.test(v) ||
       "아이디는 영문+숫자 5 ~ 10자만 입력 가능합니다.",
     (v: string) =>
       !(v && v.length >= 15) || "아이디는 10자 이상 입력할 수 없습니다.",
