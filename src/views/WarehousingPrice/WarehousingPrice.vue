@@ -473,6 +473,7 @@ export default class WarehousingPrice extends Vue {
       }
     );
 
+
     this.close_item_modal();
   }
 }
