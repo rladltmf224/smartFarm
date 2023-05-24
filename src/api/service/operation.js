@@ -21,7 +21,10 @@ export default {
 
   
   
-  
+  printLabelApi: (params) =>
+    AuthAPI.get("/api/operation/joborder/detail/print", {
+      params: params,
+    }),
   
   
   getDepartmentDataPage: () =>
