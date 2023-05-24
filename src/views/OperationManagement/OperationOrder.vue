@@ -238,7 +238,7 @@
       <v-card>
         <v-card-title>라벨 프린트</v-card-title>
         <v-card-text>
-
+          <LoadingSpinner v-if="loadingSpinner"></LoadingSpinner>
           <span>파종날짜</span>
           <v-menu dense ref="print_sowingDate" v-model="print_menu_start_date" :close-on-content-click="false"
             :return-value.sync="startDate" transition="scale-transition" offset-y min-width="auto">
@@ -256,14 +256,10 @@
               </v-btn>
             </v-date-picker>
           </v-menu>
-
-
           <span>프린트할 수량</span>
           <v-text-field hide-details="true" type="number" dense solo :max="999" class="text-box-style"
             placeholder="최대 999개" v-model="printData.printNum">
           </v-text-field>
-
-
           <v-spacer></v-spacer>
         </v-card-text>
         <v-card-actions>
@@ -281,12 +277,13 @@ import * as api from "@/api";
 import cfg from "./config";
 import { gridCfg } from "@/util/config/";
 import OrderModal from "./OperationOrderModal.vue";
+import LoadingSpinner from "@/views/SmartFarm/Details/LoadingSpinner.vue";
 import { Component, Vue, Watch } from "vue-property-decorator";
 import _ from "lodash";
 
 @Component({
   components: {
-    OrderModal,
+    OrderModal, LoadingSpinner
   },
 })
 export default class OperationOrder extends Vue {
@@ -345,7 +342,7 @@ export default class OperationOrder extends Vue {
   print_menu_start_date: boolean = false;
   print_menu: boolean = false;
   print_sowingDate: any = '';
-
+  loadingSpinner: boolean = false;
   @Watch("searchDepartment")
   onSearchDepartmentChange() {
     if (
@@ -897,17 +894,15 @@ export default class OperationOrder extends Vue {
 
   }
   print() {
-    let test = this.startDate;
-    console.log('원본', test)
-    let result = test.replace(/-/g, '');  // '-' 문자를 제거
-    console.log(result);  // 출력: '20221212'
+    this.loadingSpinner = true;
     let param: any = {
-      sowingDate: result,
+      sowingDate: this.startDate.replace(/-/g, ''),
       joborderdetailId: this.printData.jobOrderDetailId,
     }
     api.operation
       .printLabelApi(param)
       .then((response: any) => {
+
         this.$swal({
           title: "출력을 요청했습니다.",
           icon: "success",
@@ -917,10 +912,19 @@ export default class OperationOrder extends Vue {
           toast: true,
           timer: 1500,
         });
-
       })
       .catch((error: any) => {
         console.log(error);
+        this.$swal({
+          title: "출력이 실패되었습니다.다시 시도해주세요.",
+          icon: "error",
+          position: "top",
+          showCancelButton: false,
+          showConfirmButton: false,
+          toast: true,
+          timer: 1500,
+        });
+        this.loadingSpinner = true;
       })
       .finally(() => {
         this.closePrintModal();
@@ -931,6 +935,7 @@ export default class OperationOrder extends Vue {
     this.printOpen = false;
     this.startDate = '';
     this.printData = {};
+
   }
 
   deleteData(item: any) {
