@@ -152,7 +152,7 @@
                 </v-btn>
               </template>
               <template v-slot:item.print="{ item }">
-                <v-icon small @click="printLabel(item)">
+                <v-icon small @click="openPrintModal(item)">
                   mdi-printer
                 </v-icon>
               </template>
@@ -233,6 +233,11 @@
     </v-dialog>
 
 
+
+
+
+
+
     <!-- 프린트수량입력 -->
     <v-dialog v-model="printOpen" width="700px" persistent>
       <v-card>
@@ -241,12 +246,12 @@
           <LoadingSpinner v-if="loadingSpinner"></LoadingSpinner>
           <span>파종날짜</span>
           <v-menu dense ref="print_sowingDate" v-model="print_menu_start_date" :close-on-content-click="false"
-            :return-value.sync="startDate" transition="scale-transition" offset-y min-width="auto">
+            :return-value.sync="print_sowingDate" transition="scale-transition" offset-y min-width="auto">
             <template v-slot:activator="{ on, attrs }">
               <v-text-field class="text-box-style" hide-details="true" dense v-model="print_sowingDate" solo rounded
-                label="시작일" readonly v-bind="attrs" v-on="on"></v-text-field>
+                readonly v-bind="attrs" v-on="on"></v-text-field>
             </template>
-            <v-date-picker v-model="print_sowingDate" no-title scrollable locale="ko-KR" :max="endDate">
+            <v-date-picker v-model="print_sowingDate" no-title scrollable locale="ko-KR">
               <v-spacer></v-spacer>
               <v-btn text color="primary" @click="print_menu = false">
                 취소
@@ -257,7 +262,7 @@
             </v-date-picker>
           </v-menu>
           <span>프린트할 수량</span>
-          <v-text-field hide-details="true" type="number" dense solo :max="999" class="text-box-style"
+          <v-text-field min="0" hide-details="true" type="number" dense solo max="999" class="text-box-style"
             placeholder="최대 999개" v-model="printData.printNum">
           </v-text-field>
           <v-spacer></v-spacer>
@@ -337,7 +342,7 @@ export default class OperationOrder extends Vue {
   seletedJobOrderId: any = [];
   printOpen: boolean = false;
   printData: any = {
-    printNum: 0
+    printNum: 1
   }
   print_menu_start_date: boolean = false;
   print_menu: boolean = false;
@@ -440,7 +445,18 @@ export default class OperationOrder extends Vue {
     this.getSearch();
     this.getDataList();
     this.getDepartmentList();
+    this.setNowDate();
   }
+
+  setNowDate() { //파종날짜를 현재로 디폴트하기
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    this.print_sowingDate = `${year}-${month}-${day}`;
+  }
+
+
 
   s_date_search(v: any) {
     this.startDate = v;
@@ -885,57 +901,61 @@ export default class OperationOrder extends Vue {
     };
   }
 
-  printLabel(item: any) {
-    console.log('프린트데이타', item.jobOrderDetailId)
+  openPrintModal(item: any) {
     this.printOpen = true;
-
     this.printData.jobOrderDetailId = item.jobOrderDetailId
-
-
   }
   print() {
-    this.loadingSpinner = true;
-    let param: any = {
-      sowingDate: this.startDate.replace(/-/g, ''),
-      joborderdetailId: this.printData.jobOrderDetailId,
-    }
-    api.operation
-      .printLabelApi(param)
-      .then((response: any) => {
+    if (this.print_sowingDate == '') {
+      alert('날짜가없다.')
+    } else if (this.printData.printNum == '') {
+      alert('수량을선택해라')
+    } else {
+      this.loadingSpinner = true;
+      let param: any = {
+        sowingDate: this.print_sowingDate.replace(/-/g, ''),
+        joborderdetailId: this.printData.jobOrderDetailId,
+      }
+      api.operation
+        .printLabelApi(param)
+        .then((response: any) => {
+          this.$swal({
+            title: "출력을 요청했습니다.",
+            icon: "success",
+            position: "top",
+            showCancelButton: false,
+            showConfirmButton: false,
+            toast: true,
+            timer: 1500,
+          });
+        })
+        .catch((error: any) => {
+          console.log(error);
+          this.$swal({
+            title: "출력이 실패되었습니다.다시 시도해주세요.",
+            icon: "error",
+            position: "top",
+            showCancelButton: false,
+            showConfirmButton: false,
+            toast: true,
+            timer: 1500,
+          });
 
-        this.$swal({
-          title: "출력을 요청했습니다.",
-          icon: "success",
-          position: "top",
-          showCancelButton: false,
-          showConfirmButton: false,
-          toast: true,
-          timer: 1500,
+        })
+        .finally(() => {
+          this.closePrintModal();
         });
-      })
-      .catch((error: any) => {
-        console.log(error);
-        this.$swal({
-          title: "출력이 실패되었습니다.다시 시도해주세요.",
-          icon: "error",
-          position: "top",
-          showCancelButton: false,
-          showConfirmButton: false,
-          toast: true,
-          timer: 1500,
-        });
-        this.loadingSpinner = true;
-      })
-      .finally(() => {
-        this.closePrintModal();
-      });
+    }
+
+
+
+
   }
   closePrintModal() {
-    console.log('모달을닫겠습니다')
     this.printOpen = false;
     this.startDate = '';
     this.printData = {};
-
+    this.loadingSpinner = false;
   }
 
   deleteData(item: any) {
