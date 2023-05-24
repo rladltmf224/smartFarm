@@ -239,7 +239,7 @@
 
 
     <!-- 프린트수량입력 -->
-    <v-dialog v-model="printOpen" width="700px" persistent>
+    <v-dialog v-model="printOpen" width="400px" persistent>
       <v-card>
         <v-card-title>라벨 프린트</v-card-title>
         <v-card-text>
