@@ -242,8 +242,10 @@
     <v-dialog v-model="printOpen" width="400px" persistent>
       <v-card>
         <v-card-title>라벨 프린트</v-card-title>
-        <v-card-text>
-          <LoadingSpinner v-if="loadingSpinner"></LoadingSpinner>
+        <v-card-text v-if="loadingSpinner">
+          <LoadingSpinner></LoadingSpinner>
+        </v-card-text>
+        <v-card-text v-else>
           <span>파종날짜</span>
           <v-menu dense ref="print_sowingDate" v-model="print_menu_start_date" :close-on-content-click="false"
             :return-value.sync="print_sowingDate" transition="scale-transition" offset-y min-width="auto">
@@ -267,6 +269,8 @@
           </v-text-field>
           <v-spacer></v-spacer>
         </v-card-text>
+
+
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="success" @click="print()"> 출력 </v-btn>
@@ -915,6 +919,7 @@ export default class OperationOrder extends Vue {
       let param: any = {
         sowingDate: this.print_sowingDate.replace(/-/g, ''),
         joborderdetailId: this.printData.jobOrderDetailId,
+        printCount: this.printData.printNum
       }
       api.operation
         .printLabelApi(param)
