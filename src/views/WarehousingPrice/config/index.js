@@ -11,7 +11,7 @@ export default {
       //등록된 품목
       { text: "품목명", value: "itemName" },
       { text: "타입", value: "itemType" },
-      { text: "버전", value: "itemVersion" },
+      // { text: "버전", value: "itemVersion" },
       { text: "창고", value: "storageName" },
 
       { text: "매입가", value: "unitPrice" },
@@ -25,7 +25,7 @@ export default {
       { text: "품목코드", value: "itemCode" },
 
       { text: "품목타입", value: "itemType" },
-      { text: "버전", value: "itemVersion" },
+      // { text: "버전", value: "itemVersion" },
 
       { text: "규격", value: "standard" },
       { text: "단위", value: "unit" },

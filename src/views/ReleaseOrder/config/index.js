@@ -110,7 +110,8 @@ export default {
       { name: "생산 완료", value: "생산 완료" },
       { name: "작업 종료", value: "작업 종료" },
     ],
-    way_list: [{ name: "출고요청목록" }, { name: "원제품목록" }],
+    //way_list: [{ name: "출고요청목록" }, { name: "원제품목록" }],
+    way_list: [{ name: "원제품목록" }],
     customer: {
       companyId: "",
       customerId: "",

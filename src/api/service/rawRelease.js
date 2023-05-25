@@ -33,11 +33,11 @@ export default {
       headers: { "Content-Type": "application/json" },
       params: params,
     }),
-  getReleaseOrderReleaseData: (params) =>
-    AuthAPI.get("/api/release/detail", {
-      headers: { "Content-Type": "application/json" },
-      params: params,
-    }),
+  // getReleaseOrderReleaseData: (params) =>
+  //   AuthAPI.get("/api/release/detail", {
+  //     headers: { "Content-Type": "application/json" },
+  //     params: params,
+  //   }),
   getReleaseOrderRawDetailData: (params) =>
     AuthAPI.get("/api/release/childitem", {
       headers: { "Content-Type": "application/json" },

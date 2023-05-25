@@ -272,24 +272,6 @@
         </v-col>
         <v-col cols="12">
           <v-tabs-items v-model="tabs">
-            <v-tab-item>
-              <v-card>
-                <v-data-table
-                  height="200"
-                  :headers="headers_release"
-                  :items="release_list"
-                  item-key="barcode"
-                  class="elevation-4"
-                  fixed-header
-                  multi-sort
-                  single-select
-                  dense
-                  hide-default-footer
-                  no-data-text="데이터가 없습니다."
-                >
-                </v-data-table>
-              </v-card>
-            </v-tab-item>
             <v-tab-item
               ><v-card>
                 <v-data-table
@@ -401,6 +383,12 @@ export default class ReleaseOrder extends Vue {
     this.getCustomer();
   }
 
+  @Watch("raw_list")
+  check() {
+    console.log("값이들어왔고");
+    return this.raw_list;
+  }
+
   mounted() {
     this.onResize();
   }
@@ -442,6 +430,7 @@ export default class ReleaseOrder extends Vue {
     let reqData_raw = {
       jobOrderId: data.jobOrderId,
     };
+    /* 출고요청 목록
     api.rawRelease
       .getReleaseOrderReleaseData(reqData_raw)
       .then((response) => {
@@ -451,11 +440,13 @@ export default class ReleaseOrder extends Vue {
       .catch((error) => {
         console.log(error);
       });
+    */
     api.rawRelease
       .getReleaseOrderRawData(reqData_raw)
       .then((response) => {
         console.log("getReleaseOrderRawData", response);
         this.raw_list = response.data.responseData;
+        console.log("----", this.raw_list);
       })
       .catch((error) => {
         console.log(error);
