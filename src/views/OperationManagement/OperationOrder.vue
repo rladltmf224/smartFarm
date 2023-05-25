@@ -364,6 +364,8 @@ export default class OperationOrder extends Vue {
     }
   }
 
+
+
   @Watch("orderListCfg.options", { deep: true })
   onOrderListCfgChange() {
     this.getSearch();
@@ -374,7 +376,6 @@ export default class OperationOrder extends Vue {
   @Watch("orderData.inputCount")
   checkCount() {
     let stringNum = this.orderData.inputCount.toString();
-
     if (this.orderData.inputCount > this.exCount) {
       this.$swal({
         title: "투입수량보다 클 순 없습니다.",
@@ -951,16 +952,14 @@ export default class OperationOrder extends Vue {
           this.closePrintModal();
         });
     }
-
-
-
-
   }
   closePrintModal() {
     this.printOpen = false;
-    this.startDate = '';
-    this.printData = {};
+    this.printData.printNum = 1;
     this.loadingSpinner = false;
+
+
+
   }
 
   deleteData(item: any) {
