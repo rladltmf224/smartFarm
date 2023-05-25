@@ -2,7 +2,7 @@ export default {
   header: {
     itemList: [
       { text: "code", value: "code" },
-      { text: "버전", value: "version" },
+      // { text: "버전", value: "version" },
       { text: "품목명", value: "name" },
       { text: "규격", value: "standard" },
       { text: "타입", value: "type" },
