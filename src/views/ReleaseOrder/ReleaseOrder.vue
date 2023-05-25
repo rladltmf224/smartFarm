@@ -383,12 +383,6 @@ export default class ReleaseOrder extends Vue {
     this.getCustomer();
   }
 
-  @Watch("raw_list")
-  check() {
-    console.log("값이들어왔고");
-    return this.raw_list;
-  }
-
   mounted() {
     this.onResize();
   }
@@ -446,7 +440,6 @@ export default class ReleaseOrder extends Vue {
       .then((response) => {
         console.log("getReleaseOrderRawData", response);
         this.raw_list = response.data.responseData;
-        console.log("----", this.raw_list);
       })
       .catch((error) => {
         console.log(error);
