@@ -650,8 +650,9 @@ export default class OperationOrder extends Vue {
                 this.toatalselected = [];
                 this.datatable = [];
               } else {
+                console.log(response)
                 this.$swal({
-                  title: "상태변경이 실패되었습니다.",
+                  title: response.data.message,
                   icon: "error",
                   position: "top",
                   showCancelButton: false,
