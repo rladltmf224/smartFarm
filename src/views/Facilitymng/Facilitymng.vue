@@ -554,7 +554,6 @@ export default class Facilitymng extends Vue {
     this.facilityList.forEach((value) => {
       if (value["facilityId"] == row.facilityId) {
         this.locationList = value["details"];
-        console.log(this.locationList);
       }
     });
 
