@@ -96,9 +96,6 @@
             </v-col>
             <v-spacer></v-spacer>
             <v-col class="text-right" cols="2">
-              <!-- <v-btn small class="mr-1" color="primary" @click="totalDelete">
-                선 택 삭 제
-              </v-btn> -->
               <v-btn color="primary" @click="add"> 작업지시서 등록 </v-btn>
             </v-col>
           </v-row>
@@ -117,7 +114,6 @@
               <template v-slot:[`item.deadline`]="{ item }">
                 {{ item.deadline }}
               </template>
-
               <template v-slot:[`item.changeOrder`]="{ item }">
                 <v-btn v-show="item.status !== 'JO_DONE'" small fluid color="info" class="mr-1 editBtn"
                   :value="getStatusCodeNext(item.status, statusCode).code">
@@ -155,7 +151,11 @@
                   {{ getStatusCode(item.status, statusCode_detail) }}
                 </v-btn>
               </template>
-
+              <template v-slot:item.print="{ item }">
+                <v-icon small @click="openPrintModal(item)">
+                  mdi-printer
+                </v-icon>
+              </template>
               <template v-slot:[`item.work`]="{ item }">
                 <v-btn v-show="item.status !== 'SB08'" text small fluid color="primary" class="mr-1 editBtn" :value="getStatusCodeNext(item.status, statusCode_detail).code
                   " @click="
@@ -231,6 +231,53 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+
+
+
+
+
+
+    <!-- 프린트수량입력 -->
+    <v-dialog v-model="printOpen" width="400px" persistent>
+      <v-card>
+        <v-card-title>라벨 프린트</v-card-title>
+        <v-card-text v-if="loadingSpinner">
+          <LoadingSpinner></LoadingSpinner>
+        </v-card-text>
+        <v-card-text v-else>
+          <span>파종날짜</span>
+          <v-menu dense ref="print_sowingDate" v-model="print_menu_start_date" :close-on-content-click="false"
+            :return-value.sync="print_sowingDate" transition="scale-transition" offset-y min-width="auto">
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field class="text-box-style" hide-details="true" dense v-model="print_sowingDate" solo rounded
+                readonly v-bind="attrs" v-on="on"></v-text-field>
+            </template>
+            <v-date-picker v-model="print_sowingDate" no-title scrollable locale="ko-KR">
+              <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="print_menu = false">
+                취소
+              </v-btn>
+              <v-btn text color="primary" @click="print_s_date_search(print_sowingDate)">
+                확인
+              </v-btn>
+            </v-date-picker>
+          </v-menu>
+          <span>프린트할 수량</span>
+          <v-text-field min="0" hide-details="true" type="number" dense solo max="999" class="text-box-style"
+            placeholder="최대 999개" v-model="printData.printNum">
+          </v-text-field>
+          <v-spacer></v-spacer>
+        </v-card-text>
+
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="success" @click="print()"> 출력 </v-btn>
+          <v-btn color="error" @click="closePrintModal()"> 닫기 </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -239,12 +286,13 @@ import * as api from "@/api";
 import cfg from "./config";
 import { gridCfg } from "@/util/config/";
 import OrderModal from "./OperationOrderModal.vue";
+import LoadingSpinner from "@/views/SmartFarm/Details/LoadingSpinner.vue";
 import { Component, Vue, Watch } from "vue-property-decorator";
 import _ from "lodash";
 
 @Component({
   components: {
-    OrderModal,
+    OrderModal, LoadingSpinner
   },
 })
 export default class OperationOrder extends Vue {
@@ -296,6 +344,14 @@ export default class OperationOrder extends Vue {
   joborder: any = {};
   clickedNum: any = [];
   seletedJobOrderId: any = [];
+  printOpen: boolean = false;
+  printData: any = {
+    printNum: 1
+  }
+  print_menu_start_date: boolean = false;
+  print_menu: boolean = false;
+  print_sowingDate: any = '';
+  loadingSpinner: boolean = false;
   @Watch("searchDepartment")
   onSearchDepartmentChange() {
     if (
@@ -308,6 +364,8 @@ export default class OperationOrder extends Vue {
     }
   }
 
+
+
   @Watch("orderListCfg.options", { deep: true })
   onOrderListCfgChange() {
     this.getSearch();
@@ -318,7 +376,6 @@ export default class OperationOrder extends Vue {
   @Watch("orderData.inputCount")
   checkCount() {
     let stringNum = this.orderData.inputCount.toString();
-
     if (this.orderData.inputCount > this.exCount) {
       this.$swal({
         title: "투입수량보다 클 순 없습니다.",
@@ -393,12 +450,29 @@ export default class OperationOrder extends Vue {
     this.getSearch();
     this.getDataList();
     this.getDepartmentList();
+    this.setNowDate();
   }
+
+  setNowDate() { //파종날짜를 현재로 디폴트하기
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    this.print_sowingDate = `${year}-${month}-${day}`;
+  }
+
+
 
   s_date_search(v: any) {
     this.startDate = v;
     this.menu_start_date = false;
     let startEL: any = this.$refs.startDate;
+    startEL.save(v);
+  }
+  print_s_date_search(v: any) {
+    this.print_sowingDate = v;
+    this.print_menu_start_date = false;
+    let startEL: any = this.$refs.print_sowingDate;
     startEL.save(v);
   }
   e_date_search(v: any) {
@@ -407,7 +481,6 @@ export default class OperationOrder extends Vue {
     let endEL: any = this.$refs.endDate;
     endEL.save(v);
   }
-
   getSearch() {
     const { page, itemsPerPage, sortBy, sortDesc } = this.orderListCfg.options;
     this.toatalselected = [];
@@ -832,6 +905,63 @@ export default class OperationOrder extends Vue {
       chargeName: item.chargeName,
     };
   }
+
+  openPrintModal(item: any) {
+    this.printOpen = true;
+    this.printData.jobOrderDetailId = item.jobOrderDetailId
+  }
+  print() {
+    if (this.print_sowingDate == '') {
+      alert('날짜가없다.')
+    } else if (this.printData.printNum == '') {
+      alert('수량을선택해라')
+    } else {
+      this.loadingSpinner = true;
+      let param: any = {
+        sowingDate: this.print_sowingDate.replace(/-/g, ''),
+        joborderdetailId: this.printData.jobOrderDetailId,
+        printCount: this.printData.printNum
+      }
+      api.operation
+        .printLabelApi(param)
+        .then((response: any) => {
+          this.$swal({
+            title: "출력을 요청했습니다.",
+            icon: "success",
+            position: "top",
+            showCancelButton: false,
+            showConfirmButton: false,
+            toast: true,
+            timer: 1500,
+          });
+        })
+        .catch((error: any) => {
+          console.log(error);
+          this.$swal({
+            title: "출력이 실패되었습니다.다시 시도해주세요.",
+            icon: "error",
+            position: "top",
+            showCancelButton: false,
+            showConfirmButton: false,
+            toast: true,
+            timer: 1500,
+          });
+
+        })
+        .finally(() => {
+          this.closePrintModal();
+        });
+    }
+  }
+  closePrintModal() {
+    this.printOpen = false;
+    this.printData.printNum = 1;
+    this.loadingSpinner = false;
+
+
+
+  }
+
   deleteData(item: any) {
     let joborder: any = {
       id: item.id,

@@ -26,6 +26,7 @@ export default {
       { text: "수정자", value: "modifiedId" },
       { text: "수정일자", value: "modifiedDate" },
       { text: "진행", value: "work" },
+      { text: "라벨 프린트", value: "print" },
     ],
     itemheaders: [
       { text: "타입", value: "type" },
