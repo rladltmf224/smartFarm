@@ -96,14 +96,16 @@
             :key="i"
             :value="item"
             :color="toggle.length == 0 && i == 0 ? 'success' : ''"
+            :disabled="item.dateDiff == null && item.customId != ''"
             active-color="success"
             rounded
             class="mb-2"
-            >{{ item.customerName }}
+            >{{ item.customName }}
           </v-btn>
-          <!--             :style="[toggle.length == 0 ? testGroup : null]"
-   
-            @click="getSchedule(item.customerId)"-->
+          <!--        
+           :disabled="item.dateDiff == null"
+            :style="[toggle.length == 0 ? testGroup : null]"
+          @click="getSchedule(item.customerId)"-->
         </v-btn-toggle>
       </div>
       <div class="calendarBox">
@@ -544,22 +546,45 @@ export default class Schedule extends Vue {
 
   @Watch("toggle")
   changeBtn() {
-    this.events = [];
-    let tempTotal = JSON.parse(JSON.stringify(this.totalEvents));
+    console.log("toggle도는 횟수");
+    //let tempTotal = JSON.parse(JSON.stringify(this.totalEvents));
     let tempId: any = [];
 
     this.toggle.forEach((data: any) => {
-      tempId.push(data.customerId);
+      tempId.push(data.customId);
     });
     var total = tempId.find((e: any) => e === "");
 
-    if (this.toggle.length == 0) {
-      this.getSchedule("");
+    if (total == undefined) {
+      if (this.toggle.length != 0 && tempId.length != 0) {
+        this.getSchedule(tempId);
+      } else {
+        this.getSchedule([]);
+      }
+    } else {
+      this.getSchedule([]);
+    }
+    tempId = [];
+  }
+
+  /*
+    if (
+      this.toggle.length == 0 ||
+      (this.toggle.length == 1 && this.toggle[0].customId == "")
+    ) {
+      console.log("2");
+      this.getSchedule([]);
+      this.getFilter();
     } else {
       if (total != undefined) {
         this.toggle = [];
         tempId = [];
-      } else {
+      }
+      console.log("3");
+      this.getSchedule(tempId);
+      */
+  /*
+      else {
         tempTotal.forEach((value: any) => {
           tempId.forEach((value_detail: any) => {
             if (value.customerId == value_detail) {
@@ -570,8 +595,7 @@ export default class Schedule extends Vue {
           });
         });
       }
-    }
-  }
+      */
 
   @Watch("selectedView")
   changeOptions(newView: any) {
@@ -598,8 +622,9 @@ export default class Schedule extends Vue {
 
   mounted() {
     this.setDateRangeText();
-    this.getCustomer();
-    this.getSchedule("");
+    //this.getCustomer();
+    this.getFilter();
+    this.getSchedule([]);
   }
 
   resetZoom() {
@@ -647,7 +672,7 @@ export default class Schedule extends Vue {
   async getTotalSchedule() {
     this.timelineList = [];
     let searchItem = {
-      customerId: "",
+      customerId: [],
     };
     let yArea = new Set();
     let groupList = new Set();
@@ -776,7 +801,21 @@ export default class Schedule extends Vue {
     console.groupEnd();
   }
 
+  getFilter() {
+    //let resetArray: any = [];
+    this.filterList = [];
+    this.filterList = [{ customName: "전체 일정", customId: "" }];
+    console.log("getFilter()", this.filterList);
+    api.schedule.getFilterCustomer().then((response) => {
+      response.data.responseData.forEach((data: any) => {
+        this.filterList.push(data);
+      });
+    });
+
+    console.log("최종 버전", this.filterList);
+  }
   //전체 거래List
+  /*
   getCustomer() {
     api.schedule.getCustomerInfo().then((response) => {
       this.customerList = response.data.responseData;
@@ -786,19 +825,16 @@ export default class Schedule extends Vue {
       console.groupEnd();
     });
   }
+  */
 
   //전체 일정List
   getSchedule(item: any) {
-    //this.timelineTableList = [];
     this.totalEvents = [];
     this.events = [];
-    this.filterList = [];
-    this.filterList = [{ customerName: "전체 일정", customerId: "" }];
-
     let searchItem = {
-      customerId: "",
+      customList: [],
     };
-    searchItem.customerId = item;
+    searchItem.customList = item;
 
     api.schedule.getScheduleInfo(searchItem).then((response) => {
       this.totalEvents = response.data.responseData;
@@ -820,6 +856,7 @@ export default class Schedule extends Vue {
         });
       });
 
+      /*
       this.totalEvents.forEach((value: any) => {
         if (
           value.details.length != 0 &&
@@ -834,11 +871,14 @@ export default class Schedule extends Vue {
           });
         }
       });
+      */
 
       console.group("getSchedule");
       console.log("getSchedule", this.events);
       console.groupEnd();
     });
+
+    console.log("-- 최종 events--", this.events);
   }
 
   //일정표에 표시되는 년월
@@ -904,6 +944,7 @@ export default class Schedule extends Vue {
 
   //update 일정
   onClickSchedule(event: any) {
+    console.log("1");
     //상세일정 일정옆에 띄우기
     this.x = event.nativeEvent.pageX;
     this.y = event.nativeEvent.pageY;
@@ -944,7 +985,7 @@ export default class Schedule extends Vue {
     this.selectedTabs = item;
 
     if (this.selectedTabs == "달력") {
-      this.getSchedule("");
+      this.getSchedule([]);
     } else {
       this.getTotalSchedule();
     }
@@ -1032,14 +1073,18 @@ export default class Schedule extends Vue {
 
   closeModal_schedule() {
     this.chooseDialog = false;
-    console.log(this.totalEvents);
-    this.getSchedule("");
+    this.getSchedule([]);
+    this.getFilter();
+    //this.getSchedule([]);
     //this.getTotalSchedule();
   }
   closeMenu_schedule() {
+    console.log("1");
     this.detailMenu = false;
-    console.log(this.totalEvents);
-    this.getSchedule("");
+    console.log("2");
+    this.getSchedule([]);
+    console.log("3");
+    this.getFilter();
     //this.getTotalSchedule();
   }
 }

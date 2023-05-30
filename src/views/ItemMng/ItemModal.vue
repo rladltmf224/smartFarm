@@ -11,46 +11,114 @@
           <v-row dense>
             <v-col cols="2" align-self="center" v-if="!editedType">
               <span>code</span>
-              <v-text-field v-model="itemData.code" disabled solo hide-details="false"
-                class="text-box-style"></v-text-field>
+              <v-text-field
+                v-model="itemData.code"
+                disabled
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-text-field>
             </v-col>
 
             <v-col cols="3" align-self="center">
-
               <span>품목명</span>
-              <v-text-field v-model="itemData.name" solo hide-details="false" class="text-box-style"></v-text-field>
+              <v-text-field
+                v-model="itemData.name"
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-text-field>
             </v-col>
           </v-row>
           <v-row dense>
             <v-col cols="3" align-self="center">
               <span>규격</span>
-              <v-text-field v-model="itemData.standard" solo hide-details="false" class="text-box-style"></v-text-field>
+              <v-text-field
+                v-model="itemData.standard"
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-text-field>
             </v-col>
             <v-col cols="3" align-self="center">
               <span>unit</span>
-              <v-text-field v-model="itemData.unit" solo hide-details="false" class="text-box-style"></v-text-field>
+              <v-text-field
+                v-model="itemData.unit"
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-text-field>
             </v-col>
             <v-col cols="2" align-self="center">
               <span>타입</span>
-              <v-select :items="items_type" v-model="itemData.type" item-text="name" item-value="name" solo
-                hide-details="false" class="text-box-style"></v-select>
+              <v-select
+                :items="items_type"
+                v-model="itemData.type"
+                item-text="name"
+                item-value="name"
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-select>
             </v-col>
-            <v-col v-if="itemData.type == '완제품'" cols="2" align-self="center">
+            <v-col
+              v-if="itemData.type == '원자재'"
+              cols="2"
+              align-self="center"
+            >
+              <span>원자재 타입</span>
+              <v-select
+                :items="item_type"
+                v-model="itemData.itemType"
+                item-text="name"
+                item-value="name"
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-select>
+            </v-col>
+            <v-col
+              v-if="itemData.type == '완제품'"
+              cols="2"
+              align-self="center"
+            >
               <span>완제품 타입</span>
-              <v-select :items="product_type" v-model="itemData.productionType" item-text="name" item-value="name" solo
-                hide-details="false" class="text-box-style"></v-select>
+              <v-select
+                :items="product_type"
+                v-model="itemData.productionType"
+                item-text="name"
+                item-value="name"
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-select>
             </v-col>
           </v-row>
           <v-row dense>
             <v-col cols="6" align-self="center">
               <span>지정창고</span>
-              <v-select :items="storageData" v-model="itemData.storageId" item-text="name" item-value="id"
-                @change="getLocation" solo hide-details="false" class="text-box-style"></v-select>
+              <v-select
+                :items="storageData"
+                v-model="itemData.storageId"
+                item-text="name"
+                item-value="id"
+                @change="getLocation"
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-select>
             </v-col>
             <v-col cols="6" align-self="center">
               <span>지정구역</span>
-              <v-select :items="locationData" v-model="itemData.storageLocationId" item-text="area"
-                item-value="storageLocationId" solo hide-details="false" class="text-box-style"></v-select>
+              <v-select
+                :items="locationData"
+                v-model="itemData.storageLocationId"
+                item-text="area"
+                item-value="storageLocationId"
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-select>
             </v-col>
           </v-row>
         </v-card-text>
@@ -76,6 +144,7 @@ import cfg from "./config/index";
 export default class ItemModal extends Vue {
   items_type: object[] = [];
   product_type: object[] = [];
+  item_type: object[] = [];
   storageID: number = 0;
   locationID: number = 0;
 
@@ -100,6 +169,7 @@ export default class ItemModal extends Vue {
 
   created() {
     this.items_type = cfg.data.items_type;
+    this.item_type = cfg.data.item_type_list;
     this.product_type = cfg.data.product_type_list;
   }
 
@@ -168,7 +238,7 @@ export default class ItemModal extends Vue {
       return this.$swal("경고", "타입을 선택해주세요", "error");
     }
 
-    if (customerInfo.type == '완제품' && customerInfo.productionType == null) {
+    if (customerInfo.type == "완제품" && customerInfo.productionType == null) {
       return this.$swal("경고", "완제품타입을  선택해주세요.", "error");
     }
 
@@ -180,17 +250,11 @@ export default class ItemModal extends Vue {
       return this.$swal("경고", "구역을 선택해주세요.", "error");
     }
 
-
-
-
     this.$emit("save-data", customerInfo, this.editedIndex);
   }
 
-  checkDup() { //품목명 중복체크
-
-
+  checkDup() {
+    //품목명 중복체크
   }
-
-
 }
 </script>

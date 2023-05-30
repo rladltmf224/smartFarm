@@ -9,6 +9,10 @@ export default {
     AuthAPI.get("/api/workschedule/customer", {
       headers: { "Content-Type": "application/json" },
     }),
+  getFilterCustomer: () =>
+    AuthAPI.get("/api/workschedule/customerlist", {
+      headers: { "Content-Type": "application/json" },
+    }),
   getScheduleInfo: (params) =>
     AuthAPI.post("/api/workschedule/search", JSON.stringify(params), {
       headers: { "Content-Type": "application/json" },

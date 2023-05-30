@@ -42,6 +42,12 @@ export default {
       { name: "실생묘", value: "실생묘" },
       { name: "접목묘", value: "접목묘" },
     ],
+    item_type_list: [
+      { name: "상토", value: "상토" },
+      { name: "트레이", value: "트레이" },
+      { name: "양액", value: "양액" },
+      { name: "기타", value: "기타" },
+    ],
     items_type: [{ name: "원자재" }, { name: "완제품" }, { name: "반제품" }],
   },
 };
