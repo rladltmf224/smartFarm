@@ -210,6 +210,11 @@ const routes = [
         component: () =>
           import("@/views/OperationOrderDetailMng/OperationOrderDetail.vue"),
       },
+      {
+        path: "ManureMng",
+        name: "ManureMng",
+        component: () => import("@/views/SmartFarm/WaterpHEC/ManureMng"),
+      },
     ],
   },
 ];

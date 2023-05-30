@@ -4,8 +4,8 @@
     <v-toolbar-title>
       <div class="AppBar">
         <div>
-          <slot>{{ pageTitleName
-          }}
+          <slot
+            >{{ pageTitleName }}
             <span v-if="pageTitleName"> ></span>
             {{ pageName }}
           </slot>
@@ -14,9 +14,20 @@
     </v-toolbar-title>
     <v-spacer></v-spacer>
     <Alarm></Alarm>
-    <v-menu offset-y v-model="menu" :close-on-content-click="false" location="end">
+    <v-menu
+      offset-y
+      v-model="menu"
+      :close-on-content-click="false"
+      location="end"
+    >
       <template v-slot:activator="{ on, attrs }">
-        <v-btn elevation="0" color="transparent" rounded v-bind="attrs" v-on="on">
+        <v-btn
+          elevation="0"
+          color="transparent"
+          rounded
+          v-bind="attrs"
+          v-on="on"
+        >
           <v-badge bordered bottom color="red" dot offset-x="10" offset-y="10">
             <v-avatar size="30" class="mx-2">
               <v-img src="@/assets/images/icon.png" />
@@ -29,15 +40,24 @@
       <v-card width="250">
         <v-list>
           <v-list-item class="d-flex flex-column">
-            <v-card elevation="0" class="pa-0 mb-1" width="230" v-for="(item, index) in todayTotalList" :key="index">
+            <v-card
+              elevation="0"
+              class="pa-0 mb-1"
+              width="230"
+              v-for="(item, index) in todayTotalList"
+              :key="index"
+            >
               <v-card-text>
                 <v-row :link="true" :to="to_schedule">
                   <v-col cols="1" class="pa-1 todayListBox mr-4"> </v-col>
-                  <v-col cols="10" class="pa-0"><span>
-                      {{ `${item.customerName}의 ${item.title} 일정` }}</span><br />
+                  <v-col cols="10" class="pa-0"
+                    ><span>
+                      {{ `${item.customerName}의 ${item.title} 일정` }}</span
+                    ><br />
                     <span style="font-size: 9px">{{
                       `${item.start} ~ ${item.end}`
-                    }}</span></v-col>
+                    }}</span></v-col
+                  >
                 </v-row>
                 <!--{{ `[${item.customerName}]${item.title}` }}-->
               </v-card-text>
@@ -46,13 +66,19 @@
         </v-list>
         <v-divider></v-divider>
         <v-list dense nav rounded>
-          <v-list-item @click="mySettingDialog = true" @mouseover="openTooltip()">
+          <v-list-item
+            @click="mySettingDialog = true"
+            @mouseover="openTooltip()"
+          >
             <v-list-item-icon>
               <v-icon>mdi-account-circle-outline</v-icon>
             </v-list-item-icon>
             <v-list-item-title>회원정보 변경</v-list-item-title>
           </v-list-item>
-          <v-list-item @click="userInfoDialog = true" @mouseover="openTooltip()">
+          <v-list-item
+            @click="userInfoDialog = true"
+            @mouseover="openTooltip()"
+          >
             <v-list-item-icon>
               <v-icon>mdi-account-circle-outline</v-icon>
             </v-list-item-icon>
@@ -66,10 +92,19 @@
       </v-list-item> -->
 
           <!--비밀번호 변경 dialog-->
-          <SidebarUserInfo :open="userInfoDialog" @closeModal="close" @log-out="logout" @save-info="handlerSaveInfo">
+          <SidebarUserInfo
+            :open="userInfoDialog"
+            @closeModal="close"
+            @log-out="logout"
+            @save-info="handlerSaveInfo"
+          >
           </SidebarUserInfo>
 
-          <SidebarMySetting :open="mySettingDialog" @closeModal="mySettingDialog = false" @save-info="handlerSaveInfo">
+          <SidebarMySetting
+            :open="mySettingDialog"
+            @closeModal="mySettingDialog = false"
+            @save-info="handlerSaveInfo"
+          >
           </SidebarMySetting>
         </v-list>
       </v-card>
@@ -96,11 +131,11 @@ import Alarm from "../Sidebar/Alarm.vue";
   },
   computed: {
     pageName() {
-      return this.$store.state.pageName
+      return this.$store.state.pageName;
     },
     pageTitleName() {
-      return this.$store.state.pageTitleName
-    }
+      return this.$store.state.pageTitleName;
+    },
   },
 })
 export default class Sidebar extends Vue {
@@ -145,7 +180,6 @@ export default class Sidebar extends Vue {
   //     if (alarmIcon) alarmIcon.click();
   //   }
   // }
-
 
   mounted() {
     this.getTodayInfo();
@@ -211,6 +245,10 @@ export default class Sidebar extends Vue {
           title: "양액EC/pH 데이터",
           to: "InputData",
         },
+        {
+          title: "양액관리",
+          to: "ManureMng",
+        },
       ],
     });
     this.items.push({
@@ -270,8 +308,6 @@ export default class Sidebar extends Vue {
      return this.$store.state.pageName;
    } */
 
-
-
   // alarmToggle() {
   //   this.alarmOn = !this.alarmOn;
   //   if (this.alarmOn) {
@@ -285,10 +321,8 @@ export default class Sidebar extends Vue {
   //   this.$store.commit("ALARM/removeAlarm", alarm);
   // }
 
-
-
   goHome(): void {
-    this.$router.push("/monitoring").catch(() => { });
+    this.$router.push("/monitoring").catch(() => {});
 
     return;
   }
