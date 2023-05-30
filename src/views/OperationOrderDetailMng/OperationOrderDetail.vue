@@ -9,18 +9,48 @@
               <v-col cols="10">
                 <v-row dense>
                   <v-col cols="2">
-                    <v-text-field solo rounded dense hide-details="true" label="작업지시서코드" v-model="searchJobOrder"
-                      return-object @keydown.enter="getSearch" required></v-text-field>
+                    <v-text-field
+                      solo
+                      rounded
+                      dense
+                      hide-details="true"
+                      label="작업지시서코드"
+                      v-model="searchJobOrder"
+                      return-object
+                      @keydown.enter="getSearch"
+                      required
+                    ></v-text-field>
                   </v-col>
                   <v-col cols="2">
-                    <v-text-field solo rounded dense hide-details="true" label="품목명" v-model="itemname" return-object
-                      @keydown.enter="getSearch" required></v-text-field>
+                    <v-text-field
+                      solo
+                      rounded
+                      dense
+                      hide-details="true"
+                      label="품목명"
+                      v-model="itemname"
+                      return-object
+                      @keydown.enter="getSearch"
+                      required
+                    ></v-text-field>
                   </v-col>
                   <v-col cols="2">
                     <span class="text"></span>
-                    <v-autocomplete solo rounded hide-details="true" dense label="거래처" class="pl-3"
-                      v-model="searchCustomer" :items="searchCustomerData" @change="getSearch" item-value="id"
-                      item-text="name" return-object required></v-autocomplete>
+                    <v-autocomplete
+                      solo
+                      rounded
+                      hide-details="true"
+                      dense
+                      label="거래처"
+                      class="pl-3"
+                      v-model="searchCustomer"
+                      :items="searchCustomerData"
+                      @change="getSearch"
+                      item-value="id"
+                      item-text="name"
+                      return-object
+                      required
+                    ></v-autocomplete>
                   </v-col>
                 </v-row>
                 <v-row dense>
@@ -54,37 +84,73 @@
             </v-col>
           </v-row>
           <v-card>
-            <v-data-table multi-sort fixed-header height="300" :headers="headers" :items="totalTable" dense single-select
-              :options.sync="orderListCfg.options" :server-items-length="orderListCfg.totalCount"
-              :loading="orderListCfg.loading" :items-per-page="orderListCfg.itemsPerPage" :page.sync="orderListCfg.page"
-              @page-count="orderListCfg.pageCount = $event" hide-default-footer no-data-text="데이터가 없습니다.">
-
-
+            <v-data-table
+              multi-sort
+              fixed-header
+              :height="table_height"
+              :headers="headers"
+              :items="totalTable"
+              dense
+              single-select
+              :options.sync="orderListCfg.options"
+              :server-items-length="orderListCfg.totalCount"
+              :loading="orderListCfg.loading"
+              :items-per-page="orderListCfg.itemsPerPage"
+              :page.sync="orderListCfg.page"
+              @page-count="orderListCfg.pageCount = $event"
+              hide-default-footer
+              no-data-text="데이터가 없습니다."
+            >
               <template v-slot:[`item.status`]="{ item }">
-                <v-btn class="text-left mt-1 mb-1" small :color="getStatusColor(item.status)" dark style="width: 100px"
-                  depressed>
+                <v-btn
+                  class="text-left mt-1 mb-1"
+                  small
+                  :color="getStatusColor(item.status)"
+                  dark
+                  style="width: 100px"
+                  depressed
+                >
                   <v-icon left> mdi-album </v-icon>
                   {{ getStatusCode(item.status, statusCode_detail) }}
                 </v-btn>
               </template>
 
               <template v-slot:[`item.work`]="{ item }">
-                <v-btn v-show="item.status !== 'JOD_DONE'" text small fluid color="primary" class="mr-1 editBtn"
-                  :value="getStatusCodeNext(item.status, statusCode_detail).code"
-                  @click="start_detail(item, getStatusCodeNext(item.status, statusCode_detail).code)">
+                <v-btn
+                  v-show="item.status !== 'JOD_DONE'"
+                  text
+                  small
+                  fluid
+                  color="primary"
+                  class="mr-1 editBtn"
+                  :value="
+                    getStatusCodeNext(item.status, statusCode_detail).code
+                  "
+                  @click="
+                    start_detail(
+                      item,
+                      getStatusCodeNext(item.status, statusCode_detail).code
+                    )
+                  "
+                >
                   {{ getStatusCodeNext(item.status, statusCode_detail).name }}
                 </v-btn>
               </template>
               <template v-slot:[`item.detail`]="{ item }">
-                <v-btn small depressed @click="showDetailDialog(item)">상세보기</v-btn>
+                <v-btn small depressed @click="showDetailDialog(item)"
+                  >상세보기</v-btn
+                >
               </template>
             </v-data-table>
           </v-card>
-          <v-pagination circle v-model="orderListCfg.page" :length="orderListCfg.pageCount"></v-pagination>
+          <v-pagination
+            circle
+            v-model="orderListCfg.page"
+            :length="orderListCfg.pageCount"
+          ></v-pagination>
         </v-col>
       </v-row>
     </v-container>
-
 
     <v-dialog v-model="updateStatus" width="450px">
       <v-card>
@@ -94,35 +160,71 @@
           <v-row dense>
             <v-col align-self="center">
               <span>품목</span>
-              <v-text-field label="품목" v-model.trim="this.itemName" dense solo disabled
-                hide-details="false"></v-text-field>
+              <v-text-field
+                label="품목"
+                v-model.trim="this.itemName"
+                dense
+                solo
+                disabled
+                hide-details="false"
+              ></v-text-field>
             </v-col>
             <v-col align-self="center">
               <span>투입수량</span>
-              <v-text-field v-model.trim="this.exCount" dense solo disabled hide-details="false"></v-text-field>
+              <v-text-field
+                v-model.trim="this.exCount"
+                dense
+                solo
+                disabled
+                hide-details="false"
+              ></v-text-field>
             </v-col>
             <v-col align-self="center">
               <span>다음단계</span>
-              <v-text-field dense :value="this.nextStep" solo disabled hide-details="false"></v-text-field>
+              <v-text-field
+                dense
+                :value="this.nextStep"
+                solo
+                disabled
+                hide-details="false"
+              ></v-text-field>
             </v-col>
           </v-row>
           <v-row justify="center">
             <v-col cols="6" class="pb-0">
               <span>불량갯수</span>
-              <v-text-field v-model="orderData.inputCount" placeholder="불량 개수 입력"
-                oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');" :rules="countRules"
-                solo></v-text-field>
+              <v-text-field
+                v-model="orderData.inputCount"
+                placeholder="불량 개수 입력"
+                oninput="javascript: this.value = this.value.replace(/[^0-9]/g, '');"
+                :rules="countRules"
+                solo
+              ></v-text-field>
             </v-col>
             <v-col cols="6" class="pb-0">
               <span class="ml-5">불량률</span>
-              <v-text-field color="red" class="percentFont ml-5" v-model="percent" solo hide-details text-h4 flat>
-              </v-text-field></v-col>
+              <v-text-field
+                color="red"
+                class="percentFont ml-5"
+                v-model="percent"
+                solo
+                hide-details
+                text-h4
+                flat
+              >
+              </v-text-field
+            ></v-col>
           </v-row>
           <v-row dense>
             <v-col align-self="center">
               <span>비고</span>
-              <v-text-field v-model="orderData.memo" dense solo hide-details="false"
-                class="text-box-style"></v-text-field>
+              <v-text-field
+                v-model="orderData.memo"
+                dense
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-text-field>
             </v-col>
           </v-row>
         </v-card-text>
@@ -159,69 +261,134 @@
     </v-dialog> -->
     <v-dialog v-model="showDetail" max-width="800px">
       <v-card>
-        <v-card-title>
-        </v-card-title>
+        <v-card-title> </v-card-title>
         <v-card-text>
           <v-row dense>
             <v-col cols="4" align-self="center">
               <span>작업지시코드</span>
-              <v-text-field v-model="detailJobOrderData.code" disabled dense solo hide-details="false"
-                class="text-box-style"></v-text-field>
+              <v-text-field
+                v-model="detailJobOrderData.code"
+                disabled
+                dense
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-text-field>
             </v-col>
             <v-col cols="3" align-self="center">
               <span>생성일</span>
-              <v-text-field v-model="detailJobOrderData.createdDate" disabled dense solo hide-details="false"
-                class="text-box-style"></v-text-field>
+              <v-text-field
+                v-model="detailJobOrderData.createdDate"
+                disabled
+                dense
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-text-field>
             </v-col>
             <v-col cols="2" align-self="center">
               <span>작성자</span>
-              <v-text-field v-model="detailJobOrderData.createdId" disabled dense solo hide-details="false"
-                class="text-box-style"></v-text-field>
+              <v-text-field
+                v-model="detailJobOrderData.createdId"
+                disabled
+                dense
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-text-field>
             </v-col>
             <v-col cols="3" align-self="center">
               <span>거래처</span>
-              <v-text-field v-model="detailJobOrderData.customer" disabled dense solo hide-details="false"
-                class="text-box-style"></v-text-field>
+              <v-text-field
+                v-model="detailJobOrderData.customer"
+                disabled
+                dense
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-text-field>
             </v-col>
           </v-row>
           <v-row dense>
             <v-col cols="3" align-self="center">
               <span>수정자</span>
-              <v-text-field v-model="detailJobOrderData.modifiedId" disabled dense solo hide-details="false"
-                class="text-box-style"></v-text-field>
+              <v-text-field
+                v-model="detailJobOrderData.modifiedId"
+                disabled
+                dense
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-text-field>
             </v-col>
             <v-col cols="3" align-self="center">
               <span>수정일</span>
-              <v-text-field v-model="detailJobOrderData.modifiedDate" disabled dense solo hide-details="false"
-                class="text-box-style"></v-text-field>
+              <v-text-field
+                v-model="detailJobOrderData.modifiedDate"
+                disabled
+                dense
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-text-field>
             </v-col>
             <v-col cols="6" align-self="center">
               <span>메모</span>
-              <v-text-field v-model="detailJobOrderData.memo" disabled dense solo hide-details="false"
-                class="text-box-style"></v-text-field>
+              <v-text-field
+                v-model="detailJobOrderData.memo"
+                disabled
+                dense
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-text-field>
             </v-col>
           </v-row>
           <v-row dense>
             <v-col cols="3" align-self="center">
               <span>작업지시서명</span>
-              <v-text-field v-model="detailJobOrderData.name" disabled dense solo hide-details="false"
-                class="text-box-style"></v-text-field>
+              <v-text-field
+                v-model="detailJobOrderData.name"
+                disabled
+                dense
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-text-field>
             </v-col>
             <v-col cols="3" align-self="center">
               <span>상태</span>
-              <v-text-field v-model="detailJobOrderData.status" disabled dense solo hide-details="false"
-                class="text-box-style">
+              <v-text-field
+                v-model="detailJobOrderData.status"
+                disabled
+                dense
+                solo
+                hide-details="false"
+                class="text-box-style"
+              >
               </v-text-field>
             </v-col>
             <v-col cols="3" align-self="center">
               <span>목표수량</span>
-              <v-text-field v-model="detailJobOrderData.targetCount" disabled dense solo hide-details="false"
-                class="text-box-style"></v-text-field>
+              <v-text-field
+                v-model="detailJobOrderData.targetCount"
+                disabled
+                dense
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-text-field>
             </v-col>
             <v-col cols="3" align-self="center">
               <span>타입</span>
-              <v-text-field v-model="detailJobOrderData.type" disabled dense solo hide-details="false"
-                class="text-box-style"></v-text-field>
+              <v-text-field
+                v-model="detailJobOrderData.type"
+                disabled
+                dense
+                solo
+                hide-details="false"
+                class="text-box-style"
+              ></v-text-field>
             </v-col>
           </v-row>
         </v-card-text>
@@ -231,8 +398,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-
   </div>
 </template>
 <script lang="ts">
@@ -243,8 +408,7 @@ import { Component, Vue, Watch } from "vue-property-decorator";
 import _ from "lodash";
 
 @Component({
-  components: {
-  },
+  components: {},
 })
 export default class OperationOrder extends Vue {
   countRules: any[] = [
@@ -296,6 +460,7 @@ export default class OperationOrder extends Vue {
   statusCode_detail: any = [];
   joborder: any = {};
   detailJobOrderData: any = [];
+  table_height: number = 0;
 
   @Watch("searchDepartment")
   onSearchDepartmentChange() {
@@ -373,8 +538,6 @@ export default class OperationOrder extends Vue {
     return cfg.header.detail_jobOrder;
   }
 
-
-
   created() {
     this.orderListCfg = Object.assign({}, gridCfg);
     this.editedOrder = Object.assign({}, this.editedOrder);
@@ -387,6 +550,12 @@ export default class OperationOrder extends Vue {
     this.getSearch();
     this.getDataList();
     this.getDepartmentList();
+    this.onResize();
+  }
+
+  onResize() {
+    this.table_height = window.innerHeight - 48 - 129 - 94 - 44 - 20;
+    console.log("onResize", this.table_height);
   }
 
   s_date_search(v: any) {
@@ -405,33 +574,33 @@ export default class OperationOrder extends Vue {
   showDetailDialog(item: any) {
     this.showDetail = true;
     let param = {
-      code: item.jobOrderCode
-    }
+      code: item.jobOrderCode,
+    };
     api.operation
       .searchJobOrderCode(param)
       .then((res) => {
-        this.detailJobOrderData = res.data.responseData
-        let resData = res.data.responeData
+        this.detailJobOrderData = res.data.responseData;
+        let resData = res.data.responeData;
 
-
-        this.detailJobOrderData.createdDate = this.detailJobOrderData.createDate.substr(0, 10)
-        this.detailJobOrderData.modifiedDate = this.detailJobOrderData.modifiedDate.substr(0, 10)
+        this.detailJobOrderData.createdDate =
+          this.detailJobOrderData.createDate.substr(0, 10);
+        this.detailJobOrderData.modifiedDate =
+          this.detailJobOrderData.modifiedDate.substr(0, 10);
 
         let statusList: { [key: string]: string } = {
-          'SA02': '진행중',
-          'SA01': '대기',
-          'SA03': '완료'
+          SA02: "진행중",
+          SA01: "대기",
+          SA03: "완료",
         };
 
         if (statusList.hasOwnProperty(this.detailJobOrderData.status)) {
-          this.detailJobOrderData.status = statusList[this.detailJobOrderData.status];
+          this.detailJobOrderData.status =
+            statusList[this.detailJobOrderData.status];
         }
-
-
       })
       .catch((err) => {
-        console.log(err)
-      })
+        console.log(err);
+      });
   }
   getSearch() {
     const { page, itemsPerPage, sortBy, sortDesc } = this.orderListCfg.options;
@@ -603,7 +772,7 @@ export default class OperationOrder extends Vue {
   }
 
   start_detail(item: any, code: string) {
-    console.log('startDetail', item)
+    console.log("startDetail", item);
     this.joborder = {};
     this.orderData.memo = "";
     this.orderData.inputCount = 0;
@@ -650,7 +819,7 @@ export default class OperationOrder extends Vue {
                 this.toatalselected = [];
                 this.datatable = [];
               } else {
-                console.log(response)
+                console.log(response);
                 this.$swal({
                   title: response.data.message,
                   icon: "error",
@@ -667,7 +836,6 @@ export default class OperationOrder extends Vue {
             });
         }
       });
-
   }
 
   finish(item: any) {
