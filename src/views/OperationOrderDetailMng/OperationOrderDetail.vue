@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container fluid>
+    <v-container persistent fluid>
       <v-row>
         <v-col class="ma-2" cols="12">
           <span class="searchbox-title">조회 조건</span>
