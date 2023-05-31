@@ -96,7 +96,9 @@
             :key="i"
             :value="item"
             :color="toggle.length == 0 && i == 0 ? 'success' : ''"
-            :disabled="item.dateDiff == null && item.customId != ''"
+            :class="{
+              doneCustom: item.dateDiff === null && item.customId != '',
+            }"
             active-color="success"
             rounded
             class="mb-2"
