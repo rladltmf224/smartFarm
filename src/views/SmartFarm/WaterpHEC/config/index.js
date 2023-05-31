@@ -15,7 +15,6 @@ export default {
       { text: "거래처", value: "" },
       { text: "창고", value: "" },
       { text: "구역", value: "" },
-      { text: "최종사용일", value: "" },
     ],
   },
 };

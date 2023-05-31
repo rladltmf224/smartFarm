@@ -545,8 +545,7 @@ export default class Schedule extends Vue {
   }
 
   @Watch("toggle")
-  changeBtn() {
-    console.log("toggle도는 횟수");
+  async changeBtn() {
     //let tempTotal = JSON.parse(JSON.stringify(this.totalEvents));
     let tempId: any = [];
 
@@ -555,14 +554,15 @@ export default class Schedule extends Vue {
     });
     var total = tempId.find((e: any) => e === "");
 
-    if (total == undefined) {
-      if (this.toggle.length != 0 && tempId.length != 0) {
-        this.getSchedule(tempId);
-      } else {
-        this.getSchedule([]);
+    if (this.toggle.length != 0 && tempId.length != 0) {
+      if (this.toggle.length == 1 && this.toggle[0].customId == "") {
+        await this.getSchedule([]);
+        await this.getFilter();
+      } else if (this.toggle.length >= 1 && total == undefined) {
+        await this.getSchedule(tempId);
       }
     } else {
-      this.getSchedule([]);
+      await this.getSchedule([]);
     }
     tempId = [];
   }
@@ -811,8 +811,6 @@ export default class Schedule extends Vue {
         this.filterList.push(data);
       });
     });
-
-    console.log("최종 버전", this.filterList);
   }
   //전체 거래List
   /*
@@ -877,8 +875,6 @@ export default class Schedule extends Vue {
       console.log("getSchedule", this.events);
       console.groupEnd();
     });
-
-    console.log("-- 최종 events--", this.events);
   }
 
   //일정표에 표시되는 년월
@@ -944,7 +940,6 @@ export default class Schedule extends Vue {
 
   //update 일정
   onClickSchedule(event: any) {
-    console.log("1");
     //상세일정 일정옆에 띄우기
     this.x = event.nativeEvent.pageX;
     this.y = event.nativeEvent.pageY;
@@ -959,7 +954,6 @@ export default class Schedule extends Vue {
         this.title = `[${value.customerName}] ${value.title} `;
         this.backgroundColor = value.backgroundColor;
         this.detailEvent.push(value);
-        console.log("----", this.detailEvent);
         this.historyId = this.detailEvent[0].workScheduleDetailId;
       }
     });
@@ -1079,13 +1073,8 @@ export default class Schedule extends Vue {
     //this.getTotalSchedule();
   }
   closeMenu_schedule() {
-    console.log("1");
     this.detailMenu = false;
-    console.log("2");
-    this.getSchedule([]);
-    console.log("3");
-    this.getFilter();
-    //this.getTotalSchedule();
+    this.toggle = [{ customName: "전체 일정", customId: "" }];
   }
 }
 </script>

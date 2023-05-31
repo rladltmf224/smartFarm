@@ -14,6 +14,7 @@ export default {
       { text: "등록일", value: "createdDate", width: "7%" },
       // { text: "상태변경", value: "changeOrder" },
       { text: "수정/삭제", value: "edit", width: "5%" },
+      { text: "농자재추가", value: "addManure", width: "5%" },
     ],
     headersDetail: [
       { text: "품목코드", value: "itemCode" },
@@ -62,6 +63,15 @@ export default {
       { text: "투입수량(BOM기준)", value: "count" },
       { text: "투입수량", value: "targetCount" },
     ],
+    manure_header: [
+      { text: "품목타입", value: "" },
+      { text: "품목명", value: "" },
+      { text: "규격", value: "" },
+      { text: "unit", value: "" },
+      { text: "창고", value: "" },
+      { text: "구역", value: "" },
+      { text: "수량", value: "" },
+    ],
   },
   data: {
     status_JO: [
@@ -84,6 +94,12 @@ export default {
       { code: "작업 진행중", name: "작업 진행중" },
       { code: "생산 완료", name: "생산 완료" },
       { code: "완료", name: "완료" },
+    ],
+    item_type: [
+      { text: "상토", value: "상토" },
+      { text: "트레이", value: "트레이" },
+      { text: "양액", value: "양액" },
+      { text: "기타", value: "기타" },
     ],
   },
 };

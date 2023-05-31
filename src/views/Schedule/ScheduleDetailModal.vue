@@ -476,9 +476,10 @@ export default class ScheduleDetailModal extends Vue {
   get historyId() {
     return this.id;
   }
+
   get detailMenu() {
     this.update = false;
-    this.getTotalComment();
+
     this.openHistory = this.historyOn;
     this.detailEvent = this.detail;
     return this.open;
@@ -508,6 +509,11 @@ export default class ScheduleDetailModal extends Vue {
       borderRadius: colorMenu ? "50%" : "4px",
       transition: "border-radius 200ms ease-in-out",
     };
+  }
+
+  @Watch("detailEvent")
+  getComment() {
+    this.getTotalComment();
   }
 
   updateStatus() {
