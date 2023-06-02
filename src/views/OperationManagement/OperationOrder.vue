@@ -264,7 +264,11 @@
                 </v-icon>
               </template>
               <template v-slot:[`item.addManure`]="{ item }">
-                <v-btn small depressed @click="openManureModal">
+                <v-btn
+                  small
+                  depressed
+                  @click="openManureModal(item.jobOrderId)"
+                >
                   농자재추가
                 </v-btn>
               </template>
@@ -448,6 +452,16 @@
           <LoadingSpinner></LoadingSpinner>
         </v-card-text>
         <v-card-text v-else>
+          <span> 타이틀 </span>
+          <v-radio-group dense row class="mt-0" v-model="printData.printType">
+            <v-radio dense label="거래처명" value="C" color="success"></v-radio>
+            <v-radio
+              dense
+              label="작업지시서명"
+              value="T"
+              color="success"
+            ></v-radio>
+          </v-radio-group>
           <span>파종날짜</span>
           <v-menu
             dense
@@ -516,7 +530,11 @@
     </v-dialog>
 
     <!--농자재 추가 모달-->
-    <OrderAddItemModal :open="itemDialog" @closeModal="closeItemModal">
+    <OrderAddItemModal
+      :open="itemDialog"
+      @closeModal="closeItemModal"
+      :id="orderId"
+    >
     </OrderAddItemModal>
   </div>
 </template>
@@ -543,6 +561,7 @@ export default class OperationOrder extends Vue {
     (v: any) =>
       !(v.length > 1 && v.charAt(0) == "0") || "0를 삭제 후 재입력해주세요",
   ];
+  orderId: string = "";
   itemName: string = "";
   nextStep: string = "";
   updateStatus: boolean = false;
@@ -590,8 +609,10 @@ export default class OperationOrder extends Vue {
   printOpen: boolean = false;
   printData: any = {
     printNum: 1,
+    printType: "C",
   };
   print_menu_start_date: boolean = false;
+  print_printType: string = "";
   print_menu: boolean = false;
   print_sowingDate: any = "";
   loadingSpinner: boolean = false;
@@ -1126,13 +1147,16 @@ export default class OperationOrder extends Vue {
       chargeName: item.chargeName,
     };
   }
-  openManureModal() {
+  openManureModal(item: any) {
+    this.orderId = item;
     this.itemDialog = true;
   }
   closeItemModal() {
     this.itemDialog = false;
   }
   openPrintModal(item: any) {
+    console.log(item);
+    this.print_printType = "C";
     this.printOpen = true;
     this.printData.jobOrderDetailId = item.jobOrderDetailId;
   }
@@ -1148,6 +1172,7 @@ export default class OperationOrder extends Vue {
         sowingDate: this.print_sowingDate.replace(/-/g, ""),
         joborderdetailId: this.printData.jobOrderDetailId,
         printCount: this.printData.printNum,
+        printType: this.printData.printType,
       };
       api.operation
         .printLabelApi(param)

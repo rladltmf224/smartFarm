@@ -19,14 +19,11 @@ export default {
   makeOperationOrderPage: (params) =>
     AuthAPI.post("/api/operation/joborder", JSON.stringify(params)),
 
-  
-  
   printLabelApi: (params) =>
     AuthAPI.get("/api/operation/joborder/detail/print", {
       params: params,
     }),
-  
-  
+
   getDepartmentDataPage: () =>
     AuthAPI.get("/api/operation/joborder/department"),
 
@@ -66,4 +63,12 @@ export default {
     AuthAPI.get("/api/operation/joborder/item/bom", {
       params: params,
     }),
+  getTotalItemList: () => AuthAPI.get("/api/operation/joborder/material/item"),
+  getUseItemList: (params) =>
+    AuthAPI.get("/api/operation/joborder/material/list", {
+      params: params,
+    }),
+
+  updateUseItemList: (params) =>
+    AuthAPI.post("/api/operation/joborder/material", JSON.stringify(params)),
 };
