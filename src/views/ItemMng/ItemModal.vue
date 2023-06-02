@@ -69,7 +69,7 @@
               <span>원자재 타입</span>
               <v-select
                 :items="item_type"
-                v-model="itemData.itemType"
+                v-model="itemData.productionType"
                 item-text="name"
                 item-value="name"
                 solo
@@ -77,6 +77,7 @@
                 class="text-box-style"
               ></v-select>
             </v-col>
+
             <v-col
               v-if="itemData.type == '완제품'"
               cols="2"

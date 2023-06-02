@@ -43,11 +43,19 @@ export default {
       { name: "접목묘", value: "접목묘" },
     ],
     item_type_list: [
-      { name: "상토", value: "상토" },
-      { name: "트레이", value: "트레이" },
-      { name: "양액", value: "양액" },
-      { name: "기타", value: "기타" },
+      { code: "SC0101", name: "종자" }, //원자재 출고에 쓰이는 종자품목
+      { code: "SC0102", name: "농자재" }, //작업지시서에 입력할 상토/트레이/농약 등등
+      { code: "SC0103", name: "양액" }, //양액 품목인 원자재
+      { code: "SC0104", name: "기타" }, //집게등등 쓰이긴하지만 작업지시서에 등록된지않는 품목
     ],
+
     items_type: [{ name: "원자재" }, { name: "완제품" }, { name: "반제품" }],
   },
 };
+
+/*
+ { name: "상토", value: "상토" },
+      { name: "트레이", value: "트레이" },
+      { name: "양액", value: "양액" },
+      { name: "기타", value: "기타" },
+*/
