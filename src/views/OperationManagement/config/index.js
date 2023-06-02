@@ -74,7 +74,7 @@ export default {
       { text: "수정일", value: "modifiedDate" },
     ],
     selectedAddItem_header: [
-      { text: "신규여부", value: "status" },
+      //{ text: "신규여부", value: "status" },
       { text: "lot", value: "lot" },
       { text: "품목명", value: "itemName" },
       { text: "거래처", value: "customer" },

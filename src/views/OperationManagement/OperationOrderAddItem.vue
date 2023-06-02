@@ -45,6 +45,7 @@
             v-show="addData.length != 0"
             :headers="selectedAddItem_header"
             :items="addData"
+            item-key="lot"
             disable-pagination
             hide-default-footer
             loading-text="서버에 요청중...."
@@ -52,7 +53,7 @@
             class="elevation-1"
             fixed-header
           >
-            <template v-slot:item.status="{ item }">
+            <!--<template v-slot:item.status="{ item }">
               <v-btn
                 class="text-left mt-1 mb-1"
                 small
@@ -64,7 +65,7 @@
                 <v-icon left> mdi-album </v-icon>
                 {{ item.status == "new" ? "신규" : "추가" }}
               </v-btn>
-            </template>
+            </template>-->
           </v-data-table>
         </v-card-text>
         <v-card-actions>
@@ -218,21 +219,22 @@ export default class OrderAddItemModal extends Vue {
           totalData.push(this.itemTable[i]);
         }
       }
-    }
 
-    totalData.forEach((data: any) => {
-      this.selectedItem_list.forEach((subData: any) => {
-        if (data.lot == subData.lot) {
-          data["status"] = "add";
-          data["id"] = subData.id;
-          data["count"] = Number(subData.count + data.useCount);
-        } else {
-          data["status"] = "new";
-          data["id"] = "";
-          data["count"] = Number(data.useCount);
-        }
+      totalData.forEach((data: any) => {
+        this.selectedItem_list.forEach((subData: any) => {
+          if (data.lot === subData.lot) {
+            //data["status"] = "add";
+            data["id"] = subData.id;
+            data["useCount"] = Number(data.useCount);
+            data["totalCount"] = Number(data.useCount) + Number(subData.count);
+          } else {
+            //data["status"] = "new";
+            data["id"] = "";
+            data["useCount"] = Number(data.useCount);
+          }
+        });
       });
-    });
+    }
 
     this.addData = [...totalData];
     this.itemDialog = false;
@@ -257,11 +259,20 @@ export default class OrderAddItemModal extends Vue {
       });
     } else {
       this.addData.forEach((value: any) => {
-        tempAdd.push({
-          id: value.id,
-          materialId: value.materialId,
-          count: Number(value.useCount),
-        });
+        console.log();
+        if (Object.keys(value).includes("totalCount")) {
+          tempAdd.push({
+            id: value.id,
+            materialId: value.materialId,
+            count: Number(value.totalCount),
+          });
+        } else {
+          tempAdd.push({
+            id: value.id,
+            materialId: value.materialId,
+            count: Number(value.useCount),
+          });
+        }
       });
       data.detail = [...tempAdd];
     }
