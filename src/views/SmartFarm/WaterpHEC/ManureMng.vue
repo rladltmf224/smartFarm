@@ -8,9 +8,9 @@
             <v-row dense>
               <v-col cols="2">
                 <v-text-field
-                  label="코드"
-                  v-model="search_condition.item"
-                  @keydown.enter="getCustomer"
+                  label="품목명"
+                  v-model="search_manure.name"
+                  @keydown.enter="getManure"
                   dense
                   solo
                   rounded
@@ -18,21 +18,103 @@
                 ></v-text-field>
               </v-col>
               <v-col cols="2">
-                <v-text-field
-                  label="품목명"
-                  v-model="search_condition.name"
-                  @keydown.enter="getCustomer"
+                <v-menu
                   dense
-                  solo
-                  rounded
-                  elevation-0
-                ></v-text-field>
+                  ref="startDate"
+                  v-model="menu_start_date"
+                  :close-on-content-click="false"
+                  :return-value.sync="search_manure.startDate"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      hide-details="true"
+                      dense
+                      v-model="search_manure.startDate"
+                      solo
+                      rounded
+                      label="시작일"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="search_manure.startDate"
+                    no-title
+                    scrollable
+                    locale="ko-KR"
+                    :max="search_manure.endDate"
+                  >
+                    <v-spacer></v-spacer>
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="menu_start_date = false"
+                    >
+                      취소
+                    </v-btn>
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="s_date_search(search_manure.startDate)"
+                    >
+                      확인
+                    </v-btn>
+                  </v-date-picker>
+                </v-menu>
               </v-col>
-
+              <v-col cols="2">
+                <v-menu
+                  dense
+                  ref="endDate"
+                  v-model="menu_end_date"
+                  :close-on-content-click="false"
+                  :return-value.sync="search_manure.endDate"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      hide-details="true"
+                      rounded
+                      solo
+                      dense
+                      v-model="search_manure.endDate"
+                      label="종료일"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="search_manure.endDate"
+                    no-title
+                    scrollable
+                    locale="ko-KR"
+                    :min="search_manure.startDate"
+                  >
+                    <v-spacer></v-spacer>
+                    <v-btn text color="primary" @click="menu_end_date = false">
+                      취소
+                    </v-btn>
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="e_date_search(search_manure.endDate)"
+                    >
+                      확인
+                    </v-btn>
+                  </v-date-picker>
+                </v-menu>
+              </v-col>
               <v-spacer></v-spacer>
 
               <v-col class="text-right" cols="2">
-                <v-btn color="primary" @click="getCustomer" large elevation="0">
+                <v-btn color="primary" @click="getManure" large elevation="0">
                   <v-icon left> mdi-magnify </v-icon>
                   조회
                 </v-btn>
@@ -66,6 +148,12 @@
               hide-default-footer
               class="elevation-1"
               fixed-header
+              :options.sync="manureCfg.options"
+              :server-items-length="manureCfg.totalCount"
+              :items-per-page="manureCfg.itemsPerPage"
+              :page.sync="manureCfg.page"
+              @page-count="manureCfg.pageCount = $event"
+              :loading="manureCfg.loading"
             >
               <template v-slot:item.cancel="{ item }">
                 <v-btn
@@ -94,11 +182,11 @@
                 hide-default-footer-->
             </v-data-table>
           </v-card>
-          <!--<v-pagination
+          <v-pagination
             circle
-            v-model="itemListCfg.page"
-            :length="itemListCfg.pageCount"
-          ></v-pagination>-->
+            v-model="manureCfg.page"
+            :length="manureCfg.pageCount"
+          ></v-pagination>
         </v-col>
       </v-row>
     </v-container>
@@ -120,31 +208,64 @@ import { Vue, Component, Watch } from "vue-property-decorator";
   },
 })
 export default class Item extends Vue {
+  menu_start_date: boolean = false;
+  menu_end_date: boolean = false;
   table_height: number = 0;
   manure_list: any[] = [];
   manure_headers: object[] = [];
-  search_condition: any = {
-    item: "",
-    type: "",
+  search_manure: {
+    //페이징처리
+
+    name: "";
+    page: any;
+    size: any;
+    sortBy: any;
+    sortDesc: any;
+    startDate: any;
+    endDate: any;
+  } = {
+    name: "",
+    page: 1,
+    size: 0,
+    sortBy: [],
+    sortDesc: [true, false],
+    startDate: "",
+    endDate: "",
   };
   manureDialog: boolean = false;
+  manureCfg: any = {}; //페이징변수
 
   created() {
-    //this.itemListCfg = Object.assign({}, gridCfg);
+    this.manureCfg = Object.assign({}, gridCfg);
     this.manure_headers = Object.assign([], cfg.header.manure_headers);
   }
 
   mounted() {
     this.onResize();
-    this.getgetmanure();
   }
 
-  @Watch("itemListCfg.options", { deep: true })
-  onItemListChange() {}
+  @Watch("manureCfg.options", { deep: true })
+  manureChange() {
+    console.log("이거때문에");
+    this.getManure();
+  }
 
   onResize() {
     this.table_height = window.innerHeight - 48 - 129 - 44 - 44 - 20;
     console.log("onResize", this.table_height);
+  }
+  s_date_search(v: any) {
+    this.search_manure.startDate = v;
+    this.menu_start_date = false;
+    let startEL: any = this.$refs.startDate;
+    startEL.save(v);
+  }
+
+  e_date_search(v: any) {
+    this.search_manure.endDate = v;
+    this.menu_end_date = false;
+    let endEL: any = this.$refs.endDate;
+    endEL.save(v);
   }
 
   openModal() {
@@ -152,18 +273,29 @@ export default class Item extends Vue {
   }
   closeModal() {
     this.manureDialog = false;
-    this.getgetmanure();
+    this.getManure();
   }
-  getgetmanure() {
+  getManure() {
+    console.log("???");
+    const { page, itemsPerPage, sortBy, sortDesc } = this.manureCfg.options;
+    this.search_manure.page = page;
+    this.search_manure.size = itemsPerPage;
+    this.search_manure.sortBy = sortBy;
+    this.search_manure.sortDesc = sortDesc;
+
     api.smartfarm
-      .getManureList()
+      .getManureList(this.search_manure)
       .then((response) => {
         this.manure_list = response.data.responseData;
+        this.manureCfg.totalCount = response.data.totalCount;
+        this.manureCfg.loading = false;
       })
       .catch((error) => {
         console.log(error);
       })
-      .finally(() => {});
+      .finally(() => {
+        this.manureCfg.loading = false;
+      });
   }
   cancelData(item: any) {
     let data = {
@@ -196,7 +328,7 @@ export default class Item extends Vue {
                   toast: true,
                   timer: 1500,
                 });
-                this.getgetmanure();
+                this.getManure();
               } else {
                 this.$swal({
                   title: "취소에 실패되었습니다.",
@@ -215,32 +347,7 @@ export default class Item extends Vue {
         }
       });
   }
-  getCustomer() {
-    /*
-      const { page, itemsPerPage, sortBy, sortDesc } = this.itemListCfg.options;
-  
-      this.search_condition.page = page;
-      this.search_condition.size = itemsPerPage;
-      this.search_condition.sortBy = sortBy;
-      this.search_condition.sortDesc = sortDesc;
-      this.itemListCfg.loading = true;
-      api.item
-        .getItemList(this.search_condition)
-        .then((response) => {
-          console.log("getCustomerList", response);
-          this.manure_list = response.data.responseData;
-          
-        })
-        .catch((error) => {
-          console.log(error);
-        })
-        .finally(() => {
-          this.itemListCfg.loading = false;
-        });
-        */
-  }
 }
 </script>
 
 <!--<style src="../SmartFarm/SmartFarm.scss" lang="scss"></style>-->
-openModal
