@@ -67,6 +67,19 @@
               class="elevation-1"
               fixed-header
             >
+              <template v-slot:item.cancel="{ item }">
+                <v-btn
+                  small
+                  depressed
+                  color="error"
+                  elevation=""
+                  @click="cancelData(item.id)"
+                  v-show="item.status == 'USE'"
+                >
+                  취소요청
+                </v-btn>
+                <span v-show="item.status != 'USE'">사용취소</span>
+              </template>
               <!--:headers="headers"
                 :items="customer_list"
                 fixed-header
@@ -123,12 +136,11 @@ export default class Item extends Vue {
 
   mounted() {
     this.onResize();
+    this.getgetmanure();
   }
 
   @Watch("itemListCfg.options", { deep: true })
-  onItemListChange() {
-    this.getCustomer();
-  }
+  onItemListChange() {}
 
   onResize() {
     this.table_height = window.innerHeight - 48 - 129 - 44 - 44 - 20;
@@ -140,6 +152,68 @@ export default class Item extends Vue {
   }
   closeModal() {
     this.manureDialog = false;
+    this.getgetmanure();
+  }
+  getgetmanure() {
+    api.smartfarm
+      .getManureList()
+      .then((response) => {
+        this.manure_list = response.data.responseData;
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {});
+  }
+  cancelData(item: any) {
+    let data = {
+      id: item,
+    };
+
+    this.$swal
+      .fire({
+        title: "사용취소",
+        text: "해당 데이터를 사용취소 하시겠습니까?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "삭제",
+      })
+
+      .then((result) => {
+        if (result.isConfirmed) {
+          api.smartfarm
+            .deleteManure(data)
+            .then((response) => {
+              if (response.status == 200) {
+                this.$swal({
+                  title: "취소되었습니다",
+                  icon: "success",
+                  position: "top",
+                  showCancelButton: false,
+                  showConfirmButton: false,
+                  toast: true,
+                  timer: 1500,
+                });
+                this.getgetmanure();
+              } else {
+                this.$swal({
+                  title: "취소에 실패되었습니다.",
+                  icon: "error",
+                  position: "top",
+                  showCancelButton: false,
+                  showConfirmButton: false,
+                  toast: true,
+                  timer: 1500,
+                });
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      });
   }
   getCustomer() {
     /*

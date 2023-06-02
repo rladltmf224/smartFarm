@@ -131,4 +131,12 @@ export default {
     AuthAPI.post("/api/capture/list", JSON.stringify(params), {
       headers: { "Content-Type": "application/json" },
     }),
+  getItemList: () => AuthAPI.get("/api/ns/stock"),
+  createItemList: (params) =>
+    AuthAPI.post("/api/ns/item", JSON.stringify(params), {
+      headers: { "Content-Type": "application/json" },
+    }),
+  getManureList: () => AuthAPI.post("/api/ns/search"),
+  deleteManure: (params) =>
+    AuthAPI.put("/api/ns/cancel", JSON.stringify(params)),
 };
