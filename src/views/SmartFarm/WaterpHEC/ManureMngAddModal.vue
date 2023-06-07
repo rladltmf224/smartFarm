@@ -57,6 +57,7 @@ export default class ManureMngAddModal extends Vue {
   manureTable: any[] = [];
 
   get manureDialog() {
+    this.getItemList();
     return this.open;
   }
   set manureDialog(val: any) {
@@ -65,7 +66,7 @@ export default class ManureMngAddModal extends Vue {
 
   created() {
     this.manureAdd_headers = Object.assign([], cfg.header.manureAdd_headers);
-    this.getItemList();
+    //this.getItemList();
   }
   getItemList() {
     api.smartfarm
