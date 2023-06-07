@@ -246,7 +246,6 @@ export default class Item extends Vue {
 
   @Watch("manureCfg.options", { deep: true })
   manureChange() {
-    console.log("이거때문에");
     this.getManure();
   }
 
@@ -276,7 +275,6 @@ export default class Item extends Vue {
     this.getManure();
   }
   getManure() {
-    console.log("???");
     const { page, itemsPerPage, sortBy, sortDesc } = this.manureCfg.options;
     this.search_manure.page = page;
     this.search_manure.size = itemsPerPage;

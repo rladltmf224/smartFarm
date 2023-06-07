@@ -53,19 +53,19 @@
             class="elevation-1"
             fixed-header
           >
-            <!--<template v-slot:item.status="{ item }">
+            <template v-slot:item.status="{ item }">
               <v-btn
                 class="text-left mt-1 mb-1"
                 small
                 dark
-                :color="item.status == 'new' ? 'green' : ''"
+                :color="item.status == 'add' ? '' : 'green'"
                 style="width: 100px"
                 depressed
               >
                 <v-icon left> mdi-album </v-icon>
-                {{ item.status == "new" ? "신규" : "추가" }}
+                {{ item.status == "add" ? "추가" : "신규" }}
               </v-btn>
-            </template>-->
+            </template>
           </v-data-table>
         </v-card-text>
         <v-card-actions>
@@ -137,6 +137,7 @@ import cfg from "./config/index";
 export default class OrderAddItemModal extends Vue {
   @Prop({ required: true }) readonly open: boolean;
   @Prop({ required: true }) id: number;
+  totalData: any[] = [];
   selectedAddItem_header: any[] = [];
   selectedItem_header: any[] = [];
   selectedItem_list: any[] = [];
@@ -199,7 +200,8 @@ export default class OrderAddItemModal extends Vue {
     this.$emit("closeModal", false);
   }
   add() {
-    let totalData = [];
+    this.totalData = [];
+
     if (this.itemTable.length != 0) {
       for (var i = 0; i < this.itemTable.length; i++) {
         if (
@@ -216,27 +218,28 @@ export default class OrderAddItemModal extends Vue {
             timer: 1500,
           });
         } else {
-          totalData.push(this.itemTable[i]);
+          this.totalData.push(this.itemTable[i]);
         }
       }
-
-      totalData.forEach((data: any) => {
-        this.selectedItem_list.forEach((subData: any) => {
-          if (data.lot === subData.lot) {
-            //data["status"] = "add";
-            data["id"] = subData.id;
-            data["useCount"] = Number(data.useCount);
-            data["totalCount"] = Number(data.useCount) + Number(subData.count);
-          } else {
-            //data["status"] = "new";
-            data["id"] = "";
-            data["useCount"] = Number(data.useCount);
-          }
-        });
-      });
     }
 
-    this.addData = [...totalData];
+    if (this.selectedItem_list.length != 0) {
+      for (var j = 0; j < this.totalData.length; j++) {
+        for (var k = 0; k < this.selectedItem_list.length; k++) {
+          if (this.totalData[j].lot == this.selectedItem_list[k].lot) {
+            this.totalData[j]["status"] = "add";
+            this.totalData[j]["id"] = this.selectedItem_list[k].id;
+            this.totalData[j]["useCount"] =
+              Number(this.totalData[j].useCount) +
+              Number(this.selectedItem_list[k].count);
+          } else {
+            this.totalData[j]["useCount"] = Number(this.totalData[j].useCount);
+          }
+        }
+      }
+    }
+
+    this.addData = [...this.totalData];
     this.itemDialog = false;
   }
   done() {
@@ -260,15 +263,15 @@ export default class OrderAddItemModal extends Vue {
     } else {
       this.addData.forEach((value: any) => {
         console.log();
-        if (Object.keys(value).includes("totalCount")) {
+        if (Object.keys(value).includes("status")) {
           tempAdd.push({
             id: value.id,
             materialId: value.materialId,
-            count: Number(value.totalCount),
+            count: Number(value.useCount),
           });
         } else {
           tempAdd.push({
-            id: value.id,
+            id: "",
             materialId: value.materialId,
             count: Number(value.useCount),
           });
