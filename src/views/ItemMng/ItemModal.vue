@@ -71,7 +71,7 @@
                 :items="item_type"
                 v-model="itemData.productionType"
                 item-text="name"
-                item-value="name"
+                item-value="code"
                 solo
                 hide-details="false"
                 class="text-box-style"
