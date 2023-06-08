@@ -181,6 +181,8 @@
       :open="chooseDialog"
       :totalEvents="totalEvents"
       @closeModal="closeModal_schedule"
+      @getFilter="getFilter"
+      @getEvent="getSchedule([])"
     >
     </ScheduleAddModal>
     <ScheduleDetailModal
@@ -193,6 +195,8 @@
       :detail="detailEvent"
       :id="historyId"
       @closeModal="closeMenu_schedule"
+      @getFilter="getFilter"
+      @getEvent="getSchedule([])"
     >
     </ScheduleDetailModal>
     <!-- 일정 히스토리
@@ -556,48 +560,20 @@ export default class Schedule extends Vue {
     });
     var total = tempId.find((e: any) => e === "");
 
-    if (this.toggle.length != 0 && tempId.length != 0) {
-      if (this.toggle.length == 1 && this.toggle[0].customId == "") {
-        await this.getSchedule([]);
-        await this.getFilter();
-      } else if (this.toggle.length >= 1 && total == undefined) {
-        await this.getSchedule(tempId);
-      }
-    } else {
-      await this.getSchedule([]);
-    }
-    tempId = [];
-  }
-
-  /*
     if (
-      this.toggle.length == 0 ||
+      (this.toggle.length >= 1 && total != undefined) ||
       (this.toggle.length == 1 && this.toggle[0].customId == "")
     ) {
-      console.log("2");
       this.getSchedule([]);
       this.getFilter();
-    } else {
-      if (total != undefined) {
-        this.toggle = [];
-        tempId = [];
-      }
-      console.log("3");
+      this.toggle = [];
+      return this.filterList;
+    }
+
+    if (this.toggle.length >= 1 && total == undefined) {
       this.getSchedule(tempId);
-      */
-  /*
-      else {
-        tempTotal.forEach((value: any) => {
-          tempId.forEach((value_detail: any) => {
-            if (value.customerId == value_detail) {
-              value.details.forEach((detail: any) => {
-                this.events.push(detail);
-              });
-            }
-          });
-        });
-      }
-      */
+    }
+  }
 
   @Watch("selectedView")
   changeOptions(newView: any) {
@@ -807,7 +783,6 @@ export default class Schedule extends Vue {
     //let resetArray: any = [];
     this.filterList = [];
     this.filterList = [{ customName: "전체 일정", customId: "" }];
-    console.log("getFilter()", this.filterList);
     api.schedule.getFilterCustomer().then((response) => {
       response.data.responseData.forEach((data: any) => {
         this.filterList.push(data);
@@ -1069,14 +1044,9 @@ export default class Schedule extends Vue {
 
   closeModal_schedule() {
     this.chooseDialog = false;
-    this.getSchedule([]);
-    this.getFilter();
-    //this.getSchedule([]);
-    //this.getTotalSchedule();
   }
   closeMenu_schedule() {
     this.detailMenu = false;
-    this.toggle = [{ customName: "전체 일정", customId: "" }];
   }
 }
 </script>
