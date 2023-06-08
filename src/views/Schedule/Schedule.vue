@@ -554,7 +554,6 @@ export default class Schedule extends Vue {
   async changeBtn() {
     //let tempTotal = JSON.parse(JSON.stringify(this.totalEvents));
     let tempId: any = [];
-
     this.toggle.forEach((data: any) => {
       tempId.push(data.customId);
     });
@@ -564,14 +563,12 @@ export default class Schedule extends Vue {
       (this.toggle.length >= 1 && total != undefined) ||
       (this.toggle.length == 1 && this.toggle[0].customId == "")
     ) {
-      this.getSchedule([]);
       this.getFilter();
       this.toggle = [];
-      return this.filterList;
-    }
-
-    if (this.toggle.length >= 1 && total == undefined) {
+    } else if (this.toggle.length >= 1 && total == undefined) {
       this.getSchedule(tempId);
+    } else {
+      this.getSchedule([]);
     }
   }
 
