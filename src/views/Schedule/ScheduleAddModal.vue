@@ -664,12 +664,16 @@ export default class ScheduleAddModal extends Vue {
               timer: 1500,
             });
           }
-          //일정 데이터 불러오기
-          this.$emit("closeModal");
-          this.dialog = false;
         })
         .catch((error) => {
           console.log(error);
+        })
+        .finally(() => {
+          //일정 데이터 불러오기
+          this.dialog = false;
+          this.$emit("closeModal");
+          this.$emit("getFilter");
+          this.$emit("getEvent");
         });
     } else {
       schedule["customerId"] = this.scheduleData.customer.customerId;
@@ -699,12 +703,16 @@ export default class ScheduleAddModal extends Vue {
               timer: 1500,
             });
           }
-          //일정 데이터 불러오기
-          this.$emit("closeModal");
-          this.dialog = false;
         })
         .catch((error) => {
           console.log(error);
+        })
+        .finally(() => {
+          //일정 데이터 불러오기
+          this.dialog = false;
+          this.$emit("closeModal");
+          this.$emit("getFilter");
+          this.$emit("getEvent");
         });
     }
   }
