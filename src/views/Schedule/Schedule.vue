@@ -563,12 +563,11 @@ export default class Schedule extends Vue {
       (this.toggle.length >= 1 && total != undefined) ||
       (this.toggle.length == 1 && this.toggle[0].customId == "")
     ) {
+      this.getSchedule([]);
       this.getFilter();
       this.toggle = [];
     } else if (this.toggle.length >= 1 && total == undefined) {
       this.getSchedule(tempId);
-    } else {
-      this.getSchedule([]);
     }
   }
 
