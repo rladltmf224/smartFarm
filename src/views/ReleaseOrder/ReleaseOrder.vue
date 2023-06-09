@@ -47,7 +47,7 @@
                       v-model="search_condition.jobOrderStatus"
                       label="작업지시서 상태"
                       item-text="name"
-                      item-value="value"
+                      item-value="code"
                       dense
                       solo
                       rounded

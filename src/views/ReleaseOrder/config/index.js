@@ -105,10 +105,9 @@ export default {
     ],
     search_job_status_list: [
       { name: "전체", value: "" },
-      { name: "대기", value: "대기" },
-      { name: "작업 진행중", value: "작업 진행중" },
-      { name: "생산 완료", value: "생산 완료" },
-      { name: "작업 종료", value: "작업 종료" },
+      { code: "SA01", name: "대기" },
+      { code: "SA02", name: "진행중" },
+      { code: "SA03", name: "완료" },
     ],
     //way_list: [{ name: "출고요청목록" }, { name: "원제품목록" }],
     way_list: [{ name: "원제품목록" }],

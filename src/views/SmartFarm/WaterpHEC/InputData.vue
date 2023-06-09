@@ -7,39 +7,87 @@
           <v-card class="card-shadow pa-3" height="65">
             <v-row dense>
               <v-col cols="2">
-                <v-select class="select" :items="search_list1" label="조회항목" v-model="search_type_1" item-text="name" solo
-                  rounded item-value="value" dense></v-select>
+                <v-select
+                  class="select"
+                  :items="search_list1"
+                  label="조회항목"
+                  v-model="search_type_1"
+                  item-text="name"
+                  solo
+                  rounded
+                  item-value="value"
+                  dense
+                ></v-select>
               </v-col>
               <v-col cols="2">
-                <v-menu ref="test_menu1" v-model="test_menu1" :close-on-content-click="false"
-                  :return-value.sync="test_date1" transition="scale-transition" offset-y min-width="auto">
+                <v-menu
+                  ref="test_menu1"
+                  v-model="test_menu1"
+                  :close-on-content-click="false"
+                  :return-value.sync="test_date1"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field v-model="test_date1" label="시작일" solo dense rounded readonly v-bind="attrs"
-                      v-on="on"></v-text-field>
+                    <v-text-field
+                      v-model="test_date1"
+                      label="시작일"
+                      solo
+                      dense
+                      rounded
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    ></v-text-field>
                   </template>
                   <v-date-picker v-model="test_date1" no-title scrollable>
                     <v-spacer></v-spacer>
                     <v-btn text color="primary" @click="test_menu1 = false">
                       Cancel
                     </v-btn>
-                    <v-btn text color="primary" @click="$refs.test_menu1.save(test_date1)">
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="$refs.test_menu1.save(test_date1)"
+                    >
                       OK
                     </v-btn>
                   </v-date-picker>
-                </v-menu></v-col>
+                </v-menu></v-col
+              >
               <v-col cols="2">
-                <v-menu ref="test_menu2" v-model="test_menu2" :close-on-content-click="false"
-                  :return-value.sync="test_date2" transition="scale-transition" offset-y min-width="auto">
+                <v-menu
+                  ref="test_menu2"
+                  v-model="test_menu2"
+                  :close-on-content-click="false"
+                  :return-value.sync="test_date2"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field v-model="test_date2" solo rounded dense label="종료일" readonly v-bind="attrs"
-                      v-on="on"></v-text-field>
+                    <v-text-field
+                      v-model="test_date2"
+                      solo
+                      rounded
+                      dense
+                      label="종료일"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    ></v-text-field>
                   </template>
                   <v-date-picker v-model="test_date2" no-title scrollable>
                     <v-spacer></v-spacer>
                     <v-btn text color="primary" @click="test_menu2 = false">
                       Cancel
                     </v-btn>
-                    <v-btn text color="primary" @click="$refs.test_menu2.save(test_date2)">
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="$refs.test_menu2.save(test_date2)"
+                    >
                       OK
                     </v-btn>
                   </v-date-picker>
@@ -48,22 +96,41 @@
               </v-col>
               <v-col cols="2" class="d-flex justify-center align-center">
                 <span>양액pH</span>
-                <v-range-slider v-model="range" step=".1" :max="max" thumb-label="always" :min="min" hide-details
-                  class="align-center">
+                <v-range-slider
+                  v-model="range"
+                  step=".1"
+                  :max="max"
+                  thumb-label="always"
+                  :min="min"
+                  hide-details
+                  class="align-center"
+                >
                   <template v-slot:prepend> </template>
                   <template v-slot:append> </template>
                 </v-range-slider>
               </v-col>
               <v-col cols="2" class="d-flex justify-center align-center">
                 <span>양액EC</span>
-                <v-range-slider v-model="EC_range" step=".1" thumb-label="always" :max="EC_max" :min="EC_min" hide-details
-                  class="align-center">
+                <v-range-slider
+                  v-model="EC_range"
+                  step=".1"
+                  thumb-label="always"
+                  :max="EC_max"
+                  :min="EC_min"
+                  hide-details
+                  class="align-center"
+                >
                   <template v-slot:append> </template>
                 </v-range-slider>
               </v-col>
               <v-spacer></v-spacer>
               <v-col class="text-right" cols="2">
-                <v-btn color="primary" @click="getWaterHistory" large elevation="0">
+                <v-btn
+                  color="primary"
+                  @click="getWaterHistory"
+                  large
+                  elevation="0"
+                >
                   조회
                 </v-btn>
               </v-col>
@@ -82,12 +149,27 @@
             </v-col>
             <v-spacer></v-spacer>
             <v-col class="text-right" cols="3">
-              <v-btn color="primary" @click="editItem(defaultItem)" elevation="0">데이터 추가</v-btn>
-            </v-col>
-          </v-row><v-card>
-            <v-data-table :headers="datas_header" :items="datas" :page.sync="page" :options.sync="options"
-              :server-items-length="totalData" :items-per-page="itemsPerPage" :loading="loading" hide-default-footer
-              multi-sort @page-count="pageCount = $event" :height="table_height">
+              <v-btn
+                color="primary"
+                @click="editItem(defaultItem)"
+                elevation="0"
+                >데이터 추가</v-btn
+              >
+            </v-col> </v-row
+          ><v-card>
+            <v-data-table
+              :headers="datas_header"
+              :items="datas"
+              :page.sync="page"
+              :options.sync="options"
+              :server-items-length="totalData"
+              :items-per-page="itemsPerPage"
+              :loading="loading"
+              hide-default-footer
+              multi-sort
+              @page-count="pageCount = $event"
+              :height="table_height"
+            >
               <!-- 버튼을 chip으로 표현 -->
               <template v-slot:item.inputDate="{ item }">
                 <!-- 수정전 버튼만-->
@@ -115,7 +197,11 @@
               </template>
             </v-data-table>
           </v-card>
-          <v-pagination circle v-model="page" :length="pageCount"></v-pagination>
+          <v-pagination
+            circle
+            v-model="page"
+            :length="pageCount"
+          ></v-pagination>
         </v-col>
       </v-row>
     </v-container>
@@ -123,49 +209,111 @@
     <v-dialog v-model="dialog" max-width="600px">
       <v-card>
         <v-card-title>
-          {{ this.editedIndex === -1 ? '데이터 추가' : '데이터 수정' }}
+          {{ this.editedIndex === -1 ? "데이터 추가" : "데이터 수정" }}
         </v-card-title>
         <v-card-text>
           <v-row dense>
             <v-col>
               <span>날짜</span>
-              <v-menu ref="DIA_menu1" v-model="DIA_menu1" :close-on-content-click="false" :return-value.sync="DIA_s_date"
-                transition="scale-transition" offset-y>
+              <v-menu
+                ref="DIA_menu1"
+                v-model="DIA_menu1"
+                :close-on-content-click="false"
+                :return-value.sync="DIA_s_date"
+                transition="scale-transition"
+                offset-y
+              >
                 <template v-slot:activator="{ on, attrs }">
-                  <v-text-field class="text-box-style" solo v-model="editedItem.inputDate" rounded readonly v-bind="attrs"
-                    v-on="on" hide-details="false"></v-text-field>
+                  <v-text-field
+                    class="text-box-style"
+                    solo
+                    v-model="editedItem.inputDate"
+                    rounded
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    hide-details="false"
+                  ></v-text-field>
                 </template>
-                <v-date-picker v-model="editedItem.inputDate" no-title scrollable :max="DIA_e_date">
+                <v-date-picker
+                  v-model="editedItem.inputDate"
+                  no-title
+                  scrollable
+                  :max="DIA_e_date"
+                >
                   <v-spacer></v-spacer>
-                  <v-btn text color="primary" @click="DIA_menu1 = false">Cancel</v-btn>
-                  <v-btn text color="primary" @click="DIA_s_date_search(DIA_s_date)">OK</v-btn>
+                  <v-btn text color="primary" @click="DIA_menu1 = false"
+                    >Cancel</v-btn
+                  >
+                  <v-btn
+                    text
+                    color="primary"
+                    @click="DIA_s_date_search(DIA_s_date)"
+                    >OK</v-btn
+                  >
                 </v-date-picker>
               </v-menu>
             </v-col>
             <v-col>
               <span>오전/오후</span>
-              <v-select class="text-box-style" hide-details="false" :items="search_list2" label="오전/오후"
-                v-model="editedItem.division" item-text="name" solo rounded item-value="value"></v-select>
+              <v-select
+                class="text-box-style"
+                hide-details="false"
+                :items="search_list2"
+                label="오전/오후"
+                v-model="editedItem.division"
+                item-text="name"
+                solo
+                rounded
+                item-value="value"
+              ></v-select>
             </v-col>
           </v-row>
           <v-row dense>
             <v-col>
               <span>양액pH(4~8사이)</span>
-              <v-text-field hide-details="false" class="text-box-style" type="number" step="any" min="0" ref="input"
-                label="양액pH(4~8사이)" :rules="[pH_numberRule]" rounded solo v-model.number="editedItem.ph"></v-text-field>
+              <v-text-field
+                hide-details="false"
+                class="text-box-style"
+                type="number"
+                step="any"
+                min="0"
+                ref="input"
+                label="양액pH(4~8사이)"
+                :rules="[pH_numberRule]"
+                rounded
+                solo
+                v-model.number="editedItem.ph"
+              ></v-text-field>
             </v-col>
             <v-col>
               <span>양액EC(0.3~2.5사이)</span>
-              <v-text-field hide-details="false" class="text-box-style" type="number" step="any" min="0" ref="input"
-                label="양액EC(0.3~2.5사이)" rounded solo :rules="[EC_numberRule]"
-                v-model.number="editedItem.ec"></v-text-field>
+              <v-text-field
+                hide-details="false"
+                class="text-box-style"
+                type="number"
+                step="any"
+                min="0"
+                ref="input"
+                label="양액EC(0.3~2.5사이)"
+                rounded
+                solo
+                :rules="[EC_numberRule]"
+                v-model.number="editedItem.ec"
+              ></v-text-field>
             </v-col>
           </v-row>
           <v-row dense>
             <v-col>
               <span>메모(최대 500자)</span>
-              <v-text-field hide-details="false" class="text-box-style" v-model="editedItem.memo" label="메모" solo
-                rounded></v-text-field>
+              <v-text-field
+                hide-details="false"
+                class="text-box-style"
+                v-model="editedItem.memo"
+                label="메모"
+                solo
+                rounded
+              ></v-text-field>
             </v-col>
           </v-row>
         </v-card-text>
@@ -175,8 +323,6 @@
           <v-btn color="error" @click="close" elevation="0">닫기</v-btn>
         </v-card-actions>
       </v-card>
-
-
     </v-dialog>
   </div>
 </template>
@@ -253,9 +399,9 @@ export default {
       menu1: false,
       menu2: false,
       search_list1: [
+        { name: "전체", value: "all" },
         { name: "양액EC", value: "ec" },
         { name: "양액pH", value: "ph" },
-        { name: "전체", value: "all" },
       ],
       search_type_1: "all",
       search_list2: [
@@ -276,7 +422,7 @@ export default {
         division: "",
         inputDate: new Date().toISOString().substr(0, 10),
       },
-      table_height: 0
+      table_height: 0,
     };
   },
   mounted() {
@@ -309,13 +455,13 @@ export default {
       let weekDay = nowDate.getDate();
 
       if (weekMonth < 10) {
-        weekMonth = '0' + weekMonth;
+        weekMonth = "0" + weekMonth;
       }
       if (weekDay < 10) {
-        weekDay = '0' + weekDay;
+        weekDay = "0" + weekDay;
       }
 
-      let resultDate = weekYear + '-' + weekMonth + '-' + weekDay;
+      let resultDate = weekYear + "-" + weekMonth + "-" + weekDay;
       this.test_date1 = resultDate;
       console.log(resultDate);
     },
@@ -399,7 +545,7 @@ export default {
         api.smartfarm
           .waterECpHRegister(item)
           .then((res) => {
-            console.log(res.data.message)
+            console.log(res.data.message);
             if (res.status == 200) {
               this.$swal({
                 title: "저장되었습니다.",
@@ -413,7 +559,6 @@ export default {
               this.close();
               this.getWaterHistory();
             } else {
-
               this.$swal({
                 title: res.data.message,
                 icon: "error",
@@ -426,7 +571,7 @@ export default {
             }
           })
           .catch((err) => {
-            console.log('err', err)
+            console.log("err", err);
             this.$swal({
               title: "서버와의 연결을 확인해주세요.",
               icon: "error",
@@ -439,33 +584,36 @@ export default {
           });
       } else {
         item.id = this.editedItem.id;
-        api.smartfarm.waterECpHEdit(item).then((res) => {
-          if (res.status == 200) {
-            this.$swal({
-              title: "수정되었습니다.",
-              icon: "success",
-              position: "top",
-              showCancelButton: false,
-              showConfirmButton: false,
-              toast: true,
-              timer: 1500,
-            });
-            this.close()
-            this.getWaterHistory();
-          } else {
-            this.$swal({
-              title: res.data.message,
-              icon: "error",
-              position: "top",
-              showCancelButton: false,
-              showConfirmButton: false,
-              toast: true,
-              timer: 1500,
-            });
-          }
-        }).catch((err) => {
-          console.log(err)
-        })
+        api.smartfarm
+          .waterECpHEdit(item)
+          .then((res) => {
+            if (res.status == 200) {
+              this.$swal({
+                title: "수정되었습니다.",
+                icon: "success",
+                position: "top",
+                showCancelButton: false,
+                showConfirmButton: false,
+                toast: true,
+                timer: 1500,
+              });
+              this.close();
+              this.getWaterHistory();
+            } else {
+              this.$swal({
+                title: res.data.message,
+                icon: "error",
+                position: "top",
+                showCancelButton: false,
+                showConfirmButton: false,
+                toast: true,
+                timer: 1500,
+              });
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
     },
     close() {
@@ -523,7 +671,6 @@ export default {
               "서버와 통신이 원활하지않습니다.",
               "ERROR"
             );
-
           }
         })
         .catch((error) => {
@@ -548,7 +695,7 @@ export default {
       return this.editedIndex === -1 ? "New Item" : "Edit Item";
     },
   },
-  created() { },
+  created() {},
 };
 </script>
 <style src="@/views/SmartFarm/SmartFarm.scss" lang="scss"></style>

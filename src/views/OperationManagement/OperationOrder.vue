@@ -48,12 +48,12 @@
                       dense
                       label="부서"
                       class="pl-3"
-                      @change="getSearch"
+                      @change="selectedDepartment"
                       v-model="searchDepartment"
                       :items="searchDepartmentData"
+                      return-object
                       item-text="departmentName"
                       item-value="departmentId"
-                      return-object
                       no-data-text="검색결과가 없습니다."
                     ></v-autocomplete>
                   </v-col>
@@ -67,6 +67,7 @@
                       :items="searchCrewData"
                       @change="getSearch"
                       item-text="chargeName"
+                      item-value="id"
                       label="담당자"
                       return-object
                       no-data-text="검색결과가 없습니다."
@@ -173,9 +174,9 @@
                     <v-radio-group dense v-model="row" row @change="getSearch">
                       진행 상태 :
                       <v-radio label="전체" value=""> </v-radio>
-                      <v-radio label="대기" value="JO_WAIT"> </v-radio>
-                      <v-radio label="진행중" value="JO_ING"> </v-radio>
-                      <v-radio label="완료" value="JO_DONE"> </v-radio>
+                      <v-radio label="대기" value="SA01"> </v-radio>
+                      <v-radio label="진행중" value="SA02"> </v-radio>
+                      <v-radio label="완료" value="SA03"> </v-radio>
                     </v-radio-group>
                   </v-col>
                 </v-row>
@@ -603,7 +604,7 @@ export default class OperationOrder extends Vue {
   startDate: string = "";
   endDate: string = "";
   jobordeList: any = {};
-  departmentCrewList: any;
+  departmentCrewList: any[] = [];
   statusCode: any = [];
   statusCode_detail: any = [];
   joborder: any = {};
@@ -679,10 +680,10 @@ export default class OperationOrder extends Vue {
   get searchDepartmentData() {
     return this.departmentList;
   }
-  get searchdepartmentData() {
-    return this.departmentList;
-  }
+
   get searchCrewData() {
+    console.log("ddd");
+    console.log(this.departmentCrewList);
     return this.departmentCrewList;
   }
 
@@ -799,29 +800,30 @@ export default class OperationOrder extends Vue {
         console.log(error);
       });
   }
+  selectedDepartment() {
+    if (this.searchDepartment.departmentId != "") {
+      this.getDepartmentCrewList();
+    } else {
+      this.departmentCrewList = [];
+    }
+  }
   getDepartmentCrewList() {
-    //확인 필요
-    let joborder: any;
+    if (this.searchDepartment != "") {
+      let joborder = {
+        departmentId: this.searchDepartment.departmentId,
+      };
 
-    //totalDepartment 선언 안되있음
-    // if (this.searchDepartment != "" && this.totalDepartment == "") {
-    //   this.keyword = this.searchDepartment.departmentId;
-    // } else if (this.totalDepartment != "" && this.searchDepartment == "") {
-    //   this.keyword = this.totalDepartment.departmentId;
-    // }
-    // joborder = {
-    //   departmentId: this.keyword,
-    // };
-    // if (this.keyword != null) {
-    //   api.operation
-    //     .getDepartmentCrewDataPage(joborder)
-    //     .then((response) => {
-    //       this.departmentCrewList = response.data.responseData;
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //     });
-    // }
+      api.operation
+        .getDepartmentCrewDataPage(joborder)
+        .then((response) => {
+          this.departmentCrewList = response.data.responseData;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      return (this.departmentCrewList = []);
+    }
   }
 
   getDataList() {
