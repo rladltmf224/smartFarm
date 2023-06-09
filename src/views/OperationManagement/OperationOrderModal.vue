@@ -1073,7 +1073,7 @@ export default class OperationOrderModal extends Vue {
     this.orderData.selectItem = 0;
     this.orderData.selectProcess = 0;
     this.orderData.department = 0;
-
+    this.orderData.targetCount = 0;
     this.orderData.itemCount = "";
     this.orderData.selectObject = "";
     this.orderData.deadline = "";

@@ -58,9 +58,14 @@
                     <v-radio-group dense v-model="row" row @change="getSearch">
                       진행 상태 :
                       <v-radio label="전체" value=""> </v-radio>
-                      <v-radio label="대기" value="JO_WAIT"> </v-radio>
-                      <v-radio label="진행중" value="JO_ING"> </v-radio>
-                      <v-radio label="완료" value="JO_DONE"> </v-radio>
+                      <v-radio label="준비" value="SB01"> </v-radio>
+                      <v-radio label="파종" value="SB02"> </v-radio>
+                      <v-radio label="발아" value="SB03"> </v-radio>
+                      <v-radio label="1차육묘" value="SB04"> </v-radio>
+                      <v-radio label="접목" value="SB05"> </v-radio>
+                      <v-radio label="활착" value="SB06"> </v-radio>
+                      <v-radio label="2차육묘" value="SB07"> </v-radio>
+                      <v-radio label="완료" value="SB08"> </v-radio>
                     </v-radio-group>
                   </v-col>
                 </v-row>
