@@ -18,7 +18,7 @@ export default {
       { name: "거래처코드", value: 2 },
       { name: "담당자", value: 3 },
       { name: "담당자연락처", value: 4 },
-      { name: "거래처명", value: 5 },
+      //{ name: "거래처명", value: 5 },
     ],
     search_list2: [
       { name: "사업자 등록번호", value: 1 },

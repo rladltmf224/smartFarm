@@ -36,6 +36,7 @@
                 :items="customerList"
                 item-text="customerName"
                 item-value="customerId"
+                no-data-text="검색결과가 없습니다."
               ></v-autocomplete>
             </v-col>
             <v-col cols="2" fluid v-show="existing">
@@ -48,7 +49,7 @@
               >
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
-                    small
+                    color="primary"
                     @click="getExistingCalendar"
                     v-bind="attrs"
                     v-on="on"

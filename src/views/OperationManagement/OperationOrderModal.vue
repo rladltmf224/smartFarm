@@ -3,8 +3,12 @@
     <v-dialog v-model="openModal" persistent max-width="900px">
       <v-card>
         <v-card-title>
-          <span class="text-h5 dialog-title font-weight-bold" v-show="!change">작업지시서 등록</span>
-          <span class="text-h5 dialog-title font-weight-bold" v-show="change">작업지시서 수정</span>
+          <span class="text-h5 dialog-title font-weight-bold" v-show="!change"
+            >작업지시서 등록</span
+          >
+          <span class="text-h5 dialog-title font-weight-bold" v-show="change"
+            >작업지시서 수정</span
+          >
         </v-card-title>
         <v-card-text>
           <v-card elevation="4">
@@ -12,45 +16,112 @@
               <v-form ref="form" lazy-validation>
                 <v-row dense>
                   <v-col cols="3">
-                    <v-text-field label="작업지시서명"
+                    <v-text-field
+                      label="작업지시서명"
                       oninput="javascript: if (this.value.length > 50) this.value = this.value.slice(0, 50);"
-                      :rules="ordername_rule" v-model="orderData.name" tabindex="1" required dense></v-text-field>
+                      :rules="ordername_rule"
+                      v-model="orderData.name"
+                      tabindex="1"
+                      required
+                      dense
+                    ></v-text-field>
                   </v-col>
                   <v-col cols="1">
-                    <v-select v-model="orderData.selectObject" :items="objectList" item-value="value" item-text="name"
-                      label="목적" dense></v-select>
+                    <v-select
+                      v-model="orderData.selectObject"
+                      :items="objectList"
+                      item-value="value"
+                      item-text="name"
+                      label="목적"
+                      dense
+                    ></v-select>
                   </v-col>
                 </v-row>
                 <v-row dense>
                   <v-col cols="3">
-                    <v-autocomplete label="거래처" v-model="orderData.customer" tabindex="2" item-value="id"
-                      :items="customerData" item-text="name" :disabled="customerData.length == 0" required
-                      dense></v-autocomplete>
+                    <v-autocomplete
+                      label="거래처"
+                      v-model="orderData.customer"
+                      tabindex="2"
+                      item-value="id"
+                      :items="customerData"
+                      item-text="name"
+                      :disabled="customerData.length == 0"
+                      required
+                      dense
+                      no-data-text="검색결과가 없습니다."
+                    ></v-autocomplete>
                   </v-col>
 
                   <v-col cols="2">
-                    <v-autocomplete label="부서" v-model="orderData.department" tabindex="3" :items="departmentData"
-                      item-text="departmentName" item-value="departmentId" @change="selectedDepartment" required
-                      dense></v-autocomplete>
+                    <v-autocomplete
+                      label="부서"
+                      v-model="orderData.department"
+                      tabindex="3"
+                      :items="departmentData"
+                      item-text="departmentName"
+                      item-value="departmentId"
+                      @change="selectedDepartment"
+                      required
+                      dense
+                      no-data-text="검색결과가 없습니다."
+                    ></v-autocomplete>
                   </v-col>
                   <v-col cols="2">
-                    <v-autocomplete tabindex="4" v-model="orderData.departmentchargeId" item-text="chargeName"
-                      item-value="id" :items="departmentCrewList" :disabled="departmentCrewList.length == 0" label="담당자"
-                      required dense></v-autocomplete>
+                    <v-autocomplete
+                      tabindex="4"
+                      v-model="orderData.departmentchargeId"
+                      item-text="chargeName"
+                      item-value="id"
+                      :items="departmentCrewList"
+                      :disabled="departmentCrewList.length == 0"
+                      label="담당자"
+                      required
+                      dense
+                      no-data-text="검색결과가 없습니다."
+                    ></v-autocomplete>
                   </v-col>
                   <v-col cols="3">
-                    <v-menu tabindex="5" ref="deadline" v-model="menu_deadline_date" :close-on-content-click="false"
-                      :return-value.sync="deadline" transition="scale-transition" offset-y min-width="auto">
+                    <v-menu
+                      tabindex="5"
+                      ref="deadline"
+                      v-model="menu_deadline_date"
+                      :close-on-content-click="false"
+                      :return-value.sync="deadline"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
                       <template v-slot:activator="{ on, attrs }">
-                        <v-text-field label="마감일" v-model="orderData.deadline" prepend-icon="mdi-calendar" readonly
-                          v-bind="attrs" v-on="on" dense></v-text-field>
+                        <v-text-field
+                          label="마감일"
+                          v-model="orderData.deadline"
+                          prepend-icon="mdi-calendar"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                          dense
+                        ></v-text-field>
                       </template>
-                      <v-date-picker v-model="orderData.deadline" no-title scrollable locale="ko-KR">
+                      <v-date-picker
+                        v-model="orderData.deadline"
+                        no-title
+                        scrollable
+                        locale="ko-KR"
+                      >
                         <v-spacer></v-spacer>
-                        <v-btn text color="primary" @click="menu_deadline_date = false">
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="menu_deadline_date = false"
+                        >
                           취소
                         </v-btn>
-                        <v-btn text color="primary" @click="d_date_search(deadline)">
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="d_date_search(deadline)"
+                        >
                           확인
                         </v-btn>
                       </v-date-picker>
@@ -59,24 +130,54 @@
                 </v-row>
                 <v-row dense>
                   <v-col cols="3">
-                    <v-select v-model="orderData.selectItem" :items="itemList" item-value="id" item-text="name" dense
-                      label="품종"></v-select>
+                    <v-autocomplete
+                      v-model="orderData.selectItem"
+                      :items="itemList"
+                      item-value="id"
+                      item-text="name"
+                      dense
+                      label="품종"
+                      no-data-text="검색결과가 없습니다."
+                    ></v-autocomplete>
                   </v-col>
                   <v-col cols="3">
-                    <v-text-field label="수량" type="number" v-model="orderData.targetCount" dense></v-text-field>
+                    <v-text-field
+                      label="수량"
+                      type="number"
+                      v-model="orderData.targetCount"
+                      dense
+                    ></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row dense>
                   <v-col cols=" 12">
-                    <v-data-table :headers="bomHeaders" :items="bomData" disable-pagination item-key="id"
-                      hide-default-footer :items-per-page="20" dense>
+                    <v-data-table
+                      :headers="bomHeaders"
+                      :items="bomData"
+                      disable-pagination
+                      item-key="id"
+                      hide-default-footer
+                      :items-per-page="20"
+                      dense
+                    >
                       <template v-slot:item.targetCount="props">
-                        <v-edit-dialog cancel-text="취소" save-text="수정" v-if="!props.item.read"
-                          :return-value.sync="props.item.targetCount" large>
+                        <v-edit-dialog
+                          cancel-text="취소"
+                          save-text="수정"
+                          v-if="!props.item.read"
+                          :return-value.sync="props.item.targetCount"
+                          large
+                        >
                           {{ props.item.targetCount | comma }}
                           <template v-slot:input>
-                            <v-text-field v-model="props.item.targetCount" label="Edit" type="number" single-line counter
-                              oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"></v-text-field>
+                            <v-text-field
+                              v-model="props.item.targetCount"
+                              label="Edit"
+                              type="number"
+                              single-line
+                              counter
+                              oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(^0+)/, '');"
+                            ></v-text-field>
                           </template>
                         </v-edit-dialog>
                         <span v-else-if="props.item.read">{{
@@ -88,7 +189,10 @@
                 </v-row>
                 <v-row>
                   <v-col cols="12">
-                    <v-text-field label="비고" v-model="orderData.memo"></v-text-field>
+                    <v-text-field
+                      label="비고"
+                      v-model="orderData.memo"
+                    ></v-text-field>
                   </v-col>
                 </v-row>
               </v-form>
@@ -97,20 +201,42 @@
         </v-card-text>
         <v-card-actions>
           <v-row dense justify="end">
-            <v-btn v-show="change" class="mr-4" color="primary" @click="complete">
+            <v-btn
+              v-show="change"
+              class="mr-4"
+              color="primary"
+              @click="complete"
+            >
               수 정
             </v-btn>
-            <v-btn v-show="!change" :disabled="this.orderData.name == '' ||
-              this.orderData.customer == '' ||
-              this.orderData.departmentName == '' ||
-              this.orderData.itemId
-              " class="mr-1" color="primary" @click="complete('temp')">
+            <v-btn
+              v-show="!change"
+              :disabled="
+                this.orderData.name == '' ||
+                this.orderData.customer == '' ||
+                this.orderData.departmentName == '' ||
+                this.orderData.itemId
+              "
+              class="mr-1"
+              color="primary"
+              @click="complete('temp')"
+            >
               임 시 저 장
             </v-btn>
-            <v-btn v-show="!change" class="mr-1" color="primary" @click="tempOpen">
+            <v-btn
+              v-show="!change"
+              class="mr-1"
+              color="primary"
+              @click="tempOpen"
+            >
               임 시 저 장 불 러 오 기
             </v-btn>
-            <v-btn class="mr-1" v-show="!change" color="primary" @click="complete">
+            <v-btn
+              class="mr-1"
+              v-show="!change"
+              color="primary"
+              @click="complete"
+            >
               등 록
             </v-btn>
             <v-btn color="error" @click="closeModal"> 닫기 </v-btn>
@@ -122,17 +248,32 @@
     <v-dialog width="1200px" v-model="interimStorage" persistent>
       <v-card elevation="4">
         <v-card-title class="temp-title">
-          <span class="text-h5 dialog-title font-weight-bold">임시 저장 목록</span>
+          <span class="text-h5 dialog-title font-weight-bold"
+            >임시 저장 목록</span
+          >
         </v-card-title>
         <v-card-text>
           <v-row dense>
             <v-col cols="3">
-              <span class="text-h7 dialog-title font-weight-bold pl-20">현재 임시저장된 총 : {{ templist.length }} 개</span>
+              <span class="text-h7 dialog-title font-weight-bold pl-20"
+                >현재 임시저장된 총 : {{ templist.length }} 개</span
+              >
             </v-col>
             <v-col cols="12">
-              <v-data-table multi-sort fixed-header class="mr-2 ml-2 elevation-4" height="300" :sort-by="['createdDate']"
-                :sort-desc="true" @dblclick:row="aboutTemp" :headers="tempheader" :items="templist" disable-pagination
-                hide-default-footer dense>
+              <v-data-table
+                multi-sort
+                fixed-header
+                class="mr-2 ml-2 elevation-4"
+                height="300"
+                :sort-by="['createdDate']"
+                :sort-desc="true"
+                @dblclick:row="aboutTemp"
+                :headers="tempheader"
+                :items="templist"
+                disable-pagination
+                hide-default-footer
+                dense
+              >
                 <template v-slot:[`item.deadline`]="{ item }">
                   {{ item.deadline }}
                 </template>
@@ -156,10 +297,20 @@
         </v-card-text>
         <v-card-actions>
           <v-col class="text-right">
-            <v-btn class="closeBtn mr-2" fluid color="primary" @click="removeTemp">
+            <v-btn
+              class="closeBtn mr-2"
+              fluid
+              color="primary"
+              @click="removeTemp"
+            >
               전 체 삭 제
             </v-btn>
-            <v-btn class="closeBtn" color="primary" text @click="interimStorage = false">
+            <v-btn
+              class="closeBtn"
+              color="primary"
+              text
+              @click="interimStorage = false"
+            >
               닫기
             </v-btn>
           </v-col>
@@ -191,10 +342,10 @@ export default class OperationOrderModal extends Vue {
     itemsPerPageAllText: string;
     itemsPerPageOptions: number[];
   } = {
-      disableItemsPerPage: false,
-      itemsPerPageAllText: "ALL",
-      itemsPerPageOptions: [10, 20, 50, -1],
-    };
+    disableItemsPerPage: false,
+    itemsPerPageAllText: "ALL",
+    itemsPerPageOptions: [10, 20, 50, -1],
+  };
   ordername_rule: any[] = [
     (v: any) =>
       !(v && v.length >= 50) || "작업지시서명 50자 이상 입력할 수 없습니다.",
