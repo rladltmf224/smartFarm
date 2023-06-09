@@ -240,7 +240,7 @@ export default class AlarmHistory extends Vue {
     let local: any = localStorage.getItem("userId");
     let userId = JSON.parse(local) || "";
     let param_page = this.itemListCfg.options.page - 1;
-    let param_size = this.itemListCfg.options.itemsPerPage + 2;
+    let param_size = this.itemListCfg.options.itemsPerPage - 2;
 
     let param: any = {
       userId: userId,
