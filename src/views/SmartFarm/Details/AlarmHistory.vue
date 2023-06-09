@@ -7,38 +7,84 @@
           <v-card class="card-shadow pa-3" height="65">
             <v-row dense>
               <v-col cols="2">
-                <v-menu ref="startDate" v-model="startDate" :close-on-content-click="false"
-                  :return-value.sync="search_condition.startDate" transition="scale-transition" offset-y min-width="auto">
+                <v-menu
+                  ref="startDate"
+                  v-model="startDate"
+                  :close-on-content-click="false"
+                  :return-value.sync="search_condition.startDate"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field v-model="search_condition.startDate" label="시작일" prepend-icon="mdi-calendar" readonly
-                      v-bind="attrs" v-on="on" dense></v-text-field>
+                    <v-text-field
+                      v-model="search_condition.startDate"
+                      label="시작일"
+                      prepend-icon="mdi-calendar"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                      dense
+                    ></v-text-field>
                   </template>
-                  <v-date-picker v-model="search_condition.startDate" no-title scrollable locale="ko-KR"
-                    :max="search_condition.endDate">
+                  <v-date-picker
+                    v-model="search_condition.startDate"
+                    no-title
+                    scrollable
+                    locale="ko-KR"
+                    :max="search_condition.endDate"
+                  >
                     <v-spacer></v-spacer>
                     <v-btn text color="primary" @click="startDate = false">
                       취소
                     </v-btn>
-                    <v-btn text color="primary" @click="s_date_search(search_condition.startDate)">
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="s_date_search(search_condition.startDate)"
+                    >
                       확인
                     </v-btn>
                   </v-date-picker>
                 </v-menu>
               </v-col>
               <v-col md="2">
-                <v-menu ref="endDate" v-model="endDate" :close-on-content-click="false"
-                  :return-value.sync="search_condition.endDate" transition="scale-transition" offset-y min-width="auto">
+                <v-menu
+                  ref="endDate"
+                  v-model="endDate"
+                  :close-on-content-click="false"
+                  :return-value.sync="search_condition.endDate"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field v-model="search_condition.endDate" label="종료일" prepend-icon="mdi-calendar" readonly
-                      v-bind="attrs" v-on="on" dense></v-text-field>
+                    <v-text-field
+                      v-model="search_condition.endDate"
+                      label="종료일"
+                      prepend-icon="mdi-calendar"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                      dense
+                    ></v-text-field>
                   </template>
-                  <v-date-picker v-model="search_condition.endDate" no-title scrollable locale="ko-KR"
-                    :min="search_condition.startDate">
+                  <v-date-picker
+                    v-model="search_condition.endDate"
+                    no-title
+                    scrollable
+                    locale="ko-KR"
+                    :min="search_condition.startDate"
+                  >
                     <v-spacer></v-spacer>
                     <v-btn text color="primary" @click="endDate = false">
                       취소
                     </v-btn>
-                    <v-btn text color="primary" @click="e_date_search(search_condition.endDate)">
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="e_date_search(search_condition.endDate)"
+                    >
                       확인
                     </v-btn>
                   </v-date-picker>
@@ -62,27 +108,50 @@
             </v-col>
           </v-row>
           <v-card>
-            <v-data-table :height="table_height" :headers="headers" :items="table_data" fixed-header multi-sort
-              :options.sync="itemListCfg.options" :server-items-length="itemListCfg.totalCount"
-              :loading="itemListCfg.loading" :items-per-page="itemListCfg.itemsPerPage" :page.sync="itemListCfg.page"
-              @page-count="itemListCfg.pageCount = $event" hide-default-footer>
+            <v-data-table
+              :height="table_height"
+              :headers="headers"
+              :items="table_data"
+              fixed-header
+              multi-sort
+              :options.sync="itemListCfg.options"
+              :server-items-length="itemListCfg.totalCount"
+              :loading="itemListCfg.loading"
+              :items-per-page="itemListCfg.itemsPerPage"
+              :page.sync="itemListCfg.page"
+              @page-count="itemListCfg.pageCount = $event"
+              hide-default-footer
+            >
               <template v-slot:item.value="{ item }">
                 <span v-html="item.value"></span>
               </template>
               <template v-slot:item.type="{ item }">
-                <v-chip class="mr-3" :color="item.type == 'caution' ? 'warning' : 'error'">
+                <v-chip
+                  class="mr-3"
+                  :color="item.type == 'caution' ? 'warning' : 'error'"
+                >
                   {{ item.type == "caution" ? "주의" : "경고" }}
                 </v-chip>
               </template>
               <template v-slot:item.checkedDate="{ item }">
                 <span v-if="item.checkedDate" v-html="item.checkedDate"></span>
-                <v-btn v-else color="primary" elevation="0" @click="check(item.id)">
+                <v-btn
+                  v-else
+                  color="primary"
+                  elevation="0"
+                  @click="check(item.id)"
+                >
                   조치
                 </v-btn>
               </template>
             </v-data-table>
           </v-card>
-          <v-pagination circle v-model="itemListCfg.page" :length="itemListCfg.pageCount"></v-pagination>
+          <v-pagination
+            :total-visible="7"
+            circle
+            v-model="itemListCfg.page"
+            :length="itemListCfg.pageCount"
+          ></v-pagination>
         </v-col>
       </v-row>
     </v-container>
@@ -95,7 +164,6 @@ import { gridCfg } from "@/util/config";
 import { Component, Vue, Watch } from "vue-property-decorator";
 import _, { clone } from "lodash";
 import { stringify } from "querystring";
-
 
 @Component({
   components: {},
@@ -122,7 +190,7 @@ export default class AlarmHistory extends Vue {
   table_data: any[] = []; // 테이블에 보여줄 데이터
   table_height: number = 0;
   sortState: any = [];
-  queryString: string = '';
+  queryString: string = "";
   loading: boolean = false;
   itemListCfg: any = {};
 
@@ -133,9 +201,9 @@ export default class AlarmHistory extends Vue {
     this.onResize();
   }
 
-  @Watch('itemListCfg.options', { deep: true })
+  @Watch("itemListCfg.options", { deep: true })
   changeOptions() {
-    this.getData()
+    this.getData();
   }
   setSorts() {
     const { sortBy, sortDesc } = this.itemListCfg.options;
@@ -148,32 +216,31 @@ export default class AlarmHistory extends Vue {
       this.sortState = sortState;
     }
   }
-  getData() { //api 통신
-    this.setSorts()
-    this.makeParam()
+  getData() {
+    //api 통신
+    this.setSorts();
+    this.makeParam();
     this.loading = true;
     api.alarm
-      .alarmList(
-        this.queryString
-      )
+      .alarmList(this.queryString)
       .then((response) => {
         this.itemListCfg.totalCount = response.data.data.totalElements;
-        this.table_data = response.data.data.content
+        this.table_data = response.data.data.content;
         this.loading = false;
-        this.setContentString()
-        this.setContentDate()
-      }).catch((error) => {
-        console.error(error)
+        this.setContentString();
+        this.setContentDate();
+        console.log(this.table_data);
       })
+      .catch((error) => {
+        console.error(error);
+      });
   }
-  makeParam() { //api통신에 필요한 파라미터 가공
+  makeParam() {
+    //api통신에 필요한 파라미터 가공
     let local: any = localStorage.getItem("userId");
     let userId = JSON.parse(local) || "";
     let param_page = this.itemListCfg.options.page - 1;
     let param_size = this.itemListCfg.options.itemsPerPage + 2;
-
-
-
 
     let param: any = {
       userId: userId,
@@ -181,48 +248,81 @@ export default class AlarmHistory extends Vue {
       endDate: this.search_condition.endDate,
       getAll: true,
       page: param_page,
-      size: param_size
-    }
+      size: param_size,
+    };
 
-    let queryString = "?"; //파라미터를 쿼리스트링파라미터로 바꾸는 과정 
+    let queryString = "?"; //파라미터를 쿼리스트링파라미터로 바꾸는 과정
     queryString += "userId=" + userId;
     queryString += "&page=" + param_page;
     queryString += "&size=" + param_size;
     queryString += "&startDate=" + this.search_condition.startDate;
     queryString += "&endDate=" + this.search_condition.endDate;
 
-    this.sortState.forEach((state: any) => { //sortState 배열에서 참이면 asc 거짓이면 desc
-      queryString += "&sort=" + state.columnName + ',' + (state.ascending ? "asc" : "desc")
+    this.sortState.forEach((state: any) => {
+      //sortState 배열에서 참이면 asc 거짓이면 desc
+      queryString +=
+        "&sort=" + state.columnName + "," + (state.ascending ? "asc" : "desc");
     });
-    this.queryString = queryString
+    this.queryString = queryString;
   }
-  setContentString() { //api 통신후 res.data안의 content string을 가공
-    for (let i = 0; i < this.table_data.length; i++) { //res.data의 content string을 가공한다.
+  setContentString() {
+    //api 통신후 res.data안의 content string을 가공
+    for (let i = 0; i < this.table_data.length; i++) {
+      //res.data의 content string을 가공한다.
       let content = this.table_data[i].content.split("\n");
       this.table_data[i]["room"] = content[2].replace("room : ", "");
       this.table_data[i]["title"] = content[3].replace("알림 : ", "");
-      this.table_data[i]["setRange"] = content[4].replace(
-        "설정범위 : ",
-        ""
-      );
+      this.table_data[i]["setRange"] = content[4].replace("설정범위 : ", "");
       this.table_data[i]["value"] =
-        content[6].replace("- ", "") +
-        "<br>" +
-        content[7].replace("- ", "");
+        content[6].replace("- ", "") + "<br>" + content[7].replace("- ", "");
       this.table_data[i]["num"] = _.filter(this.alarmList, {
         id: this.table_data[i].id,
       }).length;
     }
   }
-  setContentDate() { //api 통신후 res.data안의 date를 가공
-    for (let i = 0; i < this.table_data.length; i++) { //res.data의 content string을 가공한다.
-      //발생일시를 가공 
-      let date = this.table_data[i]["createdDate"]
-      this.table_data[i]["createdDate"] = `${date[0]}-${(date[1] < 10 ? '0' : '') + date[1]}-${(date[2] < 10 ? '0' : '') + date[2]} ${(date[3] < 10 ? '0' : '') + date[3]}:${(date[4] < 10 ? '0' : '') + date[4]}:${(date[5] < 10 ? '0' : '') + date[5]}`;
-      //조치일시를 가공
-      let checkedDate = this.table_data[i].checkedDate
-      if (this.table_data[i].checkedDate) {
-        this.table_data[i]["checkedDate"] = `${checkedDate[0]}-${(date[1] < 10 ? '0' : '') + checkedDate[1]}-${(checkedDate[2] < 10 ? '0' : '') + checkedDate[2]} ${(checkedDate[3] < 10 ? '0' : '') + checkedDate[3]}:${(checkedDate[4] < 10 ? '0' : '') + checkedDate[4]}:${(date[5] < 10 ? '0' : '') + checkedDate[5]}`;
+  setContentDate() {
+    //api 통신후 res.data안의 date를 가공
+    for (let i = 0; i < this.table_data.length; i++) {
+      let createdDate = this.table_data[i]["createdDate"];
+      let createdDatetime = new Date(createdDate);
+      let formattedCreatedDate = `${createdDatetime.getFullYear()}-${
+        (createdDatetime.getMonth() + 1 < 10 ? "0" : "") +
+        (createdDatetime.getMonth() + 1)
+      }-${
+        (createdDatetime.getDate() < 10 ? "0" : "") + createdDatetime.getDate()
+      } ${
+        (createdDatetime.getHours() < 10 ? "0" : "") +
+        createdDatetime.getHours()
+      }:${
+        (createdDatetime.getMinutes() < 10 ? "0" : "") +
+        createdDatetime.getMinutes()
+      }:${
+        (createdDatetime.getSeconds() < 10 ? "0" : "") +
+        createdDatetime.getSeconds()
+      }`;
+      this.table_data[i]["createdDate"] = formattedCreatedDate;
+
+      // 조치일시를 가공
+      let checkedDate = this.table_data[i].checkedDate;
+      if (checkedDate) {
+        let checkedDatetime = new Date(checkedDate);
+        let formattedCheckedDate = `${checkedDatetime.getFullYear()}-${
+          (checkedDatetime.getMonth() + 1 < 10 ? "0" : "") +
+          (checkedDatetime.getMonth() + 1)
+        }-${
+          (checkedDatetime.getDate() < 10 ? "0" : "") +
+          checkedDatetime.getDate()
+        } ${
+          (checkedDatetime.getHours() < 10 ? "0" : "") +
+          checkedDatetime.getHours()
+        }:${
+          (checkedDatetime.getMinutes() < 10 ? "0" : "") +
+          checkedDatetime.getMinutes()
+        }:${
+          (checkedDatetime.getSeconds() < 10 ? "0" : "") +
+          checkedDatetime.getSeconds()
+        }`;
+        this.table_data[i]["checkedDate"] = formattedCheckedDate;
       }
     }
   }
@@ -241,7 +341,8 @@ export default class AlarmHistory extends Vue {
     let endEL: any = this.$refs.endDate;
     endEL.save(v);
   }
-  check(id: number): void { //조치버튼 클릭 시
+  check(id: number): void {
+    //조치버튼 클릭 시
     api.alarm
       .alarmCheck({ id: id })
       .then((response) => {
