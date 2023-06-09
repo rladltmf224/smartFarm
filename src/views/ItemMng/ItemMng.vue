@@ -93,6 +93,8 @@
               :page.sync="itemListCfg.page"
               @page-count="itemListCfg.pageCount = $event"
               hide-default-footer
+              loading-text="서버에 요청중...."
+              no-data-text="데이터가 없습니다."
             >
               <template v-slot:[`item.edit`]="{ item }">
                 <v-icon

@@ -37,6 +37,7 @@
                       item-text="name"
                       return-object
                       required
+                      no-data-text="검색결과가 없습니다."
                     ></v-autocomplete>
                   </v-col>
                   <v-col cols="2">
@@ -53,6 +54,7 @@
                       item-text="departmentName"
                       item-value="departmentId"
                       return-object
+                      no-data-text="검색결과가 없습니다."
                     ></v-autocomplete>
                   </v-col>
                   <v-col cols="2">
@@ -67,6 +69,7 @@
                       item-text="chargeName"
                       label="담당자"
                       return-object
+                      no-data-text="검색결과가 없습니다."
                     ></v-autocomplete>
                   </v-col>
                   <v-col cols="2">

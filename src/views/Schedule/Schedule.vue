@@ -236,6 +236,7 @@ import "@toast-ui/calendar/dist/toastui-calendar.min.css";
 import * as api from "@/api";
 import cfg from "./config";
 import _ from "lodash";
+
 //import { faPersonMilitaryRifle } from "@fortawesome/free-solid-svg-icons";
 //import { colors } from "vuetify/lib";
 

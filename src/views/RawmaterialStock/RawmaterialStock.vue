@@ -60,7 +60,7 @@
                 </v-row>
                 <v-row dense>
                   <v-col cols="2">
-                    <v-select
+                    <v-autocomplete
                       label="창고"
                       v-model="search_condition.storage"
                       :items="storage_list_search"
@@ -71,7 +71,8 @@
                       solo
                       rounded
                       hide-details="false"
-                    ></v-select>
+                      no-data-text="검색결과가 없습니다."
+                    ></v-autocomplete>
                   </v-col>
                   <v-col md="2">
                     <v-menu

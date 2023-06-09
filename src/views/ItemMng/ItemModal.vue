@@ -98,7 +98,8 @@
           <v-row dense>
             <v-col cols="6" align-self="center">
               <span>지정창고</span>
-              <v-select
+              <v-autocomplete
+                no-data-text="검색결과가 없습니다."
                 :items="storageData"
                 v-model="itemData.storageId"
                 item-text="name"
@@ -107,11 +108,12 @@
                 solo
                 hide-details="false"
                 class="text-box-style"
-              ></v-select>
+              ></v-autocomplete>
             </v-col>
             <v-col cols="6" align-self="center">
               <span>지정구역</span>
-              <v-select
+              <v-autocomplete
+                no-data-text="검색결과가 없습니다."
                 :items="locationData"
                 v-model="itemData.storageLocationId"
                 item-text="area"
@@ -119,7 +121,7 @@
                 solo
                 hide-details="false"
                 class="text-box-style"
-              ></v-select>
+              ></v-autocomplete>
             </v-col>
           </v-row>
         </v-card-text>

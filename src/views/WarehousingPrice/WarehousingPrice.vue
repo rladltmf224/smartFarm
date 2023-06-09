@@ -7,8 +7,16 @@
           <v-card class="pa-3" height="60">
             <v-row>
               <v-col cols="2">
-                <v-text-field label="거래처명" v-model="search_condition.customer" @keydown.enter="getCustomer" dense solo
-                  rounded elevation-0 hide-details="false"></v-text-field>
+                <v-text-field
+                  label="거래처명"
+                  v-model="search_condition.customer"
+                  @keydown.enter="getCustomer"
+                  dense
+                  solo
+                  rounded
+                  elevation-0
+                  hide-details="false"
+                ></v-text-field>
               </v-col>
               <v-spacer></v-spacer>
               <v-col class="pt-3 text-right" cols="3">
@@ -29,14 +37,33 @@
             </v-col>
             <v-col cols="12">
               <v-card>
-                <v-data-table :height="customerList_height" :headers="headers" :items="statement_list" item-key="id"
-                  multi-sort single-select fixed-header dense @click:row="selectCustomerItem"
-                  :options.sync="customerListCfg.options" :server-items-length="customerListCfg.totalCount"
-                  :loading="customerListCfg.loading" :items-per-page="customerListCfg.itemsPerPage"
-                  :page.sync="customerListCfg.page" @page-count="customerListCfg.pageCount = $event" hide-default-footer>
+                <v-data-table
+                  :height="customerList_height"
+                  :headers="headers"
+                  :items="statement_list"
+                  item-key="id"
+                  multi-sort
+                  single-select
+                  fixed-header
+                  dense
+                  @click:row="selectCustomerItem"
+                  :options.sync="customerListCfg.options"
+                  :server-items-length="customerListCfg.totalCount"
+                  :loading="customerListCfg.loading"
+                  :items-per-page="customerListCfg.itemsPerPage"
+                  :page.sync="customerListCfg.page"
+                  @page-count="customerListCfg.pageCount = $event"
+                  hide-default-footer
+                  loading-text="서버에 요청중...."
+                  no-data-text="데이터가 없습니다."
+                >
                 </v-data-table>
               </v-card>
-              <v-pagination circle v-model="customerListCfg.page" :length="customerListCfg.pageCount"></v-pagination>
+              <v-pagination
+                circle
+                v-model="customerListCfg.page"
+                :length="customerListCfg.pageCount"
+              ></v-pagination>
             </v-col>
           </v-row>
         </v-col>
@@ -47,20 +74,45 @@
             </v-col>
             <v-spacer></v-spacer>
             <v-col class="text-right" cols="5" align-self="center">
-              <v-btn class="ml-1" color="success" @click="saveCustomerItem">적용</v-btn>
-              <v-btn class="ml-1" color="primary" @click="editItem"><v-icon left> mdi-pencil-plus </v-icon>품목 추가</v-btn>
+              <v-btn class="ml-1" color="success" @click="saveCustomerItem"
+                >적용</v-btn
+              >
+              <v-btn class="ml-1" color="primary" @click="editItem"
+                ><v-icon left> mdi-pencil-plus </v-icon>품목 추가</v-btn
+              >
             </v-col>
             <v-col cols="12">
               <v-card>
-                <v-data-table :height="itemList_height" :headers="headers_detail" :items="statement_detail_list"
-                  item-key="itemId" single-select multi-sort hide-default-footer dense @click:row="selectItemHistory">
+                <v-data-table
+                  :height="itemList_height"
+                  :headers="headers_detail"
+                  :items="statement_detail_list"
+                  item-key="itemId"
+                  single-select
+                  multi-sort
+                  hide-default-footer
+                  dense
+                  @click:row="selectItemHistory"
+                  no-data-text="데이터가 없습니다."
+                >
                   <template v-slot:[`item.unitPrice`]="props">
-                    <v-edit-dialog cancel-text="취소" save-text="수정" :return-value.sync="props.item.unitPrice" large
-                      @save="props.item = saveUnitPrice(props.item)">
+                    <v-edit-dialog
+                      cancel-text="취소"
+                      save-text="수정"
+                      :return-value.sync="props.item.unitPrice"
+                      large
+                      @save="props.item = saveUnitPrice(props.item)"
+                    >
                       {{ props.item.unitPrice | comma }}
                       <template v-slot:input>
-                        <v-text-field v-model.number="props.item.unitPrice" label="Edit" single-line type="number"
-                          step="0.01" min="0"></v-text-field>
+                        <v-text-field
+                          v-model.number="props.item.unitPrice"
+                          label="Edit"
+                          single-line
+                          type="number"
+                          step="0.01"
+                          min="0"
+                        ></v-text-field>
                       </template>
                     </v-edit-dialog>
                   </template>
@@ -86,8 +138,15 @@
             </v-col>
             <v-col cols="12">
               <v-card>
-                <v-data-table :height="changeList_height" :headers="headers_history" :items="item_history_list" multi-sort
-                  hide-default-footer dense>
+                <v-data-table
+                  :height="changeList_height"
+                  :headers="headers_history"
+                  :items="item_history_list"
+                  multi-sort
+                  hide-default-footer
+                  dense
+                  no-data-text="데이터가 없습니다."
+                >
                   <template v-slot:[`item.unitPrice`]="props">
                     {{ props.item.unitPrice | comma }}
                   </template>
@@ -107,8 +166,13 @@
     </v-container>
 
     <!-- 생성 모달 -->
-    <WarehousingPriceItemModal :open="edit_customer" :customerID="selectCustomerID" @addItemList="handlerSaveItemModal"
-      @closeModal="close_item_modal" :checkDuplication="this.statement_detail_list"></WarehousingPriceItemModal>
+    <WarehousingPriceItemModal
+      :open="edit_customer"
+      :customerID="selectCustomerID"
+      @addItemList="handlerSaveItemModal"
+      @closeModal="close_item_modal"
+      :checkDuplication="this.statement_detail_list"
+    ></WarehousingPriceItemModal>
   </div>
 </template>
 
@@ -472,7 +536,6 @@ export default class WarehousingPrice extends Vue {
         this.statement_detail_list.unshift(data);
       }
     );
-
 
     this.close_item_modal();
   }
