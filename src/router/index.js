@@ -107,80 +107,69 @@ const routes = [
       },
 
       {
-        path: "SensorGraph",
-        name: "SensorGraph",
-        component: () => import("@/views/SmartFarm/SensorGraph"),
-      },
-      {
-        path: "SideCard",
-        name: "SideCard",
-        component: () => import("@/views/SmartFarm/SideCard"),
-      },
-      {
         path: "MonitoringGraph",
         name: "MonitoringGraph",
-        component: () => import("@/views/SmartFarm/MonitoringGraph"),
+        component: () => import("@/views/EnvironmentalControl/MonitoringGraph"),
       },
 
       {
         path: "TempHumid",
         name: "TempHumid",
-        component: () => import("@/views/SmartFarm/Details/TempHumid"),
+        component: () => import("@/views/EnvironmentalControl/TempHumid"),
       },
       {
         path: "WaterpH",
         name: "WaterpH",
-        component: () => import("@/views/SmartFarm/Details/WaterpH"),
+        component: () => import("@/views/EnvironmentalControl/WaterpH"),
       },
 
       {
         path: "InputData",
         name: "InputData",
-        component: () => import("@/views/SmartFarm/WaterpHEC/InputData"),
+        component: () => import("@/views/WaterpHEC/InputData"),
       },
       {
         path: "TableCard",
         name: "TableCard",
-        component: () => import("@/views/SmartFarm/Test/TableCard"),
+        component: () => import("@/views/Experiment/TableCard"),
       },
 
       {
         path: "Monitoring",
         name: "Monitoring",
-        component: () => import("@/views/SmartFarm/Monitoring"),
+        component: () => import("@/views/EnvironmentalControl/Monitoring"),
       },
       {
-        path: "DetailHistory",
-        name: "DetailHistory",
-        component: () => import("@/views/SmartFarm/Details/DetailHistory"),
+        path: "TemperatureHistory",
+        name: "TemperatureHistory",
+        component: () =>
+          import("@/views/TemperatureHistory/TemperatureHistory"),
       },
       {
         path: "ShowControllHistory",
         name: "ShowControllHistory",
-        component: () =>
-          import("@/views/SmartFarm/Controls/ShowControllHistory"),
+        component: () => import("@/views/ControllHistory/ShowControllHistory"),
       },
       {
         path: "ShowTest",
         name: "ShowTest",
-        component: () => import("@/views/SmartFarm/Test/ShowTest"),
+        component: () => import("@/views/Experiment/ShowTest"),
       },
       {
         path: "ShowImage",
         name: "ShowImage",
-        component: () => import("@/views/SmartFarm/Test/ShowImage"),
+        component: () => import("@/views/Experiment/ShowImage"),
       },
       {
         path: "ShowTestForm",
         name: "ShowTestForm",
-        component: () => import("@/views/SmartFarm/Test/ShowTestForm"),
+        component: () => import("@/views/Experiment/ShowTestForm"),
         props: true,
       },
       {
         path: "OrderManagement",
         name: "OrderManagement",
-        component: () =>
-          import("@/views/SmartFarm/OrderManagement/OrderManagement"),
+        component: () => import("@/views/OrderManagement/OrderManagement"),
       },
       {
         path: "notdev",
@@ -196,13 +185,12 @@ const routes = [
       {
         path: "AlarmHistory",
         name: "AlarmHistory ",
-        component: () => import("@/views/SmartFarm/Details/AlarmHistory"),
+        component: () => import("@/views/AlarmHistory/AlarmHistory"),
       },
       {
         path: "calendar",
         name: "calendar ",
-        component: () =>
-          import("@/views/SmartFarm/ConsumerProduct/calendar.vue"),
+        component: () => import("@/views/ConsumerProduct/calendar"),
       },
       {
         path: "OperationOrderDetail",
@@ -213,7 +201,7 @@ const routes = [
       {
         path: "ManureMng",
         name: "ManureMng",
-        component: () => import("@/views/SmartFarm/WaterpHEC/ManureMng"),
+        component: () => import("@/views/WaterpHEC/ManureMng"),
       },
     ],
   },

@@ -38,11 +38,13 @@
         </v-btn>
       </v-row>
       <v-spacer></v-spacer>
-      <div class="graphBox">
-        <canvas ref="barChart" />
+      <div class="box mt-5">
+        <div class="graphBox">
+          <canvas ref="barChart" />
+        </div>
       </div>
 
-      <v-card class="timelineBox elevation-0">
+      <v-card class="timelineBox elevation-0 mt-5" :height="card_height">
         <v-expansion-panels v-model="activePanel">
           <v-expansion-panel v-for="(item, index) in panels" :key="index">
             <v-expansion-panel-header
@@ -374,6 +376,7 @@ export default class Schedule extends Vue {
         xAxis: {
           min: "",
           max: "",
+          position: "top",
           beginAtZero: true,
           autoSkip: false,
           maxTicksLimit: 6,
@@ -524,6 +527,7 @@ export default class Schedule extends Vue {
     visibleEventCount: 10,
     //visibleWeeksCount: 5, //보여줄 주단위
   };
+  card_height: number = 0;
 
   get calendarInstance() {
     //'GetInstance'는 호출 값을 한 번만 제공합니다.
@@ -606,6 +610,10 @@ export default class Schedule extends Vue {
     chart.resetZoom();
   }
 
+  onResize() {
+    this.card_height = window.innerHeight - 48 - 48 - 48 - 400;
+  }
+
   getdayDate() {
     const now = new Date();
     const day = now.getDate();
@@ -647,7 +655,7 @@ export default class Schedule extends Vue {
   async getTotalSchedule() {
     this.timelineList = [];
     let searchItem = {
-      customerId: [],
+      customList: [],
     };
     let yArea = new Set();
     let groupList = new Set();
@@ -763,7 +771,7 @@ export default class Schedule extends Vue {
           options: this.chartData.options,
         });
 
-        chart.canvas.parentNode.style.height = "400px";
+        chart.canvas.parentNode.style.height = "550px";
         chart.canvas.style.backgroundColor = "#fdfdfd";
         chart.resize();
 
@@ -955,6 +963,7 @@ export default class Schedule extends Vue {
     if (this.selectedTabs == "달력") {
       this.getSchedule([]);
     } else {
+      this.onResize();
       this.getTotalSchedule();
     }
   }

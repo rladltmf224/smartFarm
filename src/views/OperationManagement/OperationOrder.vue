@@ -549,7 +549,7 @@ import cfg from "./config";
 import { gridCfg } from "@/util/config/";
 import OrderModal from "./OperationOrderModal.vue";
 import OrderAddItemModal from "./OperationOrderAddItem.vue";
-import LoadingSpinner from "@/views/SmartFarm/Details/LoadingSpinner.vue";
+import LoadingSpinner from "@/components/Loading/LodingSpinner.vue"; //로딩스피너
 import { Component, Vue, Watch } from "vue-property-decorator";
 import _ from "lodash";
 
