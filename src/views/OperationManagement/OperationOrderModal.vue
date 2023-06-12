@@ -159,6 +159,7 @@
                       hide-default-footer
                       :items-per-page="20"
                       dense
+                      no-data-text="데이터가 없습니다."
                     >
                       <template v-slot:item.targetCount="props">
                         <v-edit-dialog
@@ -432,10 +433,11 @@ export default class OperationOrderModal extends Vue {
   @Watch("orderData.selectItem")
   onItemDataChange() {
     if (this.orderData.selectItem != 0) {
+      this.bomData = [];
       this.getProcessList();
     } else {
       this.orderData.selectProcess = "";
-      this.processList = [];
+      this.bomData = [];
     }
   }
 
@@ -1088,36 +1090,38 @@ export default class OperationOrderModal extends Vue {
 
     api.operation.getItemListByBom(reqData).then((res) => {
       console.log("getItemListByBom", res);
-      let bomData = res.data.responseData.details.map((item: any) => {
-        delete item.bomDetailId;
-        return item;
-      });
-      if (res.data.responseData.productionType == "실생묘") {
-        res.data.responseData.details.forEach((element: any) => {
-          element.targetCount = this.orderData.targetCount;
-          element.read = true;
-          return element;
+      if (res.data.responseData.length != 0) {
+        let bomData = res.data.responseData.details.map((item: any) => {
+          delete item.bomDetailId;
+          return item;
         });
-        this.bomData = res.data.responseData.details;
-      } else if (res.data.responseData.productionType == "접목묘") {
-        let arrData = [];
-        arrData = res.data.responseData.details;
+        if (res.data.responseData.productionType == "실생묘") {
+          res.data.responseData.details.forEach((element: any) => {
+            element.targetCount = this.orderData.targetCount;
+            element.read = true;
+            return element;
+          });
+          this.bomData = res.data.responseData.details;
+        } else if (res.data.responseData.productionType == "접목묘") {
+          let arrData = [];
+          arrData = res.data.responseData.details;
 
-        arrData.forEach((element: any) => {
-          element.targetCount = 0;
-          element.read = false;
-          return element;
-        });
-        arrData.push({
-          itemName: res.data.responseData.itemName,
-          itemId: res.data.responseData.itemId,
-          count: 1,
-          targetCount: this.orderData.targetCount,
-          read: true,
-        });
-        this.bomData = arrData;
+          arrData.forEach((element: any) => {
+            element.targetCount = 0;
+            element.read = false;
+            return element;
+          });
+          arrData.push({
+            itemName: res.data.responseData.itemName,
+            itemId: res.data.responseData.itemId,
+            count: 1,
+            targetCount: this.orderData.targetCount,
+            read: true,
+          });
+          this.bomData = arrData;
+        }
+        console.log("bomData", bomData);
       }
-      console.log("bomData", bomData);
     });
   }
 
