@@ -209,7 +209,7 @@ export default class Sidebar extends Vue {
           },
           {
             title: "이력 조회",
-            to: "DetailHistory",
+            to: "TemperatureHistory",
           },
           {
             title: "알람이력 조회",

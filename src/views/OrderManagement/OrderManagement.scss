@@ -1,0 +1,18 @@
+.v-data-table-header {
+  background-color: #f6f8f9;
+}
+.text-start {
+  border-right: 1px solid #d8dadb;
+  border-bottom: 1px solid #d8dadb;
+}
+.v-data-table.v-data-table-header__sort-badge {
+  display: none !important;
+}
+
+.v-data-table-header__sort-badge {
+  display: none;
+}
+
+.v-data-table > .v-data-table__wrapper > table > tfoot > tr > td {
+  height: 26px;
+}
