@@ -572,9 +572,13 @@ export default class ScheduleDetailModal extends Vue {
         })
         .catch((error) => {
           console.log(error);
+        })
+        .finally(() => {
+          //일정 데이터 불러오기
+          this.$emit("closeModal");
+          this.$emit("getFilter");
+          this.$emit("getEvent");
         });
-      //일정 데이터 불러오기
-      this.$emit("closeModal");
     }
   }
 

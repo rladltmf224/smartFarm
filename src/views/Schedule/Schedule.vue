@@ -955,6 +955,8 @@ export default class Schedule extends Vue {
 
   openModal() {
     this.chooseDialog = true;
+    this.getSchedule([]);
+    console.log("가기전", this.totalEvents);
   }
 
   clickTab(item: any) {

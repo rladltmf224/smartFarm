@@ -382,8 +382,9 @@ export default class ScheduleAddModal extends Vue {
     endDate: HTMLFormElement;
   };
   @Prop({ required: true }) open: boolean = false;
-  @Prop({ required: true }) totalEvents: any[];
 
+  events: any[] = []; //[response] 전체 일정 데이터
+  totalEvents: any[] = []; //[response] 전체 일정 데이터
   existing: boolean = false; //추가 일정 상태
   secondResetTypeData: any = []; //그 외 일정 v-model
   secondTitleList: any = [{ title: "", start: "", end: "", memo: "" }]; //그 외 일정 v-model
@@ -495,6 +496,7 @@ export default class ScheduleAddModal extends Vue {
 
   created() {
     this.getCustomer();
+    this.getSchedule([]);
   }
 
   chooseAddModal() {
@@ -515,6 +517,27 @@ export default class ScheduleAddModal extends Vue {
     this.secondTitleList = JSON.parse(JSON.stringify(this.secondResetTypeData));
   }
 
+  getSchedule(item: any) {
+    this.totalEvents = [];
+    this.events = [];
+    let searchItem = {
+      customList: [],
+    };
+    searchItem.customList = item;
+
+    api.schedule.getScheduleInfo(searchItem).then((response) => {
+      this.totalEvents = response.data.responseData;
+
+      response.data.responseData.forEach((value: any) => {
+        value.details.forEach((detailVAlue: any) => {
+          detailVAlue["backgroundColor"] = value.backgroundColor;
+        });
+      });
+      console.group("getSchedule");
+      console.log("getSchedule", this.events);
+      console.groupEnd();
+    });
+  }
   //전체 거래List
   getCustomer() {
     api.schedule.getCustomerInfo().then((response) => {
