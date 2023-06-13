@@ -150,7 +150,7 @@
             :total-visible="7"
             circle
             v-model="itemListCfg.page"
-            :length="itemListCfg.pageCount"
+            :length="itemListCfg.totalCount"
           ></v-pagination>
         </v-col>
       </v-row>
@@ -224,7 +224,7 @@ export default class AlarmHistory extends Vue {
     api.alarm
       .alarmList(this.queryString)
       .then((response) => {
-        this.itemListCfg.totalCount = response.data.data.totalElements;
+        this.itemListCfg.totalCount = response.data.data.totalPages;
         this.table_data = response.data.data.content;
         this.loading = false;
         this.setContentString();

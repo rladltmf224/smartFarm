@@ -261,7 +261,7 @@
 </template>
 <script lang="ts">
 import * as api from "@/api";
-import cfg from "./config/index";
+import cfg from './config/index'
 import _, { functionsIn } from "lodash";
 import {
     Component, Vue, Prop, Watch
