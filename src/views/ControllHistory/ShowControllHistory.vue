@@ -445,13 +445,13 @@ export default {
         });
     },
     s_date_search(v) {
-      this.setDate();
+      /*    this.setDate(); */
       this.s_date = v;
       this.menu1 = false;
       this.$refs.menu1.save(v);
     },
     e_date_search(v) {
-      this.setDate();
+      /*       this.setDate(); */
       this.e_date = v;
       this.menu2 = false;
       this.$refs.menu2.save(v);
