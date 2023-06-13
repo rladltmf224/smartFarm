@@ -383,7 +383,6 @@ export default class ScheduleAddModal extends Vue {
   };
   @Prop({ required: true }) open: boolean = false;
 
-  events: any[] = []; //[response] 전체 일정 데이터
   totalEvents: any[] = []; //[response] 전체 일정 데이터
   existing: boolean = false; //추가 일정 상태
   secondResetTypeData: any = []; //그 외 일정 v-model
@@ -445,6 +444,7 @@ export default class ScheduleAddModal extends Vue {
     },
   ];
   get chooseDialog() {
+    this.getSchedule();
     this.scheduleData.customer = "";
     this.scheduleData.cropName = "";
     this.scheduleData.varietyName = "";
@@ -496,7 +496,6 @@ export default class ScheduleAddModal extends Vue {
 
   created() {
     this.getCustomer();
-    this.getSchedule([]);
   }
 
   chooseAddModal() {
@@ -517,14 +516,12 @@ export default class ScheduleAddModal extends Vue {
     this.secondTitleList = JSON.parse(JSON.stringify(this.secondResetTypeData));
   }
 
-  getSchedule(item: any) {
+  getSchedule() {
     this.totalEvents = [];
-    this.events = [];
     let searchItem = {
       customList: [],
     };
-    searchItem.customList = item;
-
+    console.log(searchItem);
     api.schedule.getScheduleInfo(searchItem).then((response) => {
       this.totalEvents = response.data.responseData;
 
@@ -533,9 +530,6 @@ export default class ScheduleAddModal extends Vue {
           detailVAlue["backgroundColor"] = value.backgroundColor;
         });
       });
-      console.group("getSchedule");
-      console.log("getSchedule", this.events);
-      console.groupEnd();
     });
   }
   //전체 거래List
