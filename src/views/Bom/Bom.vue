@@ -17,16 +17,7 @@
                   label="품목코드 or품목명"
                 ></v-text-field>
               </v-col>
-              <v-col cols="2">
-                <v-text-field
-                  dense
-                  solo
-                  rounded
-                  v-model="search_bom.itemVersion"
-                  @keydown.enter="getBom"
-                  label="완제품 버전"
-                ></v-text-field>
-              </v-col>
+
               <v-col cols="2">
                 <v-text-field
                   dense
@@ -258,14 +249,14 @@ export default class Bom extends Vue {
   search_bom: {
     //페이징처리
     item: string;
-    itemVersion: string;
+
     page: any;
     size: any;
     sortBy: any;
     sortDesc: any;
   } = {
     item: "",
-    itemVersion: "",
+
     page: 1,
     size: 0,
     sortBy: [],
@@ -538,4 +529,4 @@ export default class Bom extends Vue {
   }
 }
 </script>
-<style src="../SmartFarm/SmartFarm.scss" lang="scss"></style>
+<style src="./Bom.scss" lang="scss"></style>

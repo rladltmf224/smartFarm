@@ -19,3 +19,24 @@
 tr.v-data-table__selected {
   background: #97c6f5 !important;
 }
+.searchbox-title {
+  color: #6e7c87;
+}
+.v-data-table-header {
+  background-color: red;
+}
+
+.v-card {
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05) !important;
+  border-radius: 10px;
+}
+
+.v-sheet {
+  background-color: white;
+  border-radius: 5px;
+}
+.v-pagination .v-pagination_navigation {
+  box-shadow: none;
+  border: 1px solid #dee2e6;
+  color: #6c757d;
+}

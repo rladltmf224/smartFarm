@@ -1,34 +1,21 @@
-.title {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+.v-data-table-header {
+  background-color: #ffffff;
 }
-tr.v-data-table__selected {
-  background: #e8ffe9 !important;
+
+.v-card {
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05) !important;
+  border-radius: 10px;
 }
-.swal-wide {
-  width: 850px;
-}
-.closeBtn {
-  border: 1px solid #72e072;
-}
-.reverseRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: stretch;
-  height: 70px;
-}
-.bomRow {
-  padding: 0px;
-  display: flex;
-  justify-content: space-between;
-  align-items: stretch;
-  height: 50px;
-}
-.bomTreeTable {
+
+.v-sheet {
   background-color: white;
-  padding-left: 64px !important;
-  padding-right: 0px !important;
+  border-radius: 5px;
+}
+
+.v-pagination .v-pagination_navigation {
+  box-shadow: none;
+  border: 1px solid #dee2e6;
+  color: #6c757d;
 }
 .countFont input::placeholder {
   color: red !important;
@@ -42,6 +29,13 @@ tr.v-data-table__selected {
 .countFont .v-input__control {
   height: 30px;
 }
+
+.bomTreeTable {
+  background-color: white;
+  padding-left: 56px !important;
+  padding-right: 0px !important;
+}
+
 .text-start {
   border-right: 1px solid #d8dadb;
   border-bottom: 1px solid #d8dadb;

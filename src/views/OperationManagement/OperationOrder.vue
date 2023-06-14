@@ -682,8 +682,6 @@ export default class OperationOrder extends Vue {
   }
 
   get searchCrewData() {
-    console.log("ddd");
-    console.log(this.departmentCrewList);
     return this.departmentCrewList;
   }
 

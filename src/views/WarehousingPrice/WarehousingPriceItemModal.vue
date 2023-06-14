@@ -10,8 +10,14 @@
         <v-card-text>
           <v-row>
             <v-col cols="2" align-self="center">
-              <v-text-field label="품목명 or 품목코드" v-model.trim="search_condition_modal.item"
-                @keydown.enter="search_itemList" dense solo hide-details="false"></v-text-field>
+              <v-text-field
+                label="품목명 or 품목코드"
+                v-model.trim="search_condition_modal.item"
+                @keydown.enter="search_itemList"
+                dense
+                solo
+                hide-details="false"
+              ></v-text-field>
             </v-col>
 
             <v-col cols="2">
@@ -26,17 +32,40 @@
           </v-row>
           <v-row>
             <v-col>
-              <v-data-table height="380" v-model="selectItemList" :headers="headers_item" :items="itemList"
-                item-key="itemId" class="elevation-4" show-select multi-sort dense :options.sync="itemListCfg.options"
-                :server-items-length="itemListCfg.totalCount" :loading="itemListCfg.loading"
-                :items-per-page="itemListCfg.itemsPerPage" :page.sync="itemListCfg.page"
-                @page-count="itemListCfg.pageCount = $event" hide-default-footer>
+              <v-data-table
+                height="380"
+                v-model="selectItemList"
+                :headers="headers_item"
+                :items="itemList"
+                item-key="itemId"
+                class="elevation-4"
+                show-select
+                multi-sort
+                dense
+                :options.sync="itemListCfg.options"
+                :server-items-length="itemListCfg.totalCount"
+                :loading="itemListCfg.loading"
+                :items-per-page="itemListCfg.itemsPerPage"
+                :page.sync="itemListCfg.page"
+                @page-count="itemListCfg.pageCount = $event"
+                hide-default-footer
+              >
                 <template v-slot:item.storageId="props">
-                  <v-select class="select" :items="storage_list" item-text="name" item-value="id"
-                    v-model="props.item.storageId" dense></v-select>
+                  <v-select
+                    class="select"
+                    :items="storage_list"
+                    item-text="name"
+                    item-value="id"
+                    v-model="props.item.storageId"
+                    dense
+                  ></v-select>
                 </template>
               </v-data-table>
-              <v-pagination circle v-model="itemListCfg.page" :length="itemListCfg.pageCount"></v-pagination>
+              <v-pagination
+                circle
+                v-model="itemListCfg.page"
+                :length="itemListCfg.pageCount"
+              ></v-pagination>
             </v-col>
           </v-row>
         </v-card-text>
@@ -70,9 +99,9 @@ export default class WarehousingPriceItemModal extends Vue {
     sortBy?: string[];
     sortDesc?: boolean[];
   } = {
-      item: "",
-      types: ["원자재", "반제품"],
-    };
+    item: "",
+    types: ["원자재", "반제품"],
+  };
   itemListCfg: any = {};
 
   @Prop({ required: true }) open: boolean;
@@ -99,9 +128,6 @@ export default class WarehousingPriceItemModal extends Vue {
     this.itemListCfg = Object.assign({}, gridCfg);
   }
 
-
-
-
   close_item_modal() {
     this.$emit("closeModal");
   }
@@ -123,10 +149,6 @@ export default class WarehousingPriceItemModal extends Vue {
     } else {
       this.$emit("addItemList", this.selectItemList);
     }
-
-
-
-
   }
 
   search_itemList() {

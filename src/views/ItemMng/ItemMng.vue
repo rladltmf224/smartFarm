@@ -41,16 +41,6 @@
                   elevation-0
                 ></v-text-field>
               </v-col>
-              <!-- <v-col cols="1">
-                <v-text-field
-                  label="버전"
-                  v-model="search_condition.version"
-                  @keydown.enter="getCustomer"
-                  dense
-                  outlined
-                  rounded="xl"
-                ></v-text-field>
-              </v-col> -->
               <v-spacer></v-spacer>
 
               <v-col class="text-right" cols="2">
@@ -85,7 +75,6 @@
               :items="customer_list"
               fixed-header
               multi-sort
-              @click:row="selectCustomer"
               :options.sync="itemListCfg.options"
               :server-items-length="itemListCfg.totalCount"
               :loading="itemListCfg.loading"
@@ -284,17 +273,12 @@ import { Vue, Component, Watch } from "vue-property-decorator";
   },
 })
 export default class Item extends Vue {
-  windowSize: any = {
-    x: 0,
-    y: 0,
-  };
   table_height: number = 0;
   itemDialog: boolean = false;
   itemDialog_type: boolean = false;
   processDialog: boolean = false;
   ProcessAddDialog: boolean = false;
   edit_customer: boolean = false;
-  items_storage: [] = [];
   items_location: [] = [];
   itemListCfg: any = {};
   storage_data: [] = [];
@@ -320,18 +304,22 @@ export default class Item extends Vue {
     file: "",
   };
   editedIndex: number = -1;
-  //customer_list: object[] = [];
+
   customer_list: Array<string> = [];
 
   search_condition: any = {
     item: "",
     type: "",
     option: "",
-    version: "",
   };
   selectItemID: number = 0;
   selectedProcess: object = {};
 
+  /*
+  customer_list: object[] = [];
+  items_storage: [] = [];
+
+  */
   get headers() {
     return cfg.header.itemList;
   }
@@ -386,15 +374,6 @@ export default class Item extends Vue {
             this.alertResult(response.data.isSuccess);
             this.closeModal();
           } else {
-            /*  this.$swal({
-               title: response.data.message,
-               icon: "error",
-               position: "top",
-               showCancelButton: false,
-               showConfirmButton: false,
-               toast: true,
-               timer: 1500,
-             }); */
             this.$swal("경고", `${response.data.message}`, "error");
           }
         })
@@ -449,9 +428,6 @@ export default class Item extends Vue {
         timer: 1500,
       });
     }
-  }
-  selectCustomer(data: any) {
-    console.log("selectCustomer", data);
   }
 
   getCustomer() {
@@ -761,4 +737,4 @@ export default class Item extends Vue {
 }
 </script>
 
-<style src="../SmartFarm/SmartFarm.scss" lang="scss"></style>
+<style src="./ItemMng.scss" lang="scss"></style>
