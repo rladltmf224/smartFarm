@@ -58,7 +58,6 @@
                         dense
                         hide-default-footer
                         @click:row="click"
-                        @dblclick:row="dblclickRow"
                       >
                       </v-data-table>
                       <v-pagination
@@ -167,7 +166,6 @@
                       :footer-props="footer_option"
                       dense
                       @click:row="selectedItemData"
-                      @dblclick:row="dblclickRow"
                       hide-default-footer
                       loading-text="서버에 요청중...."
                       no-data-text="데이터가 없습니다."
@@ -230,7 +228,7 @@
                     <v-btn
                       v-show="!change"
                       class="align-center"
-                      color="green "
+                      color="primary "
                       @click="back"
                     >
                       이전 단계
@@ -279,40 +277,23 @@ export default class BomModal extends Vue {
     itemsPerPageOptions: [10, 20, 50, -1],
   };
   bomItemListCfg: any = {}; //페이징처리
-  custmerlist: [] = []; //[response] 거래처 데이터
-  itemKeyword: any = "";
-  plusSelected: [] = []; //원자재테이블 v-model
-  itemlist: [] = []; //[response] 조회된 전체 원자재 데이터
-  productlist: [] = []; //[response] 조회된 전체 완제품 데이터
-  searchItemkeyword: any = ""; //원자재조회조건 v-model
-  searchTypekeyword: any = ""; //원자재조회조건 - 자재타입
+  custmerlist: object[] = []; //[response] 거래처 데이터
+  itemKeyword: string = "";
+  plusSelected: object[] = []; //원자재테이블 v-model
+  itemlist: object[] = []; //[response] 조회된 전체 원자재 데이터
+  productlist: object[] = []; //[response] 조회된 전체 완제품 데이터
+  searchItemkeyword: object | string = ""; //원자재조회조건 v-model
+  searchTypekeyword: object | string = ""; //원자재조회조건 - 자재타입
   searchItemText: string = ""; //원자재조회조건-검색어
-  searchItemCustmerText: any = ""; //원자재조회조건- 거래처
+  searchItemCustmerText: object | string = ""; //원자재조회조건- 거래처
   searchProduct: string = ""; //완제품조회조건 v-model
-  totalItem: any[] = []; //plus된 원자재테이블 v-model
+  totalItem: Array<any> = []; //plus된 원자재테이블 v-model
   step: number = 1; //step단계
   bomData: { item: any; details: any } = {
     //원자재테이블 v-model
     item: [],
     details: [],
   };
-
-  /*한번 더 체크하고 삭제할 변수
-  totalData: any;
-  keyword: string = "";
-  product: any;
-  item: any;
-  
-  type bomOpt = {
-    options?: any;
-    page: any;
-    itemsPerPage: any;
-    sortBy?: any;
-    sortDesc?: any;
-    loading: boolean;
-    totalCount: number;
-  };
-  */
 
   @Prop({ required: true }) open: boolean;
   @Prop({ required: true }) change: boolean;
@@ -348,7 +329,7 @@ export default class BomModal extends Vue {
   @Watch("searchItemkeyword")
   onSearchItemkeyWordChange() {
     if (this.searchItemkeyword != null) {
-      this.itemKeyword = this.searchItemkeyword.value;
+      this.itemKeyword = (this.searchItemkeyword as HTMLInputElement).value;
     }
   }
 
@@ -382,7 +363,9 @@ export default class BomModal extends Vue {
       if (this.searchItemCustmerText != null) {
         data["item"] = "";
         data["type"] = "";
-        data["customer"] = this.searchItemCustmerText.name;
+        data["customer"] = (
+          this.searchItemCustmerText as HTMLInputElement
+        ).name;
       }
     }
 
@@ -390,7 +373,7 @@ export default class BomModal extends Vue {
       if (this.searchTypekeyword != null) {
         data["item"] = "";
         data["customer"] = "";
-        data["type"] = this.searchTypekeyword.value;
+        data["type"] = (this.searchTypekeyword as HTMLInputElement).value;
       }
     }
 
@@ -450,15 +433,12 @@ export default class BomModal extends Vue {
         this.bomItemListCfg.loading = false;
       });
   }
-  selectedItemData(item: any, row: any) {
+  selectedItemData(item: object, row: object | any) {
     row.select(true);
   }
 
-  click(item: any, row: any) {
+  click(item: object, row: object | any) {
     row.select(true);
-  }
-  dblclickRow(item: any, row: any) {
-    row.select(false);
   }
   plus() {
     if (this.plusSelected.length == 0) {

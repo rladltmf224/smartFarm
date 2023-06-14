@@ -698,4 +698,4 @@ export default {
   created() {},
 };
 </script>
-<style src="@/views/SmartFarm/SmartFarm.scss" lang="scss"></style>
+<style src="./ManureMng.scss" lang="scss"></style>

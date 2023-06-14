@@ -24,13 +24,13 @@
                 clear-icon="mdi-close-circle-outline"
               ></v-text-field>
             </v-sheet>
+
             <v-card
               class="pa-4 lighten-2"
               style="overflow-y: auto"
               :height="dept_height"
             >
               <v-treeview
-                v-model="tree"
                 :open="initiallyOpen"
                 :items="items"
                 :search="searchTxt"
@@ -276,8 +276,6 @@ export default class Member extends Vue {
   files: {} = cfg.data.filesData;
   inputType: string = "";
   selectNode: any = "";
-  tree: [] = [];
-  dept_list: string[] = ["정수기 부서", "청정기 부서", "비데 부서"];
   dept_role: any = "";
   items: any[] = [];
   rolesData: object[] = cfg.data.rolesData;
@@ -639,4 +637,4 @@ export default class Member extends Vue {
 }
 </script>
 
-<style src="../SmartFarm/SmartFarm.scss" lang="scss"></style>
+<style src="./MemberMng.scss" lang="scss"></style>

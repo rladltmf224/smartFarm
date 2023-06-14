@@ -53,7 +53,6 @@ export default {
       { text: "단위", value: "unit" },
     ],
     frontBomHeader: [
-      { text: "타입", value: "type" },
       { text: "코드", value: "code" },
       { text: "완제품명", value: "name" },
       { text: "타입", value: "type" },

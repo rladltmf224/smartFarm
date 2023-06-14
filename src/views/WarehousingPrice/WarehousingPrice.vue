@@ -199,10 +199,7 @@ import { Vue, Component, Watch } from "vue-property-decorator";
   },
 })
 export default class WarehousingPrice extends Vue {
-  itemDialog: boolean = false;
-  itemDialog_type: string = "";
   edit_customer: boolean = false;
-  history_modal_title: string = "";
   customer_item_list: [] = [];
   item_history_list: [] = [];
   customerListCfg: any = {};
@@ -210,10 +207,6 @@ export default class WarehousingPrice extends Vue {
   search_condition: any = {
     customer: "",
     type: "매입거래처",
-  };
-  search_condition_modal: { item: string; types: string[] } = {
-    item: "",
-    types: ["원자재", "반제품"],
   };
   customer: object = {
     code: "",
@@ -247,7 +240,6 @@ export default class WarehousingPrice extends Vue {
   storage_list: any[] = [];
   item_list_modal: any[] = [];
   selectCustomerID: string = "";
-  itemModal_Loading: boolean = false;
   customerList_height: number = 0;
   itemList_height: number = 0;
   changeList_height: number = 0;
@@ -282,31 +274,10 @@ export default class WarehousingPrice extends Vue {
     this.onResize();
   }
 
-  // closeModal() {
-  //   this.item = false;
-  //   this.itemInfo = Object.assign({}, this.itemInfo_default);
-  //   this.getCustomer();
-  //   console.log("closeModal");
-  // }
-  // changeText() {
-  //   console.log(this.itemInfo.count);
-  //   this.itemInfo.count = this.itemInfo.count.replace(/[^0-9]/g, "");
-  // }
-
   onResize() {
     this.customerList_height = window.innerHeight - 48 - 129 - 90;
     this.itemList_height = window.innerHeight - 48 - 550;
     this.changeList_height = window.innerHeight - 48 - 500;
-  }
-  getStatusColor(status: string) {
-    switch (status) {
-      case "부분입고":
-        return "orange";
-      case "입고":
-        return "success";
-      case "반품":
-        return "red";
-    }
   }
 
   selectCustomerItem(data: any, row: any) {
@@ -411,20 +382,6 @@ export default class WarehousingPrice extends Vue {
         console.log(error);
       });
   }
-
-  deleteDetailItem_pop(item: any, index: any) {
-    const detailindex = this.item_list_modal.findIndex((object) => {
-      return object.itemId === item.itemId;
-    });
-    console.log(item, index, detailindex);
-    this.item_list_modal[detailindex].eachCount.splice(index, 1);
-    let sumData = _.sumBy(this.item_list_modal[detailindex].eachCount, "count");
-    this.item_list_modal[detailindex].normalCount = sumData;
-  }
-
-  // closeModal_item() {
-  //   this.add_item = false;
-  // }
   closeModal_customer() {
     this.edit_customer = false;
     this.itemInfo = Object.assign({}, this.itemInfo_default);
@@ -438,19 +395,7 @@ export default class WarehousingPrice extends Vue {
       name: "",
     };
   }
-  saveOrderCount(item: any) {
-    console.log(item);
-    item.defectCount = parseInt(item.orderCount) - parseInt(item.normalCount);
-    if (
-      parseInt(item.orderCount) <
-      parseInt(item.normalCount) + parseInt(item.defectCount)
-    ) {
-      this.$swal("경고", "주문수량을 다시 입력해주세요!", "error");
-      return item;
-    }
 
-    return item;
-  }
   editItem() {
     if (this.selectCustomerID == "") {
       return this.$swal("경고", "거래처를 선택해주세요", "error");

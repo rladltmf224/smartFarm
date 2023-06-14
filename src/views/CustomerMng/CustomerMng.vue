@@ -189,10 +189,6 @@
                   조회
                 </v-btn>
               </v-col>
-              <!-- <v-row>
-                <v-spacer></v-spacer>
-                <v-col class="align-self-center" cols="1"> </v-col>
-              </v-row> -->
             </v-row>
           </v-card>
         </v-col>
@@ -272,21 +268,10 @@
 <script lang="ts">
 import * as api from "@/api";
 import cfg from "./config/index";
-import util from "@/util";
 import { gridCfg } from "@/util/config";
 import CustomerModal from "./CustomerModal.vue";
 import "@/util/filters";
 import { Vue, Component, Watch } from "vue-property-decorator";
-// interface bomOpt {
-//   options?: any;
-//   page: any;
-//   itemsPerPage: any;
-//   sortBy?: any;
-//   sortDesc?: any;
-//   loading: boolean;
-//   totalCount?: number;
-//   pageCount?: number;
-// }
 
 @Component({
   components: {
@@ -353,14 +338,9 @@ export default class Customer extends Vue {
     this.search_list4 = cfg.data.search_list3;
     this.customer_type = cfg.data.customer_type;
     this.customerOption = Object.assign({}, gridCfg);
-
-    //console.log("startDataEL", this.startDataEL);
   }
 
   mounted() {
-    console.log(util);
-    //this.getCustomer();
-
     this.onResize();
   }
 
@@ -504,7 +484,6 @@ export default class Customer extends Vue {
   }
   editItem(item: any, edit_type: boolean) {
     this.customerDialog = true;
-    //this.editedIndex = this.customer_list.indexOf(JSON.stringify(item));
     this.editedCustomer = Object.assign({}, item);
     this.customerDialog_type = edit_type;
     this.edit_customer = true;
@@ -512,4 +491,4 @@ export default class Customer extends Vue {
 }
 </script>
 
-<style src="../SmartFarm/SmartFarm.scss" lang="scss"></style>
+<style src="./CustomerMng.scss" lang="scss"></style>

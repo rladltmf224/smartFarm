@@ -347,5 +347,3 @@ export default class Item extends Vue {
   }
 }
 </script>
-
-<!--<style src="../SmartFarm/SmartFarm.scss" lang="scss"></style>-->

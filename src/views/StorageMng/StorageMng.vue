@@ -442,9 +442,7 @@ export default class Storage extends Vue {
     }
     this.closeModal_customer();
   }
-  // openModal_customer() {
-  //   this.dialog_customer = true;
-  // }
+
   closeModal_customer() {
     this.edit_customer = false;
     this.$nextTick(() => {
