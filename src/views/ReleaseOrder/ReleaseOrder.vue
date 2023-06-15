@@ -331,9 +331,7 @@ export default class ReleaseOrder extends Vue {
   search_dateType: object[] = [];
   search_job_status_list: object[] = [];
   search_condition: any = {};
-  max25chars: any = (v: any) => v.length <= 25 || "Input too long!";
   tabs: any = null;
-  selectedId: number = -1;
   edit_customer: boolean = false;
   reversal_rawModal: boolean = false;
   selected_check: [] = [];
@@ -343,7 +341,6 @@ export default class ReleaseOrder extends Vue {
   itemInfo: object = {};
   itemInfo_default: object = {};
   editedItemInfo: object = {};
-  editedIndex: number = -1;
   statement_list: [] = [];
   statement_detail_list: [] = [];
   customer_list: [] = [];
@@ -351,10 +348,7 @@ export default class ReleaseOrder extends Vue {
   bom_list_modal: any[] = [];
   statement_list_modal: [] = [];
   raw_list_modal: [] = [];
-  raw_detail_list: [] = [];
-  raw_reversal_list: [] = [];
   company_list: [] = [];
-  txtReleaseCount_check: any = 0;
   txtSelectCount_check: any = 0;
   selectItemID: any = "";
   select_rawID: any = 0;
@@ -470,209 +464,22 @@ export default class ReleaseOrder extends Vue {
       });
   }
 
-  saveRawData_reversal() {
-    console.log("saveRawData_reversal", this.$refs.rawGrid);
-
-    this.raw_list_modal.forEach((el: any) => {
-      console.log(el, this.select_rawID);
-      if (el.itemId == this.select_rawID) {
-        el.rawMaterialDetails = this.selected_check;
-        el.reversalCount = parseInt(this.txtSelectCount_check);
-      }
-    });
-    let gridEL: any = this.$refs.rawListGrid;
-    gridEL.$forceUpdate();
-
-    this.closeRawReversalDetail();
-  }
-
-  saveReversalCount(item: any) {
-    item.reversalCount = parseInt(item.reversalCount);
-    let sumData = 0;
-    this.selected_check.forEach((el: any) => {
-      sumData += parseInt(el.reversalCount);
-    });
-    console.log("sumData", sumData);
-
-    this.txtSelectCount_check = sumData;
-
-    return item;
-  }
-
-  addRawItem_reversal(item: any) {
-    console.log("addRawItem_reversal", item, this.selected_check);
-    let select_reversal = this.selected_check;
-
-    let sumData = 0;
-    if (select_reversal != undefined) {
-      select_reversal.forEach((el: any) => {
-        sumData += parseInt(el.reversalCount);
-      });
-      if (item.value) {
-        sumData += parseInt(item.item.reversalCount);
-      } else if (!item.value) {
-        sumData -= parseInt(item.item.reversalCount);
-      }
-    } else {
-      sumData = item.item.reversalCount;
-    }
-
-    console.log("sumData", sumData);
-
-    this.txtSelectCount_check = sumData;
-  }
-
-  closeRawReversalDetail() {
-    this.txtSelectCount_check = 0;
-    this.reversal_rawModal = false;
-    this.selected_check = [];
-  }
-
-  processItem() {
-    let processData = {
-      id: this.selectItemID,
-      warehousingUpdateDetails: this.statement_detail_list,
-    };
-    api.rawWarehousing
-      .updateWarehousingList(processData)
-      .then((response) => {
-        console.log("createCustomerItem", response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-
   closeModal_customer() {
     this.edit_customer = false;
     this.getCustomer();
   }
   getStatusColor(status: string) {
     switch (status) {
-      case "출고 요청":
-        return "primary";
-      case "작업 진행중":
+      case "SA01":
         return "orange";
-      case "출하 요청":
-        return "success";
-      case "제품 환불":
-        return "red";
-      case "생산 완료":
-        return "success";
+      case "SA02":
+        return "green";
+      case "SA03":
+        return "#757575";
     }
   }
   editItem() {
     this.edit_customer = true;
-  }
-  editItem_modal(item: any) {
-    api.item
-      .getItemPage()
-      .then((response) => {
-        console.log("getItemPage", response);
-        this.company_list = response.data.basicCompanies;
-        this.customer_list = response.data.basicCustomers;
-        this.statement_list_modal = response.data.basicStatements;
-        this.item_list = response.data.basicItems;
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    //this.editedIndex = this.statement_list_modal.indexOf(item);
-    this.editedCustomer = Object.assign({}, item);
-    this.edit_customer = true;
-  }
-  deleteItem_modal(item: any) {
-    let deleteIndex = this.bom_list_modal.indexOf(item);
-    console.log("deleteItem_pop", deleteIndex, item);
-
-    this.$swal
-      .fire({
-        title: "삭제",
-        text: "해당 데이터를 삭제 하시겠습니까?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "삭제",
-      })
-      .then((result) => {
-        if (result.isConfirmed) {
-          this.bom_list_modal.splice(deleteIndex, 1);
-        }
-      });
-  }
-  releaseProcess(item: any) {
-    console.log("deleteItem_pop", item);
-
-    this.$swal
-      .fire({
-        title: "출고 진행",
-        text: "출고진행으로 변경하시겠습니까?",
-        icon: "info",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "진행",
-      })
-      .then((result) => {
-        if (result.isConfirmed) {
-          api.rawRelease.updateReleaseProcess(item).then((response) => {
-            if (response.status == 200) {
-              this.getCustomer();
-            }
-          });
-        }
-      });
-  }
-  releaseDone(item: any) {
-    console.log("deleteItem_pop", item);
-
-    this.$swal
-      .fire({
-        title: "출고 완료",
-        text: "출고완료로 변경하시겠습니까?",
-        icon: "info",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "완료",
-      })
-      .then((result) => {
-        if (result.isConfirmed) {
-          api.rawRelease.updateReleaseDone(item).then((response) => {
-            if (response.status == 200) {
-              this.getCustomer();
-            }
-          });
-        }
-      });
-  }
-  releaseCancle(item: any) {
-    console.log("deleteItem_pop", item);
-
-    this.$swal
-      .fire({
-        title: "출고 취소",
-        text: "출고취소로 변경하시겠습니까?",
-        icon: "error",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "취소",
-      })
-      .then((result) => {
-        if (result.isConfirmed) {
-          let reqData = {
-            id: item.id,
-          };
-          api.rawRelease.deleteReleaseList(reqData).then((response) => {
-            if (response.status == 200) {
-              this.getCustomer();
-            }
-          });
-        }
-      });
   }
 
   getStatusCode(status: string) {

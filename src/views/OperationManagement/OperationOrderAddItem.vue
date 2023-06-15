@@ -130,7 +130,7 @@
 </template>
 <script lang="ts">
 import * as api from "@/api";
-import { Vue, Component, Prop, Watch } from "vue-property-decorator";
+import { Vue, Component, Prop } from "vue-property-decorator";
 import cfg from "./config/index";
 
 @Component
@@ -147,10 +147,13 @@ export default class OrderAddItemModal extends Vue {
   itemTable: any[] = [];
   addData: any[] = [];
   selectedTable: any[] = [];
+
   get manureDialog() {
+    if (this.open) {
+      this.getSelectedItemList();
+    }
     this.addData = [];
     this.itemTable = [];
-    this.getSelectedItemList();
     return this.open;
   }
   set manureDialog(val: any) {

@@ -144,12 +144,6 @@ export default class LotTracking extends Vue {
   backward_list: [] = [];
   rawHousingData: any[] = [];
   search_text: string = "";
-  search_condition_forward: object = {
-    rawMaterialLot: "",
-  };
-  search_condition_backward: object = {
-    productLot: "",
-  };
 
   get headers_forward() {
     return cfg.header.forwardList;

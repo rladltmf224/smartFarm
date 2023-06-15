@@ -444,11 +444,6 @@ export default class OperationOrderModal extends Vue {
   @Watch("editedCustomerData")
   onEditedCustomerDataChange() {
     console.log("editedCustomerData", this.editedCustomerData);
-    if (this.open) {
-      if (this.change) {
-        this.getDetailData(this.editedCustomerData.id);
-      }
-    }
   }
 
   @Watch("item")
@@ -484,6 +479,9 @@ export default class OperationOrderModal extends Vue {
 
   get openModal() {
     this.getItemList();
+    if (this.open && this.change) {
+      this.getDetailData(this.editedCustomerData.jobOrderId);
+    }
     return this.open;
   }
   set openModal(val: any) {
@@ -543,21 +541,22 @@ export default class OperationOrderModal extends Vue {
           this.orderData.selectObject = res.data.responseData.type;
           this.orderData.deadline = res.data.responseData.deadline;
           this.orderData.memo = res.data.responseData.memo;
-          this.orderData.selectEquipData_regi = _.cloneDeep(
-            res.data.responseData.facilityDetails.forEach((element: any) => {
-              element.use = element.jobOrderId !== null ? true : false;
-              element.active = true;
-            })
-          );
+          // this.orderData.selectEquipData_regi = _.cloneDeep(
+          //   res.data.responseData.facilityDetails.forEach((element: any) => {
+          //     element.use = element.jobOrderId !== null ? true : false;
+          //     element.active = true;
+          //   })
+          // );
 
-          console.log(
-            "selectEquipData_regi",
-            res.data.responseData.facilityDetails
-          );
+          // console.log(
+          //   "selectEquipData_regi",
+          //   res.data.responseData.facilityDetails
+          // );
 
-          this.orderData.selectEquipData_regi = [
-            ...res.data.responseData.facilityDetails,
-          ];
+          // this.orderData.selectEquipData_regi = [
+          //   ...res.data.responseData.facilityDetails,
+          // ];
+          console.log("------------", this.orderData);
         } else {
           this.closeModal();
           this.$swal({
