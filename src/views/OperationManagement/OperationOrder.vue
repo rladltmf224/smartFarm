@@ -228,6 +228,7 @@
                 <v-btn
                   class="text-left"
                   small
+                  :color="getStatusColor(item.status)"
                   dark
                   style="width: 100px"
                   depressed
@@ -253,14 +254,14 @@
               </template>
               <template v-slot:[`item.edit`]="{ item }">
                 <v-icon
-                  v-if="item.status == 'JO_WAIT'"
+                  v-if="item.status == 'SA01'"
                   small
                   @click="changeData(item)"
                 >
                   mdi-pencil
                 </v-icon>
                 <v-icon
-                  v-if="item.status == 'JO_WAIT'"
+                  v-if="item.status == 'SA01'"
                   small
                   @click="deleteItem_pop(item)"
                 >
@@ -304,12 +305,12 @@
               dense
               disable-pagination
               hide-default-footer
+              no-data-text="작업지시서 선택 시, 보여집니다."
             >
               <template v-slot:[`item.status`]="{ item }">
                 <v-btn
                   class="text-left mt-1 mb-1"
                   small
-                  :color="getStatusColor(item.status)"
                   dark
                   style="width: 100px"
                   depressed
@@ -348,9 +349,6 @@
               <template v-slot:item.deadline="{ item }">
                 {{ item.deadline }}
               </template>
-              <template v-slot:no-data>
-                <h5>작업지시서 선택 시, 보여집니다.</h5>
-              </template>
             </v-data-table>
           </v-card>
         </v-col>
@@ -358,12 +356,13 @@
     </v-container>
 
     <!--작업지시서 등록 모달-->
-    <order-modal
+    <OrderModal
       :open="orderDialog"
       :change="change"
       :editedCustomerData="editedOrder"
       @closeModal="closeModal"
-    ></order-modal>
+    ></OrderModal>
+
     <v-dialog v-model="updateStatus" width="450px">
       <v-card>
         <v-card-title> </v-card-title>
@@ -862,68 +861,6 @@ export default class OperationOrder extends Vue {
       details: [],
     };
   }
-  start(item: any, code: string) {
-    let joborder: object;
-
-    joborder = {
-      jobOrderId: item.id,
-      status: code,
-    };
-
-    this.$swal
-      .fire({
-        text: "작업을 진행하시겠습니까?",
-        icon: "info",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "진행",
-      })
-      .then((result) => {
-        if (result.isConfirmed) {
-          api.operation
-            .updateOperationOrderPage(joborder)
-            .then((response) => {
-              if (response.status == 200) {
-                this.$swal({
-                  title: "작업을 진행하겠습니다.",
-                  icon: "success",
-                  position: "top",
-                  showCancelButton: false,
-                  showConfirmButton: false,
-                  toast: true,
-                  timer: 1500,
-                });
-                this.getSearch();
-
-                let reqData = {
-                  jobOrderId: item.id,
-                };
-
-                api.operation.getJobOrerDetail(reqData).then((res) => {
-                  console.log("getJobOrerDetail", res);
-                  this.datatable = res.data.responseData;
-                });
-
-                this.datatable = [];
-              } else {
-                this.$swal({
-                  title: "상태변경이 실패되었습니다.",
-                  icon: "error",
-                  position: "top",
-                  showCancelButton: false,
-                  showConfirmButton: false,
-                  toast: true,
-                  timer: 1500,
-                });
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      });
-  }
 
   start_detail(item: any, code: string) {
     this.joborder = {};
@@ -1000,146 +937,12 @@ export default class OperationOrder extends Vue {
       });
   }
 
-  finish(item: any) {
-    let joborder: { jobOrderId: number; status: string };
-
-    joborder = {
-      jobOrderId: item.id,
-      status: "완료",
-    };
-
-    this.$swal
-      .fire({
-        text: "생산을 완료하시겠습니까?",
-        icon: "info",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "완료",
-      })
-      .then((result) => {
-        if (result.isConfirmed) {
-          api.operation
-            .updateOperationOrderPage(joborder)
-            .then((response) => {
-              if (response.status == 200) {
-                this.$swal({
-                  title: "생산이 완료되었습니다.",
-                  icon: "success",
-                  position: "top",
-                  showCancelButton: false,
-                  showConfirmButton: false,
-                  toast: true,
-                  timer: 1500,
-                });
-                this.getSearch();
-                this.toatalselected = [];
-                this.datatable = [];
-              } else {
-                this.$swal({
-                  title: "상태변경이 실패되었습니다.",
-                  icon: "error",
-                  position: "top",
-                  showCancelButton: false,
-                  showConfirmButton: false,
-                  toast: true,
-                  timer: 1500,
-                });
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      });
-  }
-
-  totalDelete() {
-    let joborder: any = {
-      id: [],
-    };
-
-    if (this.toatalselected.length == 0) {
-      return this.$swal({
-        title: "삭제 할 목록이 없습니다.",
-        icon: "error",
-        position: "top",
-        showCancelButton: false,
-        showConfirmButton: false,
-        toast: true,
-        timer: 1500,
-      });
-    }
-
-    for (var k = 0; k < this.toatalselected.length; k++) {
-      if (this.toatalselected[k].status != "대기") {
-        this.$swal({
-          title: "대기 상태에서만 삭제가 가능합니다.",
-          icon: "error",
-          position: "top",
-          showCancelButton: false,
-          showConfirmButton: false,
-          toast: true,
-          timer: 1500,
-        });
-      } else {
-        joborder.id.push(this.toatalselected[k].id);
-
-        if (joborder != "") {
-          this.$swal
-            .fire({
-              title: "삭제",
-              text: "해당 데이터를 삭제 하시겠습니까?",
-              icon: "warning",
-              showCancelButton: true,
-              confirmButtonColor: "#3085d6",
-              cancelButtonColor: "#d33",
-              confirmButtonText: "삭제",
-            })
-            .then((result) => {
-              if (result.isConfirmed) {
-                api.operation
-                  .deleteorderList(joborder)
-                  .then((response) => {
-                    if (response.status == 200) {
-                      this.$swal({
-                        title: "삭제되었습니다",
-                        icon: "success",
-                        position: "top",
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                        toast: true,
-                        timer: 1500,
-                      });
-                      this.getSearch();
-                      this.toatalselected = [];
-                      this.datatable = [];
-                    } else {
-                      this.$swal({
-                        title: "삭제가 실패되었습니다.",
-                        icon: "error",
-                        position: "top",
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                        toast: true,
-                        timer: 1500,
-                      });
-                    }
-                  })
-                  .catch((error) => {
-                    console.log(error);
-                  });
-              }
-            });
-        }
-      }
-    }
-  }
   changeData(item: any) {
     this.change = true;
     this.orderDialog = true;
-    this.getDataList();
-    this.getDepartmentList();
+    //this.getDataList();
+    //this.getDepartmentList();
+
     this.editedOrder = Object.assign({}, item);
     this.editedOrder.department = {
       departmentId: item.departmentId,
@@ -1166,9 +969,9 @@ export default class OperationOrder extends Vue {
 
   print() {
     if (this.print_sowingDate == "") {
-      alert("날짜가없다.");
+      alert("날짜를 기입해주세요.");
     } else if (this.printData.printNum == "") {
-      alert("수량을선택해라");
+      alert("수량을 선택하세요.");
     } else {
       this.loadingSpinner = true;
       let param: any = {
@@ -1213,75 +1016,15 @@ export default class OperationOrder extends Vue {
     this.loadingSpinner = false;
   }
 
-  deleteData(item: any) {
-    let joborder: any = {
-      id: item.id,
-    };
-
-    if (item.status == "생산전") {
-      this.$swal
-        .fire({
-          title: "삭제",
-          text: "해당 데이터를 삭제 하시겠습니까?",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "삭제",
-        })
-
-        .then((result) => {
-          if (result.isConfirmed) {
-            api.operation
-              .deleteorderList(joborder)
-              .then((response) => {
-                if (response.status == 200) {
-                  this.$swal({
-                    title: "삭제되었습니다",
-                    icon: "success",
-                    position: "top",
-                    showCancelButton: false,
-                    showConfirmButton: false,
-                    toast: true,
-                    timer: 1500,
-                  });
-                  this.getSearch();
-                  this.datatable = [];
-                } else {
-                  this.$swal({
-                    title: "삭제가 실패되었습니다.",
-                    icon: "error",
-                    position: "top",
-                    showCancelButton: false,
-                    showConfirmButton: false,
-                    toast: true,
-                    timer: 1500,
-                  });
-                }
-                this.getSearch();
-              })
-              .catch((error) => {
-                console.log(error);
-              });
-          }
-        });
-    } else {
-      this.$swal({
-        title: "대기 상태에서만 삭제가 가능합니다.",
-        icon: "error",
-        position: "top",
-        showCancelButton: false,
-        showConfirmButton: false,
-        toast: true,
-        timer: 1500,
-      });
-    }
-  }
   getStatusColor(status: string) {
-    if (status == "생산전") return "orange";
-    else if (status == "생산중") return "blue darken-1";
-    else if (status == "생산 완료") return "green";
-    else return "black";
+    switch (status) {
+      case "SA01":
+        return "orange";
+      case "SA02":
+        return "green";
+      case "SA03":
+        return "#757575";
+    }
   }
 
   /*   getStatusCode(status: string, code: any[]) {

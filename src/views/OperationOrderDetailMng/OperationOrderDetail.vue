@@ -28,7 +28,7 @@
                       dense
                       hide-details="true"
                       label="품목명"
-                      v-model="itemname"
+                      v-model="searchItemName"
                       return-object
                       @keydown.enter="getSearch"
                       required
@@ -241,29 +241,6 @@
       </v-card>
     </v-dialog>
 
-    <!--  <v-dialog v-model="showDetail" width="400px">
-      <v-card>
-        <v-card>
-          <v-card-text>
-            <v-timeline align-top dense>
-              <v-timeline-item v-for="( item, i ) in detailJobOrderData" :key="i" small>
-                <div>
-                  <div class="font-weight-normal">
-                    <strong>{{ item.text }}</strong>
-                  </div>
-                  <div>{{ item.value }}</div>
-                </div>
-              </v-timeline-item>
-            </v-timeline>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer />
-            <v-btn color="error" @click="showDetail = false">닫기</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-card>
-
-    </v-dialog> -->
     <v-dialog v-model="showDetail" max-width="800px">
       <v-card>
         <v-card-title> </v-card-title>
@@ -422,7 +399,6 @@ export default class OperationOrder extends Vue {
   ];
   showDetail: boolean = false;
   itemName: string = "";
-  itemname: string = "";
   nextStep: string = "";
   updateStatus: boolean = false;
   exCount: number = 0;
@@ -442,42 +418,24 @@ export default class OperationOrder extends Vue {
     memo: "", //메모
     details: [], //추가한 품목 목록
   };
+  searchItemName: string = "";
   searchJobOrder: string = "";
   searchCustomer: any = "";
-  searchDepartment: any = "";
-  searchCrew: any = "";
   id: number | "" = "";
-  change: boolean = false;
   departmentList: any[] = [];
-  datatable: any[] = [];
-  toatalselected: any[] = [];
   row: any = "";
   menu_start_date: boolean = false;
   menu_end_date: boolean = false;
   customerList: any[] = [];
-  selectedData: any[] = [];
   totalData: any[] = [];
   startDate: string = "";
   endDate: string = "";
   jobordeList: any = {};
-  departmentCrewList: any;
   statusCode: any = [];
   statusCode_detail: any = [];
   joborder: any = {};
   detailJobOrderData: any = [];
   table_height: number = 0;
-
-  @Watch("searchDepartment")
-  onSearchDepartmentChange() {
-    if (
-      this.searchDepartment != "" &&
-      this.searchDepartment.departmentName != "전체"
-    ) {
-      this.getDepartmentCrewList();
-    } else {
-      this.searchCrew = "";
-    }
-  }
 
   @Watch("orderListCfg.options", { deep: true })
   onOrderListCfgChange() {
@@ -521,16 +479,6 @@ export default class OperationOrder extends Vue {
 
   get searchCustomerData() {
     return this.customerList;
-  }
-
-  get searchDepartmentData() {
-    return this.departmentList;
-  }
-  get searchdepartmentData() {
-    return this.departmentList;
-  }
-  get searchCrewData() {
-    return this.departmentCrewList;
   }
 
   get totalTable() {
@@ -609,10 +557,10 @@ export default class OperationOrder extends Vue {
   }
   getSearch() {
     const { page, itemsPerPage, sortBy, sortDesc } = this.orderListCfg.options;
-    this.toatalselected = [];
+
     this.jobordeList = {
       joborder: this.searchJobOrder,
-      item: this.itemname,
+      item: this.searchItemName,
       customer: "",
       status: this.row,
       page: page,
@@ -622,17 +570,6 @@ export default class OperationOrder extends Vue {
     };
 
     this.orderListCfg.loading = true;
-    if (this.searchDepartment != "") {
-      if (this.searchDepartment.departmentName == "전체") {
-        this.jobordeList["department"] = "";
-      } else {
-        this.jobordeList["department"] = this.searchDepartment.departmentName;
-      }
-    }
-
-    if (this.searchCrew != "") {
-      this.jobordeList["chargeName"] = this.searchCrew.chargeName;
-    }
 
     if (this.searchCustomer != "") {
       this.jobordeList["customer"] = this.searchCustomer.code;
@@ -661,30 +598,6 @@ export default class OperationOrder extends Vue {
         console.log(error);
       });
   }
-  getDepartmentCrewList() {
-    //확인 필요
-    let joborder: any;
-
-    //totalDepartment 선언 안되있음
-    // if (this.searchDepartment != "" && this.totalDepartment == "") {
-    //   this.keyword = this.searchDepartment.departmentId;
-    // } else if (this.totalDepartment != "" && this.searchDepartment == "") {
-    //   this.keyword = this.totalDepartment.departmentId;
-    // }
-    // joborder = {
-    //   departmentId: this.keyword,
-    // };
-    // if (this.keyword != null) {
-    //   api.operation
-    //     .getDepartmentCrewDataPage(joborder)
-    //     .then((response) => {
-    //       this.departmentCrewList = response.data.responseData;
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //     });
-    // }
-  }
 
   getDataList() {
     api.operation
@@ -696,83 +609,6 @@ export default class OperationOrder extends Vue {
       })
       .catch((error) => {
         console.log(error);
-      });
-  }
-
-  dataDetail(item: any, row: any) {
-    row.select(true);
-    let reqData = {
-      jobOrderId: item.jobOrderId,
-    };
-    console.log("dataDetail", item.jobOrderId);
-    api.operation.getJobOrerDetail(reqData).then((res) => {
-      console.log("getJobOrerDetail", res);
-      this.datatable = res.data.responseData;
-    });
-  }
-  add() {
-    this.orderDialog = true;
-    this.editedOrder = {
-      name: "",
-      customer: "",
-      department: "",
-      departmentchargeName: "",
-      deadline: "",
-      memo: "",
-      details: [],
-    };
-  }
-  start(item: any, code: string) {
-    let joborder: object;
-
-    joborder = {
-      jobOrderId: item.id,
-      status: code,
-    };
-
-    this.$swal
-      .fire({
-        text: "작업을 진행하시겠습니까?",
-        icon: "info",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "진행",
-      })
-      .then((result) => {
-        if (result.isConfirmed) {
-          api.operation
-            .updateOperationOrderPage(joborder)
-            .then((response) => {
-              if (response.status == 200) {
-                this.$swal({
-                  title: "작업을 진행하dd겠습니다.",
-                  icon: "success",
-                  position: "top",
-                  showCancelButton: false,
-                  showConfirmButton: false,
-                  toast: true,
-                  timer: 1500,
-                });
-                this.getSearch();
-                this.toatalselected = [];
-                this.datatable = [];
-              } else {
-                this.$swal({
-                  title: "상태변경이 실패되었습니다.",
-                  icon: "error",
-                  position: "top",
-                  showCancelButton: false,
-                  showConfirmButton: false,
-                  toast: true,
-                  timer: 1500,
-                });
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
       });
   }
 
@@ -821,8 +657,6 @@ export default class OperationOrder extends Vue {
                 });
                 this.updateStatus = false;
                 this.getSearch();
-                this.toatalselected = [];
-                this.datatable = [];
               } else {
                 console.log(response);
                 this.$swal({
@@ -842,226 +676,10 @@ export default class OperationOrder extends Vue {
         }
       });
   }
-
-  finish(item: any) {
-    let joborder: { jobOrderId: number; status: string };
-
-    joborder = {
-      jobOrderId: item.id,
-      status: "완료",
-    };
-
-    this.$swal
-      .fire({
-        text: "생산을 완료하시겠습니까?",
-        icon: "info",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "완료",
-      })
-      .then((result) => {
-        if (result.isConfirmed) {
-          api.operation
-            .updateOperationOrderPage(joborder)
-            .then((response) => {
-              if (response.status == 200) {
-                this.$swal({
-                  title: "생산이 완료되었습니다.",
-                  icon: "success",
-                  position: "top",
-                  showCancelButton: false,
-                  showConfirmButton: false,
-                  toast: true,
-                  timer: 1500,
-                });
-                this.getSearch();
-                this.toatalselected = [];
-                this.datatable = [];
-              } else {
-                this.$swal({
-                  title: "상태변경이 실패되었습니다.",
-                  icon: "error",
-                  position: "top",
-                  showCancelButton: false,
-                  showConfirmButton: false,
-                  toast: true,
-                  timer: 1500,
-                });
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      });
-  }
-
-  totalDelete() {
-    let joborder: any = {
-      id: [],
-    };
-
-    if (this.toatalselected.length == 0) {
-      return this.$swal({
-        title: "삭제 할 목록이 없습니다.",
-        icon: "error",
-        position: "top",
-        showCancelButton: false,
-        showConfirmButton: false,
-        toast: true,
-        timer: 1500,
-      });
-    }
-
-    for (var k = 0; k < this.toatalselected.length; k++) {
-      if (this.toatalselected[k].status != "대기") {
-        this.$swal({
-          title: "대기 상태에서만 삭제가 가능합니다.",
-          icon: "error",
-          position: "top",
-          showCancelButton: false,
-          showConfirmButton: false,
-          toast: true,
-          timer: 1500,
-        });
-      } else {
-        joborder.id.push(this.toatalselected[k].id);
-
-        if (joborder != "") {
-          this.$swal
-            .fire({
-              title: "삭제",
-              text: "해당 데이터를 삭제 하시겠습니까?",
-              icon: "warning",
-              showCancelButton: true,
-              confirmButtonColor: "#3085d6",
-              cancelButtonColor: "#d33",
-              confirmButtonText: "삭제",
-            })
-            .then((result) => {
-              if (result.isConfirmed) {
-                api.operation
-                  .deleteorderList(joborder)
-                  .then((response) => {
-                    if (response.status == 200) {
-                      this.$swal({
-                        title: "삭제되었습니다",
-                        icon: "success",
-                        position: "top",
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                        toast: true,
-                        timer: 1500,
-                      });
-                      this.getSearch();
-                      this.toatalselected = [];
-                      this.datatable = [];
-                    } else {
-                      this.$swal({
-                        title: "삭제가 실패되었습니다.",
-                        icon: "error",
-                        position: "top",
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                        toast: true,
-                        timer: 1500,
-                      });
-                    }
-                  })
-                  .catch((error) => {
-                    console.log(error);
-                  });
-              }
-            });
-        }
-      }
-    }
-  }
-  changeData(item: any) {
-    this.change = true;
-    this.orderDialog = true;
-    this.getDataList();
-    this.getDepartmentList();
-    this.editedOrder = Object.assign({}, item);
-    this.editedOrder.department = {
-      departmentId: item.departmentId,
-      departmentName: item.departmentName,
-    };
-    this.editedOrder.departmentchargeName = {
-      id: item.chargeId,
-      chargeName: item.chargeName,
-    };
-  }
-  deleteData(item: any) {
-    let joborder: any = {
-      id: item.id,
-    };
-
-    if (item.status == "생산전") {
-      this.$swal
-        .fire({
-          title: "삭제",
-          text: "해당 데이터를 삭제 하시겠습니까?",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "삭제",
-        })
-
-        .then((result) => {
-          if (result.isConfirmed) {
-            api.operation
-              .deleteorderList(joborder)
-              .then((response) => {
-                if (response.status == 200) {
-                  this.$swal({
-                    title: "삭제되었습니다",
-                    icon: "success",
-                    position: "top",
-                    showCancelButton: false,
-                    showConfirmButton: false,
-                    toast: true,
-                    timer: 1500,
-                  });
-                  this.getSearch();
-                  this.datatable = [];
-                } else {
-                  this.$swal({
-                    title: "삭제가 실패되었습니다.",
-                    icon: "error",
-                    position: "top",
-                    showCancelButton: false,
-                    showConfirmButton: false,
-                    toast: true,
-                    timer: 1500,
-                  });
-                }
-                this.getSearch();
-              })
-              .catch((error) => {
-                console.log(error);
-              });
-          }
-        });
-    } else {
-      this.$swal({
-        title: "대기 상태에서만 삭제가 가능합니다.",
-        icon: "error",
-        position: "top",
-        showCancelButton: false,
-        showConfirmButton: false,
-        toast: true,
-        timer: 1500,
-      });
-    }
-  }
   getStatusColor(status: string) {
-    if (status == "생산전") return "orange";
-    else if (status == "생산중") return "blue darken-1";
-    else if (status == "생산 완료") return "green";
-    else return "black";
+    if (status == "SB01") return "orange";
+    if (status == "SB08") return "#757575";
+    else return "green";
   }
   getStatusCode(status: string, code: any[]) {
     if (status === undefined) {
@@ -1093,52 +711,6 @@ export default class OperationOrder extends Vue {
 
       return code[index + 1];
     }
-  }
-  closeModal() {
-    this.orderDialog = false;
-    this.change = false;
-    this.editedOrder = {
-      name: "",
-      customer: "",
-      department: "",
-      departmentchargeName: "",
-      deadline: "",
-      memo: "",
-      details: [],
-    };
-    this.getSearch();
-  }
-
-  deleteItem_pop(item: any) {
-    //this.deleteIndex = this.customer_list.indexOf(item);
-    console.log("deleteItem_pop", item);
-    let deleteItem = {
-      jobOrderId: item.jobOrderId,
-    };
-
-    this.$swal
-      .fire({
-        title: "삭제",
-        text: "해당 데이터를 삭제 하시겠습니까?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "삭제",
-      })
-      .then((result) => {
-        if (result.isConfirmed) {
-          api.operation.deleteorderList(deleteItem).then((res) => {
-            this.getSearch();
-            console.log("res", res.data.isSuccess);
-            if (res.data.isSuccess) {
-              return this.$swal.fire("성공", "삭제되었습니다.", "success");
-            }
-
-            return this.$swal.fire("실패", "관리자에게 문의바랍니다.", "error");
-          });
-        }
-      });
   }
 }
 </script>

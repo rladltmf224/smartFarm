@@ -15,6 +15,7 @@
           </v-text-field>
           <v-spacer></v-spacer>
           <v-data-table
+            class="mt-5"
             :headers="detail_header"
             :items="detail"
             v-model="removeItem"
@@ -54,7 +55,7 @@ import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 @Component
 export default class WarehousingDeleteModal extends Vue {
   @Prop({ required: true }) open: boolean = false;
-  @Prop({ required: true }) delete_item: any[] = [];
+  @Prop({ required: true }) delete_item: object[];
 
   removeItem: any[] = [];
   deleteItem: any[] = [];

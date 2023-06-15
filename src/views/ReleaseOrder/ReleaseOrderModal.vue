@@ -10,9 +10,6 @@
             <v-col align-self="center">
               <span>원자재 출고 목록(대기)</span>
             </v-col>
-            <!-- <v-col class="text-right">
-              <v-btn color="primary" @click="clickSaveInfo"> 자재 출고 </v-btn>
-            </v-col> -->
           </v-row>
           <v-row dense>
             <v-col cols="12">
@@ -51,9 +48,6 @@
             <v-col align-self="center">
               <span>원자재 출고 목록(진행)</span>
             </v-col>
-            <!-- <v-col class="text-right">
-              <v-btn color="primary" @click="clickSaveInfo"> 자재 출고 </v-btn>
-            </v-col> -->
           </v-row>
           <v-row dense>
             <v-col cols="12">
@@ -130,7 +124,6 @@ import ReleaseOrderItem from "./ReleaseOrderItem.vue";
   },
 })
 export default class ReleaseOrderModal extends Vue {
-  edit_customer: boolean;
   joborder_list_modal: object[] = [];
   joborder_detail_list_modal: object[] = [];
   raw_list_modal: object[] = [];
@@ -229,13 +222,6 @@ export default class ReleaseOrderModal extends Vue {
     this.joborder_list_modal = [];
     this.joborder_detail_list_modal = [];
     this.raw_list_modal = [];
-    //this.editedCustomer = Object.assign({}, this.customer);
-    //this.editedIndex = -1;
-    // this.selectedId = -1;
-    // this.customer = {
-    //   companyId: "",
-    //   name: "",
-    // };
   }
 
   selectRawDetail(item: any) {
@@ -294,38 +280,6 @@ export default class ReleaseOrderModal extends Vue {
       });
   }
 
-  clickSaveInfo() {
-    let customerInfo: any = this.editedCustomer;
-    console.log("clickSaveCustomerInfo", customerInfo);
-    this.raw_list_modal.forEach((el: any) => {
-      el.rawMaterialDetailId = el.itemId;
-      el.count = el.releaseCount;
-    });
-    customerInfo = {
-      releaseId: "",
-      jobOrderId: this.selected_job[0].jobOrderId,
-      details: this.raw_list_modal,
-    };
-    this.raw_list_modal.forEach((el: any) => {
-      console.log("el", el);
-      el.childItemId = el.itemId;
-      el.itemId = this.selected_item[0].itemId;
-    });
-
-    console.log("생성", customerInfo);
-    api.rawRelease
-      .createReleaseOrderData(customerInfo)
-      .then((response) => {
-        console.log("createCustomerItem", response);
-        if (response.status == 200) {
-          this.$swal("성공", "자재가 입력되었습니다", "success");
-          this.$emit("closeModal");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
   getStatusCode(status: string, code: any[]) {
     if (_.find(code, { code: status }) === undefined) {
       return "";

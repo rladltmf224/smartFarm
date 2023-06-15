@@ -1,6 +1,6 @@
 <template>
   <div class="warehousing">
-    <v-container fluid v-resize="onResize">
+    <v-container fluid>
       <v-row>
         <v-col class="ma-2" md="12">
           <span class="searchbox-title">조회 조건</span>
@@ -201,8 +201,6 @@ import { Vue, Component, Watch } from "vue-property-decorator";
 export default class WarehousingMng extends Vue {
   delete_modal: boolean = false; //반품 요청 (개별 반품처리)
   delete_item: any[] = []; //반품 요청 (개별 반품처리)
-  table_height: number = 0;
-  table_height2: number = 0;
   edit_customer: boolean = false;
   history_modal: boolean = false;
   history_modal_title: string = "";
@@ -245,23 +243,13 @@ export default class WarehousingMng extends Vue {
     this.warehousingListCfg.options.itemsPerPage = 8;
   }
 
-  mounted() {
-    this.onResize();
-  }
-
-  onResize() {
-    this.table_height = window.innerHeight - 48 - 97 - 400;
-    this.table_height2 = window.innerHeight - 48 - 97 - 400 - 100 - 115;
-  }
+  mounted() {}
 
   closeModal_history() {
     this.history_modal = false;
     this.getCustomer();
   }
-  // changeText() {
-  //   console.log(this.itemInfo.count);
-  //   this.itemInfo.count = this.itemInfo.count.replace(/[^0-9]/g, "");
-  // }
+
   getStatusColor(status: string) {
     switch (status) {
       case "부분입고":
@@ -339,20 +327,6 @@ export default class WarehousingMng extends Vue {
     this.getCustomer();
   }
 
-  // getCutomerItem() {
-  //   let reqData = {
-  //     customerId: this.editedCustomer.customerId,
-  //   };
-  //   api.warehousingPrice
-  //     .getWarehousingCustomerItemData(reqData)
-  //     .then((response) => {
-  //       console.log("getWarehousingData", response);
-  //       this.item_list = response.data.responseData;
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // }
   editItem() {
     this.edit_customer = true;
     let itemModalEL: any = this.$refs.ItemModal;
@@ -366,26 +340,7 @@ export default class WarehousingMng extends Vue {
     this.delete_item.push(item);
     this.delete_modal = true;
   }
-  deleteItem_modal(item: any) {
-    let deleteIndex = this.item_list_modal.indexOf(item);
-    console.log("deleteItem_pop", deleteIndex, item);
 
-    this.$swal
-      .fire({
-        title: "삭제",
-        text: "해당 데이터를 삭제 하시겠습니까?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "삭제",
-      })
-      .then((result) => {
-        if (result.isConfirmed) {
-          this.item_list_modal.splice(deleteIndex, 1);
-        }
-      });
-  }
   selectHistory(item: any) {
     let reqData = {
       id: item.id,
