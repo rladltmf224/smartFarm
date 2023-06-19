@@ -400,6 +400,7 @@ export default class OperationOrderModal extends Vue {
   processList: any[] = [];
   selectProcess: any = 0;
   bomData: any[] = [];
+  tempBomData: any[] = [];
 
   @Prop({ required: true }) open: boolean;
   @Prop({ required: true }) change: boolean;
@@ -520,17 +521,38 @@ export default class OperationOrderModal extends Vue {
   }
 
   getDetailData(id: any) {
+    this.tempBomData = [];
     let reqData = {
       jobOrderId: id,
     };
     this.orderData.id = id;
-    console.log("asdasd", reqData);
     api.operation
       .getJobOrerDetail(reqData)
       .then((res) => {
         console.log("getJobOrerDetail", res);
 
         if (res.data.isSuccess) {
+          this.orderData.name = this.editedCustomerData.jobOrderName;
+          this.orderData.selectObject = this.editedCustomerData.jobOrderType;
+          this.orderData.customer = this.editedCustomerData.customer.id;
+          this.orderData.department = this.editedCustomerData.departmentId;
+          this.orderData.departmentchargeId =
+            this.editedCustomerData.departmentchargeName.id;
+          this.orderData.deadline = this.editedCustomerData.deadline;
+          this.orderData.memo = this.editedCustomerData.memo;
+          this.orderData.selectItem = this.editedCustomerData.itemId;
+          this.orderData.targetCount = this.editedCustomerData.targetCount;
+          res.data.responseData.forEach((value: any) => {
+            this.tempBomData.push({
+              itemName: value.itemName,
+              itemId: value.itemId,
+              count: 1,
+              read: true,
+              targetCount: value.targetCount,
+            });
+          });
+
+          /*
           this.orderData.name = res.data.responseData.jobOrderName;
           this.orderData.customer = res.data.responseData.customerId;
           this.orderData.department = res.data.responseData.departmentId;
@@ -541,6 +563,7 @@ export default class OperationOrderModal extends Vue {
           this.orderData.selectObject = res.data.responseData.type;
           this.orderData.deadline = res.data.responseData.deadline;
           this.orderData.memo = res.data.responseData.memo;
+          */
           // this.orderData.selectEquipData_regi = _.cloneDeep(
           //   res.data.responseData.facilityDetails.forEach((element: any) => {
           //     element.use = element.jobOrderId !== null ? true : false;
@@ -556,7 +579,6 @@ export default class OperationOrderModal extends Vue {
           // this.orderData.selectEquipData_regi = [
           //   ...res.data.responseData.facilityDetails,
           // ];
-          console.log("------------", this.orderData);
         } else {
           this.closeModal();
           this.$swal({
@@ -574,7 +596,61 @@ export default class OperationOrderModal extends Vue {
         console.log("err", err);
       });
   }
+  getProcessList() {
+    let reqData = {
+      itemId: this.orderData.selectItem,
+    };
 
+    api.operation.getItemListByBom(reqData).then((res) => {
+      console.log("getItemListByBom", res);
+
+      if (this.change) {
+        for (var i = 0; i < this.tempBomData.length; i++) {
+          res.data.responseData.details.forEach((element_sub: any) => {
+            if (this.tempBomData[i].itemId == element_sub.itemId) {
+              this.tempBomData[i]["count"] = element_sub.count;
+              this.tempBomData[i]["read"] = false;
+            }
+          });
+        }
+
+        this.bomData = this.tempBomData;
+        console.log(this.bomData);
+      }
+      if (res.data.responseData.length != 0 && !this.change) {
+        let bomData = res.data.responseData.details.map((item: any) => {
+          delete item.bomDetailId;
+          return item;
+        });
+        if (res.data.responseData.productionType == "실생묘") {
+          res.data.responseData.details.forEach((element: any) => {
+            element.targetCount = this.orderData.targetCount;
+            element.read = true;
+            return element;
+          });
+          this.bomData = res.data.responseData.details;
+        } else if (res.data.responseData.productionType == "접목묘") {
+          let arrData = [];
+          arrData = res.data.responseData.details;
+
+          arrData.forEach((element: any) => {
+            element.targetCount = 0;
+            element.read = false;
+            return element;
+          });
+          arrData.push({
+            itemName: res.data.responseData.itemName,
+            itemId: res.data.responseData.itemId,
+            count: 1,
+            targetCount: this.orderData.targetCount,
+            read: true,
+          });
+          this.bomData = arrData;
+        }
+        console.log("bomData", bomData);
+      }
+    });
+  }
   toggleEquip(btnData: any) {
     console.log(btnData);
     if (btnData.use) {
@@ -727,7 +803,7 @@ export default class OperationOrderModal extends Vue {
       customerId: this.orderData.customer,
       itemId: this.orderData.selectItem,
       // processId: this.orderData.selectProcess,
-      orderInfoDetailId: 1,
+      //orderInfoDetailId: 1,
       totalCount: this.orderData.itemCount,
       type: this.orderData.selectObject,
       deadline: this.orderData.deadline,
@@ -735,12 +811,12 @@ export default class OperationOrderModal extends Vue {
       details: this.bomData,
       targetCount: this.orderData.targetCount,
     };
-    joborder.facilityDetailIds = _.map(
-      this.orderData.selectEquipData_regi,
-      (el) => {
-        return el.facilityDetailId;
-      }
-    );
+    // joborder.facilityDetailIds = _.map(
+    //   this.orderData.selectEquipData_regi,
+    //   (el) => {
+    //     return el.facilityDetailId;
+    //   }
+    // );
     // validation check -> use _.map
     if (type == "temp") {
       return this.getTemp(joborder);
@@ -775,9 +851,10 @@ export default class OperationOrderModal extends Vue {
     // }
 
     if (this.change) {
-      joborder.id = this.orderData.id;
+      joborder["jobOrderId"] = this.orderData.id;
+
       api.operation
-        .makeOperationOrderPage(joborder)
+        .getOperationOrderChangePage(joborder)
         .then((response) => {
           if (response.status == 200) {
             this.$swal({
@@ -800,6 +877,12 @@ export default class OperationOrderModal extends Vue {
               timer: 1500,
             });
           }
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          this.change = false;
           this.orderData = {
             name: "",
             customer: "",
@@ -811,9 +894,6 @@ export default class OperationOrderModal extends Vue {
             details: [],
           };
           this.openModal = false;
-        })
-        .catch((error) => {
-          console.log(error);
         });
     } else {
       api.operation
@@ -1081,47 +1161,6 @@ export default class OperationOrderModal extends Vue {
     this.orderData.memo = "";
     this.orderData.selectEquipData_regi = [];
     this.bomData = [];
-  }
-  getProcessList() {
-    let reqData = {
-      itemId: this.orderData.selectItem,
-    };
-
-    api.operation.getItemListByBom(reqData).then((res) => {
-      console.log("getItemListByBom", res);
-      if (res.data.responseData.length != 0) {
-        let bomData = res.data.responseData.details.map((item: any) => {
-          delete item.bomDetailId;
-          return item;
-        });
-        if (res.data.responseData.productionType == "실생묘") {
-          res.data.responseData.details.forEach((element: any) => {
-            element.targetCount = this.orderData.targetCount;
-            element.read = true;
-            return element;
-          });
-          this.bomData = res.data.responseData.details;
-        } else if (res.data.responseData.productionType == "접목묘") {
-          let arrData = [];
-          arrData = res.data.responseData.details;
-
-          arrData.forEach((element: any) => {
-            element.targetCount = 0;
-            element.read = false;
-            return element;
-          });
-          arrData.push({
-            itemName: res.data.responseData.itemName,
-            itemId: res.data.responseData.itemId,
-            count: 1,
-            targetCount: this.orderData.targetCount,
-            read: true,
-          });
-          this.bomData = arrData;
-        }
-        console.log("bomData", bomData);
-      }
-    });
   }
 
   saveTargetCount(count: string) {
